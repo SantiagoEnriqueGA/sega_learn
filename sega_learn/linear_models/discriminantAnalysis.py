@@ -162,6 +162,8 @@ class QuadraticDiscriminantAnalysis(object):
     """
     def __init__(self, priors=None, reg_param=0.0):
         self.priors = priors
+        
+        assert reg_param >= 0.0, "Regularization parameter must be non-negative."
         self.reg_param = reg_param
         
     def fit(self, X, y):

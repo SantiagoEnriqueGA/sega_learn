@@ -1,16 +1,13 @@
 import unittest
-from unittest.mock import Mock
-from unittest.mock import MagicMock
-import logging
 import sys
 import os
 import numpy as np
-from sklearn.datasets import make_regression
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, accuracy_score
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from sega_learn.linear_models import *
+from sega_learn.linear_models import make_data
 from test_utils import synthetic_data_regression, suppress_print
 
 class TestOrdinaryLeastSquares(unittest.TestCase):
@@ -418,6 +415,115 @@ class TestPolynomialTransform(unittest.TestCase):
     def test_invalid_transform(self):
         with self.assertRaises(Exception):
             self.transform.transform(None)      
+        
+class TestLinearDiscriminantAnalysis(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        print("Testing Linear Discriminant Analysis")
+        
+    def setUp(self):
+        self.cov_class_1 = np.array([[0.0, -1.0], [2.5, 0.7]]) * 2.0    # Covariance matrix for class 1, scaled by 2.0
+        self.cov_class_2 = self.cov_class_1.T                           # Covariance matrix for class 2, same as class 1 but transposed
+        
+        # Generate data
+        self.X, self.y = make_data(n_samples=1000, n_features=2, cov_class_1=self.cov_class_1, cov_class_2=self.cov_class_2, shift=[4,1], seed=1)
+        
+    def test_lda(self):
+        lda = LinearDiscriminantAnalysis()
+        lda.fit(self.X, self.y)
+        y_pred = lda.predict(self.X)
+        acc = accuracy_score(self.y, y_pred)
+        self.assertGreaterEqual(acc, 0.50)
+    
+    def test_lda_svd(self):
+        lda = LinearDiscriminantAnalysis(solver='svd')
+        lda.fit(self.X, self.y)
+        y_pred = lda.predict(self.X)
+        acc = accuracy_score(self.y, y_pred)
+        self.assertGreater(acc, 0)
+    
+    def test_lda_lsqr(self):
+        lda = LinearDiscriminantAnalysis(solver='lsqr')
+        lda.fit(self.X, self.y)
+        y_pred = lda.predict(self.X)
+        acc = accuracy_score(self.y, y_pred)
+        self.assertGreater(acc, 0)
+    
+    def test_lda_eigen(self):
+        lda = LinearDiscriminantAnalysis(solver='eigen')
+        lda.fit(self.X, self.y)
+        y_pred = lda.predict(self.X)
+        acc = accuracy_score(self.y, y_pred)
+        self.assertGreater(acc, 0)
+        
+    def test_lda_bad_solver(self):
+        lda = LinearDiscriminantAnalysis(solver='bad_solver')
+        with self.assertRaises(ValueError):
+            lda.fit(self.X, self.y)
+            
+    def test_lda_no_solver(self):
+        lda = LinearDiscriminantAnalysis(solver=None)
+        with self.assertRaises(ValueError):
+            lda.fit(self.X, self.y)
+            
+    def test_lda_no_data(self):
+        lda = LinearDiscriminantAnalysis()
+        with self.assertRaises(Exception):
+            lda.fit(None, None)
+    
+class TestQuadraticDiscriminantAnalysis(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        print("Testing Quadratic Discriminant Analysis")
+        
+    def setUp(self):
+        self.cov_class_1 = np.array([[0.0, -1.0], [2.5, 0.7]]) * 2.0    # Covariance matrix for class 1, scaled by 2.0
+        self.cov_class_2 = self.cov_class_1.T                           # Covariance matrix for class 2, same as class 1 but transposed
+        
+        # Generate data
+        self.X, self.y = make_data(n_samples=1000, n_features=2, cov_class_1=self.cov_class_1, cov_class_2=self.cov_class_2, shift=[4,1], seed=1)
+        
+    def test_qda(self):
+        qda = QuadraticDiscriminantAnalysis()
+        qda.fit(self.X, self.y)
+        y_pred = qda.predict(self.X)
+        acc = accuracy_score(self.y, y_pred)
+        self.assertGreaterEqual(acc, 0.50)
+        
+    def test_qda_prior(self):
+        qda = QuadraticDiscriminantAnalysis(priors=[0.5, 0.5])
+        self.y = self.y.astype(int)  # Ensure class labels are integers
+        qda.fit(self.X, self.y)
+        y_pred = qda.predict(self.X)
+        acc = accuracy_score(self.y, y_pred)
+        self.assertGreaterEqual(acc, 0.50)
+    
+    def test_qda_reg_param(self):
+        qda = QuadraticDiscriminantAnalysis(reg_param=0.1)
+        qda.fit(self.X, self.y)
+        y_pred = qda.predict(self.X)
+        acc = accuracy_score(self.y, y_pred)
+        self.assertGreaterEqual(acc, 0.50)
+        
+    def test_qda_bad_reg_param(self):
+        with self.assertRaises(Exception):
+            qda = QuadraticDiscriminantAnalysis(reg_param=-0.1)
+            qda.fit(self.X, self.y)
+        
+    def test_qda_no_data(self):
+        qda = QuadraticDiscriminantAnalysis()
+        with self.assertRaises(Exception):
+            qda.fit(None, None)
+            
+    def test_qda_no_priors(self):
+        qda = QuadraticDiscriminantAnalysis(priors=None)
+        qda.fit(self.X, self.y)    
+        self.assertEqual(qda.priors, None)   
+        
+    def test_qda_bad_priors(self):
+        with self.assertRaises(Exception):
+            qda = QuadraticDiscriminantAnalysis(priors=[0.5, 0.5, 0.5])
+            qda.fit(self.X, self.y)
         
 if __name__ == '__main__':
     unittest.main()
