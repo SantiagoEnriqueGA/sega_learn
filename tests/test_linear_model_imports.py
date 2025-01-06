@@ -29,7 +29,7 @@ class TestImports(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Imports")
+        print("Testing Imports - Linear Models")
     
     def test_individual_imports(self):
         assert utl is not None
