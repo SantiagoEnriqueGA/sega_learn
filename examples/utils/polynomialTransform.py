@@ -2,7 +2,9 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-from sega_learn.linear_models import PolynomialTransform, OrdinaryLeastSquares
+from sega_learn.linear_models import OrdinaryLeastSquares
+from sega_learn.utils import PolynomialTransform
+
 import numpy as np
 from sklearn.metrics import r2_score
 

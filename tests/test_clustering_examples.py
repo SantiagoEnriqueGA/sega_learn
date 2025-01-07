@@ -7,7 +7,7 @@ import importlib.util
 import contextlib
 import io
 
-from test_utils import suppress_print, strip_file_path
+from utils import suppress_print, strip_file_path
 
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))

@@ -5,12 +5,6 @@ from scipy import linalg
 
 # TODO: Complete docstrings for classes and methods
 
-class Utility(object):
-    """
-    Utility class
-    """
-    pass
-
 class OrdinaryLeastSquares(object):
     """
     Ordinary Least Squares (OLS) linear regression model.
@@ -795,69 +789,6 @@ class PassiveAggressiveRegressor(object):
         formula = " + ".join(terms)                                             # Join the terms with " + "
         return f"y = {formula} + {self.intercept_:.2f}"        
         
-class PolynomialTransform(object):
-    """
-    This class implements Polynomial Feature Transformation.
-    Polynomial feature transformation is a technique used to create new features from the existing features by raising them to a power or by creating interaction terms.
-    
-    Parameters:
-    - degree: int, default=2
-        The degree of the polynomial features.
-        
-    Attributes:
-    - n_samples: int
-        The number of samples.
-    - n_features: int
-        The number of features.
-    - n_output_features: int
-        The number of output features.
-    - combinations: list of tuples of shape (n_features,)
-        The combinations of features(X) of degree n.
-    - bias: bool, default=True
-        Whether to include a bias term in the output features.
-    """
-    def __init__(self, degree=2):
-        self.degree = degree
-        
-    def fit(self, X):
-        """
-        Fit the model to the data. 
-        Uses itertools.combinations_with_replacement to generate all possible combinations of features(X) of degree n.
-        """
-        from itertools import combinations_with_replacement
-        
-        self.n_samples, self.n_features = X.shape
-        
-        # Generate all possible combinations of features(X) of degree n
-        self.combinations = []
-        for d in range(1, self.degree + 1):
-            self.combinations.extend(combinations_with_replacement(range(self.n_features), d))
-        
-        self.n_output_features = len(self.combinations) + 1  # +1 for the bias term
-    
-    def transform(self, X):
-        """
-        Transform the data into polynomial features by computing the product of the features for each combination of features.
-        """
-        n_samples = X.shape[0]
-        
-        # Initialize the polynomial features with the bias term
-        X_poly = np.empty((n_samples, self.n_output_features))
-        X_poly[:, 0] = 1  # Bias term
-        
-        # For each combination of features, compute the product of the features
-        for i, comb in enumerate(self.combinations, start=1):
-            X_poly[:, i] = np.prod(X[:, comb], axis=1)
-        
-        # Return the polynomial features
-        return X_poly
-
-    def fit_transform(self, X):
-        """
-        Fit to data, then transform it.
-        """
-        self.fit(X)
-        return self.transform(X)
 
 if __name__ == "__main__":
     from sklearn.metrics import r2_score
@@ -960,45 +891,45 @@ if __name__ == "__main__":
     print(f"Regression Formula: {reg.get_formula()}")
     
     
-    # Example Polynomial Transform of Features for non-linear data 
-    # ----------------------------------------------------------------------------
-    # Plot a curved line, with noise, formula: y = 10 * sin(x) + noise
-    pnts = 300
-    X = np.linspace(0, 5, pnts)
-    y = 10 * np.sin(X) + np.random.normal(0, 1, pnts)
+    # # Example Polynomial Transform of Features for non-linear data 
+    # # ----------------------------------------------------------------------------
+    # # Plot a curved line, with noise, formula: y = 10 * sin(x) + noise
+    # pnts = 300
+    # X = np.linspace(0, 5, pnts)
+    # y = 10 * np.sin(X) + np.random.normal(0, 1, pnts)
 
-    # Fit OLS Regression
-    reg = OrdinaryLeastSquares(fit_intercept=False)
-    reg.fit(X.reshape(-1, 1), y)
+    # # Fit OLS Regression
+    # reg = OrdinaryLeastSquares(fit_intercept=False)
+    # reg.fit(X.reshape(-1, 1), y)
     
-    # Fit OLS Regression with Polynomial Features (degree=2)
-    poly2 = PolynomialTransform(degree=2)
-    X_poly2 = poly2.fit_transform(X.reshape(-1, 1))
-    reg_poly2 = OrdinaryLeastSquares(fit_intercept=False)
-    reg_poly2.fit(X_poly2, y)
+    # # Fit OLS Regression with Polynomial Features (degree=2)
+    # poly2 = PolynomialTransform(degree=2)
+    # X_poly2 = poly2.fit_transform(X.reshape(-1, 1))
+    # reg_poly2 = OrdinaryLeastSquares(fit_intercept=False)
+    # reg_poly2.fit(X_poly2, y)
     
-    # Fit OLS Regression with Polynomial Features (degree=3)
-    poly3 = PolynomialTransform(degree=3)
-    X_poly3 = poly3.fit_transform(X.reshape(-1, 1))
-    reg_poly3 = OrdinaryLeastSquares(fit_intercept=False)
-    reg_poly3.fit(X_poly3, y)
+    # # Fit OLS Regression with Polynomial Features (degree=3)
+    # poly3 = PolynomialTransform(degree=3)
+    # X_poly3 = poly3.fit_transform(X.reshape(-1, 1))
+    # reg_poly3 = OrdinaryLeastSquares(fit_intercept=False)
+    # reg_poly3.fit(X_poly3, y)
     
-    print("\nExample Usage Polynomial Transform of Features")
-    print("Base Model: y = 10 * sin(x) + noise")
-    print(f"OLS R^2 Score: {r2_score(y, reg.predict(X.reshape(-1, 1)))}")
-    print(f"OLS Polynomial Degree 2 R^2 Score: {r2_score(y, reg_poly2.predict(X_poly2))}")
-    print(f"OLS Polynomial Degree 3 R^2 Score: {r2_score(y, reg_poly3.predict(X_poly3))}")
+    # print("\nExample Usage Polynomial Transform of Features")
+    # print("Base Model: y = 10 * sin(x) + noise")
+    # print(f"OLS R^2 Score: {r2_score(y, reg.predict(X.reshape(-1, 1)))}")
+    # print(f"OLS Polynomial Degree 2 R^2 Score: {r2_score(y, reg_poly2.predict(X_poly2))}")
+    # print(f"OLS Polynomial Degree 3 R^2 Score: {r2_score(y, reg_poly3.predict(X_poly3))}")
     
-    import matplotlib.pyplot as plt
-    plt.figure(figsize=(10, 6))
-    plt.scatter(X, y, color='blue', label='Data Points', alpha=0.5)
-    plt.plot(X, reg.predict(X.reshape(-1, 1)), color='red', label='OLS Regression')
-    plt.plot(X, reg_poly2.predict(X_poly2), color='green', label='OLS Regression Polynomial Degree 2')
-    plt.plot(X, reg_poly3.predict(X_poly3), color='orange', label='OLS Regression Polynomial Degree 3')
-    plt.xlabel('Feature 0')
-    plt.ylabel('Target')
-    plt.title('Sin Curve with Noise')
-    plt.legend()
-    plt.show()
+    # import matplotlib.pyplot as plt
+    # plt.figure(figsize=(10, 6))
+    # plt.scatter(X, y, color='blue', label='Data Points', alpha=0.5)
+    # plt.plot(X, reg.predict(X.reshape(-1, 1)), color='red', label='OLS Regression')
+    # plt.plot(X, reg_poly2.predict(X_poly2), color='green', label='OLS Regression Polynomial Degree 2')
+    # plt.plot(X, reg_poly3.predict(X_poly3), color='orange', label='OLS Regression Polynomial Degree 3')
+    # plt.xlabel('Feature 0')
+    # plt.ylabel('Target')
+    # plt.title('Sin Curve with Noise')
+    # plt.legend()
+    # plt.show()
 
 

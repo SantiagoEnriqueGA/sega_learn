@@ -4,14 +4,12 @@ from .clustering import (
 )
 
 from .linear_models import (
-    Utility,
     OrdinaryLeastSquares,
     Ridge,
     Lasso,
     Bayesian,
     RANSAC,
     PassiveAggressiveRegressor,
-    PolynomialTransform,
     LinearDiscriminantAnalysis,
     QuadraticDiscriminantAnalysis,
     make_data
@@ -23,7 +21,6 @@ __all__ = [
     "DBSCAN",
     
     # Linear Models
-    "Utility",
     "OrdinaryLeastSquares",
     "Ridge",
     "Lasso",

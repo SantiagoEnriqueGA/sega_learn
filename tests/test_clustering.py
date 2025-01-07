@@ -10,7 +10,7 @@ import warnings
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from sega_learn.clustering import *
-from test_utils import suppress_print
+from tests.utils import suppress_print
 
 class TestKMeans(unittest.TestCase):
     """

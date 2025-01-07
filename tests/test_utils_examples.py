@@ -20,7 +20,7 @@ class TestExampleExceptions(unittest.TestCase):
         pass
 
 
-class TestExamplesLinearModels(unittest.TestCase):
+class TestExamplesClustering(unittest.TestCase):
     """
     Test cases for the example files.  
     Holds dynamically generated test cases for each example file.
@@ -36,7 +36,7 @@ def load_tests(loader, tests, pattern):
         pattern: The pattern to match test files.
     """
     # Find all example files in the examples directory. (Files starting with 'example_')
-    example_files = glob.glob(os.path.join(os.path.dirname(__file__), '..\\examples\\linear_models\\*.py'))
+    example_files = glob.glob(os.path.join(os.path.dirname(__file__), '..\\examples\\utils\\*.py'))
     
     # Raise an error if no example files are found.
     if not example_files:
@@ -63,12 +63,12 @@ def load_tests(loader, tests, pattern):
         test_exeptions = []
         test_exeptions = [f'test_{name}' for name in test_exeptions]
         if test_name in test_exeptions:
-            setattr(TestExamplesLinearModels, test_name, lambda self, example_file=example_file: TestExampleExceptions().test_main(example_file))
+            setattr(TestExamplesClustering, test_name, lambda self, example_file=example_file: TestExampleExceptions().test_main(example_file))
         else:
-            setattr(TestExamplesLinearModels, test_name, test_func)
+            setattr(TestExamplesClustering, test_name, test_func)
     
     # Load the dynamically generated test cases.
-    return loader.loadTestsFromTestCase(TestExamplesLinearModels)
+    return loader.loadTestsFromTestCase(TestExamplesClustering)
 
 if __name__ == '__main__':
     unittest.main()
