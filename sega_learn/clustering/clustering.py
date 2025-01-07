@@ -47,15 +47,7 @@ class KMeans:
     - Visualize the clustering results and determine the optimal number of clusters.
     """
     def __init__(self, X, n_clusters=3, max_iter=300, tol=1e-4):
-        """
-        Initialize the KMeans object.
-
-        Parameters:
-        - X: The data matrix (numpy array).
-        - n_clusters: The number of clusters.
-        - max_iter: The maximum number of iterations.
-        - tol: The tolerance to declare convergence.
-        """
+        """Initialize the KMeans object."""
         self.X = self._convert_to_ndarray(X).astype(float)  # Convert input data to ndarray
         self.n_clusters = n_clusters                        # Number of clusters
         self.max_iter = max_iter                            # Maximum number of iterations

@@ -13,16 +13,45 @@ class Utility(object):
 
 class OrdinaryLeastSquares(object):
     """
-    Ordinary Least Squares (OLS) class
+    Ordinary Least Squares (OLS) linear regression model.
+    
+    Parameters:
+    - fit_intercept : bool, default=True
+        Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
+    
+    Attributes:
+    - coef_ : ndarray of shape (n_features,) or (n_features + 1,)
+        Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
+    - intercept_ : float
+        Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.
+    
+    Methods: 
+    - fit(X, y): Fit the linear model to the data.
+    - predict(X): Predict using the linear model.
+    - get_formula(): Returns the formula of the model as a string.    
     """
     def __init__(self, fit_intercept=True) -> None:
+        """
+        Initialize the OrdinaryLeastSquares object.
+
+        Parameters:
+        - fit_intercept : bool, default=True
+            Whether to calculate the intercept for this model.
+        """
         self.fit_intercept = fit_intercept
         self.coef_ = None
         self.intercept_ = None
     
     def fit(self, X, y):
         """
-        Fit the model to the data
+        Fit linear model.
+        
+        Parameters:
+        - X : array-like of shape (n_samples, n_features): Training data.
+        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
+        
+        Returns:
+        - self : object
         """
         if self.fit_intercept:                              # If fit_intercept is True
             X = np.hstack([np.ones((X.shape[0], 1)), X])    # Add a column of ones to X, for the intercept
@@ -38,7 +67,13 @@ class OrdinaryLeastSquares(object):
                 
     def predict(self, X):
         """
-        Predict using the linear model
+        Predict using the linear model.
+        
+        Parameters:
+        - X : array-like of shape (n_samples, n_features): Samples.
+        
+        Returns:
+        - y_pred : array-like of shape (n_samples,): Predicted values.
         """
         if self.fit_intercept:                                  # If fit_intercept is True
             X = np.hstack([np.ones((X.shape[0], 1)), X])        # Add a column of ones to X, for the intercept
@@ -49,7 +84,10 @@ class OrdinaryLeastSquares(object):
         
     def get_formula(self):
         """
-        Returns the formula of the model
+        Returns the formula of the model as a string.
+        
+        Returns:
+        - formula : str: The formula of the model.
         """
         terms = [f"{coef:.4f} * x_{i}" for i, coef in enumerate(self.coef_)]    # Create the terms of the formula
         formula = " + ".join(terms)                                             # Join the terms with " + "
@@ -59,7 +97,29 @@ class OrdinaryLeastSquares(object):
         
 class Ridge(object):
     """
-    Ridge Regression Class
+    This class implements Ridge Regression using Coordinate Descent.
+    Ridge regression implements L2 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
+    
+    Parameters:
+    - alpha : float, default=1.0
+        Regularization strength; must be a positive float. Regularization improves the conditioning of the problem and reduces the variance of the estimates.
+    - fit_intercept : bool, default=True
+        Whether to calculate the intercept for this model.
+    - max_iter : int, default=10000
+        Maximum number of iterations for the coordinate descent solver.
+    - tol : float, default=1e-4
+        Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance.
+        
+    Attributes:
+    - coef_ : ndarray of shape (n_features,) or (n_features + 1,)
+        Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
+    - intercept_ : float
+        Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.
+    
+    Methods:
+    - fit(X, y): Fit the linear model to the data.
+    - predict(X): Predict using the linear model.
+    - get_formula(): Returns the formula of the model as a string.
     """
     def __init__(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=1e-4):
         self.alpha = alpha
@@ -71,7 +131,11 @@ class Ridge(object):
     
     def fit(self, X, y):
         """
-        Fit the model to the data using coordinate descent
+        Fit the model to the data using coordinate descent.
+        
+        Parameters:
+        - X : array-like of shape (n_samples, n_features): Training data.
+        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
         """
         if self.fit_intercept:                                  # If fit_intercept is True
             X = np.hstack([np.ones((X.shape[0], 1)), X])        # Add a column of ones to X, for the intercept
@@ -104,7 +168,10 @@ class Ridge(object):
     
     def predict(self, X):
         """
-        Predict using the linear model
+        Predict using the linear model.  
+
+        Parameters:
+        - X : array-like of shape (n_samples, n_features): Samples.
         """
         if self.fit_intercept:                                  # If fit_intercept is True
             X = np.hstack([np.ones((X.shape[0], 1)), X])        # Add a column of ones to X, for the intercept
@@ -115,7 +182,10 @@ class Ridge(object):
         
     def get_formula(self):
         """
-        Returns the formula of the model
+        Computes the formula of the model.
+        
+        Returns:
+        - formula : str: The formula of the model.
         """
         terms = [f"{coef:.4f} * x_{i}" for i, coef in enumerate(self.coef_)]    # Create the terms of the formula
         formula = " + ".join(terms)                                             # Join the terms with " + "
@@ -125,7 +195,24 @@ class Ridge(object):
 
 class Lasso(object):
     """
-    Lasso Regression Class
+    This class implements Lasso Regression using Coordinate Descent.
+    Lasso regression implements L1 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
+    
+    Parameters:
+    - alpha : float, default=1.0
+        Regularization strength; must be a positive float. Regularization improves the conditioning of the problem and reduces the variance of the estimates.
+    - fit_intercept : bool, default=True
+        Whether to calculate the intercept for this model.
+    - max_iter : int, default=10000
+        Maximum number of iterations for the coordinate descent solver.
+    - tol : float, default=1e-4
+        Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance.
+    
+    Attributes:
+    - coef_ : ndarray of shape (n_features,) or (n_features + 1,)
+        Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
+    - intercept_ : float
+        Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.    
     """
     def __init__(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=1e-4):
         self.alpha = alpha
@@ -137,7 +224,11 @@ class Lasso(object):
     
     def fit(self, X, y):
         """
-        Fit the model to the data using coordinate descent
+        Fit the model to the data using coordinate descent.
+        
+        Parameters:
+        - X : array-like of shape (n_samples, n_features): Training data.
+        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
         """
         if self.fit_intercept:                              # If fit_intercept is True
             X = np.hstack([np.ones((X.shape[0], 1)), X])    # Add a column of ones to X, for the intercept
@@ -169,7 +260,10 @@ class Lasso(object):
     
     def predict(self, X):
         """
-        Predict using the linear model
+        Predict using the linear model.
+        
+        Parameters:
+        - X : array-like of shape (n_samples, n_features): Samples.
         """
         if self.fit_intercept:                                      # If fit_intercept is True
             X = np.hstack([np.ones((X.shape[0], 1)), X])            # Add a column of ones to X, for the intercept
@@ -180,7 +274,10 @@ class Lasso(object):
         
     def get_formula(self):
         """
-        Returns the formula of the model
+        Computes the formula of the model.
+        
+        Returns:
+        - formula : str: The formula of the model.
         """
         terms = [f"{coef:.4f} * x_{i}" for i, coef in enumerate(self.coef_)]    # Create the terms of the formula
         formula = " + ".join(terms)                                             # Join the terms with " + "
@@ -190,21 +287,38 @@ class Lasso(object):
 
 class Bayesian(object):
     """
-    Bayesian Regression Class
+    This class implements Bayesian Regression using Coordinate Descent.
+    Bayesian regression implements both L1 and L2 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
    
-    Args:
-        max_iter: int, default=300
-            The maximum number of iterations to perform.
-        tol: float, default=0.001
-            The convergence threshold. The algorithm will stop if the coefficients change less than the threshold.
-        alpha_1: float, default=1e-06
-            The shape parameter for the prior on the weights.
-        alpha_2: float, default=1e-06
-            The scale parameter for the prior on the weights.
-        lambda_1: float, default=1e-06
-            The shape parameter for the prior on the noise.
-        lambda_2: float, default=1e-06
-            The scale parameter for the prior on the noise.        
+    Parameters:
+    - max_iter: int, default=300
+        The maximum number of iterations to perform.
+    - tol: float, default=0.001
+        The convergence threshold. The algorithm will stop if the coefficients change less than the threshold.
+    - alpha_1: float, default=1e-06
+        The shape parameter for the prior on the weights.
+    - alpha_2: float, default=1e-06
+        The scale parameter for the prior on the weights.
+    - lambda_1: float, default=1e-06
+        The shape parameter for the prior on the noise.
+    - lambda_2: float, default=1e-06
+        The scale parameter for the prior on the noise.        
+    - fit_intercept: bool, default=True
+         Whether to calculate the intercept for this model.
+         
+    Attributes:
+    - intercept_: float
+        The intercept of the model.
+    - coef_: ndarray of shape (n_features,) or (n_features + 1,)
+        Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
+    - n_iter_: int  
+         The number of iterations performed.
+    - alpha_: float
+        The precision of the weights.
+    - lambda_: float
+        The precision of the noise.
+    - sigma_: ndarray of shape (n_features, n_features)
+        The posterior covariance of the weights.
     """
     def __init__(self, max_iter=300, tol=0.001, alpha_1=1e-06, alpha_2=1e-06, lambda_1=1e-06, lambda_2=1e-06, fit_intercept = None):
         self.max_iter = max_iter
@@ -221,6 +335,10 @@ class Bayesian(object):
     def fit(self, X, y):
         """
         Fit the model to the data.
+        
+        Parameters:
+        - X : array-like of shape (n_samples, n_features): Training data.
+        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
         """
         # Initialization of the values of the parameters
         eps = np.finfo(np.float64).eps      # Machine epsilon, the smallest number that can be added to 1.0 to get a larger number
@@ -273,7 +391,29 @@ class Bayesian(object):
     
     def tune(self, X, y, beta1=0.9, beta2=0.999, iter=1000):
         """
-        Automatically tune the hyperparameters alpha_1, alpha_2, lambda_1, lambda_2
+        Automatically tune the hyperparameters alpha_1, alpha_2, lambda_1, lambda_2.
+        Loops through the parameter space, and returns the best hyperparameters based on the mean squared error.
+        Compues gradients using ADAM optimizer.
+        
+        Parameters:
+        - X : array-like of shape (n_samples, n_features): Training data.
+        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
+        - beta1: float, default=0.9
+            The exponential decay rate for the first moment estimates.
+        - beta2: float, default=0.999
+            The exponential decay rate for the second moment estimates.
+        - iter: int, default=1000
+            The number of iterations to perform.
+        
+        Returns:
+        - best_alpha_1: float
+            The best value of alpha_1.
+        - best_alpha_2: float
+            The best value of alpha_2.
+        - best_lambda_1: float
+            The best value of lambda_1.
+        - best_lambda_2: float
+            The best value of lambda_2.
         """
        
         # Initialize the best values of the hyperparameters
@@ -388,13 +528,19 @@ class Bayesian(object):
         
     def predict(self, X):
         """
-        Predict using the linear model
+        Predict using the linear model. Computes the dot product of X and the coefficients.
+        
+        Parameters:
+        - X : array-like of shape (n_samples, n_features): Samples.
         """
         return np.dot(X, self.coef_)
     
     def get_formula(self):
         """
-        Returns the formula of the model
+        Computes the formula of the model.
+        
+        Returns:
+        - formula : str: The formula of the model.
         """
         terms = [f"{coef:.4f} * x_{i}" for i, coef in enumerate(self.coef_)]    # Create the terms of the formula
         formula = " + ".join(terms)                                             # Join the terms with " + "
@@ -404,7 +550,40 @@ class Bayesian(object):
 
 class RANSAC(object):
     """
-    RANSAC (Random Sample Consensus) class
+    Implements RANSAC (RANdom SAmple Consensus) algorithm for robust linear regression.
+    This uses the RANSAC algorithm to fit a linear model to the data, while ignoring outliers.
+    
+    Parameters:
+    - n: int, default=10
+        Number of data points to estimate parameters.
+    - k: int, default=100
+        Maximum iterations allowed.
+    - t: float, default=0.05
+         Threshold value to determine if points are fit well, in terms of residuals.
+    - d: int, default=10
+        Number of close data points required to assert model fits well. 
+    - model: object, default=None
+        The model to use for fitting. If None, uses Ordinary Least Squares.
+    - auto_scale_t: bool, default=False
+        - Whether to automatically scale the threshold until a model is fit.
+    - scale_t_factor: float, default=2
+        - Factor by which to scale the threshold until a model is fit.
+    - auto_scale_n: bool, default=False
+        - Whether to automatically scale the number of data points until a model is fit.
+    - scale_n_factor: float, default=2
+        - Factor by which to scale the number of data points until a model is fit.
+    
+    Attributes:
+    - best_fit: object
+        The best model fit.
+    - best_error: float
+        The best error achieved by the model.
+    - best_n: int
+        The best number of data points used to fit the model.
+    - best_t: float
+        The best threshold value used to determine if points are fit well, in terms of residuals.
+    - best_model: object
+        The best model fit. 
     """
     def __init__(self, n=10, k=100, t=0.05, d=10, model=None, 
                  auto_scale_t=False, scale_t_factor=2,
@@ -436,20 +615,20 @@ class RANSAC(object):
         self.scale_n_factor = scale_n_factor
     
     def _square_loss(self, y_true, y_pred):
-        """
-        Compute the square loss
-        """
+        """Compute the square loss."""
         return (y_true - y_pred) ** 2
     
     def _mean_square_loss(self, y_true, y_pred):
-        """
-        Compute the mean square loss
-        """
+        """Compute the mean square loss."""
         return np.mean(self._square_loss(y_true, y_pred))
     
     def fit(self, X, y):
         """
-        Fit the model to the data, using RANSAC
+        Fit the model to the data, using RANSAC.
+        
+        Parameters:
+        - X : array-like of shape (n_samples, n_features): Training data.
+        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
         """
         for _ in range(self.k):
             # Randomly select n data points
@@ -491,13 +670,16 @@ class RANSAC(object):
             
     def predict(self, X):
         """
-        Predict using the best fit model
+        Predict using the best fit model.
+        
+        Parameters:
+        - X : array-like of shape (n_samples, n_features): Samples.
         """
         return self.best_fit.predict(X)
     
     def get_formula(self):
         """
-        Returns the formula of the model
+        Computes the formula of the model if fit, else returns "No model fit available"
         """
         try:
             return self.best_fit.get_formula()
@@ -506,12 +688,32 @@ class RANSAC(object):
         
 class PassiveAggressiveRegressor(object):
     """
-    Passive Aggressive Regressor class
+    Implements Passive Aggressive Regression using the Passive Aggressive algorithm.
+    The algorithm is a type of online learning algorithm that updates the model parameters based on the current sample.
+    If the prediction is within a certain tolerance, the model parameters are updated.
+    
+    Parameters:
+    - C: float, default=1.0
+        Regularization parameter/step size.
+    - max_iter: int, default=1000
+        The maximum number of passes over the training data.
+    - tol: float, default=1e-3
+        The stopping criterion.
+    
+    Attributes:
+    - coef_: ndarray of shape (n_features,) or (n_features + 1,)
+        Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
+    - intercept_: float
+        Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.
+    - n_iter_: int
+        The number of iterations performed.
+    - steps_: list of tuples of shape (n_features,) or (n_features + 1,)
+        The weights and intercept at each iteration if save_steps is True.
+    - save_steps: bool, default=False
+        - Whether to save the weights and intercept at each iteration.
     """
     def __init__(self, C=1.0, max_iter=1000, tol=1e-3):
-        """
-        Initialize the linear model with the given parameters.
-        """
+        """Initialize the linear model with the given parameters."""
         self.C = C                              # Regularization parameter/step size
         self.max_iter = max_iter                # The maximum number of passes over the training data
         self.tol = tol                          # The stopping criterion
@@ -523,6 +725,11 @@ class PassiveAggressiveRegressor(object):
         """
         Fit the model to the data.
         Save the weights and the intercept at each iteration if save_steps is True.
+        
+        Parameters:
+        - X : array-like of shape (n_samples, n_features): Training data.
+        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
+        - save_steps: bool, default=False
         """
         # Initialize the weights and the intercept
         self.coef_ = np.zeros(X.shape[1])
@@ -561,13 +768,13 @@ class PassiveAggressiveRegressor(object):
         
     def predict(self, X):
         """
-        Predict using the linear model
+        Predict using the linear model. Dot product of X and the coefficients.
         """
         return np.dot(X, self.coef_) + self.intercept_   
     
     def predict_all_steps(self, X):
         """
-        Predict using the linear model at each iteration
+        Predict using the linear model at each iteration. (save_steps=True)
         """ 
         assert hasattr(self, 'steps_'), "Model has not been fitted with save_steps=True"
         
@@ -579,7 +786,10 @@ class PassiveAggressiveRegressor(object):
     
     def get_formula(self):
         """
-        Returns the formula of the model
+        Computes the formula of the model.
+        
+        Returns:
+        - formula : str: The formula of the model.
         """
         terms = [f"{coef:.4f} * x_{i}" for i, coef in enumerate(self.coef_)]    # Create the terms of the formula
         formula = " + ".join(terms)                                             # Join the terms with " + "
@@ -587,14 +797,32 @@ class PassiveAggressiveRegressor(object):
         
 class PolynomialTransform(object):
     """
-    Transforms features into polynomial features
+    This class implements Polynomial Feature Transformation.
+    Polynomial feature transformation is a technique used to create new features from the existing features by raising them to a power or by creating interaction terms.
+    
+    Parameters:
+    - degree: int, default=2
+        The degree of the polynomial features.
+        
+    Attributes:
+    - n_samples: int
+        The number of samples.
+    - n_features: int
+        The number of features.
+    - n_output_features: int
+        The number of output features.
+    - combinations: list of tuples of shape (n_features,)
+        The combinations of features(X) of degree n.
+    - bias: bool, default=True
+        Whether to include a bias term in the output features.
     """
     def __init__(self, degree=2):
         self.degree = degree
         
     def fit(self, X):
         """
-        Fit the model to the data
+        Fit the model to the data. 
+        Uses itertools.combinations_with_replacement to generate all possible combinations of features(X) of degree n.
         """
         from itertools import combinations_with_replacement
         
@@ -609,7 +837,7 @@ class PolynomialTransform(object):
     
     def transform(self, X):
         """
-        Transform the data into polynomial features
+        Transform the data into polynomial features by computing the product of the features for each combination of features.
         """
         n_samples = X.shape[0]
         
@@ -626,7 +854,7 @@ class PolynomialTransform(object):
 
     def fit_transform(self, X):
         """
-        Fit to data, then transform it
+        Fit to data, then transform it.
         """
         self.fit(X)
         return self.transform(X)
@@ -772,5 +1000,5 @@ if __name__ == "__main__":
     plt.title('Sin Curve with Noise')
     plt.legend()
     plt.show()
-    
+
 
