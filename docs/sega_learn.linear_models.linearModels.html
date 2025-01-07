@@ -59,10 +59,8 @@ td.singlecolumn { width: 100%; }
 </dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#Lasso">Lasso</a>
 </dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#OrdinaryLeastSquares">OrdinaryLeastSquares</a>
 </dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#PassiveAggressiveRegressor">PassiveAggressiveRegressor</a>
-</dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#PolynomialTransform">PolynomialTransform</a>
 </dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#RANSAC">RANSAC</a>
 </dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#Ridge">Ridge</a>
-</dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#Utility">Utility</a>
 </dt></dl>
 </dd>
 </dl>
@@ -337,51 +335,6 @@ Data descriptors defined here:<br>
 </td></tr></table> <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><a name="PolynomialTransform">class <strong>PolynomialTransform</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
-<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#PolynomialTransform">PolynomialTransform</a>(degree=2)<br>
-&nbsp;<br>
-This&nbsp;class&nbsp;implements&nbsp;Polynomial&nbsp;Feature&nbsp;Transformation.<br>
-Polynomial&nbsp;feature&nbsp;transformation&nbsp;is&nbsp;a&nbsp;technique&nbsp;used&nbsp;to&nbsp;create&nbsp;new&nbsp;features&nbsp;from&nbsp;the&nbsp;existing&nbsp;features&nbsp;by&nbsp;raising&nbsp;them&nbsp;to&nbsp;a&nbsp;power&nbsp;or&nbsp;by&nbsp;creating&nbsp;interaction&nbsp;terms.<br>
-&nbsp;<br>
-Parameters:<br>
--&nbsp;degree:&nbsp;int,&nbsp;default=2<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;degree&nbsp;of&nbsp;the&nbsp;polynomial&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
-Attributes:<br>
--&nbsp;n_samples:&nbsp;int<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;samples.<br>
--&nbsp;n_features:&nbsp;int<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;features.<br>
--&nbsp;n_output_features:&nbsp;int<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;output&nbsp;features.<br>
--&nbsp;combinations:&nbsp;list&nbsp;of&nbsp;tuples&nbsp;of&nbsp;shape&nbsp;(n_features,)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;combinations&nbsp;of&nbsp;features(X)&nbsp;of&nbsp;degree&nbsp;n.<br>
--&nbsp;bias:&nbsp;bool,&nbsp;default=True<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;include&nbsp;a&nbsp;bias&nbsp;term&nbsp;in&nbsp;the&nbsp;output&nbsp;features.<br>&nbsp;</span></td></tr>
-<tr><td>&nbsp;</td>
-<td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="PolynomialTransform-__init__"><strong>__init__</strong></a>(self, degree=2)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
-
-<dl><dt><a name="PolynomialTransform-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data.&nbsp;<br>
-Uses&nbsp;itertools.combinations_with_replacement&nbsp;to&nbsp;generate&nbsp;all&nbsp;possible&nbsp;combinations&nbsp;of&nbsp;features(X)&nbsp;of&nbsp;degree&nbsp;n.</span></dd></dl>
-
-<dl><dt><a name="PolynomialTransform-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;to&nbsp;data,&nbsp;then&nbsp;transform&nbsp;it.</span></dd></dl>
-
-<dl><dt><a name="PolynomialTransform-transform"><strong>transform</strong></a>(self, X)</dt><dd><span class="code">Transform&nbsp;the&nbsp;data&nbsp;into&nbsp;polynomial&nbsp;features&nbsp;by&nbsp;computing&nbsp;the&nbsp;product&nbsp;of&nbsp;the&nbsp;features&nbsp;for&nbsp;each&nbsp;combination&nbsp;of&nbsp;features.</span></dd></dl>
-
-<hr>
-Data descriptors defined here:<br>
-<dl><dt><strong>__dict__</strong></dt>
-<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
-</dl>
-<dl><dt><strong>__weakref__</strong></dt>
-<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
-</dl>
-</td></tr></table> <p>
-<table class="section">
-<tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="RANSAC">class <strong>RANSAC</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
@@ -499,21 +452,6 @@ Parameters:<br>
 
 <hr>
 Data descriptors defined here:<br>
-<dl><dt><strong>__dict__</strong></dt>
-<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
-</dl>
-<dl><dt><strong>__weakref__</strong></dt>
-<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
-</dl>
-</td></tr></table> <p>
-<table class="section">
-<tr class="decor title-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><a name="Utility">class <strong>Utility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
-<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#Utility">Utility</a>&nbsp;class<br>&nbsp;</span></td></tr>
-<tr><td>&nbsp;</td>
-<td class="singlecolumn">Data descriptors defined here:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
 </dl>

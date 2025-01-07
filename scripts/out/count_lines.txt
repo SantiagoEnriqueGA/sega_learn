@@ -1,36 +1,43 @@
 ﻿Lines per Python file, sorted by descending order:
 ____________________________________________________________________________________________________
-	sega_learn\linear_models\linearModels.py                                       :   749
-	sega_learn\tests\test_linear_model.py                                          :   641
-	sega_learn\clustering\clustering.py                                            :   600
-	sega_learn\linear_models\discriminantAnalysis.py                               :   339
-	sega_learn\tests_performance\test_linear_model.py                              :   199
+	sega_learn\linear_models\linearModels.py                                       :   907
+	sega_learn\tests\test_linear_model.py                                          :   607
+	sega_learn\clustering\clustering.py                                            :   593
+	sega_learn\linear_models\discriminantAnalysis.py                               :   406
+	sega_learn\tests_performance\test_linear_model.py                              :   166
 	sega_learn\tests\test_clustering.py                                            :   145
 	sega_learn\tests_performance\test_clustering.py                                :    97
 	sega_learn\tests\test_clustering_examples.py                                   :    66
 	sega_learn\tests\test_linear_model_examples.py                                 :    66
-	sega_learn\tests\test_linear_model_imports.py                                  :    55
-	sega_learn\tests_performance\test_utils.py                                     :    44
-	sega_learn\tests\test_utils.py                                                 :    44
+	sega_learn\tests\test_utils_examples.py                                        :    66
+	sega_learn\utils\polynomialTransform.py                                        :    64
+	sega_learn\tests_performance\test_utils.py                                     :    55
+	sega_learn\tests\test_linear_model_imports.py                                  :    49
+	sega_learn\tests\test_utils.py                                                 :    46
+	sega_learn\tests\utils.py                                                      :    44
+	sega_learn\tests_performance\utils.py                                          :    44
 	sega_learn\examples\clustering\kmeans.py                                       :    43
 	sega_learn\examples\clustering\dbscan_3d_aimated.py                            :    42
-	sega_learn\examples\linear_models\polynomialTransform.py                       :    40
+	sega_learn\examples\utils\polynomialTransform.py                               :    41
 	sega_learn\examples\clustering\dbscan.py                                       :    38
 	sega_learn\examples\clustering\dbscan_3d.py                                    :    33
+	sega_learn\__init__.py                                                         :    32
 	sega_learn\examples\linear_models\ransac_vis.py                                :    31
-	sega_learn\linear_models\__init__.py                                           :    30
 	sega_learn\tests\test_clustering_imports.py                                    :    29
 	sega_learn\examples\linear_models\passiveAggressive_vis.py                     :    29
+	sega_learn\tests\test_imports.py                                               :    27
+	sega_learn\linear_models\__init__.py                                           :    26
 	sega_learn\examples\linear_models\ransac.py                                    :    20
-	sega_learn\examples\linear_models\passiveAggressive.py                         :    17
-	sega_learn\examples\linear_models\ridge.py                                     :    17
 	sega_learn\examples\linear_models\ols.py                                       :    17
+	sega_learn\examples\linear_models\ridge.py                                     :    17
+	sega_learn\examples\linear_models\passiveAggressive.py                         :    17
 	sega_learn\examples\linear_models\bayes.py                                     :    16
 	sega_learn\examples\linear_models\lda.py                                       :    15
 	sega_learn\examples\linear_models\qda.py                                       :    14
-	sega_learn\examples\linear_models\lasso.py                                     :    13
 	sega_learn\tests\run_all_tests.py                                              :    13
+	sega_learn\examples\linear_models\lasso.py                                     :    13
 	sega_learn\clustering\__init__.py                                              :     8
+	sega_learn\utils\__init__.py                                                   :     4
 ____________________________________________________________________________________________________
-Total lines                                                                            :  3510
+Total lines                                                                            :  3946
  

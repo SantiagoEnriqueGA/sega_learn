@@ -3,6 +3,8 @@ wrote sega_learn.clustering.__init__.html
 wrote sega_learn.linear_models.discriminantAnalysis.html
 wrote sega_learn.linear_models.linearModels.html
 wrote sega_learn.linear_models.__init__.html
+wrote sega_learn.utils.polynomialTransform.html
+wrote sega_learn.utils.__init__.html
 wrote sega_learn.html
  
 To view the documentation, run the following command in the terminal:
