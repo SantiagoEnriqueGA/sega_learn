@@ -122,7 +122,7 @@ class KMeans:
         Returns:
         - centroids: The initialized centroids.
         """
-        np.random.seed(1)                                           # Set random seed for reproducibility
+        # np.random.seed(1)                                           # Set random seed for reproducibility
         random_indices = np.random.permutation(self.X.shape[0])     # Randomly shuffle indices
         centroids = self.X[random_indices[:self.n_clusters]]        # Select the first n_clusters points as centroids
         return centroids                        
@@ -159,7 +159,6 @@ class KMeans:
         ])
         
         return centroids
-
 
     def fit(self):
         """
@@ -284,7 +283,7 @@ class KMeans:
         else:
             return 0                    # Return 0 if no valid similarity scores found
 
-    
+
     def silhouette_score(self, X, labels):
         """
         Calculate the silhouette score for evaluating clustering performance.

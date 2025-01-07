@@ -1,3 +1,4 @@
+from cProfile import label
 import unittest
 import sys
 import os
@@ -12,6 +13,22 @@ from sega_learn.clustering import *
 from test_utils import suppress_print
 
 class TestKMeans(unittest.TestCase):
+    """
+    Unit test for the KMeans clustering class.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_initialization: Tests the initialization of the KMeans class.
+    - test_fit: Tests the fit method of the KMeans class.
+    - test_predict: Tests the predict method of the KMeans class.
+    - test_elbow_method: Tests the elbow method for determining the optimal number of clusters.
+    - test_find_optimal_clusters: Tests the find_optimal_clusters method for determining the optimal number of clusters.
+    - test_silhouette_score: Tests the silhouette score method for evaluating clustering performance.
+    - test_calinski_harabasz_index: Tests the Calinski-Harabasz index method for evaluating clustering performance.
+    - test_davies_bouldin_index: Tests the Davies-Bouldin index method for evaluating clustering performance.
+    - test_initialize_centroids: Tests the initialize_centroids method for initializing centroids.
+    - test_initialize_centroids_random: Tests the initialize_centroids method for initializing centroids randomly.
+    - tearDown: Cleans up after each test method is run.
+    """
     @classmethod
     def setUpClass(cls):
         print("Testing KMeans")
@@ -54,11 +71,53 @@ class TestKMeans(unittest.TestCase):
         self.assertTrue(1 <= db_optimal_k <= 5)
         self.assertTrue(1 <= silhouette_optimal_k <= 5)
         
+    def test_silhouette_score(self):
+        X = np.array([[1.0, 2.0], [1.5, 1.8], [5.0, 8.0]])
+        labels = np.array([0, 0, 1])
+        score = self.kmeans.silhouette_score(X, labels)
+        self.assertTrue(-1 <= score <= 1)
+
+    def test_calinski_harabasz_index(self):
+        X = np.array([[1.0, 2.0], [1.5, 1.8], [5.0, 8.0]])
+        labels = np.array([0, 0, 1])
+        centroids = np.array([[1.25, 1.9], [5.0, 8.0]])
+        score = self.kmeans.calinski_harabasz_index(X, labels, centroids)
+        self.assertTrue(score >= 0)
+        
+    def test_davies_bouldin_index(self):
+        X = np.array([[1.0, 2.0], [1.5, 1.8], [5.0, 8.0]])
+        labels = np.array([0, 0, 1])
+        centroids = np.array([[1.25, 1.9], [5.0, 8.0]])
+        score = self.kmeans.davies_bouldin_index(X, labels, centroids)
+        self.assertTrue(score >= 0)
+        
+    def test_initialize_centroids(self):
+        self.centroids = self.kmeans.initialize_centroids()
+        self.assertEqual(len(self.centroids), self.true_k)
+        
+    def test_initialize_centroids_random(self):
+        # TODO: There is a non-zero chance that the centroids are equal, so we need to run this test multiple times to ensure that the centroids are not equal.
+        self.X = np.array([np.random.rand(10000, 10000)])        
+        self.centroids1 = self.kmeans.initialize_centroids()
+        self.centroids2 = self.kmeans.initialize_centroids()
+        self.assertFalse(np.array_equal(self.centroids1, self.centroids2))
+        
     def tearDown(self):
         if os.path.exists("tests/test_elbow.png"):
             os.remove("tests/test_elbow.png")
 
 class TestDBSCAN(unittest.TestCase):
+    """
+    Unit test for the DBSCAN clustering class.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_initialization: Tests the initialization of the DBSCAN class.
+    - test_fit: Tests the fit method of the DBSCAN class.
+    - test_predict: Tests the predict method of the DBSCAN class.
+    - test_silhouette_score: Tests the silhouette score method for evaluating clustering performance.
+    - test_auto_eps: Tests the auto_eps method for automatically determining the optimal epsilon value.
+    """
+    
     @classmethod
     def setUpClass(cls):
         print("Testing DBSCAN")

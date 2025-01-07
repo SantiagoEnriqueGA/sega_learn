@@ -6,18 +6,11 @@ import sys
 import importlib.util
 import contextlib
 import io
-import warnings
 
-from test_utils import suppress_print
+from test_utils import suppress_print, strip_file_path
 
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-def strip_file_path(file_path):
-    """
-    Strips the file path and returns the file name.
-    """
-    return os.path.basename(file_path)
 
 class TestExampleExceptions(unittest.TestCase):
     """
@@ -27,7 +20,7 @@ class TestExampleExceptions(unittest.TestCase):
         pass
 
 
-class TestExamples(unittest.TestCase):
+class TestExamplesClustering(unittest.TestCase):
     """
     Test cases for the example files.  
     Holds dynamically generated test cases for each example file.
@@ -70,12 +63,12 @@ def load_tests(loader, tests, pattern):
         test_exeptions = []
         test_exeptions = [f'test_{name}' for name in test_exeptions]
         if test_name in test_exeptions:
-            setattr(TestExamples, test_name, lambda self, example_file=example_file: TestExampleExceptions().test_main(example_file))
+            setattr(TestExamplesClustering, test_name, lambda self, example_file=example_file: TestExampleExceptions().test_main(example_file))
         else:
-            setattr(TestExamples, test_name, test_func)
+            setattr(TestExamplesClustering, test_name, test_func)
     
     # Load the dynamically generated test cases.
-    return loader.loadTestsFromTestCase(TestExamples)
+    return loader.loadTestsFromTestCase(TestExamplesClustering)
 
 if __name__ == '__main__':
     unittest.main()

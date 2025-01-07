@@ -11,6 +11,18 @@ from sega_learn.linear_models import make_data
 from test_utils import synthetic_data_regression, suppress_print
 
 class TestOrdinaryLeastSquares(unittest.TestCase):
+    """
+    Unit test for the Ordinary Least Squares regression class.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_fit_predict: Tests the fit and predict methods of the Ordinary Least Squares class.
+    - test_fit_intercept: Tests the fit_intercept parameter of the Ordinary Least Squares class.
+    - test_invalid_fit: Tests the fit method with invalid input.
+    - test_invalid_predict: Tests the predict method with invalid input.
+    - test_get_formula: Tests the get_formula method of the Ordinary Least Squares class.
+    - test_get_formula_with_intercept: Tests the get_formula method with intercept of the Ordinary Least Squares class.
+    - test_coef_: Tests the coef_ attribute of the Ordinary Least Squares class.
+    """
     @classmethod
     def setUpClass(cls):
         print("Testing Ordinary Least Squares Model")
@@ -59,6 +71,20 @@ class TestOrdinaryLeastSquares(unittest.TestCase):
        
 
 class TestRidge(unittest.TestCase):
+    """
+    Unit test for the Ridge regression class.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_fit_predict: Tests the fit and predict methods of the Ridge class.
+    - test_fit_intercept: Tests the fit_intercept parameter of the Ridge class.
+    - test_fit_max_iter: Tests the max_iter parameter of the Ridge class.
+    - test_fit_tol: Tests the tol parameter of the Ridge class.
+    - test_invalid_fit: Tests the fit method with invalid input.
+    - test_invalid_predict: Tests the predict method with invalid input.
+    - test_get_formula: Tests the get_formula method of the Ridge class.
+    - test_get_formula_with_intercept: Tests the get_formula method with intercept of the Ridge class.
+    - test_coef_: Tests the coef_ attribute of the Ridge class.
+    """
     @classmethod
     def setUpClass(cls):
         print("Testing Ridge Regression Model")
@@ -118,6 +144,20 @@ class TestRidge(unittest.TestCase):
         self.assertEqual(len(self.model.coef_), 5)
         
 class TestLasso(unittest.TestCase):
+    """
+    Unit test for the Lasso regression class.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_fit_predict: Tests the fit and predict methods of the Lasso class.
+    - test_fit_intercept: Tests the fit_intercept parameter of the Lasso class.
+    - test_fit_max_iter: Tests the max_iter parameter of the Lasso class.
+    - test_fit_tol: Tests the tol parameter of the Lasso class.
+    - test_invalid_fit: Tests the fit method with invalid input.
+    - test_invalid_predict: Tests the predict method with invalid input.
+    - test_get_formula: Tests the get_formula method of the Lasso class.
+    - test_get_formula_with_intercept: Tests the get_formula method with intercept of the Lasso class.
+    - test_coef_: Tests the coef_ attribute of the Lasso class.
+    """
     @classmethod
     def setUpClass(cls):
         print("Testing Lasso Regression Model")
@@ -178,6 +218,21 @@ class TestLasso(unittest.TestCase):
         
         
 class TestBayesian(unittest.TestCase):
+    """
+    Unit test for the Bayesian regression class.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_fit_predict: Tests the fit and predict methods of the Bayesian class.
+    - test_fit_intercept: Tests the fit_intercept parameter of the Bayesian class.
+    - test_fit_max_iter: Tests the max_iter parameter of the Bayesian class.
+    - test_fit_tol: Tests the tol parameter of the Bayesian class.
+    - test_tune: Tests the tune method of the Bayesian class.
+    - test_invalid_fit: Tests the fit method with invalid input.
+    - test_invalid_predict: Tests the predict method with invalid input.
+    - test_get_formula: Tests the get_formula method of the Bayesian class.
+    - test_get_formula_with_intercept: Tests the get_formula method with intercept of the Bayesian class.
+    - test_coef_: Tests the coef_ attribute of the Bayesian class.
+    """
     @classmethod
     def setUpClass(cls):
         print("Testing Bayesian Regression Model")
@@ -246,6 +301,22 @@ class TestBayesian(unittest.TestCase):
         self.assertEqual(len(self.model.coef_), 5)
     
 class TestRANSAC(unittest.TestCase):
+    """
+    Unit test for the RANSAC regression class.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_fit_predict: Tests the fit and predict methods of the RANSAC class.
+    - test_fit_n: Tests the n parameter of the RANSAC class.
+    - test_fit_k: Tests the k parameter of the RANSAC class.
+    - test_fit_t: Tests the t parameter of the RANSAC class.
+    - test_fit_d: Tests the d parameter of the RANSAC class.
+    - test_fit_auto_scale_t: Tests the auto_scale_t parameter of the RANSAC class.
+    - test_fit_auto_scale_n: Tests the auto_scale_n parameter of the RANSAC class.
+    - test_invalid_fit: Tests the fit method with invalid input.
+    - test_invalid_predict: Tests the predict method with invalid input.
+    - test_get_formula: Tests the get_formula method of the RANSAC class.
+    - test_get_formula_with_intercept: Tests the get_formula method with intercept of the RANSAC class.
+    """
     @classmethod
     def setUpClass(cls):
         print("Testing RANSAC Regression Model")
@@ -319,6 +390,21 @@ class TestRANSAC(unittest.TestCase):
         
 
 class TestPassiveAggressiveRegressor(unittest.TestCase):
+    """
+    Unit test for the Passive Aggressive Regressor class.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_fit_predict: Tests the fit and predict methods of the Passive Aggressive Regressor class.
+    - test_fit_all_steps: Tests the fit method with save_steps parameter of the Passive Aggressive Regressor class.
+    - test_predict_all_steps: Tests the predict_all_steps method of the Passive Aggressive Regressor class.
+    - test_fit_max_iter: Tests the max_iter parameter of the Passive Aggressive Regressor class.
+    - test_fit_tol: Tests the tol parameter of the Passive Aggressive Regressor class.
+    - test_invalid_fit: Tests the fit method with invalid input.
+    - test_invalid_predict: Tests the predict method with invalid input.
+    - test_get_formula: Tests the get_formula method of the Passive Aggressive Regressor class.
+    - test_get_formula_with_intercept: Tests the get_formula method with intercept of the Passive Aggressive Regressor class.
+    - test_coef_: Tests the coef_ attribute of the Passive Aggressive Regressor class.
+    """
     @classmethod
     def setUpClass(cls):
         print("Testing Passive Aggressive Regressor Model")
@@ -391,6 +477,15 @@ class TestPassiveAggressiveRegressor(unittest.TestCase):
         self.assertEqual(len(self.model.coef_), 5)
         
 class TestPolynomialTransform(unittest.TestCase):
+    """
+    Unit test for the Polynomial Transform class.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_fit_transform: Tests the fit_transform method of the Polynomial Transform class.
+    - test_fit: Tests the fit method of the Polynomial Transform class.
+    - test_invalid_fit: Tests the fit method with invalid input.
+    - test_invalid_transform: Tests the transform method with invalid input.
+    """
     @classmethod
     def setUpClass(cls):
         print("Testing Polynomial Transform")
@@ -417,6 +512,18 @@ class TestPolynomialTransform(unittest.TestCase):
             self.transform.transform(None)      
         
 class TestLinearDiscriminantAnalysis(unittest.TestCase):
+    """
+    Unit test for the Linear Discriminant Analysis class.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_lda: Tests the fit and predict methods of the Linear Discriminant Analysis class.
+    - test_lda_svd: Tests the fit and predict methods with svd solver of the Linear Discriminant Analysis class.
+    - test_lda_lsqr: Tests the fit and predict methods with lsqr solver of the Linear Discriminant Analysis class.
+    - test_lda_eigen: Tests the fit and predict methods with eigen solver of the Linear Discriminant Analysis class.
+    - test_lda_bad_solver: Tests the fit method with invalid solver of the Linear Discriminant Analysis class.
+    - test_lda_no_solver: Tests the fit method with no solver of the Linear Discriminant Analysis class.
+    - test_lda_no_data: Tests the fit method with invalid input.
+    """
     @classmethod
     def setUpClass(cls):
         print("Testing Linear Discriminant Analysis")
@@ -472,6 +579,18 @@ class TestLinearDiscriminantAnalysis(unittest.TestCase):
             lda.fit(None, None)
     
 class TestQuadraticDiscriminantAnalysis(unittest.TestCase):
+    """
+    Unit test for the Quadratic Discriminant Analysis class.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_qda: Tests the fit and predict methods of the Quadratic Discriminant Analysis class.
+    - test_qda_prior: Tests the fit and predict methods with priors parameter of the Quadratic Discriminant Analysis class.
+    - test_qda_reg_param: Tests the fit and predict methods with reg_param parameter of the Quadratic Discriminant Analysis class.
+    - test_qda_bad_reg_param: Tests the fit method with invalid reg_param parameter of the Quadratic Discriminant Analysis class.
+    - test_qda_no_data: Tests the fit method with invalid input.
+    - test_qda_no_priors: Tests the fit method with no priors parameter of the Quadratic Discriminant Analysis class.
+    - test_qda_bad_priors: Tests the fit method with invalid priors parameter of the Quadratic Discriminant Analysis class.
+    """
     @classmethod
     def setUpClass(cls):
         print("Testing Quadratic Discriminant Analysis")

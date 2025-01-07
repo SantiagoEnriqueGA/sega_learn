@@ -21,7 +21,7 @@ from sega_learn.linear_models import *
 
 class TestImports(unittest.TestCase):
     """
-    Tests that the segadb package can be imported.
+    Tests that the linear_models subpackage can be imported correctly.
     Methods:
     - setUpClass: Initializes a new instance of the Index class before each test method is run.
     - test_individual_imports: Tests that each module in the segadb package can be imported individually.
