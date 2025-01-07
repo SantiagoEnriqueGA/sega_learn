@@ -3,6 +3,8 @@ import numpy as np
 from math import log, floor, ceil
 from scipy import linalg
 
+# TODO: Complete docstrings for classes and methods
+
 class Utility(object):
     """
     Utility class

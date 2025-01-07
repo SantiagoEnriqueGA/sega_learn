@@ -1,0 +1,14 @@
+﻿wrote sega_learn.clustering.html
+wrote sega_learn.__init__.html
+No Python documentation found for 'sega_learn.discriminantAnalysis'.
+Use help() to get the interactive help utility.
+Use help(str) for help on the str class.
+No Python documentation found for 'sega_learn.linearModels'.
+Use help() to get the interactive help utility.
+Use help(str) for help on the str class.
+wrote sega_learn.__init__.html
+wrote sega_learn.html
+ 
+To view the documentation, run the following command in the terminal:
+python -m pydoc -p 8080
+Then open a web browser and navigate to http://localhost:8080/sega_learn.html
