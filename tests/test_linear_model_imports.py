@@ -19,7 +19,7 @@ from sega_learn.linear_models import make_data as mdt
 
 from sega_learn.linear_models import *
 
-class TestImports(unittest.TestCase):
+class TestImportsLinear(unittest.TestCase):
     """
     Tests that the linear_models subpackage can be imported correctly.
     Methods:

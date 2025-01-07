@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.linear_models.discriminantAnalysis</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.linear_models.html" class="white">linear_models</a>.discriminantAnalysis</strong></td>
+</tr></table>
+    <p><span class="code">#&nbsp;Importing&nbsp;the&nbsp;required&nbsp;libraries</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="scipy.linalg.html">scipy.linalg</a><br>
+</td><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.linear_models.discriminantAnalysis.html#LinearDiscriminantAnalysis">LinearDiscriminantAnalysis</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.discriminantAnalysis.html#QuadraticDiscriminantAnalysis">QuadraticDiscriminantAnalysis</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.discriminantAnalysis.html#Utility">Utility</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="LinearDiscriminantAnalysis">class <strong>LinearDiscriminantAnalysis</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#LinearDiscriminantAnalysis">LinearDiscriminantAnalysis</a>(solver='svd',&nbsp;priors=None)<br>
+&nbsp;<br>
+Implements&nbsp;Linear&nbsp;Discriminant&nbsp;Analysis.<br>
+A&nbsp;classifier&nbsp;with&nbsp;a&nbsp;linear&nbsp;decision&nbsp;boundary,&nbsp;generated&nbsp;by&nbsp;fitting&nbsp;class&nbsp;conditional&nbsp;densities&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;using&nbsp;Bayes'&nbsp;rule.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;solver&nbsp;:&nbsp;{'svd',&nbsp;'lsqr',&nbsp;'eigen'},&nbsp;default='svd'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Solver&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;LDA.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'svd'&nbsp;is&nbsp;the&nbsp;default&nbsp;and&nbsp;recommended&nbsp;solver.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'lsqr'&nbsp;is&nbsp;a&nbsp;faster&nbsp;alternative&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;is&nbsp;large.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'eigen'&nbsp;is&nbsp;an&nbsp;alternative&nbsp;solver&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;is&nbsp;small.<br>
+-&nbsp;priors&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_classes,),&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="LinearDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, solver='svd', priors=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="LinearDiscriminantAnalysis-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;decision&nbsp;function&nbsp;to&nbsp;an&nbsp;array&nbsp;of&nbsp;samples.&nbsp;<br>
+The&nbsp;decision&nbsp;function&nbsp;is&nbsp;the&nbsp;log-likelihood&nbsp;of&nbsp;each&nbsp;class.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Test&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;array,&nbsp;shape&nbsp;(n_samples,&nbsp;n_classes):&nbsp;Log-likelihood&nbsp;of&nbsp;each&nbsp;class&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<dl><dt><a name="LinearDiscriminantAnalysis-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;according&nbsp;to&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
+This&nbsp;method&nbsp;computes&nbsp;the&nbsp;mean&nbsp;and&nbsp;covariance&nbsp;of&nbsp;each&nbsp;class,&nbsp;and&nbsp;the&nbsp;prior&nbsp;probabilities&nbsp;of&nbsp;each&nbsp;class.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+-&nbsp;y&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,):&nbsp;Target&nbsp;values,&nbsp;i.e.,&nbsp;class&nbsp;labels.</span></dd></dl>
+
+<dl><dt><a name="LinearDiscriminantAnalysis-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Perform&nbsp;classification&nbsp;on&nbsp;an&nbsp;array&nbsp;of&nbsp;test&nbsp;vectors&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Test&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;array,&nbsp;shape&nbsp;(n_samples,):&nbsp;Predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="QuadraticDiscriminantAnalysis">class <strong>QuadraticDiscriminantAnalysis</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#QuadraticDiscriminantAnalysis">QuadraticDiscriminantAnalysis</a>(priors=None,&nbsp;reg_param=0.0)<br>
+&nbsp;<br>
+Implements&nbsp;Quadratic&nbsp;Discriminant&nbsp;Analysis.<br>
+The&nbsp;quadratic&nbsp;term&nbsp;allows&nbsp;for&nbsp;more&nbsp;flexibility&nbsp;in&nbsp;modeling&nbsp;the&nbsp;class&nbsp;conditional<br>
+A&nbsp;classifier&nbsp;with&nbsp;a&nbsp;quadratic&nbsp;decision&nbsp;boundary,&nbsp;generated&nbsp;by&nbsp;fitting&nbsp;class&nbsp;conditional&nbsp;densities&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;using&nbsp;Bayes'&nbsp;rule.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;priors&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_classes,),&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.<br>
+-&nbsp;reg_param&nbsp;:&nbsp;float,&nbsp;default=0.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Regularization&nbsp;parameter.&nbsp;If&nbsp;greater&nbsp;than&nbsp;0,&nbsp;the&nbsp;covariance&nbsp;matrices&nbsp;are&nbsp;regularized&nbsp;by&nbsp;adding&nbsp;a&nbsp;scaled&nbsp;identity&nbsp;matrix&nbsp;to&nbsp;them.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="QuadraticDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, priors=None, reg_param=0.0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="QuadraticDiscriminantAnalysis-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;decision&nbsp;function&nbsp;to&nbsp;an&nbsp;array&nbsp;of&nbsp;samples.<br>
+The&nbsp;decision&nbsp;function&nbsp;is&nbsp;the&nbsp;log-likelihood&nbsp;of&nbsp;each&nbsp;class.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Test&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;array,&nbsp;shape&nbsp;(n_samples,&nbsp;n_classes):&nbsp;Log-likelihood&nbsp;of&nbsp;each&nbsp;class&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<dl><dt><a name="QuadraticDiscriminantAnalysis-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;according&nbsp;to&nbsp;the&nbsp;given&nbsp;training&nbsp;data.&nbsp;Uses&nbsp;the&nbsp;means&nbsp;and&nbsp;covariance&nbsp;matrices&nbsp;of&nbsp;each&nbsp;class.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+-&nbsp;y&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,):&nbsp;Target&nbsp;values,&nbsp;i.e.,&nbsp;class&nbsp;labels.</span></dd></dl>
+
+<dl><dt><a name="QuadraticDiscriminantAnalysis-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Perform&nbsp;classification&nbsp;on&nbsp;an&nbsp;array&nbsp;of&nbsp;test&nbsp;vectors&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Test&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;array,&nbsp;shape&nbsp;(n_samples,):&nbsp;Predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Utility">class <strong>Utility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Utility">Utility</a>&nbsp;class<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-ceil"><strong>ceil</strong></a>(x, /)</dt><dd><span class="code">Return&nbsp;the&nbsp;ceiling&nbsp;of&nbsp;x&nbsp;as&nbsp;an&nbsp;Integral.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;the&nbsp;smallest&nbsp;integer&nbsp;&gt;=&nbsp;x.</span></dd></dl>
+ <dl><dt><a name="-fig_add_discriminant_analysis"><strong>fig_add_discriminant_analysis</strong></a>(X, y, da, ax)</dt><dd><span class="code">Add&nbsp;a&nbsp;discriminant&nbsp;analysis&nbsp;plot&nbsp;to&nbsp;a&nbsp;figure.</span></dd></dl>
+ <dl><dt><a name="-floor"><strong>floor</strong></a>(x, /)</dt><dd><span class="code">Return&nbsp;the&nbsp;floor&nbsp;of&nbsp;x&nbsp;as&nbsp;an&nbsp;Integral.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;the&nbsp;largest&nbsp;integer&nbsp;&lt;=&nbsp;x.</span></dd></dl>
+ <dl><dt><a name="-log"><strong>log</strong></a>(...)</dt><dd><span class="code"><a href="#-log">log</a>(x,&nbsp;[base=math.e])<br>
+Return&nbsp;the&nbsp;logarithm&nbsp;of&nbsp;x&nbsp;to&nbsp;the&nbsp;given&nbsp;base.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;base&nbsp;not&nbsp;specified,&nbsp;returns&nbsp;the&nbsp;natural&nbsp;logarithm&nbsp;(base&nbsp;e)&nbsp;of&nbsp;x.</span></dd></dl>
+ <dl><dt><a name="-make_data"><strong>make_data</strong></a>(n_samples, n_features, cov_class_1, cov_class_2, shift=[1, 1], seed=0)</dt><dd><span class="code">Make&nbsp;data&nbsp;for&nbsp;testing,&nbsp;for&nbsp;testing&nbsp;LDA&nbsp;and&nbsp;QDA.&nbsp;<br>
+Data&nbsp;points&nbsp;for&nbsp;class&nbsp;1&nbsp;are&nbsp;generated&nbsp;by&nbsp;multiplying&nbsp;a&nbsp;random&nbsp;matrix&nbsp;with&nbsp;the&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;covariance&nbsp;matrix&nbsp;of&nbsp;class&nbsp;1,&nbsp;and&nbsp;data&nbsp;points&nbsp;for&nbsp;class&nbsp;2&nbsp;are&nbsp;generated&nbsp;by&nbsp;multiplying&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;random&nbsp;matrix&nbsp;with&nbsp;the&nbsp;covariance&nbsp;matrix&nbsp;of&nbsp;class&nbsp;2&nbsp;and&nbsp;adding&nbsp;[1,&nbsp;1].</span></dd></dl>
+ <dl><dt><a name="-plot_ellipse"><strong>plot_ellipse</strong></a>(mean, cov, color, ax, label)</dt><dd><span class="code">Plot&nbsp;an&nbsp;ellipse&nbsp;representing&nbsp;the&nbsp;class&nbsp;conditional&nbsp;density.</span></dd></dl>
+</td></tr></table>
+</body></html>

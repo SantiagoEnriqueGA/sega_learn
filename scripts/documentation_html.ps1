@@ -1,23 +1,18 @@
 # Delete all existing .html files in the docs/ folder
 Remove-Item -Path "docs/*.html" -Force
 
-# # Generate documentation for Python files in the segadb/ folder, excluding paths containing "__archive"
-# $files = Get-ChildItem -Recurse -Path "sega_learn/" -Filter *.py | Where-Object { 
-#     -not ($_.FullName -like "*__archive*") 
-# } | ForEach-Object {
-#     $_.BaseName
-# }
-
-# Get all Python files in the sega_learn/clustering and sega_learn/linear_models folders
-$files = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/clustering", "sega_learn/linear_models" | ForEach-Object {
-    $_.BaseName
+# Get all Python files in the sega_learn/clustering folder
+$clusteringFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/clustering" | ForEach-Object {
+    "sega_learn.clustering.$($_.BaseName)"
 }
 
-
-# Add sega_learn. to names of files to generate documentation for
-$files = $files | ForEach-Object {
-    "sega_learn.$_"
+# Get all Python files in the sega_learn/linear_models folder
+$linearModelsFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/linear_models" | ForEach-Object {
+    "sega_learn.linear_models.$($_.BaseName)"
 }
+
+# Combine the lists of files
+$files = $clusteringFiles + $linearModelsFiles
 
 # Add the main sega_learn module to the list of files to document
 $files += "sega_learn"

@@ -10,7 +10,7 @@ from sega_learn.clustering import KMeans as kms
 
 from sega_learn.clustering import *
 
-class TestImports(unittest.TestCase):
+class TestImportsClustering(unittest.TestCase):
     """
     Tests that the clustering subpackage can be imported correctly.
     Methods:

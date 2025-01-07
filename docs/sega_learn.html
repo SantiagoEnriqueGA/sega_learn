@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: package sega_learn</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">sega_learn</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Package Contents</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="sega_learn.clustering.html"><strong>clustering</strong>&nbsp;(package)</a><br>
+</td><td class="multicolumn"><a href="sega_learn.linear_models.html"><strong>linear_models</strong>&nbsp;(package)</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.clustering.clustering.html#DBSCAN">sega_learn.clustering.clustering.DBSCAN</a>
+</dt><dt class="heading-text"><a href="sega_learn.clustering.clustering.html#KMeans">sega_learn.clustering.clustering.KMeans</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.discriminantAnalysis.html#LinearDiscriminantAnalysis">sega_learn.linear_models.discriminantAnalysis.LinearDiscriminantAnalysis</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.discriminantAnalysis.html#QuadraticDiscriminantAnalysis">sega_learn.linear_models.discriminantAnalysis.QuadraticDiscriminantAnalysis</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#Bayesian">sega_learn.linear_models.linearModels.Bayesian</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#Lasso">sega_learn.linear_models.linearModels.Lasso</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#OrdinaryLeastSquares">sega_learn.linear_models.linearModels.OrdinaryLeastSquares</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#PassiveAggressiveRegressor">sega_learn.linear_models.linearModels.PassiveAggressiveRegressor</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#PolynomialTransform">sega_learn.linear_models.linearModels.PolynomialTransform</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#RANSAC">sega_learn.linear_models.linearModels.RANSAC</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#Ridge">sega_learn.linear_models.linearModels.Ridge</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.linearModels.html#Utility">sega_learn.linear_models.linearModels.Utility</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Bayesian">class <strong>Bayesian</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Bayesian">Bayesian</a>(max_iter=300,&nbsp;tol=0.001,&nbsp;alpha_1=1e-06,&nbsp;alpha_2=1e-06,&nbsp;lambda_1=1e-06,&nbsp;lambda_2=1e-06,&nbsp;fit_intercept=None)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;implements&nbsp;<a href="#Bayesian">Bayesian</a>&nbsp;Regression&nbsp;using&nbsp;Coordinate&nbsp;Descent.<br>
+<a href="#Bayesian">Bayesian</a>&nbsp;regression&nbsp;implements&nbsp;both&nbsp;L1&nbsp;and&nbsp;L2&nbsp;regularization,&nbsp;which&nbsp;helps&nbsp;to&nbsp;prevent&nbsp;overfitting&nbsp;by&nbsp;adding&nbsp;a&nbsp;penalty&nbsp;term&nbsp;to&nbsp;the&nbsp;loss&nbsp;function.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;max_iter:&nbsp;int,&nbsp;default=300<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;to&nbsp;perform.<br>
+-&nbsp;tol:&nbsp;float,&nbsp;default=0.001<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;convergence&nbsp;threshold.&nbsp;The&nbsp;algorithm&nbsp;will&nbsp;stop&nbsp;if&nbsp;the&nbsp;coefficients&nbsp;change&nbsp;less&nbsp;than&nbsp;the&nbsp;threshold.<br>
+-&nbsp;alpha_1:&nbsp;float,&nbsp;default=1e-06<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;shape&nbsp;parameter&nbsp;for&nbsp;the&nbsp;prior&nbsp;on&nbsp;the&nbsp;weights.<br>
+-&nbsp;alpha_2:&nbsp;float,&nbsp;default=1e-06<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;scale&nbsp;parameter&nbsp;for&nbsp;the&nbsp;prior&nbsp;on&nbsp;the&nbsp;weights.<br>
+-&nbsp;lambda_1:&nbsp;float,&nbsp;default=1e-06<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;shape&nbsp;parameter&nbsp;for&nbsp;the&nbsp;prior&nbsp;on&nbsp;the&nbsp;noise.<br>
+-&nbsp;lambda_2:&nbsp;float,&nbsp;default=1e-06<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;scale&nbsp;parameter&nbsp;for&nbsp;the&nbsp;prior&nbsp;on&nbsp;the&nbsp;noise.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+-&nbsp;fit_intercept:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;calculate&nbsp;the&nbsp;intercept&nbsp;for&nbsp;this&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Attributes:<br>
+-&nbsp;intercept_:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;intercept&nbsp;of&nbsp;the&nbsp;model.<br>
+-&nbsp;coef_:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_features,)&nbsp;or&nbsp;(n_features&nbsp;+&nbsp;1,)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Estimated&nbsp;coefficients&nbsp;for&nbsp;the&nbsp;linear&nbsp;regression&nbsp;problem.&nbsp;If&nbsp;`fit_intercept`&nbsp;is&nbsp;True,&nbsp;the&nbsp;first&nbsp;element&nbsp;is&nbsp;the&nbsp;intercept.<br>
+-&nbsp;n_iter_:&nbsp;int&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;iterations&nbsp;performed.<br>
+-&nbsp;alpha_:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;precision&nbsp;of&nbsp;the&nbsp;weights.<br>
+-&nbsp;lambda_:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;precision&nbsp;of&nbsp;the&nbsp;noise.<br>
+-&nbsp;sigma_:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_features,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;posterior&nbsp;covariance&nbsp;of&nbsp;the&nbsp;weights.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Bayesian-__init__"><strong>__init__</strong></a>(self, max_iter=300, tol=0.001, alpha_1=1e-06, alpha_2=1e-06, lambda_1=1e-06, lambda_2=1e-06, fit_intercept=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="Bayesian-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data.<br>
+-&nbsp;y&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_samples,&nbsp;n_targets):&nbsp;Target&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="Bayesian-get_formula"><strong>get_formula</strong></a>(self)</dt><dd><span class="code">Computes&nbsp;the&nbsp;formula&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;formula&nbsp;:&nbsp;str:&nbsp;The&nbsp;formula&nbsp;of&nbsp;the&nbsp;model.</span></dd></dl>
+
+<dl><dt><a name="Bayesian-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;using&nbsp;the&nbsp;linear&nbsp;model.&nbsp;Computes&nbsp;the&nbsp;dot&nbsp;product&nbsp;of&nbsp;X&nbsp;and&nbsp;the&nbsp;coefficients.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Samples.</span></dd></dl>
+
+<dl><dt><a name="Bayesian-tune"><strong>tune</strong></a>(self, X, y, beta1=0.9, beta2=0.999, iter=1000)</dt><dd><span class="code">Automatically&nbsp;tune&nbsp;the&nbsp;hyperparameters&nbsp;alpha_1,&nbsp;alpha_2,&nbsp;lambda_1,&nbsp;lambda_2.<br>
+Loops&nbsp;through&nbsp;the&nbsp;parameter&nbsp;space,&nbsp;and&nbsp;returns&nbsp;the&nbsp;best&nbsp;hyperparameters&nbsp;based&nbsp;on&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error.<br>
+Compues&nbsp;gradients&nbsp;using&nbsp;ADAM&nbsp;optimizer.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data.<br>
+-&nbsp;y&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_samples,&nbsp;n_targets):&nbsp;Target&nbsp;values.<br>
+-&nbsp;beta1:&nbsp;float,&nbsp;default=0.9<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;exponential&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;first&nbsp;moment&nbsp;estimates.<br>
+-&nbsp;beta2:&nbsp;float,&nbsp;default=0.999<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;exponential&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;second&nbsp;moment&nbsp;estimates.<br>
+-&nbsp;iter:&nbsp;int,&nbsp;default=1000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;iterations&nbsp;to&nbsp;perform.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;best_alpha_1:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;best&nbsp;value&nbsp;of&nbsp;alpha_1.<br>
+-&nbsp;best_alpha_2:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;best&nbsp;value&nbsp;of&nbsp;alpha_2.<br>
+-&nbsp;best_lambda_1:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;best&nbsp;value&nbsp;of&nbsp;lambda_1.<br>
+-&nbsp;best_lambda_2:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;best&nbsp;value&nbsp;of&nbsp;lambda_2.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="DBSCAN">class <strong>DBSCAN</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#DBSCAN">DBSCAN</a>(X,&nbsp;eps=0.5,&nbsp;min_samples=5)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;implements&nbsp;the&nbsp;Density-Based&nbsp;Spatial&nbsp;Clustering&nbsp;of&nbsp;Applications&nbsp;with&nbsp;Noise&nbsp;(<a href="#DBSCAN">DBSCAN</a>)&nbsp;algorithm.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+-&nbsp;eps:&nbsp;The&nbsp;maximum&nbsp;distance&nbsp;between&nbsp;two&nbsp;samples&nbsp;for&nbsp;one&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;in&nbsp;the&nbsp;neighborhood&nbsp;of&nbsp;the&nbsp;other.<br>
+-&nbsp;min_samples:&nbsp;The&nbsp;number&nbsp;of&nbsp;samples&nbsp;in&nbsp;a&nbsp;neighborhood&nbsp;for&nbsp;a&nbsp;point&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;a&nbsp;core&nbsp;point.<br>
+&nbsp;<br>
+Methods:<br>
+-&nbsp;__init__:&nbsp;Initializes&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;input&nbsp;parameters.<br>
+-&nbsp;fit:&nbsp;Fits&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;assigns&nbsp;cluster&nbsp;labels.<br>
+-&nbsp;predict:&nbsp;Predicts&nbsp;the&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;new&nbsp;data&nbsp;points.<br>
+-&nbsp;fit_predict:&nbsp;Fits&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;and&nbsp;returns&nbsp;cluster&nbsp;labels.<br>
+-&nbsp;silhouette_score:&nbsp;Calculates&nbsp;the&nbsp;Silhouette&nbsp;Score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
+&nbsp;<br>
+Custom&nbsp;Methods:<br>
+-&nbsp;_handle_categorical:&nbsp;Handles&nbsp;categorical&nbsp;columns&nbsp;by&nbsp;one-hot&nbsp;encoding.<br>
+-&nbsp;_convert_to_ndarray:&nbsp;Converts&nbsp;input&nbsp;data&nbsp;to&nbsp;a&nbsp;NumPy&nbsp;ndarray&nbsp;and&nbsp;handles&nbsp;categorical&nbsp;columns.<br>
+-&nbsp;_custom_distance_matrix:&nbsp;Calculates&nbsp;the&nbsp;pairwise&nbsp;distance&nbsp;matrix&nbsp;using&nbsp;a&nbsp;custom&nbsp;distance&nbsp;calculation&nbsp;method.<br>
+&nbsp;<br>
+Usage&nbsp;Example:<br>
+-&nbsp;Initialize&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;data&nbsp;matrix&nbsp;and&nbsp;hyperparameters.<br>
+-&nbsp;Fit&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;evaluate&nbsp;clustering&nbsp;performance&nbsp;using&nbsp;silhouette&nbsp;score.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="DBSCAN-__init__"><strong>__init__</strong></a>(self, X, eps=0.5, min_samples=5)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+-&nbsp;eps:&nbsp;The&nbsp;maximum&nbsp;distance&nbsp;between&nbsp;two&nbsp;samples&nbsp;for&nbsp;one&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;in&nbsp;the&nbsp;neighborhood&nbsp;of&nbsp;the&nbsp;other.<br>
+-&nbsp;min_samples:&nbsp;The&nbsp;number&nbsp;of&nbsp;samples&nbsp;in&nbsp;a&nbsp;neighborhood&nbsp;for&nbsp;a&nbsp;point&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;a&nbsp;core&nbsp;point.</span></dd></dl>
+
+<dl><dt><a name="DBSCAN-auto_eps"><strong>auto_eps</strong></a>(self, min=0.1, max=1.1, precision=0.01, return_scores=False, verbose=False)</dt><dd><span class="code">Find&nbsp;the&nbsp;optimal&nbsp;eps&nbsp;value&nbsp;for&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;based&nbsp;on&nbsp;silhouette&nbsp;score.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;min:&nbsp;The&nbsp;minimum&nbsp;eps&nbsp;value&nbsp;to&nbsp;start&nbsp;the&nbsp;search.<br>
+-&nbsp;max:&nbsp;The&nbsp;maximum&nbsp;eps&nbsp;value&nbsp;to&nbsp;end&nbsp;the&nbsp;search.<br>
+-&nbsp;precision:&nbsp;The&nbsp;precision&nbsp;of&nbsp;the&nbsp;search.<br>
+-&nbsp;return_scores:&nbsp;Whether&nbsp;to&nbsp;return&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;(eps,&nbsp;score)&nbsp;pairs.<br>
+-&nbsp;verbose:&nbsp;Whether&nbsp;to&nbsp;print&nbsp;the&nbsp;silhouette&nbsp;score&nbsp;for&nbsp;each&nbsp;eps&nbsp;value.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;eps:&nbsp;The&nbsp;optimal&nbsp;eps&nbsp;value.<br>
+-&nbsp;scores_dict&nbsp;(optional):&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;(eps,&nbsp;score)&nbsp;pairs&nbsp;if&nbsp;return_scores&nbsp;is&nbsp;True.</span></dd></dl>
+
+<dl><dt><a name="DBSCAN-fit"><strong>fit</strong></a>(self, metric='euclidean')</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
+&nbsp;<br>
+Algorithm&nbsp;Steps:<br>
+1.&nbsp;Calculate&nbsp;the&nbsp;distance&nbsp;matrix&nbsp;between&nbsp;all&nbsp;points&nbsp;in&nbsp;the&nbsp;dataset.<br>
+2.&nbsp;Identify&nbsp;core&nbsp;points&nbsp;based&nbsp;on&nbsp;the&nbsp;minimum&nbsp;number&nbsp;of&nbsp;neighbors&nbsp;within&nbsp;eps&nbsp;distance.<br>
+3.&nbsp;Assign&nbsp;cluster&nbsp;labels&nbsp;using&nbsp;depth-first&nbsp;search&nbsp;(DFS)&nbsp;starting&nbsp;from&nbsp;core&nbsp;points.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.</span></dd></dl>
+
+<dl><dt><a name="DBSCAN-fit_predict"><strong>fit_predict</strong></a>(self)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;return&nbsp;the&nbsp;cluster&nbsp;labels.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;the&nbsp;data.</span></dd></dl>
+
+<dl><dt><a name="DBSCAN-predict"><strong>predict</strong></a>(self, new_X)</dt><dd><span class="code">Predict&nbsp;the&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;new&nbsp;data&nbsp;points.<br>
+Note:&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;does&nbsp;not&nbsp;naturally&nbsp;support&nbsp;predicting&nbsp;new&nbsp;data&nbsp;points.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;new_X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;to&nbsp;predict&nbsp;(numpy&nbsp;array).<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;labels:&nbsp;The&nbsp;predicted&nbsp;cluster&nbsp;labels&nbsp;(-1&nbsp;for&nbsp;noise).</span></dd></dl>
+
+<dl><dt><a name="DBSCAN-silhouette_score"><strong>silhouette_score</strong></a>(self)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;silhouette&nbsp;score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;silhouette_score:&nbsp;The&nbsp;computed&nbsp;silhouette&nbsp;score.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="KMeans">class <strong>KMeans</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#KMeans">KMeans</a>(X,&nbsp;n_clusters=3,&nbsp;max_iter=300,&nbsp;tol=0.0001)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;implements&nbsp;the&nbsp;K-Means&nbsp;clustering&nbsp;algorithm&nbsp;along&nbsp;with&nbsp;methods&nbsp;for&nbsp;evaluating&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;<br>
+and&nbsp;visualizing&nbsp;the&nbsp;clustering&nbsp;results.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+-&nbsp;n_clusters:&nbsp;The&nbsp;number&nbsp;of&nbsp;clusters.<br>
+-&nbsp;max_iter:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations.<br>
+-&nbsp;tol:&nbsp;The&nbsp;tolerance&nbsp;to&nbsp;declare&nbsp;convergence.<br>
+&nbsp;<br>
+Methods:<br>
+-&nbsp;__init__:&nbsp;Initializes&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;parameters&nbsp;such&nbsp;as&nbsp;the&nbsp;data&nbsp;matrix,&nbsp;number&nbsp;of&nbsp;clusters,&nbsp;maximum&nbsp;iterations,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;convergence&nbsp;tolerance.<br>
+-&nbsp;_handle_categorical:&nbsp;Handles&nbsp;categorical&nbsp;columns&nbsp;in&nbsp;the&nbsp;input&nbsp;data&nbsp;by&nbsp;one-hot&nbsp;encoding.<br>
+-&nbsp;_convert_to_ndarray:&nbsp;Converts&nbsp;input&nbsp;data&nbsp;to&nbsp;a&nbsp;NumPy&nbsp;ndarray&nbsp;and&nbsp;handles&nbsp;categorical&nbsp;columns.<br>
+-&nbsp;initialize_centroids:&nbsp;Randomly&nbsp;initializes&nbsp;the&nbsp;centroids&nbsp;for&nbsp;<a href="#KMeans">KMeans</a>&nbsp;clustering.<br>
+-&nbsp;assign_clusters:&nbsp;Assigns&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;nearest&nbsp;centroid.<br>
+-&nbsp;update_centroids:&nbsp;Updates&nbsp;centroids&nbsp;based&nbsp;on&nbsp;the&nbsp;current&nbsp;cluster&nbsp;assignments.<br>
+-&nbsp;fit:&nbsp;Fits&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;by&nbsp;iteratively&nbsp;updating&nbsp;centroids&nbsp;and&nbsp;cluster&nbsp;assignments&nbsp;until&nbsp;convergence.<br>
+-&nbsp;predict:&nbsp;Predicts&nbsp;the&nbsp;closest&nbsp;cluster&nbsp;each&nbsp;sample&nbsp;in&nbsp;new_X&nbsp;belongs&nbsp;to.<br>
+-&nbsp;elbow_method:&nbsp;Implements&nbsp;the&nbsp;elbow&nbsp;method&nbsp;to&nbsp;determine&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters.<br>
+-&nbsp;calinski_harabasz_index:&nbsp;Calculates&nbsp;the&nbsp;Calinski-Harabasz&nbsp;Index&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
+-&nbsp;davies_bouldin_index:&nbsp;Calculates&nbsp;the&nbsp;Davies-Bouldin&nbsp;Index&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
+-&nbsp;silhouette_score:&nbsp;Calculates&nbsp;the&nbsp;Silhouette&nbsp;Score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
+-&nbsp;find_optimal_clusters:&nbsp;Implements&nbsp;methods&nbsp;to&nbsp;find&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;using&nbsp;the&nbsp;elbow&nbsp;method,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calinski-Harabasz&nbsp;Index,&nbsp;Davies-Bouldin&nbsp;Index,&nbsp;and&nbsp;Silhouette&nbsp;Score.&nbsp;It&nbsp;also&nbsp;plots&nbsp;the&nbsp;evaluation&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;metrics&nbsp;to&nbsp;aid&nbsp;in&nbsp;determining&nbsp;the&nbsp;optimal&nbsp;k&nbsp;value.<br>
+&nbsp;<br>
+Usage&nbsp;Example:<br>
+-&nbsp;Initialize&nbsp;<a href="#KMeans">KMeans</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;data&nbsp;matrix,&nbsp;number&nbsp;of&nbsp;clusters,&nbsp;and&nbsp;other&nbsp;parameters.<br>
+-&nbsp;Fit&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;evaluate&nbsp;clustering&nbsp;performance&nbsp;using&nbsp;various&nbsp;metrics.<br>
+-&nbsp;Visualize&nbsp;the&nbsp;clustering&nbsp;results&nbsp;and&nbsp;determine&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="KMeans-__init__"><strong>__init__</strong></a>(self, X, n_clusters=3, max_iter=300, tol=0.0001)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
+
+<dl><dt><a name="KMeans-assign_clusters"><strong>assign_clusters</strong></a>(self, centroids)</dt><dd><span class="code">Assign&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;nearest&nbsp;centroid.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;centroids:&nbsp;The&nbsp;current&nbsp;centroids.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;assignments&nbsp;for&nbsp;each&nbsp;data&nbsp;point.</span></dd></dl>
+
+<dl><dt><a name="KMeans-calinski_harabasz_index"><strong>calinski_harabasz_index</strong></a>(self, X, labels, centroids)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;Calinski-Harabasz&nbsp;Index&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+-&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.<br>
+-&nbsp;centroids:&nbsp;The&nbsp;centroids&nbsp;of&nbsp;the&nbsp;clusters.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;ch_index:&nbsp;The&nbsp;computed&nbsp;Calinski-Harabasz&nbsp;Index.</span></dd></dl>
+
+<dl><dt><a name="KMeans-davies_bouldin_index"><strong>davies_bouldin_index</strong></a>(self, X, labels, centroids)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;Davies-Bouldin&nbsp;Index&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+-&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.<br>
+-&nbsp;centroids:&nbsp;The&nbsp;centroids&nbsp;of&nbsp;the&nbsp;clusters.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;db_index:&nbsp;The&nbsp;computed&nbsp;Davies-Bouldin&nbsp;Index.</span></dd></dl>
+
+<dl><dt><a name="KMeans-elbow_method"><strong>elbow_method</strong></a>(self, max_k=10)</dt><dd><span class="code">Implement&nbsp;the&nbsp;elbow&nbsp;method&nbsp;to&nbsp;determine&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+-&nbsp;max_k:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;clusters&nbsp;to&nbsp;test.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;distortions:&nbsp;A&nbsp;list&nbsp;of&nbsp;distortions&nbsp;for&nbsp;each&nbsp;k.</span></dd></dl>
+
+<dl><dt><a name="KMeans-find_optimal_clusters"><strong>find_optimal_clusters</strong></a>(self, max_k=10, true_k=None, save_dir=None)</dt><dd><span class="code">Find&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;using&nbsp;various&nbsp;evaluation&nbsp;metrics&nbsp;and&nbsp;plot&nbsp;the&nbsp;results.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+-&nbsp;max_k:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;clusters&nbsp;to&nbsp;consider.<br>
+-&nbsp;true_k:&nbsp;The&nbsp;true&nbsp;number&nbsp;of&nbsp;clusters&nbsp;in&nbsp;the&nbsp;data.<br>
+-&nbsp;save_dir:&nbsp;The&nbsp;directory&nbsp;to&nbsp;save&nbsp;the&nbsp;plot&nbsp;(optional).<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;ch_optimal_k:&nbsp;The&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;Calinski-Harabasz&nbsp;Index.<br>
+-&nbsp;db_optimal_k:&nbsp;The&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;Davies-Bouldin&nbsp;Index.<br>
+-&nbsp;silhouette_optimal_k:&nbsp;The&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;Silhouette&nbsp;Score.</span></dd></dl>
+
+<dl><dt><a name="KMeans-fit"><strong>fit</strong></a>(self)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data.</span></dd></dl>
+
+<dl><dt><a name="KMeans-initialize_centroids"><strong>initialize_centroids</strong></a>(self)</dt><dd><span class="code">Randomly&nbsp;initialize&nbsp;the&nbsp;centroids.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;centroids:&nbsp;The&nbsp;initialized&nbsp;centroids.</span></dd></dl>
+
+<dl><dt><a name="KMeans-predict"><strong>predict</strong></a>(self, new_X)</dt><dd><span class="code">Predict&nbsp;the&nbsp;closest&nbsp;cluster&nbsp;each&nbsp;sample&nbsp;in&nbsp;new_X&nbsp;belongs&nbsp;to.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;new_X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;to&nbsp;predict&nbsp;(numpy&nbsp;array).<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;labels:&nbsp;The&nbsp;predicted&nbsp;cluster&nbsp;labels.</span></dd></dl>
+
+<dl><dt><a name="KMeans-silhouette_score"><strong>silhouette_score</strong></a>(self, X, labels)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;silhouette&nbsp;score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+-&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;silhouette_score:&nbsp;The&nbsp;computed&nbsp;silhouette&nbsp;score.</span></dd></dl>
+
+<dl><dt><a name="KMeans-update_centroids"><strong>update_centroids</strong></a>(self)</dt><dd><span class="code">Update&nbsp;the&nbsp;centroids&nbsp;based&nbsp;on&nbsp;the&nbsp;current&nbsp;cluster&nbsp;assignments.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;centroids:&nbsp;The&nbsp;updated&nbsp;centroids.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Lasso">class <strong>Lasso</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Lasso">Lasso</a>(alpha=1.0,&nbsp;fit_intercept=True,&nbsp;max_iter=10000,&nbsp;tol=0.0001)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;implements&nbsp;<a href="#Lasso">Lasso</a>&nbsp;Regression&nbsp;using&nbsp;Coordinate&nbsp;Descent.<br>
+<a href="#Lasso">Lasso</a>&nbsp;regression&nbsp;implements&nbsp;L1&nbsp;regularization,&nbsp;which&nbsp;helps&nbsp;to&nbsp;prevent&nbsp;overfitting&nbsp;by&nbsp;adding&nbsp;a&nbsp;penalty&nbsp;term&nbsp;to&nbsp;the&nbsp;loss&nbsp;function.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;alpha&nbsp;:&nbsp;float,&nbsp;default=1.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Regularization&nbsp;strength;&nbsp;must&nbsp;be&nbsp;a&nbsp;positive&nbsp;float.&nbsp;Regularization&nbsp;improves&nbsp;the&nbsp;conditioning&nbsp;of&nbsp;the&nbsp;problem&nbsp;and&nbsp;reduces&nbsp;the&nbsp;variance&nbsp;of&nbsp;the&nbsp;estimates.<br>
+-&nbsp;fit_intercept&nbsp;:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;calculate&nbsp;the&nbsp;intercept&nbsp;for&nbsp;this&nbsp;model.<br>
+-&nbsp;max_iter&nbsp;:&nbsp;int,&nbsp;default=10000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;the&nbsp;coordinate&nbsp;descent&nbsp;solver.<br>
+-&nbsp;tol&nbsp;:&nbsp;float,&nbsp;default=1e-4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Tolerance&nbsp;for&nbsp;the&nbsp;optimization.&nbsp;The&nbsp;optimization&nbsp;stops&nbsp;when&nbsp;the&nbsp;change&nbsp;in&nbsp;the&nbsp;coefficients&nbsp;is&nbsp;less&nbsp;than&nbsp;this&nbsp;tolerance.<br>
+&nbsp;<br>
+Attributes:<br>
+-&nbsp;coef_&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_features,)&nbsp;or&nbsp;(n_features&nbsp;+&nbsp;1,)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Estimated&nbsp;coefficients&nbsp;for&nbsp;the&nbsp;linear&nbsp;regression&nbsp;problem.&nbsp;If&nbsp;`fit_intercept`&nbsp;is&nbsp;True,&nbsp;the&nbsp;first&nbsp;element&nbsp;is&nbsp;the&nbsp;intercept.<br>
+-&nbsp;intercept_&nbsp;:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Independent&nbsp;term&nbsp;in&nbsp;the&nbsp;linear&nbsp;model.&nbsp;Set&nbsp;to&nbsp;0.0&nbsp;if&nbsp;`fit_intercept`&nbsp;is&nbsp;False.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Lasso-__init__"><strong>__init__</strong></a>(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=0.0001)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="Lasso-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;using&nbsp;coordinate&nbsp;descent.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data.<br>
+-&nbsp;y&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_samples,&nbsp;n_targets):&nbsp;Target&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="Lasso-get_formula"><strong>get_formula</strong></a>(self)</dt><dd><span class="code">Computes&nbsp;the&nbsp;formula&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;formula&nbsp;:&nbsp;str:&nbsp;The&nbsp;formula&nbsp;of&nbsp;the&nbsp;model.</span></dd></dl>
+
+<dl><dt><a name="Lasso-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;using&nbsp;the&nbsp;linear&nbsp;model.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Samples.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="LinearDiscriminantAnalysis">class <strong>LinearDiscriminantAnalysis</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#LinearDiscriminantAnalysis">LinearDiscriminantAnalysis</a>(solver='svd',&nbsp;priors=None)<br>
+&nbsp;<br>
+Implements&nbsp;Linear&nbsp;Discriminant&nbsp;Analysis.<br>
+A&nbsp;classifier&nbsp;with&nbsp;a&nbsp;linear&nbsp;decision&nbsp;boundary,&nbsp;generated&nbsp;by&nbsp;fitting&nbsp;class&nbsp;conditional&nbsp;densities&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;using&nbsp;Bayes'&nbsp;rule.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;solver&nbsp;:&nbsp;{'svd',&nbsp;'lsqr',&nbsp;'eigen'},&nbsp;default='svd'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Solver&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;LDA.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'svd'&nbsp;is&nbsp;the&nbsp;default&nbsp;and&nbsp;recommended&nbsp;solver.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'lsqr'&nbsp;is&nbsp;a&nbsp;faster&nbsp;alternative&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;is&nbsp;large.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'eigen'&nbsp;is&nbsp;an&nbsp;alternative&nbsp;solver&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;is&nbsp;small.<br>
+-&nbsp;priors&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_classes,),&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="LinearDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, solver='svd', priors=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="LinearDiscriminantAnalysis-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;decision&nbsp;function&nbsp;to&nbsp;an&nbsp;array&nbsp;of&nbsp;samples.&nbsp;<br>
+The&nbsp;decision&nbsp;function&nbsp;is&nbsp;the&nbsp;log-likelihood&nbsp;of&nbsp;each&nbsp;class.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Test&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;array,&nbsp;shape&nbsp;(n_samples,&nbsp;n_classes):&nbsp;Log-likelihood&nbsp;of&nbsp;each&nbsp;class&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<dl><dt><a name="LinearDiscriminantAnalysis-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;according&nbsp;to&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
+This&nbsp;method&nbsp;computes&nbsp;the&nbsp;mean&nbsp;and&nbsp;covariance&nbsp;of&nbsp;each&nbsp;class,&nbsp;and&nbsp;the&nbsp;prior&nbsp;probabilities&nbsp;of&nbsp;each&nbsp;class.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+-&nbsp;y&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,):&nbsp;Target&nbsp;values,&nbsp;i.e.,&nbsp;class&nbsp;labels.</span></dd></dl>
+
+<dl><dt><a name="LinearDiscriminantAnalysis-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Perform&nbsp;classification&nbsp;on&nbsp;an&nbsp;array&nbsp;of&nbsp;test&nbsp;vectors&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Test&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;array,&nbsp;shape&nbsp;(n_samples,):&nbsp;Predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="OrdinaryLeastSquares">class <strong>OrdinaryLeastSquares</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#OrdinaryLeastSquares">OrdinaryLeastSquares</a>(fit_intercept=True)&nbsp;-&amp;gt;&nbsp;None<br>
+&nbsp;<br>
+Ordinary&nbsp;Least&nbsp;Squares&nbsp;(OLS)&nbsp;linear&nbsp;regression&nbsp;model.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;fit_intercept&nbsp;:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;calculate&nbsp;the&nbsp;intercept&nbsp;for&nbsp;this&nbsp;model.&nbsp;If&nbsp;set&nbsp;to&nbsp;False,&nbsp;no&nbsp;intercept&nbsp;will&nbsp;be&nbsp;used&nbsp;in&nbsp;calculations.<br>
+&nbsp;<br>
+Attributes:<br>
+-&nbsp;coef_&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_features,)&nbsp;or&nbsp;(n_features&nbsp;+&nbsp;1,)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Estimated&nbsp;coefficients&nbsp;for&nbsp;the&nbsp;linear&nbsp;regression&nbsp;problem.&nbsp;If&nbsp;`fit_intercept`&nbsp;is&nbsp;True,&nbsp;the&nbsp;first&nbsp;element&nbsp;is&nbsp;the&nbsp;intercept.<br>
+-&nbsp;intercept_&nbsp;:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Independent&nbsp;term&nbsp;in&nbsp;the&nbsp;linear&nbsp;model.&nbsp;Set&nbsp;to&nbsp;0.0&nbsp;if&nbsp;`fit_intercept`&nbsp;is&nbsp;False.<br>
+&nbsp;<br>
+Methods:&nbsp;<br>
+-&nbsp;<a href="#OrdinaryLeastSquares-fit">fit</a>(X,&nbsp;y):&nbsp;Fit&nbsp;the&nbsp;linear&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
+-&nbsp;<a href="#OrdinaryLeastSquares-predict">predict</a>(X):&nbsp;Predict&nbsp;using&nbsp;the&nbsp;linear&nbsp;model.<br>
+-&nbsp;<a href="#OrdinaryLeastSquares-get_formula">get_formula</a>():&nbsp;Returns&nbsp;the&nbsp;formula&nbsp;of&nbsp;the&nbsp;model&nbsp;as&nbsp;a&nbsp;string.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="OrdinaryLeastSquares-__init__"><strong>__init__</strong></a>(self, fit_intercept=True) -&gt; None</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#OrdinaryLeastSquares">OrdinaryLeastSquares</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;fit_intercept&nbsp;:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;calculate&nbsp;the&nbsp;intercept&nbsp;for&nbsp;this&nbsp;model.</span></dd></dl>
+
+<dl><dt><a name="OrdinaryLeastSquares-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;linear&nbsp;model.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data.<br>
+-&nbsp;y&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_samples,&nbsp;n_targets):&nbsp;Target&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;self&nbsp;:&nbsp;<a href="builtins.html#object">object</a></span></dd></dl>
+
+<dl><dt><a name="OrdinaryLeastSquares-get_formula"><strong>get_formula</strong></a>(self)</dt><dd><span class="code">Returns&nbsp;the&nbsp;formula&nbsp;of&nbsp;the&nbsp;model&nbsp;as&nbsp;a&nbsp;string.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;formula&nbsp;:&nbsp;str:&nbsp;The&nbsp;formula&nbsp;of&nbsp;the&nbsp;model.</span></dd></dl>
+
+<dl><dt><a name="OrdinaryLeastSquares-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;using&nbsp;the&nbsp;linear&nbsp;model.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Samples.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;y_pred&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,):&nbsp;Predicted&nbsp;values.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="PassiveAggressiveRegressor">class <strong>PassiveAggressiveRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#PassiveAggressiveRegressor">PassiveAggressiveRegressor</a>(C=1.0,&nbsp;max_iter=1000,&nbsp;tol=0.001)<br>
+&nbsp;<br>
+Implements&nbsp;Passive&nbsp;Aggressive&nbsp;Regression&nbsp;using&nbsp;the&nbsp;Passive&nbsp;Aggressive&nbsp;algorithm.<br>
+The&nbsp;algorithm&nbsp;is&nbsp;a&nbsp;type&nbsp;of&nbsp;online&nbsp;learning&nbsp;algorithm&nbsp;that&nbsp;updates&nbsp;the&nbsp;model&nbsp;parameters&nbsp;based&nbsp;on&nbsp;the&nbsp;current&nbsp;sample.<br>
+If&nbsp;the&nbsp;prediction&nbsp;is&nbsp;within&nbsp;a&nbsp;certain&nbsp;tolerance,&nbsp;the&nbsp;model&nbsp;parameters&nbsp;are&nbsp;updated.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;C:&nbsp;float,&nbsp;default=1.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Regularization&nbsp;parameter/step&nbsp;size.<br>
+-&nbsp;max_iter:&nbsp;int,&nbsp;default=1000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;passes&nbsp;over&nbsp;the&nbsp;training&nbsp;data.<br>
+-&nbsp;tol:&nbsp;float,&nbsp;default=1e-3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;stopping&nbsp;criterion.<br>
+&nbsp;<br>
+Attributes:<br>
+-&nbsp;coef_:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_features,)&nbsp;or&nbsp;(n_features&nbsp;+&nbsp;1,)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Estimated&nbsp;coefficients&nbsp;for&nbsp;the&nbsp;linear&nbsp;regression&nbsp;problem.&nbsp;If&nbsp;`fit_intercept`&nbsp;is&nbsp;True,&nbsp;the&nbsp;first&nbsp;element&nbsp;is&nbsp;the&nbsp;intercept.<br>
+-&nbsp;intercept_:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Independent&nbsp;term&nbsp;in&nbsp;the&nbsp;linear&nbsp;model.&nbsp;Set&nbsp;to&nbsp;0.0&nbsp;if&nbsp;`fit_intercept`&nbsp;is&nbsp;False.<br>
+-&nbsp;n_iter_:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;iterations&nbsp;performed.<br>
+-&nbsp;steps_:&nbsp;list&nbsp;of&nbsp;tuples&nbsp;of&nbsp;shape&nbsp;(n_features,)&nbsp;or&nbsp;(n_features&nbsp;+&nbsp;1,)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;weights&nbsp;and&nbsp;intercept&nbsp;at&nbsp;each&nbsp;iteration&nbsp;if&nbsp;save_steps&nbsp;is&nbsp;True.<br>
+-&nbsp;save_steps:&nbsp;bool,&nbsp;default=False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Whether&nbsp;to&nbsp;save&nbsp;the&nbsp;weights&nbsp;and&nbsp;intercept&nbsp;at&nbsp;each&nbsp;iteration.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="PassiveAggressiveRegressor-__init__"><strong>__init__</strong></a>(self, C=1.0, max_iter=1000, tol=0.001)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;linear&nbsp;model&nbsp;with&nbsp;the&nbsp;given&nbsp;parameters.</span></dd></dl>
+
+<dl><dt><a name="PassiveAggressiveRegressor-fit"><strong>fit</strong></a>(self, X, y, save_steps=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
+Save&nbsp;the&nbsp;weights&nbsp;and&nbsp;the&nbsp;intercept&nbsp;at&nbsp;each&nbsp;iteration&nbsp;if&nbsp;save_steps&nbsp;is&nbsp;True.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data.<br>
+-&nbsp;y&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_samples,&nbsp;n_targets):&nbsp;Target&nbsp;values.<br>
+-&nbsp;save_steps:&nbsp;bool,&nbsp;default=False</span></dd></dl>
+
+<dl><dt><a name="PassiveAggressiveRegressor-get_formula"><strong>get_formula</strong></a>(self)</dt><dd><span class="code">Computes&nbsp;the&nbsp;formula&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;formula&nbsp;:&nbsp;str:&nbsp;The&nbsp;formula&nbsp;of&nbsp;the&nbsp;model.</span></dd></dl>
+
+<dl><dt><a name="PassiveAggressiveRegressor-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;using&nbsp;the&nbsp;linear&nbsp;model.&nbsp;Dot&nbsp;product&nbsp;of&nbsp;X&nbsp;and&nbsp;the&nbsp;coefficients.</span></dd></dl>
+
+<dl><dt><a name="PassiveAggressiveRegressor-predict_all_steps"><strong>predict_all_steps</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;using&nbsp;the&nbsp;linear&nbsp;model&nbsp;at&nbsp;each&nbsp;iteration.&nbsp;(save_steps=True)</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="PolynomialTransform">class <strong>PolynomialTransform</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#PolynomialTransform">PolynomialTransform</a>(degree=2)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;implements&nbsp;Polynomial&nbsp;Feature&nbsp;Transformation.<br>
+Polynomial&nbsp;feature&nbsp;transformation&nbsp;is&nbsp;a&nbsp;technique&nbsp;used&nbsp;to&nbsp;create&nbsp;new&nbsp;features&nbsp;from&nbsp;the&nbsp;existing&nbsp;features&nbsp;by&nbsp;raising&nbsp;them&nbsp;to&nbsp;a&nbsp;power&nbsp;or&nbsp;by&nbsp;creating&nbsp;interaction&nbsp;terms.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;degree:&nbsp;int,&nbsp;default=2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;degree&nbsp;of&nbsp;the&nbsp;polynomial&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Attributes:<br>
+-&nbsp;n_samples:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;samples.<br>
+-&nbsp;n_features:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;features.<br>
+-&nbsp;n_output_features:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;output&nbsp;features.<br>
+-&nbsp;combinations:&nbsp;list&nbsp;of&nbsp;tuples&nbsp;of&nbsp;shape&nbsp;(n_features,)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;combinations&nbsp;of&nbsp;features(X)&nbsp;of&nbsp;degree&nbsp;n.<br>
+-&nbsp;bias:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;include&nbsp;a&nbsp;bias&nbsp;term&nbsp;in&nbsp;the&nbsp;output&nbsp;features.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="PolynomialTransform-__init__"><strong>__init__</strong></a>(self, degree=2)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="PolynomialTransform-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data.&nbsp;<br>
+Uses&nbsp;itertools.combinations_with_replacement&nbsp;to&nbsp;generate&nbsp;all&nbsp;possible&nbsp;combinations&nbsp;of&nbsp;features(X)&nbsp;of&nbsp;degree&nbsp;n.</span></dd></dl>
+
+<dl><dt><a name="PolynomialTransform-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;to&nbsp;data,&nbsp;then&nbsp;transform&nbsp;it.</span></dd></dl>
+
+<dl><dt><a name="PolynomialTransform-transform"><strong>transform</strong></a>(self, X)</dt><dd><span class="code">Transform&nbsp;the&nbsp;data&nbsp;into&nbsp;polynomial&nbsp;features&nbsp;by&nbsp;computing&nbsp;the&nbsp;product&nbsp;of&nbsp;the&nbsp;features&nbsp;for&nbsp;each&nbsp;combination&nbsp;of&nbsp;features.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="QuadraticDiscriminantAnalysis">class <strong>QuadraticDiscriminantAnalysis</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#QuadraticDiscriminantAnalysis">QuadraticDiscriminantAnalysis</a>(priors=None,&nbsp;reg_param=0.0)<br>
+&nbsp;<br>
+Implements&nbsp;Quadratic&nbsp;Discriminant&nbsp;Analysis.<br>
+The&nbsp;quadratic&nbsp;term&nbsp;allows&nbsp;for&nbsp;more&nbsp;flexibility&nbsp;in&nbsp;modeling&nbsp;the&nbsp;class&nbsp;conditional<br>
+A&nbsp;classifier&nbsp;with&nbsp;a&nbsp;quadratic&nbsp;decision&nbsp;boundary,&nbsp;generated&nbsp;by&nbsp;fitting&nbsp;class&nbsp;conditional&nbsp;densities&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;using&nbsp;Bayes'&nbsp;rule.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;priors&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_classes,),&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.<br>
+-&nbsp;reg_param&nbsp;:&nbsp;float,&nbsp;default=0.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Regularization&nbsp;parameter.&nbsp;If&nbsp;greater&nbsp;than&nbsp;0,&nbsp;the&nbsp;covariance&nbsp;matrices&nbsp;are&nbsp;regularized&nbsp;by&nbsp;adding&nbsp;a&nbsp;scaled&nbsp;identity&nbsp;matrix&nbsp;to&nbsp;them.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="QuadraticDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, priors=None, reg_param=0.0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="QuadraticDiscriminantAnalysis-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;decision&nbsp;function&nbsp;to&nbsp;an&nbsp;array&nbsp;of&nbsp;samples.<br>
+The&nbsp;decision&nbsp;function&nbsp;is&nbsp;the&nbsp;log-likelihood&nbsp;of&nbsp;each&nbsp;class.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Test&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;array,&nbsp;shape&nbsp;(n_samples,&nbsp;n_classes):&nbsp;Log-likelihood&nbsp;of&nbsp;each&nbsp;class&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<dl><dt><a name="QuadraticDiscriminantAnalysis-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;according&nbsp;to&nbsp;the&nbsp;given&nbsp;training&nbsp;data.&nbsp;Uses&nbsp;the&nbsp;means&nbsp;and&nbsp;covariance&nbsp;matrices&nbsp;of&nbsp;each&nbsp;class.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+-&nbsp;y&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,):&nbsp;Target&nbsp;values,&nbsp;i.e.,&nbsp;class&nbsp;labels.</span></dd></dl>
+
+<dl><dt><a name="QuadraticDiscriminantAnalysis-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Perform&nbsp;classification&nbsp;on&nbsp;an&nbsp;array&nbsp;of&nbsp;test&nbsp;vectors&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Test&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;array,&nbsp;shape&nbsp;(n_samples,):&nbsp;Predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="RANSAC">class <strong>RANSAC</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RANSAC">RANSAC</a>(n=10,&nbsp;k=100,&nbsp;t=0.05,&nbsp;d=10,&nbsp;model=None,&nbsp;auto_scale_t=False,&nbsp;scale_t_factor=2,&nbsp;auto_scale_n=False,&nbsp;scale_n_factor=2)<br>
+&nbsp;<br>
+Implements&nbsp;<a href="#RANSAC">RANSAC</a>&nbsp;(RANdom&nbsp;SAmple&nbsp;Consensus)&nbsp;algorithm&nbsp;for&nbsp;robust&nbsp;linear&nbsp;regression.<br>
+This&nbsp;uses&nbsp;the&nbsp;<a href="#RANSAC">RANSAC</a>&nbsp;algorithm&nbsp;to&nbsp;fit&nbsp;a&nbsp;linear&nbsp;model&nbsp;to&nbsp;the&nbsp;data,&nbsp;while&nbsp;ignoring&nbsp;outliers.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;n:&nbsp;int,&nbsp;default=10<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;of&nbsp;data&nbsp;points&nbsp;to&nbsp;estimate&nbsp;parameters.<br>
+-&nbsp;k:&nbsp;int,&nbsp;default=100<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Maximum&nbsp;iterations&nbsp;allowed.<br>
+-&nbsp;t:&nbsp;float,&nbsp;default=0.05<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Threshold&nbsp;value&nbsp;to&nbsp;determine&nbsp;if&nbsp;points&nbsp;are&nbsp;fit&nbsp;well,&nbsp;in&nbsp;terms&nbsp;of&nbsp;residuals.<br>
+-&nbsp;d:&nbsp;int,&nbsp;default=10<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;of&nbsp;close&nbsp;data&nbsp;points&nbsp;required&nbsp;to&nbsp;assert&nbsp;model&nbsp;fits&nbsp;well.&nbsp;<br>
+-&nbsp;model:&nbsp;<a href="builtins.html#object">object</a>,&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;model&nbsp;to&nbsp;use&nbsp;for&nbsp;fitting.&nbsp;If&nbsp;None,&nbsp;uses&nbsp;Ordinary&nbsp;Least&nbsp;Squares.<br>
+-&nbsp;auto_scale_t:&nbsp;bool,&nbsp;default=False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Whether&nbsp;to&nbsp;automatically&nbsp;scale&nbsp;the&nbsp;threshold&nbsp;until&nbsp;a&nbsp;model&nbsp;is&nbsp;fit.<br>
+-&nbsp;scale_t_factor:&nbsp;float,&nbsp;default=2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Factor&nbsp;by&nbsp;which&nbsp;to&nbsp;scale&nbsp;the&nbsp;threshold&nbsp;until&nbsp;a&nbsp;model&nbsp;is&nbsp;fit.<br>
+-&nbsp;auto_scale_n:&nbsp;bool,&nbsp;default=False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Whether&nbsp;to&nbsp;automatically&nbsp;scale&nbsp;the&nbsp;number&nbsp;of&nbsp;data&nbsp;points&nbsp;until&nbsp;a&nbsp;model&nbsp;is&nbsp;fit.<br>
+-&nbsp;scale_n_factor:&nbsp;float,&nbsp;default=2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Factor&nbsp;by&nbsp;which&nbsp;to&nbsp;scale&nbsp;the&nbsp;number&nbsp;of&nbsp;data&nbsp;points&nbsp;until&nbsp;a&nbsp;model&nbsp;is&nbsp;fit.<br>
+&nbsp;<br>
+Attributes:<br>
+-&nbsp;best_fit:&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;best&nbsp;model&nbsp;fit.<br>
+-&nbsp;best_error:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;best&nbsp;error&nbsp;achieved&nbsp;by&nbsp;the&nbsp;model.<br>
+-&nbsp;best_n:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;best&nbsp;number&nbsp;of&nbsp;data&nbsp;points&nbsp;used&nbsp;to&nbsp;fit&nbsp;the&nbsp;model.<br>
+-&nbsp;best_t:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;best&nbsp;threshold&nbsp;value&nbsp;used&nbsp;to&nbsp;determine&nbsp;if&nbsp;points&nbsp;are&nbsp;fit&nbsp;well,&nbsp;in&nbsp;terms&nbsp;of&nbsp;residuals.<br>
+-&nbsp;best_model:&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;best&nbsp;model&nbsp;fit.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="RANSAC-__init__"><strong>__init__</strong></a>(self, n=10, k=100, t=0.05, d=10, model=None, auto_scale_t=False, scale_t_factor=2, auto_scale_n=False, scale_n_factor=2)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;linear&nbsp;model&nbsp;with&nbsp;the&nbsp;given&nbsp;parameters.</span></dd></dl>
+
+<dl><dt><a name="RANSAC-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data,&nbsp;using&nbsp;<a href="#RANSAC">RANSAC</a>.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data.<br>
+-&nbsp;y&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_samples,&nbsp;n_targets):&nbsp;Target&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="RANSAC-get_formula"><strong>get_formula</strong></a>(self)</dt><dd><span class="code">Computes&nbsp;the&nbsp;formula&nbsp;of&nbsp;the&nbsp;model&nbsp;if&nbsp;fit,&nbsp;else&nbsp;returns&nbsp;"No&nbsp;model&nbsp;fit&nbsp;available"</span></dd></dl>
+
+<dl><dt><a name="RANSAC-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;using&nbsp;the&nbsp;best&nbsp;fit&nbsp;model.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Samples.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Ridge">class <strong>Ridge</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Ridge">Ridge</a>(alpha=1.0,&nbsp;fit_intercept=True,&nbsp;max_iter=10000,&nbsp;tol=0.0001)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;implements&nbsp;<a href="#Ridge">Ridge</a>&nbsp;Regression&nbsp;using&nbsp;Coordinate&nbsp;Descent.<br>
+<a href="#Ridge">Ridge</a>&nbsp;regression&nbsp;implements&nbsp;L2&nbsp;regularization,&nbsp;which&nbsp;helps&nbsp;to&nbsp;prevent&nbsp;overfitting&nbsp;by&nbsp;adding&nbsp;a&nbsp;penalty&nbsp;term&nbsp;to&nbsp;the&nbsp;loss&nbsp;function.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;alpha&nbsp;:&nbsp;float,&nbsp;default=1.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Regularization&nbsp;strength;&nbsp;must&nbsp;be&nbsp;a&nbsp;positive&nbsp;float.&nbsp;Regularization&nbsp;improves&nbsp;the&nbsp;conditioning&nbsp;of&nbsp;the&nbsp;problem&nbsp;and&nbsp;reduces&nbsp;the&nbsp;variance&nbsp;of&nbsp;the&nbsp;estimates.<br>
+-&nbsp;fit_intercept&nbsp;:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;calculate&nbsp;the&nbsp;intercept&nbsp;for&nbsp;this&nbsp;model.<br>
+-&nbsp;max_iter&nbsp;:&nbsp;int,&nbsp;default=10000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;the&nbsp;coordinate&nbsp;descent&nbsp;solver.<br>
+-&nbsp;tol&nbsp;:&nbsp;float,&nbsp;default=1e-4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Tolerance&nbsp;for&nbsp;the&nbsp;optimization.&nbsp;The&nbsp;optimization&nbsp;stops&nbsp;when&nbsp;the&nbsp;change&nbsp;in&nbsp;the&nbsp;coefficients&nbsp;is&nbsp;less&nbsp;than&nbsp;this&nbsp;tolerance.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Attributes:<br>
+-&nbsp;coef_&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_features,)&nbsp;or&nbsp;(n_features&nbsp;+&nbsp;1,)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Estimated&nbsp;coefficients&nbsp;for&nbsp;the&nbsp;linear&nbsp;regression&nbsp;problem.&nbsp;If&nbsp;`fit_intercept`&nbsp;is&nbsp;True,&nbsp;the&nbsp;first&nbsp;element&nbsp;is&nbsp;the&nbsp;intercept.<br>
+-&nbsp;intercept_&nbsp;:&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Independent&nbsp;term&nbsp;in&nbsp;the&nbsp;linear&nbsp;model.&nbsp;Set&nbsp;to&nbsp;0.0&nbsp;if&nbsp;`fit_intercept`&nbsp;is&nbsp;False.<br>
+&nbsp;<br>
+Methods:<br>
+-&nbsp;<a href="#Ridge-fit">fit</a>(X,&nbsp;y):&nbsp;Fit&nbsp;the&nbsp;linear&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
+-&nbsp;<a href="#Ridge-predict">predict</a>(X):&nbsp;Predict&nbsp;using&nbsp;the&nbsp;linear&nbsp;model.<br>
+-&nbsp;<a href="#Ridge-get_formula">get_formula</a>():&nbsp;Returns&nbsp;the&nbsp;formula&nbsp;of&nbsp;the&nbsp;model&nbsp;as&nbsp;a&nbsp;string.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Ridge-__init__"><strong>__init__</strong></a>(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=0.0001)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="Ridge-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;using&nbsp;coordinate&nbsp;descent.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data.<br>
+-&nbsp;y&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_samples,&nbsp;n_targets):&nbsp;Target&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="Ridge-get_formula"><strong>get_formula</strong></a>(self)</dt><dd><span class="code">Computes&nbsp;the&nbsp;formula&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;formula&nbsp;:&nbsp;str:&nbsp;The&nbsp;formula&nbsp;of&nbsp;the&nbsp;model.</span></dd></dl>
+
+<dl><dt><a name="Ridge-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;using&nbsp;the&nbsp;linear&nbsp;model.&nbsp;&nbsp;<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Samples.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Utility">class <strong>Utility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Utility">Utility</a>&nbsp;class<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-make_data"><strong>make_data</strong></a>(n_samples, n_features, cov_class_1, cov_class_2, shift=[1, 1], seed=0)</dt><dd><span class="code">Make&nbsp;data&nbsp;for&nbsp;testing,&nbsp;for&nbsp;testing&nbsp;LDA&nbsp;and&nbsp;QDA.&nbsp;<br>
+Data&nbsp;points&nbsp;for&nbsp;class&nbsp;1&nbsp;are&nbsp;generated&nbsp;by&nbsp;multiplying&nbsp;a&nbsp;random&nbsp;matrix&nbsp;with&nbsp;the&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;covariance&nbsp;matrix&nbsp;of&nbsp;class&nbsp;1,&nbsp;and&nbsp;data&nbsp;points&nbsp;for&nbsp;class&nbsp;2&nbsp;are&nbsp;generated&nbsp;by&nbsp;multiplying&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;random&nbsp;matrix&nbsp;with&nbsp;the&nbsp;covariance&nbsp;matrix&nbsp;of&nbsp;class&nbsp;2&nbsp;and&nbsp;adding&nbsp;[1,&nbsp;1].</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>__all__</strong> = ['KMeans', 'DBSCAN', 'Utility', 'OrdinaryLeastSquares', 'Ridge', 'Lasso', 'Bayesian', 'RANSAC', 'PassiveAggressiveRegressor', 'PolynomialTransform', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'make_data']</td></tr></table>
+</body></html>
