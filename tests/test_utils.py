@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 import numpy as np
-from sklearn.metrics import r2_score, accuracy_score
+import pandas as pd
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -44,6 +44,37 @@ class TestPolynomialTransform(unittest.TestCase):
     def test_invalid_transform(self):
         with self.assertRaises(Exception):
             self.transform.transform(None)      
+            
+class TestDataPrep(unittest.TestCase):
+    """
+    Unit test for the Data Prep class.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each
+    - test_one_hot_encode: Tests the one_hot_encode method of the Data Prep class.
+    - test_one_hot_encode_multiple: Tests the one_hot_encode method with multiple columns.
+    - test_write_data: Tests the write_data method of the Data
+    """
+    @classmethod
+    def setUpClass(cls):
+        print("Testing Data Prep")
+        
+    def test_one_hot_encode(self):
+        # DF with one categorical column (col 3)
+        df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': [5, 6, 7, 8], 'C': ['a', 'b', 'a', 'b']})
+        df_encoded = DataPrep.one_hot_encode(df, [2])
+        self.assertEqual(df_encoded.shape[1], 4)
+        
+    def test_one_hot_encode_multiple(self):
+        # DF with two categorical columns (col 2 and 3)
+        df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': ['a', 'b', 'a', 'b'], 'C': ['x', 'y', 'x', 'y']})
+        df_encoded = DataPrep.one_hot_encode(df, [1, 2])
+        self.assertEqual(df_encoded.shape[1], 5)
+        
+    def test_write_data(self):
+        df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': [5, 6, 7, 8]})
+        DataPrep.write_data(df, 'test.csv')
+        self.assertTrue(os.path.exists('test.csv'))
+        os.remove('test.csv')     
         
 if __name__ == '__main__':
     unittest.main()
