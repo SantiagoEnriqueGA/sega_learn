@@ -1,5 +1,5 @@
 # Find TODO comments in Python files, excluding paths containing "__archive"
-Get-ChildItem -Recurse -Filter *.py | Where-Object { 
+$todoComments = Get-ChildItem -Recurse -Filter *.py | Where-Object { 
     -not ($_.FullName -like "*__archive*") 
 } | ForEach-Object {
     $file = $_
@@ -8,12 +8,23 @@ Get-ChildItem -Recurse -Filter *.py | Where-Object {
         $lineNumber++
         $trimmedLine = $_.TrimStart()
         if ($trimmedLine -match 'TODO') {
-            $todoComment = [PSCustomObject]@{
+            [PSCustomObject]@{
                 FileName   = $file.FullName -replace ".*sega_learn", "sega_learn"
                 LineNumber = $global:lineNumber
                 Line       = $trimmedLine
             }
-            $todoComment
         }
     }
-} | Tee-Object -FilePath "scripts/out/todo_comments.txt" | Format-Table -AutoSize
+}
+
+# Write TODO comments to the file
+$todoComments | Tee-Object -FilePath "scripts/out/todo_comments.txt" | Format-Table -AutoSize
+
+# Append the "Other" section to the file
+# Add new TODOs here:
+$otherTodos = @"
+Other:
+Trees: refactor "RunRandom..." classes into parent classes
+"@
+
+Add-Content -Path "scripts/out/todo_comments.txt" -Value $otherTodos
