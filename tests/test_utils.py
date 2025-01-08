@@ -3,18 +3,19 @@ import sys
 import os
 import numpy as np
 import pandas as pd
+from sklearn.datasets import make_regression
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from sega_learn.utils import *
+from sega_learn.linear_models import *
 from tests.utils import synthetic_data_regression, suppress_print
 
-       
+
 class TestPolynomialTransform(unittest.TestCase):
     """
     Unit test for the Polynomial Transform class.
     Methods:
-    - setUpClass: Initializes a new instance of the Index class before each test method is run.
     - test_fit_transform: Tests the fit_transform method of the Polynomial Transform class.
     - test_fit: Tests the fit method of the Polynomial Transform class.
     - test_invalid_fit: Tests the fit method with invalid input.
@@ -49,7 +50,6 @@ class TestDataPrep(unittest.TestCase):
     """
     Unit test for the Data Prep class.
     Methods:
-    - setUpClass: Initializes a new instance of the Index class before each
     - test_one_hot_encode: Tests the one_hot_encode method of the Data Prep class.
     - test_one_hot_encode_multiple: Tests the one_hot_encode method with multiple columns.
     - test_write_data: Tests the write_data method of the Data
@@ -76,5 +76,47 @@ class TestDataPrep(unittest.TestCase):
         self.assertTrue(os.path.exists('test.csv'))
         os.remove('test.csv')     
         
+class TestVotingRegressor(unittest.TestCase):
+    """
+    Unit test for the Voting Regressor class.
+    Methods:
+    - setUp: Initializes a new instance of the Voting Regressor class before each test method is run.
+    - test_init: Tests the initialization of the Voting Regressor class.
+    - test_predict: Tests the predict method of the Voting Regressor class.
+    - test_get_params: Tests the get_params method of the Voting Regressor class.
+    - test_show_models: Tests the show_models method of the Voting Regressor class.
+    """
+    @classmethod
+    def setUpClass(cls):
+        print("Testing Voting Regressor")
+    
+    def setUp(self):
+        self.X, self.y = make_regression(n_samples=1000, n_features=5, noise=25, random_state=42)
+        ols = OrdinaryLeastSquares()
+        ols.fit(self.X, self.y)
+        lasso = Lasso()
+        lasso.fit(self.X, self.y)
+        ridge = Ridge()
+        ridge.fit(self.X, self.y)
+        self.voter = VotingRegressor(models=[ols, lasso, ridge], model_weights=[0.3, 0.3, 0.4])        
+        
+    def test_init(self):
+        self.assertEqual(len(self.voter.models), 3)
+        self.assertEqual(len(self.voter.model_weights), 3)
+    
+    def test_predict(self):
+        y_pred = self.voter.predict(self.X)
+        self.assertEqual(y_pred.shape[0], self.y.shape[0])
+        
+    def test_get_params(self):
+        params = self.voter.get_params()
+        self.assertEqual(len(params), 2)
+        
+    def test_show_models(self):
+        with suppress_print():
+            self.voter.show_models()
+            self.voter.show_models(formula=True)
+            
+    
 if __name__ == '__main__':
     unittest.main()

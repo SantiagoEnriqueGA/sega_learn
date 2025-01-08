@@ -1,6 +1,7 @@
 from .utils import (
     PolynomialTransform,
     DataPrep,
+    VotingRegressor,
 )
 
 from .clustering import (

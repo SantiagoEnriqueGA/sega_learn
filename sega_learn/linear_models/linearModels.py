@@ -36,6 +36,9 @@ class OrdinaryLeastSquares(object):
         self.coef_ = None
         self.intercept_ = None
     
+    def __str__(self):
+        return "Ordinary Least Squares"
+    
     def fit(self, X, y):
         """
         Fit linear model.
@@ -123,6 +126,9 @@ class Ridge(object):
         self.coef_ = None
         self.intercept_ = None
     
+    def __str__(self):
+        return "Ridge Regression"
+    
     def fit(self, X, y):
         """
         Fit the model to the data using coordinate descent.
@@ -186,6 +192,7 @@ class Ridge(object):
         if self.fit_intercept:                                                  # If fit_intercept is True
             formula = f"{self.intercept_:.2f} + " + formula                     # Add the intercept to the formula
         return f"y = {formula}" 
+    
 
 class Lasso(object):
     """
@@ -215,6 +222,9 @@ class Lasso(object):
         self.tol = tol
         self.coef_ = None
         self.intercept_ = None
+    
+    def __str__(self):
+        return "Lasoo Regression"
     
     def fit(self, X, y):
         """
@@ -325,7 +335,10 @@ class Bayesian(object):
     
         self.intercept_ = None
         self.coef_ = None
-        
+    
+    def __str__(self):
+        return "Bayesian Regression"    
+    
     def fit(self, X, y):
         """
         Fit the model to the data.
@@ -608,6 +621,9 @@ class RANSAC(object):
         self.scale_n = auto_scale_n
         self.scale_n_factor = scale_n_factor
     
+    def __str__(self):
+        return "RANSAC"
+    
     def _square_loss(self, y_true, y_pred):
         """Compute the square loss."""
         return (y_true - y_pred) ** 2
@@ -715,6 +731,9 @@ class PassiveAggressiveRegressor(object):
         self.coef_ = None                       # The learned weights
         self.intercept_ = None                  # The learned intercept
      
+    def __str__(self):
+        return "Passive Aggressive Regressor"
+    
     def fit(self, X, y, save_steps=False):
         """
         Fit the model to the data.
