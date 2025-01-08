@@ -35,6 +35,22 @@ from .trees import (
     GradientBoostedRegressor
 )
 
+from .neural_networks import (
+    AdamOptimizer,
+    SGDOptimizer,
+    AdadeltaOptimizer,    
+    lr_scheduler_exp,
+    lr_scheduler_plateau,
+    lr_scheduler_step,
+    CrossEntropyLoss,
+    BCEWithLogitsLoss,
+    NeuralNetwork,
+    Layer,
+    Activation,
+)
+    
+    
+
 __all__ = [
     # Utils
     "PolynomialTransform",
@@ -67,5 +83,18 @@ __all__ = [
     "RunRandomForestClassifierPar",
     "RandomForestRegressor",
     "RunRandomForestRegressor",
-    "GradientBoostedRegressor"
+    "GradientBoostedRegressor",
+    
+    # Neural Networks
+    'AdamOptimizer',
+    'SGDOptimizer',
+    'AdadeltaOptimizer',
+    'lr_scheduler_exp',
+    'lr_scheduler_plateau',
+    'lr_scheduler_step',
+    'CrossEntropyLoss',
+    'BCEWithLogitsLoss',
+    'NeuralNetwork',
+    'Layer',
+    'Activation',
 ]
