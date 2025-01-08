@@ -30,8 +30,13 @@ $utilsFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/utils" | For
 # Combine the lists of files
 $files = $clusteringFiles + $linearModelsFiles + $utilsFiles + $treesFiles + $neuralNetworksFiles
 
-# Add the main sega_learn module to the list of files to document
+# Add the main sega_learn modules to the list of files to document
 $files += "sega_learn"
+$files += "sega_learn.clustering"
+$files += "sega_learn.linear_models"
+$files += "sega_learn.trees"
+$files += "sega_learn.neural_networks"
+$files += "sega_learn.utils"
 
 # Generate documentation for each Python file
 $files | ForEach-Object {

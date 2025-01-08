@@ -20,6 +20,11 @@ wrote sega_learn.neural_networks.optimizers.html
 wrote sega_learn.neural_networks.schedulers.html
 wrote sega_learn.neural_networks.__init__.html
 wrote sega_learn.html
+wrote sega_learn.clustering.html
+wrote sega_learn.linear_models.html
+wrote sega_learn.trees.html
+wrote sega_learn.neural_networks.html
+wrote sega_learn.utils.html
  
 To view the documentation, run the following command in the terminal:
 python -m pydoc -p 8080
