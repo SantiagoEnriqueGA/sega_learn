@@ -3,8 +3,16 @@ wrote sega_learn.clustering.__init__.html
 wrote sega_learn.linear_models.discriminantAnalysis.html
 wrote sega_learn.linear_models.linearModels.html
 wrote sega_learn.linear_models.__init__.html
+wrote sega_learn.utils.dataPrep.html
 wrote sega_learn.utils.polynomialTransform.html
 wrote sega_learn.utils.__init__.html
+wrote sega_learn.trees.gradientBoostedRegressor.html
+wrote sega_learn.trees.randomForestClassifier.html
+wrote sega_learn.trees.randomForestClassifierPar.html
+wrote sega_learn.trees.randomForestRegressor.html
+wrote sega_learn.trees.treeClassifier.html
+wrote sega_learn.trees.treeRegressor.html
+wrote sega_learn.trees.__init__.html
 wrote sega_learn.html
  
 To view the documentation, run the following command in the terminal:

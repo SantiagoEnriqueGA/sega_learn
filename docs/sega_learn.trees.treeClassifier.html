@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.trees.treeClassifier</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.trees.html" class="white">trees</a>.treeClassifier</strong></td>
+</tr></table>
+    <p><span class="code">#&nbsp;Importing&nbsp;the&nbsp;required&nbsp;libraries</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="ast.html">ast</a><br>
+<a href="csv.html">csv</a><br>
+</td><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+<a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
+</td><td class="multicolumn"><a href="random.html">random</a><br>
+</td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.trees.treeClassifier.html#ClassifierTreeInfoGain">ClassifierTreeInfoGain</a>
+</dt></dl>
+</dd>
+<dt class="heading-text"><a href="sega_learn.trees.treeClassifier.html#ClassifierTreeUtility">ClassifierTreeUtility</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="ClassifierTree">class <strong>ClassifierTree</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#ClassifierTree">ClassifierTree</a>(max_depth)<br>
+&nbsp;<br>
+A&nbsp;class&nbsp;representing&nbsp;a&nbsp;decision&nbsp;tree.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;decision&nbsp;tree.<br>
+&nbsp;<br>
+Methods:<br>
+-&nbsp;<a href="#ClassifierTree-learn">learn</a>(X,&nbsp;y,&nbsp;par_node={},&nbsp;depth=0):&nbsp;Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
+-&nbsp;<a href="#ClassifierTree-classify">classify</a>(record):&nbsp;Classifies&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="ClassifierTree-__init__"><strong>__init__</strong></a>(self, max_depth)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="ClassifierTree-classify"><strong>classify</strong></a>(self, record)</dt><dd><span class="code">Classifies&nbsp;a&nbsp;given&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;record:&nbsp;A&nbsp;dictionary&nbsp;representing&nbsp;the&nbsp;record&nbsp;to&nbsp;be&nbsp;classified.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;The&nbsp;label&nbsp;assigned&nbsp;to&nbsp;the&nbsp;record&nbsp;based&nbsp;on&nbsp;the&nbsp;decision&nbsp;tree.</span></dd></dl>
+
+<dl><dt><a name="ClassifierTree-learn"><strong>learn</strong></a>(self, X, y, par_node={}, depth=0)</dt><dd><span class="code">Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
+-&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;labels.<br>
+-&nbsp;par_node&nbsp;(dict):&nbsp;The&nbsp;parent&nbsp;node&nbsp;of&nbsp;the&nbsp;current&nbsp;subtree&nbsp;(default:&nbsp;{}).<br>
+-&nbsp;depth&nbsp;(int):&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;subtree&nbsp;(default:&nbsp;0).<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;decision&nbsp;tree.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="ClassifierTreeInfoGain">class <strong>ClassifierTreeInfoGain</strong></a>(<a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#ClassifierTreeInfoGain">ClassifierTreeInfoGain</a>(max_depth=None)<br>
+&nbsp;<br>
+A&nbsp;class&nbsp;representing&nbsp;a&nbsp;decision&nbsp;tree.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;decision&nbsp;tree.<br>
+&nbsp;<br>
+Methods:<br>
+-&nbsp;<a href="#ClassifierTreeInfoGain-learn">learn</a>(X,&nbsp;y,&nbsp;par_node={},&nbsp;depth=0):&nbsp;Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
+-&nbsp;<a href="#ClassifierTreeInfoGain-classify">classify</a>(record):&nbsp;Classifies&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.trees.treeClassifier.html#ClassifierTreeInfoGain">ClassifierTreeInfoGain</a></dd>
+<dd><a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ClassifierTreeInfoGain-__init__"><strong>__init__</strong></a>(self, max_depth=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="ClassifierTreeInfoGain-learn"><strong>learn</strong></a>(self, X, y, par_node={}, depth=0)</dt><dd><span class="code">Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
+-&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;labels.<br>
+-&nbsp;par_node&nbsp;(dict):&nbsp;The&nbsp;parent&nbsp;node&nbsp;of&nbsp;the&nbsp;current&nbsp;subtree&nbsp;(default:&nbsp;{}).<br>
+-&nbsp;depth&nbsp;(int):&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;subtree&nbsp;(default:&nbsp;0).<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;decision&nbsp;tree.</span></dd></dl>
+
+<hr>
+Methods inherited from <a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a>:<br>
+<dl><dt><a name="ClassifierTreeInfoGain-classify"><strong>classify</strong></a>(self, record)</dt><dd><span class="code">Classifies&nbsp;a&nbsp;given&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;record:&nbsp;A&nbsp;dictionary&nbsp;representing&nbsp;the&nbsp;record&nbsp;to&nbsp;be&nbsp;classified.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;The&nbsp;label&nbsp;assigned&nbsp;to&nbsp;the&nbsp;record&nbsp;based&nbsp;on&nbsp;the&nbsp;decision&nbsp;tree.</span></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="ClassifierTreeUtility">class <strong>ClassifierTreeUtility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Utility&nbsp;class&nbsp;for&nbsp;computing&nbsp;entropy,&nbsp;partitioning&nbsp;classes,&nbsp;and&nbsp;calculating&nbsp;information&nbsp;gain.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="ClassifierTreeUtility-best_split"><strong>best_split</strong></a>(self, X, y)</dt><dd><span class="code">Finds&nbsp;the&nbsp;best&nbsp;attribute&nbsp;and&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;data&nbsp;based&nbsp;on&nbsp;information&nbsp;gain.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
+-&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;variable.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;dict:&nbsp;A&nbsp;dictionary&nbsp;containing&nbsp;the&nbsp;best&nbsp;split&nbsp;attribute,&nbsp;split&nbsp;value,&nbsp;left&nbsp;and&nbsp;right&nbsp;subsets&nbsp;of&nbsp;X&nbsp;and&nbsp;y,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;the&nbsp;information&nbsp;gain&nbsp;achieved&nbsp;by&nbsp;the&nbsp;split.</span></dd></dl>
+
+<dl><dt><a name="ClassifierTreeUtility-entropy"><strong>entropy</strong></a>(self, class_y)</dt><dd><span class="code">Computes&nbsp;the&nbsp;entropy&nbsp;for&nbsp;a&nbsp;given&nbsp;class.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;class_y&nbsp;(array-like):&nbsp;The&nbsp;class&nbsp;labels.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;float:&nbsp;The&nbsp;entropy&nbsp;value.</span></dd></dl>
+
+<dl><dt><a name="ClassifierTreeUtility-information_gain"><strong>information_gain</strong></a>(self, previous_y, current_y)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;information&nbsp;gain&nbsp;between&nbsp;the&nbsp;previous&nbsp;and&nbsp;current&nbsp;values&nbsp;of&nbsp;y.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;previous_y&nbsp;(array-like):&nbsp;The&nbsp;previous&nbsp;values&nbsp;of&nbsp;y.<br>
+-&nbsp;current_y&nbsp;(array-like):&nbsp;The&nbsp;current&nbsp;values&nbsp;of&nbsp;y.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;float:&nbsp;The&nbsp;information&nbsp;gain&nbsp;between&nbsp;the&nbsp;previous&nbsp;and&nbsp;current&nbsp;values&nbsp;of&nbsp;y.</span></dd></dl>
+
+<dl><dt><a name="ClassifierTreeUtility-partition_classes"><strong>partition_classes</strong></a>(self, X, y, split_attribute, split_val)</dt><dd><span class="code">Partitions&nbsp;the&nbsp;dataset&nbsp;into&nbsp;two&nbsp;subsets&nbsp;based&nbsp;on&nbsp;a&nbsp;given&nbsp;split&nbsp;attribute&nbsp;and&nbsp;value.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
+-&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;labels.<br>
+-&nbsp;split_attribute&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;attribute&nbsp;to&nbsp;split&nbsp;on.<br>
+-&nbsp;split_val&nbsp;(float):&nbsp;The&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;attribute&nbsp;on.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X_left&nbsp;&nbsp;(array-like):&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;less&nbsp;than&nbsp;or&nbsp;equal&nbsp;to&nbsp;the&nbsp;split&nbsp;value.<br>
+-&nbsp;X_right&nbsp;(array-like):&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;greater&nbsp;than&nbsp;the&nbsp;split&nbsp;value.<br>
+-&nbsp;y_left&nbsp;&nbsp;(array-like):&nbsp;The&nbsp;subset&nbsp;of&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;X_left.<br>
+-&nbsp;y_right&nbsp;(array-like):&nbsp;The&nbsp;subset&nbsp;of&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;X_right.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-ceil"><strong>ceil</strong></a>(x, /)</dt><dd><span class="code">Return&nbsp;the&nbsp;ceiling&nbsp;of&nbsp;x&nbsp;as&nbsp;an&nbsp;Integral.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;the&nbsp;smallest&nbsp;integer&nbsp;&gt;=&nbsp;x.</span></dd></dl>
+ <dl><dt><a name="-floor"><strong>floor</strong></a>(x, /)</dt><dd><span class="code">Return&nbsp;the&nbsp;floor&nbsp;of&nbsp;x&nbsp;as&nbsp;an&nbsp;Integral.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;the&nbsp;largest&nbsp;integer&nbsp;&lt;=&nbsp;x.</span></dd></dl>
+ <dl><dt><a name="-log"><strong>log</strong></a>(...)</dt><dd><span class="code"><a href="#-log">log</a>(x,&nbsp;[base=math.e])<br>
+Return&nbsp;the&nbsp;logarithm&nbsp;of&nbsp;x&nbsp;to&nbsp;the&nbsp;given&nbsp;base.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;base&nbsp;not&nbsp;specified,&nbsp;returns&nbsp;the&nbsp;natural&nbsp;logarithm&nbsp;(base&nbsp;e)&nbsp;of&nbsp;x.</span></dd></dl>
+</td></tr></table>
+</body></html>

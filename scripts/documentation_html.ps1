@@ -11,13 +11,18 @@ $linearModelsFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/linea
     "sega_learn.linear_models.$($_.BaseName)"
 }
 
+# Get all Python files in the sega_learn/trees folder
+$treesFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/trees" | ForEach-Object {
+    "sega_learn.trees.$($_.BaseName)"
+}
+
 # Get all Python files in the sega_learn/utils folder
 $utilsFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/utils" | ForEach-Object {
     "sega_learn.utils.$($_.BaseName)"
 }
 
 # Combine the lists of files
-$files = $clusteringFiles + $linearModelsFiles + $utilsFiles
+$files = $clusteringFiles + $linearModelsFiles + $utilsFiles + $treesFiles
 
 # Add the main sega_learn module to the list of files to document
 $files += "sega_learn"

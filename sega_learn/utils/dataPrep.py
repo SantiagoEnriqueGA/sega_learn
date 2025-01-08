@@ -27,7 +27,7 @@ class DataPrep(object):
 
         return df
 
-    def write_data(df, csv_file):
+    def write_data(df, csv_file, print_path=False):
         """
         Writes the DataFrame to a CSV file.
 
@@ -36,7 +36,7 @@ class DataPrep(object):
         - csv_file (str): The path of the CSV file to write to.
         """
         df.to_csv(csv_file, index=False)            # Write the DataFrame to a CSV file
-        print("Prepared data written to", csv_file) # Print the path of the written file
+        if print_path: print("Prepared data written to", csv_file) # Print the path of the written file
 
     def prepare_data(csv_file, label_col_index, cols_to_encode=[], write_to_csv=True):
         """

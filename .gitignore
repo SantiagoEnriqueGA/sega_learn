@@ -1,6 +1,12 @@
 # vscode
 .vscode/
 
+# Example datasets
+example_datasets/
+
+# Archive files
+_archive/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
