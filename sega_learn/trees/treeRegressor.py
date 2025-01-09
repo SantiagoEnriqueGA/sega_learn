@@ -42,6 +42,10 @@ class RegressorTreeUtility(object):
         - y_left (array-like): The subset of target labels corresponding to X_left.
         - y_right (array-like): The subset of target labels corresponding to X_right.
         """
+        # Check type of X and y
+        if not isinstance(X, (list, np.ndarray)) or not isinstance(y, (list, np.ndarray)):
+            raise TypeError("X and y must be lists or NumPy arrays.")      
+        
         # Convert X and y to NumPy arrays for faster computation
         X = np.array(X)
         y = np.array(y)
@@ -66,6 +70,9 @@ class RegressorTreeUtility(object):
         Calculate the information gain from a split by subtracting the variance of
         child nodes from the variance of the parent node.
         """
+        if len(previous_y) == 0:  # If the parent node is empty
+            return 0              # Return 0 information gain
+        
         parent_variance = self.calculate_variance(previous_y)                                           # Calculate the variance of the parent node
         child_variance = sum(self.calculate_variance(y) * len(y) for y in current_y) / len(previous_y)  # Calculate the variance of the child nodes
 
@@ -86,9 +93,35 @@ class RegressorTreeUtility(object):
         - dict: A dictionary containing the best split attribute, split value, left and right subsets of X and y,
                 and the information gain achieved by the split.
         """
+        # Check type of X and y
+        if not isinstance(X, (list, np.ndarray)) or not isinstance(y, (list, np.ndarray)):
+            raise TypeError("X and y must be lists or NumPy arrays.")      
+        
         # Convert X and y to numpy arrays
         X = np.array(X)
         y = np.array(y)
+
+        if X.size == 0:  # If X is empty
+            return {
+                'split_attribute': None,
+                'split_val': None,
+                'X_left': np.empty((0, 1)),
+                'X_right': np.empty((0, 1)),
+                'y_left': np.empty((0,)),
+                'y_right': np.empty((0,)),
+                'info_gain': 0
+            }
+
+        if X.shape[0] == 1:  # If X has a single value
+            return {
+                'split_attribute': None,
+                'split_val': None,
+                'X_left': np.empty((0, X.shape[1])),
+                'X_right': np.empty((0, X.shape[1])),
+                'y_left': np.empty((0,)),
+                'y_right': np.empty((0,)),
+                'info_gain': 0
+            }
 
         # Randomly select a subset of attributes for splitting
         num_features = int(np.sqrt(X.shape[1]))                                                 # Square root of total attributes
@@ -136,7 +169,7 @@ class RegressorTree(object):
 
     """
 
-    def __init__(self, max_depth):
+    def __init__(self, max_depth=5):
         self.tree = {}              # Initialize an empty dictionary to represent the decision tree
         self.max_depth = max_depth  # Set the maximum depth of the tree
 
@@ -152,8 +185,11 @@ class RegressorTree(object):
 
         Returns:
         - dict: The learned decision tree.
-
         """
+        # Check type of X and y
+        if not isinstance(X, (list, np.ndarray)) or not isinstance(y, (list, np.ndarray)):
+            raise TypeError("X and y must be lists or NumPy arrays.")      
+        
         y = y.tolist() if isinstance(y, np.ndarray) else y  # Convert y to a list if it is a NumPy array
         
         # Convert X and y to NumPy arrays for faster computation

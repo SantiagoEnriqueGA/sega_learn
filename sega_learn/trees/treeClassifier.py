@@ -152,7 +152,7 @@ class ClassifierTree(object):
 
     """
 
-    def __init__(self, max_depth):
+    def __init__(self, max_depth=5):
         self.tree = {}              # Initialize the tree as an empty dictionary
         self.max_depth = max_depth  # Set the maximum depth of the tree
         self.info_gain = []             # Initialize the information gain list
@@ -171,6 +171,10 @@ class ClassifierTree(object):
         - dict: The learned decision tree.
 
         """
+        # Check type of X and y
+        if not isinstance(X, (list, np.ndarray)) or not isinstance(y, (list, np.ndarray)):
+            raise TypeError("X and y must be lists or NumPy arrays.")  
+        
         y = y.tolist() if isinstance(y, np.ndarray) else y  # Convert y to a Python list
         
         # Convert X and y to NumPy arrays for faster computation

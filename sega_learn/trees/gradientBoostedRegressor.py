@@ -6,6 +6,7 @@ import numpy as np
 import csv
 import ast
 
+# TODO: Refactor this code like other trees
 class GradientBoostedRegressor(object):
     """
     A class to represent a Gradient Boosted Decision Tree Regressor.
@@ -176,28 +177,28 @@ class GradientBoostedRegressor(object):
         }
 
   
-# Example Usage:
-def run():
-    """
-    Runs Gradient Boosted Decision Trees on the given dataset.
-    """
-    # Source file location
-    file_orig = "data/carsDotCom.csv"
+# # Example Usage:
+# def run():
+#     """
+#     Runs Gradient Boosted Decision Trees on the given dataset.
+#     """
+#     # Source file location
+#     file_orig = "data/carsDotCom.csv"
 
-    # Prepare and format data
-    df, file_loc = dp.DataPrep.prepare_data(file_orig, label_col_index=4, cols_to_encode=[1,2,3])
+#     # Prepare and format data
+#     df, file_loc = dp.DataPrep.prepare_data(file_orig, label_col_index=4, cols_to_encode=[1,2,3])
 
-    # Initialize GBDT object
-    gbdtDiab = GradientBoostedRegressor(file_loc, num_trees=10, random_seed=0, max_depth=3)
+#     # Initialize GBDT object
+#     gbdtDiab = GradientBoostedRegressor(file_loc, num_trees=10, random_seed=0, max_depth=3)
 
-    # Train GBDT model
-    gbdtDiab.fit(stats=True)
+#     # Train GBDT model
+#     gbdtDiab.fit(stats=True)
 
-    # Predict target values
-    predictions = gbdtDiab.predict()
+#     # Predict target values
+#     predictions = gbdtDiab.predict()
 
-    # Get stats
-    stats = gbdtDiab.get_stats(predictions)
-    print(stats)
-if __name__ == "__main__":
-    run()
+#     # Get stats
+#     stats = gbdtDiab.get_stats(predictions)
+#     print(stats)
+# if __name__ == "__main__":
+#     run()

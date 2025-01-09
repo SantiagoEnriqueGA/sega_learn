@@ -122,6 +122,9 @@ class RandomForestClassifier(object):
         Args:
             XX (list): The dataset.
         """
+        if not isinstance(XX, list):
+            raise TypeError("XX must be a list")  # Raise an error if XX is not a list
+        
         for i in range(self.num_trees):                                 # For each decision tree
             data_sample, data_label = self._bootstrapping(XX, len(XX))  # Perform bootstrapping, using the entire dataset
             self.bootstraps_datasets.append(data_sample)                # Append the bootstrapped dataset, excluding the class labels

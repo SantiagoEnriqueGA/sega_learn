@@ -53,7 +53,7 @@ class RandomForestRegressor(object):
     XX = list()         # Contains both data features and data labels
     numerical_cols = 0  # Number of numeric attributes (columns)
 
-    def __init__(self, X, y, forest_size=5, random_seed=0, max_depth=10):
+    def __init__(self, X, y, forest_size=10, random_seed=0, max_depth=10):
         """
         Initializes the RandomForest object.
 
@@ -123,6 +123,9 @@ class RandomForestRegressor(object):
         Args:
             XX (list): The dataset.
         """
+        if not isinstance(XX, list):
+            raise TypeError("XX must be a list")  # Raise an error if XX is not a list
+        
         for i in range(self.num_trees):                                 # For each tree
             data_sample, data_label = self._bootstrapping(XX, len(XX))  # Perform bootstrapping on the dataset
             self.bootstraps_datasets.append(data_sample)                # Add the bootstrapped dataset to the list

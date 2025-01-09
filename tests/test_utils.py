@@ -76,6 +76,12 @@ class TestDataPrep(unittest.TestCase):
         self.assertTrue(os.path.exists('test.csv'))
         os.remove('test.csv')     
         
+    def test_df_to_ndarray(self):
+        df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': [5, 6, 7, 8], 'C': [9, 10, 11, 12]})
+        X, y = DataPrep.df_to_ndarray(df, y_col=2)
+        self.assertEqual(X.shape[1], 2)
+        self.assertEqual(y.shape[0], 4)
+        
 class TestVotingRegressor(unittest.TestCase):
     """
     Unit test for the Voting Regressor class.
