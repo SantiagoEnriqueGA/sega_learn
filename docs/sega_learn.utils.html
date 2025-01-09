@@ -71,6 +71,16 @@ td.singlecolumn { width: 100%; }
 <td class="decor title-decor" colspan=2><span class="code">A&nbsp;class&nbsp;for&nbsp;preparing&nbsp;data&nbsp;for&nbsp;machine&nbsp;learning&nbsp;models.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="DataPrep-df_to_ndarray"><strong>df_to_ndarray</strong></a>(df, y_col=0)</dt><dd><span class="code">Converts&nbsp;a&nbsp;DataFrame&nbsp;to&nbsp;a&nbsp;NumPy&nbsp;array.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;DataFrame&nbsp;to&nbsp;be&nbsp;converted.<br>
+-&nbsp;y_col&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;label&nbsp;column.&nbsp;Default&nbsp;is&nbsp;0.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.<br>
+-&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.</span></dd></dl>
+
 <dl><dt><a name="DataPrep-one_hot_encode"><strong>one_hot_encode</strong></a>(df, cols)</dt><dd><span class="code">One-hot&nbsp;encodes&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame.<br>
 Drops&nbsp;the&nbsp;original&nbsp;columns&nbsp;after&nbsp;encoding.<br>
 &nbsp;<br>
@@ -91,7 +101,8 @@ Parameters:<br>
 -&nbsp;write_to_csv&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;write&nbsp;the&nbsp;prepared&nbsp;data&nbsp;to&nbsp;a&nbsp;new&nbsp;CSV&nbsp;file.&nbsp;Default&nbsp;is&nbsp;True.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;prepared&nbsp;DataFrame.</span></dd></dl>
+-&nbsp;df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;prepared&nbsp;DataFrame.<br>
+-&nbsp;prepared_csv_file&nbsp;(str):&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;prepared&nbsp;CSV&nbsp;file.&nbsp;If&nbsp;write_to_csv&nbsp;is&nbsp;False,&nbsp;returns&nbsp;"N/A".</span></dd></dl>
 
 <dl><dt><a name="DataPrep-write_data"><strong>write_data</strong></a>(df, csv_file, print_path=False)</dt><dd><span class="code">Writes&nbsp;the&nbsp;DataFrame&nbsp;to&nbsp;a&nbsp;CSV&nbsp;file.<br>
 &nbsp;<br>

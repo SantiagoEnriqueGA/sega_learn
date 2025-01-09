@@ -49,22 +49,9 @@ td.singlecolumn { width: 100%; }
 <dl>
 <dt class="heading-text"><a href="sega_learn.trees.gradientBoostedRegressor.html#GradientBoostedRegressor">sega_learn.trees.gradientBoostedRegressor.GradientBoostedRegressor</a>
 </dt><dt class="heading-text"><a href="sega_learn.trees.randomForestClassifier.html#RandomForestClassifier">sega_learn.trees.randomForestClassifier.RandomForestClassifier</a>
-</dt><dd>
-<dl>
-<dt class="heading-text"><a href="sega_learn.trees.randomForestClassifier.html#randomForestClassifierWtInfoGain">sega_learn.trees.randomForestClassifier.randomForestClassifierWtInfoGain</a>
-</dt></dl>
-</dd>
-<dt class="heading-text"><a href="sega_learn.trees.randomForestClassifier.html#RunRandomForestClassifier">sega_learn.trees.randomForestClassifier.RunRandomForestClassifier</a>
-</dt><dt class="heading-text"><a href="sega_learn.trees.randomForestClassifierPar.html#RunRandomForestClassifierPar">sega_learn.trees.randomForestClassifierPar.RunRandomForestClassifierPar</a>
 </dt><dt class="heading-text"><a href="sega_learn.trees.randomForestRegressor.html#RandomForestRegressor">sega_learn.trees.randomForestRegressor.RandomForestRegressor</a>
-</dt><dt class="heading-text"><a href="sega_learn.trees.randomForestRegressor.html#RunRandomForestRegressor">sega_learn.trees.randomForestRegressor.RunRandomForestRegressor</a>
 </dt><dt class="heading-text"><a href="sega_learn.trees.treeClassifier.html#ClassifierTree">sega_learn.trees.treeClassifier.ClassifierTree</a>
-</dt><dd>
-<dl>
-<dt class="heading-text"><a href="sega_learn.trees.treeClassifier.html#ClassifierTreeInfoGain">sega_learn.trees.treeClassifier.ClassifierTreeInfoGain</a>
-</dt></dl>
-</dd>
-<dt class="heading-text"><a href="sega_learn.trees.treeClassifier.html#ClassifierTreeUtility">sega_learn.trees.treeClassifier.ClassifierTreeUtility</a>
+</dt><dt class="heading-text"><a href="sega_learn.trees.treeClassifier.html#ClassifierTreeUtility">sega_learn.trees.treeClassifier.ClassifierTreeUtility</a>
 </dt><dt class="heading-text"><a href="sega_learn.trees.treeRegressor.html#RegressorTree">sega_learn.trees.treeRegressor.RegressorTree</a>
 </dt><dt class="heading-text"><a href="sega_learn.trees.treeRegressor.html#RegressorTreeUtility">sega_learn.trees.treeRegressor.RegressorTreeUtility</a>
 </dt></dl>
@@ -76,7 +63,7 @@ td.singlecolumn { width: 100%; }
 <td class="section-title" colspan=3>&nbsp;<br><a name="ClassifierTree">class <strong>ClassifierTree</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#ClassifierTree">ClassifierTree</a>(max_depth)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#ClassifierTree">ClassifierTree</a>(max_depth=5)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;representing&nbsp;a&nbsp;decision&nbsp;tree.<br>
 &nbsp;<br>
@@ -88,7 +75,7 @@ Methods:<br>
 -&nbsp;<a href="#ClassifierTree-classify">classify</a>(record):&nbsp;Classifies&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="ClassifierTree-__init__"><strong>__init__</strong></a>(self, max_depth)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="ClassifierTree-__init__"><strong>__init__</strong></a>(self, max_depth=5)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
 
 <dl><dt><a name="ClassifierTree-classify"><strong>classify</strong></a>(self, record)</dt><dd><span class="code">Classifies&nbsp;a&nbsp;given&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
 &nbsp;<br>
@@ -111,61 +98,6 @@ Returns:<br>
 
 <hr>
 Data descriptors defined here:<br>
-<dl><dt><strong>__dict__</strong></dt>
-<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
-</dl>
-<dl><dt><strong>__weakref__</strong></dt>
-<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
-</dl>
-</td></tr></table> <p>
-<table class="section">
-<tr class="decor title-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><a name="ClassifierTreeInfoGain">class <strong>ClassifierTreeInfoGain</strong></a>(<a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a>)</td></tr>
-    
-<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#ClassifierTreeInfoGain">ClassifierTreeInfoGain</a>(max_depth=None)<br>
-&nbsp;<br>
-A&nbsp;class&nbsp;representing&nbsp;a&nbsp;decision&nbsp;tree.<br>
-&nbsp;<br>
-Parameters:<br>
--&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;decision&nbsp;tree.<br>
-&nbsp;<br>
-Methods:<br>
--&nbsp;<a href="#ClassifierTreeInfoGain-learn">learn</a>(X,&nbsp;y,&nbsp;par_node={},&nbsp;depth=0):&nbsp;Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
--&nbsp;<a href="#ClassifierTreeInfoGain-classify">classify</a>(record):&nbsp;Classifies&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
-<tr><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
-<dd><a href="sega_learn.trees.treeClassifier.html#ClassifierTreeInfoGain">ClassifierTreeInfoGain</a></dd>
-<dd><a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a></dd>
-<dd><a href="builtins.html#object">builtins.object</a></dd>
-</dl>
-<hr>
-Methods defined here:<br>
-<dl><dt><a name="ClassifierTreeInfoGain-__init__"><strong>__init__</strong></a>(self, max_depth=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
-
-<dl><dt><a name="ClassifierTreeInfoGain-learn"><strong>learn</strong></a>(self, X, y, par_node={}, depth=0)</dt><dd><span class="code">Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
-&nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
--&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;labels.<br>
--&nbsp;par_node&nbsp;(dict):&nbsp;The&nbsp;parent&nbsp;node&nbsp;of&nbsp;the&nbsp;current&nbsp;subtree&nbsp;(default:&nbsp;{}).<br>
--&nbsp;depth&nbsp;(int):&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;subtree&nbsp;(default:&nbsp;0).<br>
-&nbsp;<br>
-Returns:<br>
--&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;decision&nbsp;tree.</span></dd></dl>
-
-<hr>
-Methods inherited from <a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a>:<br>
-<dl><dt><a name="ClassifierTreeInfoGain-classify"><strong>classify</strong></a>(self, record)</dt><dd><span class="code">Classifies&nbsp;a&nbsp;given&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
-&nbsp;<br>
-Parameters:<br>
--&nbsp;record:&nbsp;A&nbsp;dictionary&nbsp;representing&nbsp;the&nbsp;record&nbsp;to&nbsp;be&nbsp;classified.<br>
-&nbsp;<br>
-Returns:<br>
--&nbsp;The&nbsp;label&nbsp;assigned&nbsp;to&nbsp;the&nbsp;record&nbsp;based&nbsp;on&nbsp;the&nbsp;decision&nbsp;tree.</span></dd></dl>
-
-<hr>
-Data descriptors inherited from <a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
 </dl>
@@ -306,7 +238,7 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomForestClassifier">class <strong>RandomForestClassifier</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestClassifier">RandomForestClassifier</a>(num_trees,&nbsp;max_depth)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestClassifier">RandomForestClassifier</a>(X,&nbsp;y,&nbsp;max_depth=5,&nbsp;forest_size=5,&nbsp;display=False,&nbsp;random_seed=0)<br>
 &nbsp;<br>
 Random&nbsp;Forest&nbsp;classifier.<br>
 &nbsp;<br>
@@ -326,7 +258,7 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestClassifier-voting">voting</a>(self,&nbsp;X):&nbsp;Performs&nbsp;voting&nbsp;to&nbsp;classify&nbsp;the&nbsp;input&nbsp;records.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RandomForestClassifier-__init__"><strong>__init__</strong></a>(self, num_trees, max_depth)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
+<dl><dt><a name="RandomForestClassifier-__init__"><strong>__init__</strong></a>(self, X, y, max_depth=5, forest_size=5, display=False, random_seed=0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;num_trees&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
@@ -337,7 +269,23 @@ Args:<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;XX&nbsp;(list):&nbsp;The&nbsp;dataset.</span></dd></dl>
 
+<dl><dt><a name="RandomForestClassifier-display_info_gains"><strong>display_info_gains</strong></a>(self)</dt><dd><span class="code">Displays&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.</span></dd></dl>
+
+<dl><dt><a name="RandomForestClassifier-fit"><strong>fit</strong></a>(self, verbose=True)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>&nbsp;and&nbsp;the&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;FileNotFoundError:&nbsp;If&nbsp;the&nbsp;file&nbsp;specified&nbsp;by&nbsp;file_loc&nbsp;does&nbsp;not&nbsp;exist.</span></dd></dl>
+
 <dl><dt><a name="RandomForestClassifier-fitting"><strong>fitting</strong></a>(self)</dt><dd><span class="code">Fits&nbsp;the&nbsp;decision&nbsp;trees&nbsp;to&nbsp;the&nbsp;bootstrapped&nbsp;datasets.</span></dd></dl>
+
+<dl><dt><a name="RandomForestClassifier-plot_info_gains"><strong>plot_info_gains</strong></a>(self)</dt><dd><span class="code">Plots&nbsp;the&nbsp;information&nbsp;gain&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree&nbsp;separately.</span></dd></dl>
+
+<dl><dt><a name="RandomForestClassifier-plot_info_gains_together"><strong>plot_info_gains_together</strong></a>(self)</dt><dd><span class="code">Plots&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;all&nbsp;decision&nbsp;trees&nbsp;together.</span></dd></dl>
+
+<dl><dt><a name="RandomForestClassifier-reset"><strong>reset</strong></a>(self)</dt><dd><span class="code">Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
 
 <dl><dt><a name="RandomForestClassifier-voting"><strong>voting</strong></a>(self, X)</dt><dd><span class="code">Performs&nbsp;voting&nbsp;to&nbsp;classify&nbsp;the&nbsp;input&nbsp;records.<br>
 &nbsp;<br>
@@ -357,15 +305,29 @@ Data descriptors defined here:<br>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
+<dl><dt><strong>X</strong> = []</dl>
+
+<dl><dt><strong>XX</strong> = []</dl>
+
 <dl><dt><strong>bootstraps_datasets</strong> = []</dl>
 
 <dl><dt><strong>bootstraps_labels</strong> = []</dl>
 
 <dl><dt><strong>decision_trees</strong> = []</dl>
 
+<dl><dt><strong>display</strong> = False</dl>
+
+<dl><dt><strong>forest_size</strong> = 10</dl>
+
 <dl><dt><strong>max_depth</strong> = 10</dl>
 
 <dl><dt><strong>num_trees</strong> = 0</dl>
+
+<dl><dt><strong>numerical_cols</strong> = 0</dl>
+
+<dl><dt><strong>random_seed</strong> = 0</dl>
+
+<dl><dt><strong>y</strong> = []</dl>
 
 </td></tr></table> <p>
 <table class="section">
@@ -373,7 +335,7 @@ Data and other attributes defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomForestRegressor">class <strong>RandomForestRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestRegressor">RandomForestRegressor</a>(num_trees,&nbsp;max_depth)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestRegressor">RandomForestRegressor</a>(X,&nbsp;y,&nbsp;forest_size=10,&nbsp;random_seed=0,&nbsp;max_depth=10)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;representing&nbsp;a&nbsp;Random&nbsp;Forest&nbsp;model.<br>
 &nbsp;<br>
@@ -393,10 +355,13 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;user():&nbsp;Returns&nbsp;the&nbsp;user's&nbsp;GTUsername.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RandomForestRegressor-__init__"><strong>__init__</strong></a>(self, num_trees, max_depth)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
+<dl><dt><a name="RandomForestRegressor-__init__"><strong>__init__</strong></a>(self, X, y, forest_size=10, random_seed=0, max_depth=10)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;num_trees&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(ndarray):&nbsp;The&nbsp;input&nbsp;data&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(ndarray):&nbsp;The&nbsp;target&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;forest_size&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;random_seed&nbsp;(int):&nbsp;The&nbsp;random&nbsp;seed&nbsp;for&nbsp;reproducibility.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.</span></dd></dl>
 
 <dl><dt><a name="RandomForestRegressor-bootstrapping"><strong>bootstrapping</strong></a>(self, XX)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;bootstrapped&nbsp;datasets&nbsp;for&nbsp;each&nbsp;tree.<br>
@@ -404,7 +369,13 @@ Args:<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;XX&nbsp;(list):&nbsp;The&nbsp;dataset.</span></dd></dl>
 
+<dl><dt><a name="RandomForestRegressor-fit"><strong>fit</strong></a>(self, verbose=True)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.</span></dd></dl>
+
 <dl><dt><a name="RandomForestRegressor-fitting"><strong>fitting</strong></a>(self)</dt><dd><span class="code">Fits&nbsp;the&nbsp;decision&nbsp;trees&nbsp;to&nbsp;the&nbsp;bootstrapped&nbsp;datasets.</span></dd></dl>
+
+<dl><dt><a name="RandomForestRegressor-get_stats"><strong>get_stats</strong></a>(self, verbose=True)</dt><dd><span class="code">Returns&nbsp;the&nbsp;evaluation&nbsp;metrics.</span></dd></dl>
+
+<dl><dt><a name="RandomForestRegressor-reset"><strong>reset</strong></a>(self)</dt><dd><span class="code">Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
 
 <dl><dt><a name="RandomForestRegressor-voting"><strong>voting</strong></a>(self, X)</dt><dd><span class="code">Performs&nbsp;voting&nbsp;to&nbsp;predict&nbsp;the&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;records.<br>
 &nbsp;<br>
@@ -424,15 +395,29 @@ Data descriptors defined here:<br>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
+<dl><dt><strong>X</strong> = []</dl>
+
+<dl><dt><strong>XX</strong> = []</dl>
+
 <dl><dt><strong>bootstraps_datasets</strong> = []</dl>
 
 <dl><dt><strong>bootstraps_labels</strong> = []</dl>
 
 <dl><dt><strong>decision_trees</strong> = []</dl>
 
+<dl><dt><strong>display</strong> = False</dl>
+
+<dl><dt><strong>forest_size</strong> = 10</dl>
+
 <dl><dt><strong>max_depth</strong> = 10</dl>
 
 <dl><dt><strong>num_trees</strong> = 0</dl>
+
+<dl><dt><strong>numerical_cols</strong> = 0</dl>
+
+<dl><dt><strong>random_seed</strong> = 0</dl>
+
+<dl><dt><strong>y</strong> = []</dl>
 
 </td></tr></table> <p>
 <table class="section">
@@ -440,7 +425,7 @@ Data and other attributes defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="RegressorTree">class <strong>RegressorTree</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RegressorTree">RegressorTree</a>(max_depth)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RegressorTree">RegressorTree</a>(max_depth=5)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;representing&nbsp;a&nbsp;decision&nbsp;tree&nbsp;for&nbsp;regression.<br>
 &nbsp;<br>
@@ -452,7 +437,7 @@ Methods:<br>
 -&nbsp;classify(record):&nbsp;Predicts&nbsp;the&nbsp;target&nbsp;value&nbsp;for&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RegressorTree-__init__"><strong>__init__</strong></a>(self, max_depth)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="RegressorTree-__init__"><strong>__init__</strong></a>(self, max_depth=5)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
 
 <dl><dt><a name="RegressorTree-learn"><strong>learn</strong></a>(self, X, y, par_node={}, depth=0)</dt><dd><span class="code">Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
 &nbsp;<br>
@@ -528,357 +513,11 @@ Data descriptors defined here:<br>
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
 </dl>
-</td></tr></table> <p>
-<table class="section">
-<tr class="decor title-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><a name="RunRandomForestClassifier">class <strong>RunRandomForestClassifier</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
-<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RunRandomForestClassifier">RunRandomForestClassifier</a>(file_loc,&nbsp;display=False,&nbsp;forest_size=5,&nbsp;random_seed=0,&nbsp;max_depth=10)<br>
-&nbsp;<br>
-A&nbsp;class&nbsp;that&nbsp;represents&nbsp;a&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Attributes:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;random_seed&nbsp;(int):&nbsp;The&nbsp;random&nbsp;seed&nbsp;for&nbsp;reproducibility.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;forest_size&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;display&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;display&nbsp;additional&nbsp;information&nbsp;about&nbsp;info&nbsp;gain.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;data&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;data&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;XX&nbsp;(list):&nbsp;The&nbsp;list&nbsp;that&nbsp;contains&nbsp;both&nbsp;data&nbsp;features&nbsp;and&nbsp;data&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;numerical_cols&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;numeric&nbsp;attributes&nbsp;(columns).<br>
-&nbsp;<br>
-Methods:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RunRandomForestClassifier-__init__">__init__</a>(self,&nbsp;file_loc,&nbsp;display=False,&nbsp;forest_size=5,&nbsp;random_seed=0,&nbsp;max_depth=10):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RunRandomForestClassifier-reset">reset</a>(self):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RunRandomForestClassifier-run">run</a>(self):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Example:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;randomForest,&nbsp;accuracy&nbsp;=&nbsp;runRandomForest('data.csv',&nbsp;display=True,&nbsp;forest_size=10,&nbsp;random_seed=42)<br>&nbsp;</span></td></tr>
-<tr><td>&nbsp;</td>
-<td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RunRandomForestClassifier-__init__"><strong>__init__</strong></a>(self, file_loc, display=False, forest_size=5, random_seed=0, max_depth=10)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;file_loc&nbsp;(str):&nbsp;The&nbsp;file&nbsp;location&nbsp;of&nbsp;the&nbsp;dataset.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;display&nbsp;(bool,&nbsp;optional):&nbsp;Whether&nbsp;to&nbsp;display&nbsp;additional&nbsp;information&nbsp;about&nbsp;info&nbsp;gain.&nbsp;Defaults&nbsp;to&nbsp;False.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;forest_size&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;number&nbsp;of&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.&nbsp;Defaults&nbsp;to&nbsp;5.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;random_seed&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;random&nbsp;seed&nbsp;for&nbsp;reproducibility.&nbsp;Defaults&nbsp;to&nbsp;0.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.&nbsp;Defaults&nbsp;to&nbsp;10.</span></dd></dl>
-
-<dl><dt><a name="RunRandomForestClassifier-reset"><strong>reset</strong></a>(self)</dt><dd><span class="code">Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
-
-<dl><dt><a name="RunRandomForestClassifier-run"><strong>run</strong></a>(self)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>&nbsp;and&nbsp;the&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Raises:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;FileNotFoundError:&nbsp;If&nbsp;the&nbsp;file&nbsp;specified&nbsp;by&nbsp;file_loc&nbsp;does&nbsp;not&nbsp;exist.<br>
-&nbsp;<br>
-Notes:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;file&nbsp;should&nbsp;have&nbsp;the&nbsp;following&nbsp;format:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Each&nbsp;row&nbsp;represents&nbsp;a&nbsp;data&nbsp;point&nbsp;(record).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;last&nbsp;column&nbsp;represents&nbsp;the&nbsp;class&nbsp;label.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;remaining&nbsp;columns&nbsp;represent&nbsp;the&nbsp;features&nbsp;(attributes).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Features&nbsp;are&nbsp;numerical&nbsp;and&nbsp;class&nbsp;labels&nbsp;are&nbsp;binary&nbsp;(0&nbsp;or&nbsp;1).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;random&nbsp;seed&nbsp;is&nbsp;used&nbsp;to&nbsp;initialize&nbsp;the&nbsp;random&nbsp;number&nbsp;generator&nbsp;for&nbsp;reproducibility.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>&nbsp;contains&nbsp;the&nbsp;trained&nbsp;random&nbsp;forest&nbsp;model.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;accuracy&nbsp;is&nbsp;calculated&nbsp;as&nbsp;the&nbsp;ratio&nbsp;of&nbsp;correctly&nbsp;predicted&nbsp;labels&nbsp;to&nbsp;the&nbsp;total&nbsp;number&nbsp;of&nbsp;labels.</span></dd></dl>
-
-<hr>
-Data descriptors defined here:<br>
-<dl><dt><strong>__dict__</strong></dt>
-<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
-</dl>
-<dl><dt><strong>__weakref__</strong></dt>
-<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
-</dl>
-<hr>
-Data and other attributes defined here:<br>
-<dl><dt><strong>X</strong> = []</dl>
-
-<dl><dt><strong>XX</strong> = []</dl>
-
-<dl><dt><strong>display</strong> = False</dl>
-
-<dl><dt><strong>forest_size</strong> = 10</dl>
-
-<dl><dt><strong>max_depth</strong> = 10</dl>
-
-<dl><dt><strong>numerical_cols</strong> = 0</dl>
-
-<dl><dt><strong>random_seed</strong> = 0</dl>
-
-<dl><dt><strong>y</strong> = []</dl>
-
-</td></tr></table> <p>
-<table class="section">
-<tr class="decor title-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><a name="RunRandomForestClassifierPar">class <strong>RunRandomForestClassifierPar</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
-<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RunRandomForestClassifierPar">RunRandomForestClassifierPar</a>(file_loc,&nbsp;display=False,&nbsp;forest_size=5,&nbsp;random_seed=0,&nbsp;max_depth=10)<br>
-&nbsp;<br>
-A&nbsp;class&nbsp;that&nbsp;represents&nbsp;a&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Attributes:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;random_seed&nbsp;(int):&nbsp;The&nbsp;random&nbsp;seed&nbsp;for&nbsp;reproducibility.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;forest_size&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;display&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;display&nbsp;additional&nbsp;information&nbsp;about&nbsp;info&nbsp;gain.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;data&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;data&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;XX&nbsp;(list):&nbsp;The&nbsp;list&nbsp;that&nbsp;contains&nbsp;both&nbsp;data&nbsp;features&nbsp;and&nbsp;data&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;numerical_cols&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;numeric&nbsp;attributes&nbsp;(columns).<br>
-&nbsp;<br>
-Methods:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RunRandomForestClassifierPar-__init__">__init__</a>(self,&nbsp;file_loc,&nbsp;display=False,&nbsp;forest_size=5,&nbsp;random_seed=0,&nbsp;max_depth=10):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RunRandomForestClassifierPar-reset">reset</a>(self):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RunRandomForestClassifierPar-run">run</a>(self):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Example:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;randomForest,&nbsp;accuracy&nbsp;=&nbsp;runRandomForest('data.csv',&nbsp;display=True,&nbsp;forest_size=10,&nbsp;random_seed=42)<br>&nbsp;</span></td></tr>
-<tr><td>&nbsp;</td>
-<td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RunRandomForestClassifierPar-__init__"><strong>__init__</strong></a>(self, file_loc, display=False, forest_size=5, random_seed=0, max_depth=10)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;file_loc&nbsp;(str):&nbsp;The&nbsp;file&nbsp;location&nbsp;of&nbsp;the&nbsp;dataset.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;display&nbsp;(bool,&nbsp;optional):&nbsp;Whether&nbsp;to&nbsp;display&nbsp;additional&nbsp;information&nbsp;about&nbsp;info&nbsp;gain.&nbsp;Defaults&nbsp;to&nbsp;False.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;forest_size&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;number&nbsp;of&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.&nbsp;Defaults&nbsp;to&nbsp;5.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;random_seed&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;random&nbsp;seed&nbsp;for&nbsp;reproducibility.&nbsp;Defaults&nbsp;to&nbsp;0.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.&nbsp;Defaults&nbsp;to&nbsp;10.</span></dd></dl>
-
-<dl><dt><a name="RunRandomForestClassifierPar-reset"><strong>reset</strong></a>(self)</dt><dd><span class="code">Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
-
-<dl><dt><a name="RunRandomForestClassifierPar-run"><strong>run</strong></a>(self)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>&nbsp;and&nbsp;the&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Raises:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;FileNotFoundError:&nbsp;If&nbsp;the&nbsp;file&nbsp;specified&nbsp;by&nbsp;file_loc&nbsp;does&nbsp;not&nbsp;exist.<br>
-&nbsp;<br>
-Notes:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;file&nbsp;should&nbsp;have&nbsp;the&nbsp;following&nbsp;format:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Each&nbsp;row&nbsp;represents&nbsp;a&nbsp;data&nbsp;point&nbsp;(record).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;last&nbsp;column&nbsp;represents&nbsp;the&nbsp;class&nbsp;label.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;remaining&nbsp;columns&nbsp;represent&nbsp;the&nbsp;features&nbsp;(attributes).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Features&nbsp;are&nbsp;numerical&nbsp;and&nbsp;class&nbsp;labels&nbsp;are&nbsp;binary&nbsp;(0&nbsp;or&nbsp;1).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;random&nbsp;seed&nbsp;is&nbsp;used&nbsp;to&nbsp;initialize&nbsp;the&nbsp;random&nbsp;number&nbsp;generator&nbsp;for&nbsp;reproducibility.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>&nbsp;contains&nbsp;the&nbsp;trained&nbsp;random&nbsp;forest&nbsp;model.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;accuracy&nbsp;is&nbsp;calculated&nbsp;as&nbsp;the&nbsp;ratio&nbsp;of&nbsp;correctly&nbsp;predicted&nbsp;labels&nbsp;to&nbsp;the&nbsp;total&nbsp;number&nbsp;of&nbsp;labels.</span></dd></dl>
-
-<hr>
-Data descriptors defined here:<br>
-<dl><dt><strong>__dict__</strong></dt>
-<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
-</dl>
-<dl><dt><strong>__weakref__</strong></dt>
-<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
-</dl>
-<hr>
-Data and other attributes defined here:<br>
-<dl><dt><strong>X</strong> = []</dl>
-
-<dl><dt><strong>XX</strong> = []</dl>
-
-<dl><dt><strong>display</strong> = False</dl>
-
-<dl><dt><strong>forest_size</strong> = 10</dl>
-
-<dl><dt><strong>max_depth</strong> = 10</dl>
-
-<dl><dt><strong>numerical_cols</strong> = 0</dl>
-
-<dl><dt><strong>random_seed</strong> = 0</dl>
-
-<dl><dt><strong>y</strong> = []</dl>
-
-</td></tr></table> <p>
-<table class="section">
-<tr class="decor title-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><a name="RunRandomForestRegressor">class <strong>RunRandomForestRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
-<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RunRandomForestRegressor">RunRandomForestRegressor</a>(file_loc,&nbsp;forest_size=5,&nbsp;random_seed=0,&nbsp;max_depth=10)<br>
-&nbsp;<br>
-A&nbsp;class&nbsp;that&nbsp;represents&nbsp;a&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Attributes:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;random_seed&nbsp;(int):&nbsp;The&nbsp;random&nbsp;seed&nbsp;for&nbsp;reproducibility.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;forest_size&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;display&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;display&nbsp;additional&nbsp;information&nbsp;about&nbsp;info&nbsp;gain.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;data&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;data&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;XX&nbsp;(list):&nbsp;The&nbsp;list&nbsp;that&nbsp;contains&nbsp;both&nbsp;data&nbsp;features&nbsp;and&nbsp;data&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;numerical_cols&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;numeric&nbsp;attributes&nbsp;(columns).<br>
-&nbsp;<br>
-Methods:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RunRandomForestRegressor-__init__">__init__</a>(self,&nbsp;file_loc,&nbsp;display=False,&nbsp;forest_size=5,&nbsp;random_seed=0,&nbsp;max_depth=10):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RunRandomForestRegressor-reset">reset</a>(self):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RunRandomForestRegressor-run">run</a>(self):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Example:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;randomForest,&nbsp;accuracy&nbsp;=&nbsp;runRandomForest('data.csv',&nbsp;display=True,&nbsp;forest_size=10,&nbsp;random_seed=42)<br>&nbsp;</span></td></tr>
-<tr><td>&nbsp;</td>
-<td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RunRandomForestRegressor-__init__"><strong>__init__</strong></a>(self, file_loc, forest_size=5, random_seed=0, max_depth=10)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;file_loc&nbsp;(str):&nbsp;The&nbsp;file&nbsp;location&nbsp;of&nbsp;the&nbsp;dataset.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;display&nbsp;(bool,&nbsp;optional):&nbsp;Whether&nbsp;to&nbsp;display&nbsp;additional&nbsp;information&nbsp;about&nbsp;info&nbsp;gain.&nbsp;Defaults&nbsp;to&nbsp;False.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;forest_size&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;number&nbsp;of&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.&nbsp;Defaults&nbsp;to&nbsp;5.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;random_seed&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;random&nbsp;seed&nbsp;for&nbsp;reproducibility.&nbsp;Defaults&nbsp;to&nbsp;0.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.&nbsp;Defaults&nbsp;to&nbsp;10.</span></dd></dl>
-
-<dl><dt><a name="RunRandomForestRegressor-reset"><strong>reset</strong></a>(self)</dt><dd><span class="code">Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
-
-<dl><dt><a name="RunRandomForestRegressor-run"><strong>run</strong></a>(self)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>&nbsp;and&nbsp;the&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Raises:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;FileNotFoundError:&nbsp;If&nbsp;the&nbsp;file&nbsp;specified&nbsp;by&nbsp;file_loc&nbsp;does&nbsp;not&nbsp;exist.<br>
-&nbsp;<br>
-Notes:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;file&nbsp;should&nbsp;have&nbsp;the&nbsp;following&nbsp;format:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Each&nbsp;row&nbsp;represents&nbsp;a&nbsp;data&nbsp;point&nbsp;(record).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;last&nbsp;column&nbsp;represents&nbsp;the&nbsp;class&nbsp;label.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;remaining&nbsp;columns&nbsp;represent&nbsp;the&nbsp;features&nbsp;(attributes).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Features&nbsp;are&nbsp;numerical&nbsp;and&nbsp;class&nbsp;labels&nbsp;are&nbsp;binary&nbsp;(0&nbsp;or&nbsp;1).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;random&nbsp;seed&nbsp;is&nbsp;used&nbsp;to&nbsp;initialize&nbsp;the&nbsp;random&nbsp;number&nbsp;generator&nbsp;for&nbsp;reproducibility.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>&nbsp;contains&nbsp;the&nbsp;trained&nbsp;random&nbsp;forest&nbsp;model.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;The&nbsp;accuracy&nbsp;is&nbsp;calculated&nbsp;as&nbsp;the&nbsp;ratio&nbsp;of&nbsp;correctly&nbsp;predicted&nbsp;labels&nbsp;to&nbsp;the&nbsp;total&nbsp;number&nbsp;of&nbsp;labels.</span></dd></dl>
-
-<hr>
-Data descriptors defined here:<br>
-<dl><dt><strong>__dict__</strong></dt>
-<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
-</dl>
-<dl><dt><strong>__weakref__</strong></dt>
-<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
-</dl>
-<hr>
-Data and other attributes defined here:<br>
-<dl><dt><strong>X</strong> = []</dl>
-
-<dl><dt><strong>XX</strong> = []</dl>
-
-<dl><dt><strong>display</strong> = False</dl>
-
-<dl><dt><strong>forest_size</strong> = 10</dl>
-
-<dl><dt><strong>max_depth</strong> = 10</dl>
-
-<dl><dt><strong>numerical_cols</strong> = 0</dl>
-
-<dl><dt><strong>random_seed</strong> = 0</dl>
-
-<dl><dt><strong>y</strong> = []</dl>
-
-</td></tr></table> <p>
-<table class="section">
-<tr class="decor title-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><a name="randomForestClassifierWtInfoGain">class <strong>randomForestClassifierWtInfoGain</strong></a>(<a href="sega_learn.trees.randomForestClassifier.html#RandomForestClassifier">RandomForestClassifier</a>)</td></tr>
-    
-<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#randomForestClassifierWtInfoGain">randomForestClassifierWtInfoGain</a>(num_trees,&nbsp;max_depth)<br>
-&nbsp;<br>
-A&nbsp;random&nbsp;forest&nbsp;classifier&nbsp;that&nbsp;uses&nbsp;information&nbsp;gain&nbsp;as&nbsp;the&nbsp;criterion&nbsp;for&nbsp;splitting.<br>
-&nbsp;<br>
-Parameters:<br>
--&nbsp;num_trees&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;<br>
-Attributes:<br>
--&nbsp;info_gains&nbsp;(list):&nbsp;A&nbsp;list&nbsp;to&nbsp;store&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.<br>
--&nbsp;decision_trees&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;<br>
-Methods:<br>
--&nbsp;<a href="#randomForestClassifierWtInfoGain-fitting">fitting</a>():&nbsp;Fits&nbsp;the&nbsp;decision&nbsp;trees&nbsp;to&nbsp;the&nbsp;bootstrapped&nbsp;datasets.<br>
--&nbsp;<a href="#randomForestClassifierWtInfoGain-display_info_gains">display_info_gains</a>():&nbsp;Displays&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.<br>
--&nbsp;<a href="#randomForestClassifierWtInfoGain-plot_info_gains_together">plot_info_gains_together</a>():&nbsp;Plots&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;all&nbsp;decision&nbsp;trees&nbsp;together.<br>
--&nbsp;<a href="#randomForestClassifierWtInfoGain-plot_info_gains">plot_info_gains</a>():&nbsp;Plots&nbsp;the&nbsp;information&nbsp;gain&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree&nbsp;separately.<br>&nbsp;</span></td></tr>
-<tr><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
-<dd><a href="sega_learn.trees.randomForestClassifier.html#randomForestClassifierWtInfoGain">randomForestClassifierWtInfoGain</a></dd>
-<dd><a href="sega_learn.trees.randomForestClassifier.html#RandomForestClassifier">RandomForestClassifier</a></dd>
-<dd><a href="builtins.html#object">builtins.object</a></dd>
-</dl>
-<hr>
-Methods defined here:<br>
-<dl><dt><a name="randomForestClassifierWtInfoGain-__init__"><strong>__init__</strong></a>(self, num_trees, max_depth)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;num_trees&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.</span></dd></dl>
-
-<dl><dt><a name="randomForestClassifierWtInfoGain-display_info_gains"><strong>display_info_gains</strong></a>(self)</dt><dd><span class="code">Displays&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.</span></dd></dl>
-
-<dl><dt><a name="randomForestClassifierWtInfoGain-fitting"><strong>fitting</strong></a>(self)</dt><dd><span class="code">Fits&nbsp;the&nbsp;decision&nbsp;trees&nbsp;to&nbsp;the&nbsp;bootstrapped&nbsp;datasets.</span></dd></dl>
-
-<dl><dt><a name="randomForestClassifierWtInfoGain-plot_info_gains"><strong>plot_info_gains</strong></a>(self)</dt><dd><span class="code">Plots&nbsp;the&nbsp;information&nbsp;gain&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree&nbsp;separately.</span></dd></dl>
-
-<dl><dt><a name="randomForestClassifierWtInfoGain-plot_info_gains_together"><strong>plot_info_gains_together</strong></a>(self)</dt><dd><span class="code">Plots&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;all&nbsp;decision&nbsp;trees&nbsp;together.</span></dd></dl>
-
-<hr>
-Methods inherited from <a href="sega_learn.trees.randomForestClassifier.html#RandomForestClassifier">RandomForestClassifier</a>:<br>
-<dl><dt><a name="randomForestClassifierWtInfoGain-bootstrapping"><strong>bootstrapping</strong></a>(self, XX)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;bootstrapped&nbsp;datasets&nbsp;for&nbsp;each&nbsp;tree.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;XX&nbsp;(list):&nbsp;The&nbsp;dataset.</span></dd></dl>
-
-<dl><dt><a name="randomForestClassifierWtInfoGain-voting"><strong>voting</strong></a>(self, X)</dt><dd><span class="code">Performs&nbsp;voting&nbsp;to&nbsp;classify&nbsp;the&nbsp;input&nbsp;records.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(list):&nbsp;The&nbsp;input&nbsp;records.<br>
-&nbsp;<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;list:&nbsp;The&nbsp;predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;records.</span></dd></dl>
-
-<hr>
-Data descriptors inherited from <a href="sega_learn.trees.randomForestClassifier.html#RandomForestClassifier">RandomForestClassifier</a>:<br>
-<dl><dt><strong>__dict__</strong></dt>
-<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
-</dl>
-<dl><dt><strong>__weakref__</strong></dt>
-<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
-</dl>
-<hr>
-Data and other attributes inherited from <a href="sega_learn.trees.randomForestClassifier.html#RandomForestClassifier">RandomForestClassifier</a>:<br>
-<dl><dt><strong>bootstraps_datasets</strong> = []</dl>
-
-<dl><dt><strong>bootstraps_labels</strong> = []</dl>
-
-<dl><dt><strong>decision_trees</strong> = []</dl>
-
-<dl><dt><strong>max_depth</strong> = 10</dl>
-
-<dl><dt><strong>num_trees</strong> = 0</dl>
-
 </td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor data-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
     
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>__all__</strong> = ['ClassifierTreeUtility', 'ClassifierTree', 'ClassifierTreeInfoGain', 'RegressorTreeUtility', 'RegressorTree', 'RandomForestClassifier', 'randomForestClassifierWtInfoGain', 'RunRandomForestClassifier', 'RunRandomForestClassifierPar', 'RandomForestRegressor', 'RunRandomForestRegressor', 'GradientBoostedRegressor']</td></tr></table>
+<td class="singlecolumn"><strong>__all__</strong> = ['ClassifierTreeUtility', 'ClassifierTree', 'RegressorTreeUtility', 'RegressorTree', 'RandomForestClassifier', 'RandomForestRegressor', 'GradientBoostedRegressor']</td></tr></table>
 </body></html>

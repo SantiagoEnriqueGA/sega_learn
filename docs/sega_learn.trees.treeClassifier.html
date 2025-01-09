@@ -59,12 +59,7 @@ td.singlecolumn { width: 100%; }
 </dt><dd>
 <dl>
 <dt class="heading-text"><a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a>
-</dt><dd>
-<dl>
-<dt class="heading-text"><a href="sega_learn.trees.treeClassifier.html#ClassifierTreeInfoGain">ClassifierTreeInfoGain</a>
-</dt></dl>
-</dd>
-<dt class="heading-text"><a href="sega_learn.trees.treeClassifier.html#ClassifierTreeUtility">ClassifierTreeUtility</a>
+</dt><dt class="heading-text"><a href="sega_learn.trees.treeClassifier.html#ClassifierTreeUtility">ClassifierTreeUtility</a>
 </dt></dl>
 </dd>
 </dl>
@@ -74,7 +69,7 @@ td.singlecolumn { width: 100%; }
 <td class="section-title" colspan=3>&nbsp;<br><a name="ClassifierTree">class <strong>ClassifierTree</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#ClassifierTree">ClassifierTree</a>(max_depth)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#ClassifierTree">ClassifierTree</a>(max_depth=5)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;representing&nbsp;a&nbsp;decision&nbsp;tree.<br>
 &nbsp;<br>
@@ -86,7 +81,7 @@ Methods:<br>
 -&nbsp;<a href="#ClassifierTree-classify">classify</a>(record):&nbsp;Classifies&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="ClassifierTree-__init__"><strong>__init__</strong></a>(self, max_depth)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="ClassifierTree-__init__"><strong>__init__</strong></a>(self, max_depth=5)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
 
 <dl><dt><a name="ClassifierTree-classify"><strong>classify</strong></a>(self, record)</dt><dd><span class="code">Classifies&nbsp;a&nbsp;given&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
 &nbsp;<br>
@@ -109,61 +104,6 @@ Returns:<br>
 
 <hr>
 Data descriptors defined here:<br>
-<dl><dt><strong>__dict__</strong></dt>
-<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
-</dl>
-<dl><dt><strong>__weakref__</strong></dt>
-<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
-</dl>
-</td></tr></table> <p>
-<table class="section">
-<tr class="decor title-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><a name="ClassifierTreeInfoGain">class <strong>ClassifierTreeInfoGain</strong></a>(<a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a>)</td></tr>
-    
-<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#ClassifierTreeInfoGain">ClassifierTreeInfoGain</a>(max_depth=None)<br>
-&nbsp;<br>
-A&nbsp;class&nbsp;representing&nbsp;a&nbsp;decision&nbsp;tree.<br>
-&nbsp;<br>
-Parameters:<br>
--&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;decision&nbsp;tree.<br>
-&nbsp;<br>
-Methods:<br>
--&nbsp;<a href="#ClassifierTreeInfoGain-learn">learn</a>(X,&nbsp;y,&nbsp;par_node={},&nbsp;depth=0):&nbsp;Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
--&nbsp;<a href="#ClassifierTreeInfoGain-classify">classify</a>(record):&nbsp;Classifies&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
-<tr><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
-<dd><a href="sega_learn.trees.treeClassifier.html#ClassifierTreeInfoGain">ClassifierTreeInfoGain</a></dd>
-<dd><a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a></dd>
-<dd><a href="builtins.html#object">builtins.object</a></dd>
-</dl>
-<hr>
-Methods defined here:<br>
-<dl><dt><a name="ClassifierTreeInfoGain-__init__"><strong>__init__</strong></a>(self, max_depth=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
-
-<dl><dt><a name="ClassifierTreeInfoGain-learn"><strong>learn</strong></a>(self, X, y, par_node={}, depth=0)</dt><dd><span class="code">Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
-&nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
--&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;labels.<br>
--&nbsp;par_node&nbsp;(dict):&nbsp;The&nbsp;parent&nbsp;node&nbsp;of&nbsp;the&nbsp;current&nbsp;subtree&nbsp;(default:&nbsp;{}).<br>
--&nbsp;depth&nbsp;(int):&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;subtree&nbsp;(default:&nbsp;0).<br>
-&nbsp;<br>
-Returns:<br>
--&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;decision&nbsp;tree.</span></dd></dl>
-
-<hr>
-Methods inherited from <a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a>:<br>
-<dl><dt><a name="ClassifierTreeInfoGain-classify"><strong>classify</strong></a>(self, record)</dt><dd><span class="code">Classifies&nbsp;a&nbsp;given&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
-&nbsp;<br>
-Parameters:<br>
--&nbsp;record:&nbsp;A&nbsp;dictionary&nbsp;representing&nbsp;the&nbsp;record&nbsp;to&nbsp;be&nbsp;classified.<br>
-&nbsp;<br>
-Returns:<br>
--&nbsp;The&nbsp;label&nbsp;assigned&nbsp;to&nbsp;the&nbsp;record&nbsp;based&nbsp;on&nbsp;the&nbsp;decision&nbsp;tree.</span></dd></dl>
-
-<hr>
-Data descriptors inherited from <a href="sega_learn.trees.treeClassifier.html#ClassifierTree">ClassifierTree</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
 </dl>

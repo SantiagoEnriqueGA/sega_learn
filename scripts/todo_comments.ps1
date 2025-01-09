@@ -24,7 +24,6 @@ $todoComments | Tee-Object -FilePath "scripts/out/todo_comments.txt" | Format-Ta
 # Add new TODOs here:
 $otherTodos = @"
 Other:
-Trees: refactor "RunRandom..." classes into parent classes
 "@
 
 Add-Content -Path "scripts/out/todo_comments.txt" -Value $otherTodos
