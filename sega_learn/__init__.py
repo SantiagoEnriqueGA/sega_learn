@@ -24,15 +24,10 @@ from .linear_models import (
 from .trees import (
     ClassifierTreeUtility,
     ClassifierTree,
-    ClassifierTreeInfoGain,
     RegressorTreeUtility,
     RegressorTree,
     RandomForestClassifier,
-    randomForestClassifierWtInfoGain,
-    RunRandomForestClassifier,
-    RunRandomForestClassifierPar,
     RandomForestRegressor,
-    RunRandomForestRegressor,
     GradientBoostedRegressor
 )
 
@@ -50,8 +45,6 @@ from .neural_networks import (
     Activation,
 )
     
-    
-
 __all__ = [
     # Utils
     "PolynomialTransform",
@@ -75,15 +68,10 @@ __all__ = [
     # Trees
     "ClassifierTreeUtility",
     "ClassifierTree",
-    "ClassifierTreeInfoGain",
     "RegressorTreeUtility",
     "RegressorTree",
     "RandomForestClassifier",
-    "randomForestClassifierWtInfoGain",
-    "RunRandomForestClassifier",
-    "RunRandomForestClassifierPar",
     "RandomForestRegressor",
-    "RunRandomForestRegressor",
     "GradientBoostedRegressor",
     
     # Neural Networks

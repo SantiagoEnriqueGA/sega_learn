@@ -155,6 +155,7 @@ class ClassifierTree(object):
     def __init__(self, max_depth):
         self.tree = {}              # Initialize the tree as an empty dictionary
         self.max_depth = max_depth  # Set the maximum depth of the tree
+        self.info_gain = []             # Initialize the information gain list
 
     def learn(self, X, y, par_node={}, depth=0):
         """
@@ -190,6 +191,8 @@ class ClassifierTree(object):
         X_right = best_split['X_right']
         y_left = best_split['y_left']
         y_right = best_split['y_right']
+        
+        self.info_gain.append(best_split['info_gain'])  # Append the information gain to the list
 
         if best_split['info_gain'] == 0:                        # If there is no further information gain
             return {'label': max(set(y), key=list(y).count)}    # Return the most common label
@@ -225,67 +228,3 @@ class ClassifierTree(object):
         
         return tree['label']    # Return the label assigned to the record
     
-
-class ClassifierTreeInfoGain(ClassifierTree):
-    """
-    A class representing a decision tree.
-
-    Parameters:
-    - max_depth (int): The maximum depth of the decision tree.
-
-    Methods:
-    - learn(X, y, par_node={}, depth=0): Builds the decision tree based on the given training data.
-    - classify(record): Classifies a record using the decision tree.
-
-    """
-    
-    def __init__(self, max_depth=None):
-        super().__init__(max_depth)     # Initialize the DecisionTree class
-        self.info_gain = []             # Initialize the information gain list
-    
-    def learn(self, X, y, par_node={}, depth=0):
-        """
-        Builds the decision tree based on the given training data.
-
-        Parameters:
-        - X (array-like): The input features.
-        - y (array-like): The target labels.
-        - par_node (dict): The parent node of the current subtree (default: {}).
-        - depth (int): The current depth of the subtree (default: 0).
-
-        Returns:
-        - dict: The learned decision tree.
-
-        """
-        y = y.tolist() if isinstance(y, np.ndarray) else y  # Convert y to a Python list
-        
-        # Convert X and y to NumPy arrays for faster computation
-        X = np.array(X)
-        y = np.array(y, dtype=int)
-        
-        if len(set(y)) == 1:        # If the node is pure (all labels are the same)
-            return {'label': y[0]}  # Return the label of the node
-
-        if depth >= self.max_depth:                     # If maximum depth is reached
-            return {'label': np.argmax(np.bincount(y))} # Return the most common label
-
-        # Get the best split using utility functions
-        best_split = ClassifierTreeUtility().best_split(X, y)
-        split_attribute = best_split['split_attribute']
-        split_val = best_split['split_val']
-        X_left = best_split['X_left']
-        X_right = best_split['X_right']
-        y_left = best_split['y_left']
-        y_right = best_split['y_right']
-
-        self.info_gain.append(best_split['info_gain'])  # Append the information gain to the list
-
-        if best_split['info_gain'] == 0:                        # If there is no further information gain
-            return {'label': max(set(y), key=list(y).count)}    # Return the most common label
-
-        # Recursively build the left and right subtrees
-        par_node = {'split_attribute': split_attribute, 'split_val': split_val} # Set the split attribute and value
-        par_node['left'] = self.learn(X_left, y_left, depth=depth + 1)          # Build the left subtree
-        par_node['right'] = self.learn(X_right, y_right, depth=depth + 1)       # Build the right subtree
-
-        return par_node

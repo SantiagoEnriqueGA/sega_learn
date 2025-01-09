@@ -51,6 +51,7 @@ class DataPrep(object):
 
         Returns:
         - df (pandas.DataFrame): The prepared DataFrame.
+        - prepared_csv_file (str): The path of the prepared CSV file. If write_to_csv is False, returns "N/A".
         """
         df = pd.read_csv(csv_file)              # Load the CSV file
         
@@ -66,3 +67,19 @@ class DataPrep(object):
 
         return df, "N/A"    # Else, return the prepared DataFrame and "N/A"
         
+    def df_to_ndarray(df, y_col=0):
+        """
+        Converts a DataFrame to a NumPy array.
+        
+        Parameters:
+        - df (pandas.DataFrame): The DataFrame to be converted.
+        - y_col (int): The index of the label column. Default is 0.
+        
+        Returns:
+        - X (numpy.ndarray): The feature columns as a NumPy array.
+        - y (numpy.ndarray): The label column as a NumPy array.
+        """
+        y = df.iloc[:, y_col].values            # Get the label column as a NumPy array
+        X = df.drop(df.columns[y_col], axis=1).values  # Get the feature columns as a NumPy array
+        
+        return X, y

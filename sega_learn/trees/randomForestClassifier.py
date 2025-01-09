@@ -16,7 +16,7 @@ from math import log, floor, ceil
 import random
 import matplotlib.pyplot as plt
 
-from .treeClassifier import ClassifierTreeUtility, ClassifierTree, ClassifierTreeInfoGain
+from .treeClassifier import ClassifierTreeUtility, ClassifierTree
 
 class RandomForestClassifier(object):
     """
@@ -44,7 +44,17 @@ class RandomForestClassifier(object):
     bootstraps_labels = []      # List of true class labels corresponding to records in the bootstrapped datasets
     max_depth = 10              # Maximum depth of each decision tree
 
-    def __init__(self, num_trees, max_depth):
+    random_seed = 0     # Random seed for reproducibility
+    forest_size = 10    # Number of trees in the random forest
+    max_depth = 10      # Maximum depth of each decision tree
+    display = False     # Flag to display additional information about info gain
+    
+    X = list()          # Data features
+    y = list()          # Data labels
+    XX = list()         # Contains both data features and data labels
+    numerical_cols = 0  # Number of numeric attributes (columns)
+    
+    def __init__(self, X, y, max_depth=5, forest_size=5, display=False, random_seed=0):
         """
         Initializes the RandomForest object.
 
@@ -52,14 +62,41 @@ class RandomForestClassifier(object):
             num_trees (int): The number of decision trees in the random forest.
             max_depth (int): The maximum depth of each decision tree.
         """
-        self.num_trees = num_trees      # Set the number of decision trees in the random forest
+        self.reset()    # Reset the random forest object
+        
+        self.random_seed = random_seed  # Set the random seed for reproducibility
+        np.random.seed(random_seed)     # Set the random seed for NumPy
+        
+        self.forest_size = forest_size  # Set the number of trees in the random forest
+        self.max_depth = max_depth      # Set the maximum depth of each decision tree
+        self.display = display          # Set the flag to display additional information about info gain
+        
+        self.X = X.tolist()             # Convert ndarray to list
+        self.y = y.tolist()             # Convert ndarray to list
+        self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
+        
+        self.num_trees = forest_size    # Set the number of decision trees in the random forest
         self.max_depth = max_depth      # Set the maximum depth of each decision tree
 
-        self.decision_trees = [ClassifierTree(max_depth) for i in range(num_trees)]   # Initialize the decision trees
+        self.info_gains = []                    # Initialize the list to store the information gains of each decision tree
+        self.decision_trees = [ClassifierTree(max_depth) for i in range(forest_size)]   # Initialize the decision trees
         
         self.bootstraps_datasets = []   # Initialize the list of bootstrapped datasets for each tree
         self.bootstraps_labels = []     # Initialize the list of true class labels corresponding to records in the bootstrapped datasets
 
+    def reset(self):
+        """
+        Resets the random forest object.
+        """
+        self.random_seed = 0
+        self.forest_size = 10
+        self.max_depth = 10
+        self.display = False
+        self.X = list()
+        self.y = list()
+        self.XX = list()
+        self.numerical_cols = 0
+    
     def _bootstrapping(self, XX, n):
         """
         Performs bootstrapping on the dataset.
@@ -100,6 +137,7 @@ class RandomForestClassifier(object):
             labels = self.bootstraps_labels[i]          # Get the true class labels
             
             self.decision_trees[i] = tree.learn(dataset, labels)    # Fit the tree to the bootstrapped dataset
+            self.info_gains.append(tree.info_gain)                  # Append the information gain to the list
 
     def voting(self, X):
         """
@@ -132,42 +170,47 @@ class RandomForestClassifier(object):
                 y.append(np.random.choice([0, 1]))  # If there are no votes, randomly choose a class label
 
         return y
-
-class randomForestClassifierWtInfoGain(RandomForestClassifier):
-    """
-    A random forest classifier that uses information gain as the criterion for splitting.
-
-    Parameters:
-    - num_trees (int): The number of decision trees in the random forest.
-
-    Attributes:
-    - info_gains (list): A list to store the information gains of each decision tree.
-    - decision_trees (list): A list of decision trees in the random forest.
-
-    Methods:
-    - fitting(): Fits the decision trees to the bootstrapped datasets.
-    - display_info_gains(): Displays the information gains of each decision tree.
-    - plot_info_gains_together(): Plots the information gains of all decision trees together.
-    - plot_info_gains(): Plots the information gain of each decision tree separately.
-    """
-
-    def __init__(self, num_trees, max_depth):
-        super().__init__(num_trees, max_depth)  # Initialize the RandomForest object
-        self.info_gains = []                    # Initialize the list to store the information gains of each decision tree
-        self.decision_trees = [ClassifierTreeInfoGain(max_depth) for i in range(num_trees)]   # Initialize the decision trees
-
-    def fitting(self):
+    
+    def fit(self, verbose=True):
         """
-        Fits the decision trees to the bootstrapped datasets.
-        """
-        for i in range(self.num_trees):             # For each decision tree
-            tree = self.decision_trees[i]           # Get the current tree
-            dataset = self.bootstraps_datasets[i]   # Get the bootstrapped dataset
-            labels = self.bootstraps_labels[i]      # Get the true class labels
-            
-            self.decision_trees[i] = tree.learn(dataset, labels)    # Fit the tree to the bootstrapped dataset
-            self.info_gains.append(tree.info_gain)                  # Append the information gain to the list
+        Runs the random forest algorithm.
 
+        Returns:
+            tuple: A tuple containing the random forest object and the accuracy of the random forest algorithm.
+
+        Raises:
+            FileNotFoundError: If the file specified by file_loc does not exist.
+        """
+        start = datetime.now()  # Start time
+
+        # if(self.display==False):    
+        #     randomForest = RandomForestClassifier(self.forest_size,self.max_depth)                # If display is false, use the normal random forest
+        # else:
+        #     randomForest = randomForestClassifierWtInfoGain(self.forest_size, self.max_depth)   # If display is true, use the random forest with information gain
+
+        if verbose: print("creating the bootstrap datasets")
+        self.bootstrapping(self.XX)         # Creating the bootstrapped datasets
+
+        if verbose: print("fitting the forest")
+        self.fitting()                      # Fitting the decision trees to the bootstrapped datasets
+        y_predicted = self.voting(self.X)   # Voting to classify the input records
+
+        results = [prediction == truth for prediction, truth in zip(y_predicted, self.y)]   # Comparing the predicted labels with the true labels
+
+        self.accuracy = float(results.count(True)) / float(len(results)) # Calculating the accuracy
+        
+        # Displaying the results
+        if verbose: print("accuracy:     %.4f" % self.accuracy)                          
+        if verbose: print("OOB estimate: %.4f" % (1 - self.accuracy))
+        if verbose: print("Execution time: " + str(datetime.now() - start))
+
+        # Displaying additional information about info gain
+        if(self.display==True):
+            self.display_info_gains()           # Display the information gains of each decision tree
+            self.plot_info_gains_together()     # Plot the information gains of all decision trees together
+            self.plot_info_gains()              # Plot the information gain of each decision tree separately
+        
+        
     def display_info_gains(self):
         """
         Displays the information gains of each decision tree.
@@ -176,7 +219,7 @@ class randomForestClassifierWtInfoGain(RandomForestClassifier):
             print(f"Information gain of tree {i+1}:")   # Print the information gain of the tree
             
             for j, gain in enumerate(info_gain):        # For each split
-                print(f"        split {j}: {gain}")     # Print the information gain of the split
+                print(f"\tsplit {j}: {gain:.6f}")       # Print the information gain of the split
 
     def plot_info_gains_together(self):
         """
@@ -200,160 +243,3 @@ class randomForestClassifierWtInfoGain(RandomForestClassifier):
             plt.ylabel("Information Gain")
             plt.title(f"Information Gain of Decision Tree {i+1}")
             plt.show()
-
-class RunRandomForestClassifier(object):
-    """
-    A class that represents a random forest algorithm.
-
-    Attributes:
-        random_seed (int): The random seed for reproducibility.
-        forest_size (int): The number of trees in the random forest.
-        max_depth (int): The maximum depth of each decision tree in the random forest.
-        display (bool): Whether to display additional information about info gain.
-        X (list): The list of data features.
-        y (list): The list of data labels.
-        XX (list): The list that contains both data features and data labels.
-        numerical_cols (int): The number of numeric attributes (columns).
-
-    Methods:
-        __init__(self, file_loc, display=False, forest_size=5, random_seed=0, max_depth=10):
-            Initializes the random forest object.
-
-        reset(self):
-            Resets the random forest object.
-
-        run(self):
-            Runs the random forest algorithm.
-
-    Example:
-        randomForest, accuracy = runRandomForest('data.csv', display=True, forest_size=10, random_seed=42)
-    """
-    # Initialize class variables
-    random_seed = 0     # Random seed for reproducibility
-    forest_size = 10    # Number of trees in the random forest
-    max_depth = 10      # Maximum depth of each decision tree
-    display = False     # Flag to display additional information about info gain
-    
-    X = list()          # Data features
-    y = list()          # Data labels
-    XX = list()         # Contains both data features and data labels
-    numerical_cols = 0  # Number of numeric attributes (columns)
-
-    def __init__(self, file_loc, display=False, forest_size=5, random_seed=0, max_depth=10):
-        """
-        Initializes the random forest object.
-
-        Args:
-            file_loc (str): The file location of the dataset.
-            display (bool, optional): Whether to display additional information about info gain. Defaults to False.
-            forest_size (int, optional): The number of trees in the random forest. Defaults to 5.
-            random_seed (int, optional): The random seed for reproducibility. Defaults to 0.
-            max_depth (int, optional): The maximum depth of each decision tree in the random forest. Defaults to 10.
-        """
-        self.reset()    # Reset the random forest object
-
-        self.random_seed = random_seed  # Set the random seed for reproducibility
-        np.random.seed(random_seed)     # Set the random seed for NumPy
-
-        self.forest_size = forest_size  # Set the number of trees in the random forest
-        self.max_depth = max_depth      # Set the maximum depth of each decision tree
-        self.display = display          # Set the flag to display additional information about info gain
-        
-        self.numerical_cols = set()         # Initialize the set of indices of numeric attributes (columns)
-        with open(file_loc, 'r') as f:      # Open the file in read mode
-            reader = csv.reader(f)          # Create a CSV reader
-            headers = next(reader)          # Get the headers of the CSV file
-            for i in range(len(headers)):   # Loop over the indices of the headers
-                try:
-                    float(next(reader)[i])      # If successful, add the index to the set of numerical columns
-                    self.numerical_cols.add(i)  # Add the index to the set of numerical columns
-                except ValueError:
-                    continue
-
-        print("reading the data")
-        try:
-            with open(file_loc) as f:                       # Open the file
-                next(f, None)                               # Skip the header
-                for line in csv.reader(f, delimiter=","):   # Read the file line by line
-                    xline = []                  
-                    for i in range(len(line)):              # Loop over the indices of the line
-                        if i in self.numerical_cols:                # If the index is in the set of numerical columns
-                            xline.append(ast.literal_eval(line[i])) # Append the value to the input data features
-                        
-                        else:                                       # If the index is not in the set of numerical columns
-                            xline.append(line[i])                   # Append the value to the input data features    
-
-                    self.X.append(xline[:-1])   # Append the input data features to the list of input data features
-                    self.y.append(xline[-1])    # Append the target value to the list of target values
-                    self.XX.append(xline[:])    # Append the input data features and target value to the list of input data features and target values
-        except FileNotFoundError:
-            print(f"File {file_loc} not found.")
-            return None, None
-        
-    def reset(self):
-        """
-        Resets the random forest object.
-        """
-        # Reset the random forest object
-        self.random_seed = 0
-        self.forest_size = 10
-        self.max_depth = 10
-        self.display = False
-        self.X = list()
-        self.y = list()
-        self.XX = list()
-        self.numerical_cols = 0
-
-    def run(self):
-        """
-        Runs the random forest algorithm.
-
-        Returns:
-            tuple: A tuple containing the random forest object and the accuracy of the random forest algorithm.
-
-        Raises:
-            FileNotFoundError: If the file specified by file_loc does not exist.
-
-        Notes:
-            - The file should have the following format:
-                - Each row represents a data point (record).
-                - The last column represents the class label.
-                - The remaining columns represent the features (attributes).
-                - Features are numerical and class labels are binary (0 or 1).
-            - The random seed is used to initialize the random number generator for reproducibility.
-            - The random forest object contains the trained random forest model.
-            - The accuracy is calculated as the ratio of correctly predicted labels to the total number of labels.
-        """
-        start = datetime.now()  # Start time
-
-        if(self.display==False):    
-            randomForest = RandomForestClassifier(self.forest_size,self.max_depth)                # If display is false, use the normal random forest
-        else:
-            randomForest = randomForestClassifierWtInfoGain(self.forest_size, self.max_depth)   # If display is true, use the random forest with information gain
-
-        print("creating the bootstrap datasets")
-        randomForest.bootstrapping(self.XX)         # Creating the bootstrapped datasets
-
-        print("fitting the forest")
-        randomForest.fitting()                      # Fitting the decision trees to the bootstrapped datasets
-        y_predicted = randomForest.voting(self.X)   # Voting to classify the input records
-
-        results = [prediction == truth for prediction, truth in zip(y_predicted, self.y)]   # Comparing the predicted labels with the true labels
-
-        accuracy = float(results.count(True)) / float(len(results)) # Calculating the accuracy
-        
-        # Displaying the results
-        print("accuracy: %.4f" % accuracy)                          
-        print("OOB estimate: %.4f" % (1 - accuracy))
-        print("Execution time: " + str(datetime.now() - start))
-
-        # Displaying additional information about info gain
-        if(self.display==True):
-            randomForest.display_info_gains()           # Display the information gains of each decision tree
-            randomForest.plot_info_gains_together()     # Plot the information gains of all decision trees together
-            randomForest.plot_info_gains()              # Plot the information gain of each decision tree separately
-        
-        return randomForest,accuracy
-
-
-

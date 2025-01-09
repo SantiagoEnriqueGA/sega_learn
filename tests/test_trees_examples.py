@@ -31,12 +31,6 @@ class TestExampleExceptions(unittest.TestCase):
             with suppress_print():
                 basic_example(num_trees=5, max_depth=3)
                 
-        elif 'randomForestClassifierParallel.py' in example_file:
-            from examples.trees.randomForestClassifierParallel import basic_example
-            print(f"Testing file: {strip_file_path(example_file)}")
-            with suppress_print():
-                basic_example(num_trees=5, max_depth=3)
-                
         elif 'randomForestRegressor.py' in example_file:
             from examples.trees.randomForestRegressor import basic_example
             print(f"Testing file: {strip_file_path(example_file)}")
@@ -83,7 +77,7 @@ def load_tests(loader, tests, pattern):
         
         # Dynamically add the test function to the TestExamples class.
         # If example file runs in __main__, use a lambda function to call the test function.
-        test_exeptions = ['gradientBoostedRegressor.py', 'randomForestClassifier.py', 'randomForestClassifierParallel.py', 'randomForestRegressor.py']
+        test_exeptions = ['gradientBoostedRegressor.py', 'randomForestClassifier.py', 'randomForestRegressor.py']
         test_exeptions = [f'test_{name}' for name in test_exeptions]
         if test_name in test_exeptions:
             setattr(TestExamplesTrees, test_name, lambda self, example_file=example_file: TestExampleExceptions().test_main(example_file))
