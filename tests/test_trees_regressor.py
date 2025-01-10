@@ -377,8 +377,117 @@ class TestGradientBoostedRegressor(unittest.TestCase):
     Unit test for the GradientBoostedRegressor class.
     Methods:
     - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_init: Tests the initialization of the GradientBoostedRegressor class.
+    - test_reset: Tests the reset method of the GradientBoostedRegressor class.
+    - test_fit: Tests the fit method of the GradientBoostedRegressor class.
+    - test_fit_stats: Tests the fit method with stats=False.
+    - test_fit_empty: Tests the fit method with an empty dataset.
+    - test_fit_single_value: Tests the fit method with a single value dataset.
+    - test_fit_bad_type: Tests the fit method with a bad type input.
+    - test_predict: Tests the predict method of the GradientBoostedRegressor class.
+    - test_predict_empty: Tests the predict method with an empty dataset.
+    - test_predict_single_value: Tests the predict method with a single value dataset.
+    - test_predict_bad_type: Tests the predict method with a bad type input.
+    - test_get_stats: Tests the get_stats method of the GradientBoostedRegressor class.
     """
-    # TODO: Implement tests for GradientBoostedRegressor
-
+    @classmethod
+    def setUpClass(cls):
+        print("Testing Gradient Boosted Regressor")
+        
+    def setUp(self):
+        X, y = synthetic_data_regression(n_samples=100, n_features=3)
+        self.gbr = GradientBoostedRegressor(X, y, num_trees=10, max_depth=10, random_seed=0)
+        
+    def test_init(self):
+        self.assertEqual(self.gbr.num_trees, 10)
+        self.assertEqual(self.gbr.max_depth, 10)
+        self.assertEqual(self.gbr.random_seed, 0)
+        self.assertIsInstance(self.gbr.trees, list)
+        self.assertIsInstance(self.gbr.trees[0], RegressorTree)
+    
+    def test_reset(self):
+        self.gbr.reset()
+        self.assertEqual(self.gbr.num_trees, 10)
+        self.assertEqual(self.gbr.max_depth, 10)
+        self.assertEqual(self.gbr.random_seed, 0)
+        self.assertIsInstance(self.gbr.trees, list)
+        self.assertIsInstance(self.gbr.trees[0], RegressorTree)
+    
+    def test_fit(self):
+        self.gbr.fit()
+        self.assertEqual(len(self.gbr.trees), self.gbr.num_trees)
+        self.assertIsInstance(self.gbr.trees[0], dict)
+        self.assertEqual(len(self.gbr.mean_absolute_residuals), self.gbr.num_trees)
+        self.assertIsInstance(self.gbr.mean_absolute_residuals[0], float)
+        
+    def test_fit_stats(self):
+        with suppress_print():
+            self.gbr.fit(stats=False)
+        self.assertEqual(len(self.gbr.trees), self.gbr.num_trees)
+        self.assertIsInstance(self.gbr.trees[0], dict)
+        self.assertEqual(len(self.gbr.mean_absolute_residuals), self.gbr.num_trees)
+        self.assertIsInstance(self.gbr.mean_absolute_residuals[0], float)
+    
+    def test_fit_empty(self):
+        self.gbr.X = []
+        self.gbr.y = []
+        with self.assertRaises(ValueError):
+            self.gbr.fit()
+        self.assertEqual(len(self.gbr.trees), 10)
+        
+    def test_fit_single_value(self):
+        self.gbr.X = [[1, 2, 3]]
+        self.gbr.y = [1]
+        self.gbr.fit()
+        self.assertEqual(len(self.gbr.trees), 10)
+        self.assertIsInstance(self.gbr.trees[0], dict)
+        self.assertEqual(len(self.gbr.mean_absolute_residuals), 10)
+        self.assertIsInstance(self.gbr.mean_absolute_residuals[0], float)
+    
+    def test_fit_bad_type(self):
+        self.gbr.X = "not a list"
+        self.gbr.y = "not a list"
+        with self.assertRaises(TypeError):
+            self.gbr.fit()
+            
+    def test_predict(self):
+        self.gbr.fit()
+        predictions = self.gbr.predict()
+        self.assertEqual(len(predictions), len(self.gbr.X))
+        self.assertIsInstance(predictions, np.ndarray)
+        
+    def test_predict_empty(self):
+        self.gbr.X = []
+        self.gbr.y = []
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            predictions = self.gbr.predict()
+        self.assertEqual(len(predictions), 0)
+        self.assertIsInstance(predictions, np.ndarray)
+    
+    def test_predict_single_value(self):
+        self.gbr.X = [[1, 2, 3]]
+        self.gbr.y = [1]
+        self.gbr.fit()
+        predictions = self.gbr.predict()
+        self.assertEqual(len(predictions), 1)
+        self.assertIsInstance(predictions, np.ndarray)
+        
+    def test_predict_bad_type(self):
+        self.gbr.X = "not a list"
+        self.gbr.y = "not a list"
+        with self.assertRaises(TypeError):
+            self.gbr.predict()
+            
+    def test_get_stats(self):
+        self.gbr.fit()
+        predictions = self.gbr.predict()
+        stats = self.gbr.get_stats(predictions)
+        self.assertIn("MSE", stats)
+        self.assertIn("R^2", stats)
+        self.assertIn("MAPE", stats)
+        self.assertIn("MAE", stats)
+        self.assertIn("RMSE", stats)
+    
 if __name__ == '__main__':
     unittest.main()

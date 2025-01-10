@@ -29,7 +29,7 @@ class GradientBoostedRegressor(object):
         get_stats(y_predicted): Calculates various evaluation metrics for the predicted target values.
     """
 
-    def __init__(self, file_loc: str, num_trees: int = 5, random_seed: int = 0, max_depth: int = 10):
+    def __init__(self, X, y, num_trees: int = 10, max_depth: int = 10, random_seed: int = 0):
         self.random_seed = random_seed  # Set the random seed for reproducibility
         self.num_trees = num_trees      # Set the number of trees in the ensemble
         self.max_depth = max_depth      # Set the maximum depth of each tree
@@ -45,35 +45,9 @@ class GradientBoostedRegressor(object):
         self.trees = [RegressorTree(self.max_depth) for i in range(self.num_trees)] # Initialize the list of decision trees
         self.numerical_cols = set()         # Initialize the set of indices of numeric attributes (columns)
 
-        with open(file_loc, 'r') as f:      # Open the file in read mode
-            reader = csv.reader(f)          # Create a CSV reader
-            headers = next(reader)          # Get the headers of the CSV file
-            for i in range(len(headers)):   # Loop over the indices of the headers
-                try:
-                    float(next(reader)[i])      # If successful, add the index to the set of numerical columns
-                    self.numerical_cols.add(i)  # Add the index to the set of numerical columns
-                except ValueError:
-                    continue
-
-        print("reading the data")
-        try:
-            with open(file_loc) as f:                       # Open the file
-                next(f, None)                               # Skip the header
-                for line in csv.reader(f, delimiter=","):   # Read the file line by line
-                    xline = []                              
-                    for i in range(len(line)):              # Loop over the indices of the line
-                        if i in self.numerical_cols:                # If the index is in the set of numerical columns
-                            xline.append(ast.literal_eval(line[i])) # Append the value to the input data features
-                        
-                        else:                                       # If the index is not in the set of numerical columns
-                            xline.append(line[i])                   # Append the value to the input data features
-
-                    self.X.append(xline[:-1])   # Append the input data features to the list of input data features
-                    self.y.append(xline[-1])    # Append the target value to the list of target values
-                    self.XX.append(xline[:])    # Append the input data features and target value to the list of input data features and target values
-        except FileNotFoundError:
-            print(f"File {file_loc} not found.")
-            return None, None
+        self.X = X.tolist()             # Convert ndarray to list
+        self.y = y.tolist()             # Convert ndarray to list
+        self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
 
     def reset(self):
         # Reset the GBDT object
@@ -85,7 +59,6 @@ class GradientBoostedRegressor(object):
         self.XX = list()
         self.numerical_cols = 0
         self.mean_absolute_residuals = []
-
 
     def fit(self, stats=False):
         """
@@ -160,8 +133,9 @@ class GradientBoostedRegressor(object):
         sst = np.sum((np.array(self.y) - np.mean(self.y)) ** 2)         # Total Sum of Squares (SST): (y - mean(y))^2
         r2 = 1 - (ssr / sst)                                            # R-squared Score (R^2): 1 - (SSR / SST)
 
-        mape = np.mean(np.abs((np.array(self.y) - np.array(y_predicted)) / np.array(self.y))) * 100     # Mean Absolute Percentage Error (MAPE): (|y - y'| / y) * 100
-
+        epsilon = 1e-10  # Small value to prevent division by zero
+        mape = np.mean(np.abs((np.array(self.y) - np.array(y_predicted)) / (np.array(self.y) + epsilon))) * 100  # Mean Absolute Percentage Error (MAPE): (|y - y'| / y) * 100
+        
         mae = np.mean(np.abs(np.array(self.y) - np.array(y_predicted))) # Mean Absolute Error (MAE): |y - y'|
 
         rmse = np.sqrt(np.mean((np.array(y_predicted) - np.array(self.y)) ** 2))    # Root Mean Squared Error (RMSE): sqrt((y - y')^2)
@@ -173,32 +147,7 @@ class GradientBoostedRegressor(object):
             "MAPE": mape,
             "MAE": mae,
             "RMSE": rmse,
-            "Mean_Absolute_Residuals": self.mean_absolute_residuals
+            # "Mean_Absolute_Residuals": self.mean_absolute_residuals
         }
 
   
-# # Example Usage:
-# def run():
-#     """
-#     Runs Gradient Boosted Decision Trees on the given dataset.
-#     """
-#     # Source file location
-#     file_orig = "data/carsDotCom.csv"
-
-#     # Prepare and format data
-#     df, file_loc = dp.DataPrep.prepare_data(file_orig, label_col_index=4, cols_to_encode=[1,2,3])
-
-#     # Initialize GBDT object
-#     gbdtDiab = GradientBoostedRegressor(file_loc, num_trees=10, random_seed=0, max_depth=3)
-
-#     # Train GBDT model
-#     gbdtDiab.fit(stats=True)
-
-#     # Predict target values
-#     predictions = gbdtDiab.predict()
-
-#     # Get stats
-#     stats = gbdtDiab.get_stats(predictions)
-#     print(stats)
-# if __name__ == "__main__":
-#     run()
