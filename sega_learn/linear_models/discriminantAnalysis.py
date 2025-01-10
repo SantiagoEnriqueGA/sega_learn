@@ -4,14 +4,6 @@ import numpy as np
 from math import log, floor, ceil
 from scipy import linalg
 
-# TODO: Complete docstrings for classes and methods
-
-class Utility(object):
-    """
-    Utility class
-    """
-    pass
-
 class LinearDiscriminantAnalysis(object):
     """
     Implements Linear Discriminant Analysis.
@@ -27,6 +19,18 @@ class LinearDiscriminantAnalysis(object):
         Prior probabilities of the classes. If None, the priors are uniform.
     """
     def __init__(self, solver='svd', priors=None):
+        """
+        Initialize the Linear Discriminant Analysis model with the specified solver and prior probabilities.
+        
+        Parameters:
+        - solver : {'svd', 'lsqr', 'eigen'}, default='svd'
+            Solver to use for the LDA. 
+                'svd' is the default and recommended solver. 
+                'lsqr' is a faster alternative that can be used when the number of features is large. 
+                'eigen' is an alternative solver that can be used when the number of features is small.
+        - priors : array-like, shape (n_classes,), default=None
+            Prior probabilities of the classes. If None, the priors are uniform.
+        """
         self.solver = solver
         self.priors = priors
         
@@ -214,6 +218,14 @@ class QuadraticDiscriminantAnalysis(object):
         Regularization parameter. If greater than 0, the covariance matrices are regularized by adding a scaled identity matrix to them.
     """
     def __init__(self, priors=None, reg_param=0.0):
+        """
+        Initialize the Quadratic Discriminant Analysis model with the specified prior probabilities and regularization parameter.
+        
+        Parameters:
+        - priors : array-like, shape (n_classes,), default=None
+            Prior probabilities of the classes. If None, the priors are uniform.
+        - reg_param : float, default=0.0
+        """
         self.priors = priors
         
         assert reg_param >= 0.0, "Regularization parameter must be non-negative."

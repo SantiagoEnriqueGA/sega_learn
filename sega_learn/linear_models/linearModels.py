@@ -3,8 +3,6 @@ import numpy as np
 from math import log, floor, ceil
 from scipy import linalg
 
-# TODO: Complete docstrings for classes and methods
-
 class OrdinaryLeastSquares(object):
     """
     Ordinary Least Squares (OLS) linear regression model.
@@ -119,6 +117,20 @@ class Ridge(object):
     - get_formula(): Returns the formula of the model as a string.
     """
     def __init__(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=1e-4):
+        """
+        This class implements Ridge Regression using Coordinate Descent.
+        Ridge regression implements L2 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
+        
+        Parameters:
+        - alpha : float, default=1.0
+            Regularization strength; must be a positive float. Regularization improves the conditioning of the problem and reduces the variance of the estimates.
+        - fit_intercept : bool, default=True
+            Whether to calculate the intercept for this model.
+        - max_iter : int, default=10000
+            Maximum number of iterations for the coordinate descent solver.
+        - tol : float, default=1e-4
+            Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance.
+        """
         self.alpha = alpha
         self.fit_intercept = fit_intercept
         self.max_iter = max_iter
@@ -216,6 +228,20 @@ class Lasso(object):
         Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.    
     """
     def __init__(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=1e-4):
+        """
+        This class implements Lasso Regression using Coordinate Descent.
+        Lasso regression implements L1 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
+        
+        Parameters:
+        - alpha : float, default=1.0
+            Regularization strength; must be a positive float. Regularization improves the conditioning of the problem and reduces the variance of the estimates.
+        - fit_intercept : bool, default=True
+            Whether to calculate the intercept for this model.
+        - max_iter : int, default=10000
+            Maximum number of iterations for the coordinate descent solver.
+        - tol : float, default=1e-4
+            Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance.
+        """
         self.alpha = alpha
         self.fit_intercept = fit_intercept
         self.max_iter = max_iter
@@ -325,6 +351,26 @@ class Bayesian(object):
         The posterior covariance of the weights.
     """
     def __init__(self, max_iter=300, tol=0.001, alpha_1=1e-06, alpha_2=1e-06, lambda_1=1e-06, lambda_2=1e-06, fit_intercept = None):
+        """
+        This class implements Bayesian Regression using Coordinate Descent.
+        Bayesian regression implements both L1 and L2 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
+    
+        Parameters:
+        - max_iter: int, default=300
+            The maximum number of iterations to perform.
+        - tol: float, default=0.001
+            The convergence threshold. The algorithm will stop if the coefficients change less than the threshold.
+        - alpha_1: float, default=1e-06
+            The shape parameter for the prior on the weights.
+        - alpha_2: float, default=1e-06
+            The scale parameter for the prior on the weights.
+        - lambda_1: float, default=1e-06
+            The shape parameter for the prior on the noise.
+        - lambda_2: float, default=1e-06
+            The scale parameter for the prior on the noise.        
+        - fit_intercept: bool, default=True
+            Whether to calculate the intercept for this model.
+        """
         self.max_iter = max_iter
         self.tol = tol
         self.alpha_1 = alpha_1
@@ -597,7 +643,28 @@ class RANSAC(object):
                  auto_scale_n=False, scale_n_factor=2
                  ):
         """
-        Initialize the linear model with the given parameters.
+        Implements RANSAC (RANdom SAmple Consensus) algorithm for robust linear regression.
+        This uses the RANSAC algorithm to fit a linear model to the data, while ignoring outliers.
+        
+        Parameters:
+        - n: int, default=10
+            Number of data points to estimate parameters.
+        - k: int, default=100
+            Maximum iterations allowed.
+        - t: float, default=0.05
+            Threshold value to determine if points are fit well, in terms of residuals.
+        - d: int, default=10
+            Number of close data points required to assert model fits well. 
+        - model: object, default=None
+            The model to use for fitting. If None, uses Ordinary Least Squares.
+        - auto_scale_t: bool, default=False
+            - Whether to automatically scale the threshold until a model is fit.
+        - scale_t_factor: float, default=2
+            - Factor by which to scale the threshold until a model is fit.
+        - auto_scale_n: bool, default=False
+            - Whether to automatically scale the number of data points until a model is fit.
+        - scale_n_factor: float, default=2
+            - Factor by which to scale the number of data points until a model is fit.
         """
         # Can only scale one of the threshold or the number of data points
         assert not (auto_scale_t and auto_scale_n), "Can only scale one of the threshold or the number of data points"
@@ -723,7 +790,19 @@ class PassiveAggressiveRegressor(object):
         - Whether to save the weights and intercept at each iteration.
     """
     def __init__(self, C=1.0, max_iter=1000, tol=1e-3):
-        """Initialize the linear model with the given parameters."""
+        """
+        Implements Passive Aggressive Regression using the Passive Aggressive algorithm.
+        The algorithm is a type of online learning algorithm that updates the model parameters based on the current sample.
+        If the prediction is within a certain tolerance, the model parameters are updated.
+        
+        Parameters:
+        - C: float, default=1.0
+            Regularization parameter/step size.
+        - max_iter: int, default=1000
+            The maximum number of passes over the training data.
+        - tol: float, default=1e-3
+            The stopping criterion.
+        """
         self.C = C                              # Regularization parameter/step size
         self.max_iter = max_iter                # The maximum number of passes over the training data
         self.tol = tol                          # The stopping criterion

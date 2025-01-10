@@ -1,13 +1,3 @@
-"""
-This is a custom implementation of the KMeans clustering algorithm along with additional functionalities for evaluating the optimal number of clusters and visualizing the clustering results.
-
-Classes:
-- KMeans: A class implementing KMeans clustering with methods for fitting the model, predicting cluster labels, and finding the optimal number of clusters.
-- DBSCAN: A class implementing the Density-Based Spatial Clustering of Applications with Noise (DBSCAN) algorithm.
-
-Note: Includes example usage at the end to demonstrate how to use the KMeans class and its functionalities.
-"""
-
 import numpy as np
 import pandas as pd
 from heapq import heappush, heappop
@@ -40,14 +30,17 @@ class KMeans:
     - find_optimal_clusters: Implements methods to find the optimal number of clusters using the elbow method, 
                              Calinski-Harabasz Index, Davies-Bouldin Index, and Silhouette Score. It also plots the evaluation 
                              metrics to aid in determining the optimal k value.
-
-    Usage Example:
-    - Initialize KMeans object with data matrix, number of clusters, and other parameters.
-    - Fit the KMeans model to the data and evaluate clustering performance using various metrics.
-    - Visualize the clustering results and determine the optimal number of clusters.
     """
     def __init__(self, X, n_clusters=3, max_iter=300, tol=1e-4):
-        """Initialize the KMeans object."""
+        """
+        Initialize the KMeans object.
+        
+        Parameters:
+        - X: The data matrix (numpy array, pandas DataFrame, or list).
+        - n_clusters: The number of clusters.
+        - max_iter: The maximum number of iterations.
+        - tol: The tolerance to declare convergence.
+        """
         self.X = self._convert_to_ndarray(X).astype(float)  # Convert input data to ndarray
         self.n_clusters = n_clusters                        # Number of clusters
         self.max_iter = max_iter                            # Maximum number of iterations
@@ -186,7 +179,6 @@ class KMeans:
         Implement the elbow method to determine the optimal number of clusters.
 
         Parameters:
-        - X: The data matrix (numpy array).
         - max_k: The maximum number of clusters to test.
 
         Returns:
@@ -431,15 +423,9 @@ class DBSCAN:
     - predict: Predicts the cluster labels for new data points.
     - fit_predict: Fits the DBSCAN model and returns cluster labels.
     - silhouette_score: Calculates the Silhouette Score for evaluating clustering performance.
-
-    Custom Methods:
     - _handle_categorical: Handles categorical columns by one-hot encoding.
     - _convert_to_ndarray: Converts input data to a NumPy ndarray and handles categorical columns.
     - _custom_distance_matrix: Calculates the pairwise distance matrix using a custom distance calculation method.
-
-    Usage Example:
-    - Initialize DBSCAN object with data matrix and hyperparameters.
-    - Fit the DBSCAN model to the data and evaluate clustering performance using silhouette score.
     """
     def __init__(self, X, eps=0.5, min_samples=5):
         """
@@ -542,6 +528,9 @@ class DBSCAN:
         2. Identify core points based on the minimum number of neighbors within eps distance.
         3. Assign cluster labels using depth-first search (DFS) starting from core points.
 
+        Parameters:
+        - metric: The distance metric to use ('euclidean', 'manhattan', or 'cosine').
+        
         Returns:
         - labels: The cluster labels for each data point.
         """       
@@ -658,7 +647,6 @@ class DBSCAN:
         - eps: The optimal eps value.
         - scores_dict (optional): A dictionary of (eps, score) pairs if return_scores is True.
         """
-        
         best_eps = 0.1
         best_score = -1
         step = 0.1
