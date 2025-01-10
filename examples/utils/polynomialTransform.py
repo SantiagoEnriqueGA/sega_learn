@@ -8,6 +8,8 @@ from sega_learn.utils import PolynomialTransform
 import numpy as np
 from sklearn.metrics import r2_score
 
+np.random.seed(42)  # Random seed for reproducibility
+
 pnts = 300
 X = np.linspace(0, 5, pnts)
 y = 10 * np.sin(X) + np.random.normal(0, 1, pnts)
@@ -48,4 +50,4 @@ plt.title('Sin Curve with Noise')
 plt.legend()
 plt.tight_layout()
 # plt.show()
-plt.savefig('examples/linear_models/plots/polynomialTransform.png', dpi=300)
+plt.savefig('examples/utils/plots/polynomialTransform.png', dpi=300)
