@@ -25,6 +25,12 @@ This project was heavily inspired by [scikit-learn](https://scikit-learn.org/sta
 - **Trees**: Implements tree-based algorithms like Classifier Tree, Random Forest Classifier, Gradient Boosted Regressor, Random Forest Regressor, Regressor Tree, and utilities for computing variance, partitioning classes, and calculating information gain. See [`trees`](SEGA_LEARN/trees).
 - **Utils**: Implements utility functions for data preparation and voting regressor. See [`utils`](SEGA_LEARN/utils).
 
+## Planned Features - Future Work
+- Implement dimensionality reduction algorithms like Principal Component Analysis (PCA), truncated Singular Value Decomposition (t-SVD)
+- Implement OPTICS clustering algorithm
+- Implement model selection algorithms like cross-validation, grid search, and random search
+  - Implement novel model selection algorithms like Bayesian Optimization, Bayesian Model Averaging, and Bayesian Model Selection.
+
 ## File Structure
 The project directory structure is as follows:
 
@@ -81,11 +87,37 @@ The project directory structure is as follows:
     - [`utils.py`](tests/utils.py): Contains utility functions for testing.
 
 - **examples/**: Example usages of the SEGA_LEARN library.
-  - [`example_AAA.py`](examples/example_AAA.py): Demonstrates example_AAA.
-  - [`example_BBB.py`](examples/example_BBB.py): Demonstrates example_BBB.
-  - [`example_CCC.py`](examples/example_CCC.py): Demonstrates example_CCC.
+  - **clustering/**: Contains clustering algorithms.
+    - [`kmeans.py`](examples/clustering/kmeans.py): Demonstrates KMeans.
+    - [`dbscan.py`](examples/clustering/dbscan.py): Demonstrates DBSCAN.
+    - [`dbscan_3d.py`](examples/clustering/dbscan_3d.py): Demonstrates DBSCAN with 3D data.
+    - [`dbscan_3d_aimated.py`](examples/clustering/dbscan_3d_aimated.py): Demonstrates DBSCAN with 3D data and animated plot.
+  - **linear_models/**: Contains linear models.
+    - [`ols.py`](examples/linear_models/ols.py): Demonstrates Ordinary Least Squares.
+    - [`ridge.py`](examples/linear_models/ridge.py): Demonstrates Ridge Regression.
+    - [`lasso.py`](examples/linear_models/lasso.py): Demonstrates Lasso Regression.
+    - [`bayes.py`](examples/linear_models/bayes.py): Demonstrates Bayesian Regression.
+    - [`ransac.py`](examples/linear_models/ransac.py): Demonstrates RANSAC Regression.
+    - [`passiveAggressive.py`](examples/linear_models/passiveAggressive.py): Demonstrates Passive Aggressive Regressor.
+    - [`lda.py`](examples/linear_models/lda.py): Demonstrates Linear Discriminant Analysis.
+    - [`qda.py`](examples/linear_models/qda.py): Demonstrates Quadratic Discriminant Analysis.
+  - **neural_networks/**: Contains neural network components.
+    - [`neuralNetwork.py`](examples/neural_networks/neuralNetwork.py): Demonstrates the NeuralNetwork class.
+    - [`neuralNetwork_hyper.py`](examples/neural_networks/neuralNetwork_hyper.py): Demonstrates the NeuralNetwork class with hyper-parameter tuning.
+  - **trees/**: Contains tree-based algorithms.
+    - [`gradientBoostedRegressor.py`](examples/trees/gradientBoostedRegressor.py): Demonstrates Gradient Boosted Regressor.
+    - [`randomForestClassifier.py`](examples/trees/randomForestClassifier.py): Demonstrates Random Forest Classifier.
+    - [`randomForestRegressor.py`](examples/trees/randomForestRegressor.py): Demonstrates Random Forest Regressor.
+    - [`regressorTree.py`](examples/trees/regressorTree.py): Demonstrates Regressor Tree.
+  - **utils/**: Contains utility functions.
+    - [`votingRegressor.py`](examples/utils/votingRegressor.py): Demonstrates Voting Regressor.
+    - [`polynomialTransform.py`](examples/utils/polynomialTransform.py): Demonstrates Polynomial Transform.
   
 - **docs/**: Contains the generated documentation for the SEGA_LEARN library.
+  - [`documentation.md`](docs/documentation.md): Contains the generated documentation for the SEGA_LEARN library.
+  - **HTML Documentation**: Contains the generated HTML documentation for the SEGA_LEARN library.
+    - [`SEGA_LEARN.html`](docs/SEGA_LEARN.html): Contains the main HTML documentation for the SEGA_LEARN library.
+    - Other HTML documentation files: Contain the additional HTML documentation for the SEGA_LEARN library.
 
 - **scripts/**: PowerShell scripts to help with various tasks.
   - [`_run_all_scripts.ps1`](scripts/_run_all_scripts.ps1): Runs all PowerShell scripts in the `scripts/` folder sequentially.
@@ -98,11 +130,36 @@ The project directory structure is as follows:
 
 ## Usage Examples
 
-### Cluserting
-- [example_AAA.py](examples/example_AAA.py): Demonstrates how to example_AAA.
+### Clustering
+- [`kmeans.py`](examples/clustering/kmeans.py): Demonstrates KMeans.
+- [`dbscan.py`](examples/clustering/dbscan.py): Demonstrates DBSCAN.
+- [`dbscan_3d.py`](examples/clustering/dbscan_3d.py): Demonstrates DBSCAN with 3D data.
+- [`dbscan_3d_aimated.py`](examples/clustering/dbscan_3d_aimated.py): Demonstrates DBSCAN with 3D data and animated plot.
+
+### Linear Models
+- [`ols.py`](examples/linear_models/ols.py): Demonstrates Ordinary Least Squares.
+- [`ridge.py`](examples/linear_models/ridge.py): Demonstrates Ridge Regression.
+- [`lasso.py`](examples/linear_models/lasso.py): Demonstrates Lasso Regression.
+- [`bayes.py`](examples/linear_models/bayes.py): Demonstrates Bayesian Regression.
+- [`ransac.py`](examples/linear_models/ransac.py): Demonstrates RANSAC Regression.
+- [`passiveAggressive.py`](examples/linear_models/passiveAggressive.py): Demonstrates Passive Aggressive Regressor.
+- [`lda.py`](examples/linear_models/lda.py): Demonstrates Linear Discriminant Analysis.
+- [`qda.py`](examples/linear_models/qda.py): Demonstrates Quadratic Discriminant Analysis.
+
+### Neural Networks
+- [`neuralNetwork.py`](examples/neural_networks/neuralNetwork.py): Demonstrates the NeuralNetwork class.
+- [`neuralNetwork_hyper.py`](examples/neural_networks/neuralNetwork_hyper.py): Demonstrates the NeuralNetwork class with hyper-parameter tuning.
 
 ### Trees
-- [example_AAA.py](examples/example_AAA.py): Demonstrates how to example_AAA.
+- [`gradientBoostedRegressor.py`](examples/trees/gradientBoostedRegressor.py): Demonstrates Gradient Boosted Regressor.
+- [`randomForestClassifier.py`](examples/trees/randomForestClassifier.py): Demonstrates Random Forest Classifier.
+- [`randomForestRegressor.py`](examples/trees/randomForestRegressor.py): Demonstrates Random Forest Regressor.
+- [`regressorTree.py`](examples/trees/regressorTree.py): Demonstrates Regressor Tree.
+
+### Utils
+- [`votingRegressor.py`](examples/utils/votingRegressor.py): Demonstrates Voting Regressor.
+- [`polynomialTransform.py`](examples/utils/polynomialTransform.py): Demonstrates Polynomial Transform.
+
 
 ## Scripts
 The following PowerShell scripts are included in the `scripts/` folder to help with various tasks:
@@ -118,7 +175,7 @@ The following PowerShell scripts are included in the `scripts/` folder to help w
 ## Documentation
 ### HTML Documentation
 Pydoc documentation is generated from the PowerShell script `documentation_html.ps1`.  
-To see live version: https://santiagoenriquega.github.io/custom_database/SEGA_LEARN  
+To see live version: https://santiagoenriquega.github.io/sega_learn/sega_learn  
 
 Self host documentation, run the following command in the terminal: `python -m pydoc -p 8080`  
 Then open a web browser and navigate to http://localhost:8080/SEGA_LEARN.html
@@ -130,10 +187,9 @@ The output file is located in [`docs/documentation.md`](docs/documentation.md)
 ## Tests
 To run the tests, use the following command: `python -m unittest discover -s tests`  
 Or run the all tests file: `python run_all_tests.py`
+
 ### Test Results
 The following are the results of running the tests:
-
-(SEGA_LEARN_env) PS ...\custom_database> python .\tests\run_all_tests.py
 ```sh
 (sega_learn) PS .../sega_learn/tests/run_all_tests.py
 Testing Imports - Clustering
@@ -204,5 +260,5 @@ To set up the project environment, you can use the provided `environment.yml` fi
 1. Open a terminal or command prompt.
 2. Navigate to the directory where your repository is located.
 3. Run the following command to create the conda environment: `conda env create -f environment.yml`  
-4. Activate the newly created environment: `conda activate sega_learn_env`
+4. Activate the newly created environment: `conda activate sega_learn`
 
