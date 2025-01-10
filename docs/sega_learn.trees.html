@@ -179,7 +179,7 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="GradientBoostedRegressor">class <strong>GradientBoostedRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#GradientBoostedRegressor">GradientBoostedRegressor</a>(file_loc:&nbsp;str,&nbsp;num_trees:&nbsp;int&nbsp;=&nbsp;5,&nbsp;random_seed:&nbsp;int&nbsp;=&nbsp;0,&nbsp;max_depth:&nbsp;int&nbsp;=&nbsp;10)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#GradientBoostedRegressor">GradientBoostedRegressor</a>(X,&nbsp;y,&nbsp;num_trees:&nbsp;int&nbsp;=&nbsp;10,&nbsp;max_depth:&nbsp;int&nbsp;=&nbsp;10,&nbsp;random_seed:&nbsp;int&nbsp;=&nbsp;0)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;to&nbsp;represent&nbsp;a&nbsp;Gradient&nbsp;Boosted&nbsp;Decision&nbsp;Tree&nbsp;Regressor.<br>
 &nbsp;<br>
@@ -201,7 +201,7 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#GradientBoostedRegressor-get_stats">get_stats</a>(y_predicted):&nbsp;Calculates&nbsp;various&nbsp;evaluation&nbsp;metrics&nbsp;for&nbsp;the&nbsp;predicted&nbsp;target&nbsp;values.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="GradientBoostedRegressor-__init__"><strong>__init__</strong></a>(self, file_loc: str, num_trees: int = 5, random_seed: int = 0, max_depth: int = 10)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="GradientBoostedRegressor-__init__"><strong>__init__</strong></a>(self, X, y, num_trees: int = 10, max_depth: int = 10, random_seed: int = 0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
 
 <dl><dt><a name="GradientBoostedRegressor-fit"><strong>fit</strong></a>(self, stats=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;gradient&nbsp;boosted&nbsp;decision&nbsp;tree&nbsp;regressor&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
 &nbsp;<br>

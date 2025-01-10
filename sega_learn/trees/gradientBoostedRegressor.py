@@ -6,7 +6,6 @@ import numpy as np
 import csv
 import ast
 
-# TODO: Refactor this code like other trees
 class GradientBoostedRegressor(object):
     """
     A class to represent a Gradient Boosted Decision Tree Regressor.
