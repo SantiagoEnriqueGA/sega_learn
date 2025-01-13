@@ -1,6 +1,6 @@
 # SEGA_LEARN
 
-SEGA_LEARN is a custom implementation of machine learning algorithms. It includes implementations of various machine learning algorithms, including clustering, linear models, neural networks, and trees. The project also includes scripts for testing, documentation generation, and other tasks.
+SEGA_LEARN is a custom implementation of machine learning algorithms mainly from the Python standard library and NumPy. It includes implementations of various machine learning algorithms, including clustering, linear models, neural networks, and trees. The project also includes scripts for testing, documentation generation, and other tasks.
 
 The project is organized into several directories, each with its own purpose. The `SEGA_LEARN/` directory contains the main library code, while the `tests/` directory contains unit and performance tests. The `examples/` directory contains example usages of the library, and the `docs/` directory contains the generated documentation. The `scripts/` directory contains PowerShell scripts to help with various tasks.
 
@@ -19,11 +19,11 @@ This project was heavily inspired by [scikit-learn](https://scikit-learn.org/sta
 - [Installation](#installation)
 
 ## Current Features
-- **Clustering**: Implements clustering algorithms like DBSCAN and KMeans. [`clustering`](SEGA_LEARN/clustering/clustering.py).
-- **Linear Models**: Implements various linear models like Bayesian Regression, Lasso Regression, Linear Discriminant Analysis, Ordinary Least Squares, Passive Aggressive Regressor, Quadratic Discriminant Analysis, RANSAC Regression, and Ridge Regression. See [`linear_models`](SEGA_LEARN/linear_models/linearModels.py) and [`discriminantAnalysis`](SEGA_LEARN/linear_models/discriminantAnalysis.py).
-- **Neural Networks**: Implements neural network components like optimizers (Adadelta, Adam, SGD), loss functions (BCEWithLogitsLoss, CrossEntropyLoss), and the NeuralNetwork class. See [`neural_networks`](SEGA_LEARN/neural_networks).
-- **Trees**: Implements tree-based algorithms like Classifier Tree, Random Forest Classifier, Gradient Boosted Regressor, Random Forest Regressor, Regressor Tree, and utilities for computing variance, partitioning classes, and calculating information gain. See [`trees`](SEGA_LEARN/trees).
-- **Utils**: Implements utility functions for data preparation and voting regressor. See [`utils`](SEGA_LEARN/utils).
+- **Clustering**: Implements clustering algorithms like DBSCAN and KMeans.
+- **Linear Models**: Implements various linear models like Bayesian Regression, Lasso Regression, Linear Discriminant Analysis, Ordinary Least Squares, Passive Aggressive Regressor, Quadratic Discriminant Analysis, RANSAC Regression, and Ridge Regression.
+- **Neural Networks**: Implements neural network components like optimizers (Adadelta, Adam, SGD), loss functions (BCEWithLogitsLoss, CrossEntropyLoss), and the NeuralNetwork class.
+- **Trees**: Implements tree-based algorithms like Classifier Tree, Random Forest Classifier, Gradient Boosted Regressor, Random Forest Regressor, Regressor Tree, and utilities for computing variance, partitioning classes, and calculating information gain.
+- **Utils**: Implements utility functions for data preparation and voting regressor.
 
 ## File Structure
 The project directory structure is as follows:
