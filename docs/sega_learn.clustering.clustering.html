@@ -36,13 +36,7 @@ td.singlecolumn { width: 100%; }
 <tr class="heading-text decor">
 <td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.clustering.html" class="white">clustering</a>.clustering</strong></td>
 </tr></table>
-    <p><span class="code">This&nbsp;is&nbsp;a&nbsp;custom&nbsp;implementation&nbsp;of&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;clustering&nbsp;algorithm&nbsp;along&nbsp;with&nbsp;additional&nbsp;functionalities&nbsp;for&nbsp;evaluating&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;and&nbsp;visualizing&nbsp;the&nbsp;clustering&nbsp;results.<br>
-&nbsp;<br>
-Classes:<br>
--&nbsp;<a href="#KMeans">KMeans</a>:&nbsp;A&nbsp;class&nbsp;implementing&nbsp;<a href="#KMeans">KMeans</a>&nbsp;clustering&nbsp;with&nbsp;methods&nbsp;for&nbsp;fitting&nbsp;the&nbsp;model,&nbsp;predicting&nbsp;cluster&nbsp;labels,&nbsp;and&nbsp;finding&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters.<br>
--&nbsp;<a href="#DBSCAN">DBSCAN</a>:&nbsp;A&nbsp;class&nbsp;implementing&nbsp;the&nbsp;Density-Based&nbsp;Spatial&nbsp;Clustering&nbsp;of&nbsp;Applications&nbsp;with&nbsp;Noise&nbsp;(<a href="#DBSCAN">DBSCAN</a>)&nbsp;algorithm.<br>
-&nbsp;<br>
-Note:&nbsp;Includes&nbsp;example&nbsp;usage&nbsp;at&nbsp;the&nbsp;end&nbsp;to&nbsp;demonstrate&nbsp;how&nbsp;to&nbsp;use&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;class&nbsp;and&nbsp;its&nbsp;functionalities.</span></p>
+    <p></p>
 <p>
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
@@ -87,15 +81,9 @@ Methods:<br>
 -&nbsp;predict:&nbsp;Predicts&nbsp;the&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;new&nbsp;data&nbsp;points.<br>
 -&nbsp;fit_predict:&nbsp;Fits&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;and&nbsp;returns&nbsp;cluster&nbsp;labels.<br>
 -&nbsp;silhouette_score:&nbsp;Calculates&nbsp;the&nbsp;Silhouette&nbsp;Score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
-&nbsp;<br>
-Custom&nbsp;Methods:<br>
 -&nbsp;_handle_categorical:&nbsp;Handles&nbsp;categorical&nbsp;columns&nbsp;by&nbsp;one-hot&nbsp;encoding.<br>
 -&nbsp;_convert_to_ndarray:&nbsp;Converts&nbsp;input&nbsp;data&nbsp;to&nbsp;a&nbsp;NumPy&nbsp;ndarray&nbsp;and&nbsp;handles&nbsp;categorical&nbsp;columns.<br>
--&nbsp;_custom_distance_matrix:&nbsp;Calculates&nbsp;the&nbsp;pairwise&nbsp;distance&nbsp;matrix&nbsp;using&nbsp;a&nbsp;custom&nbsp;distance&nbsp;calculation&nbsp;method.<br>
-&nbsp;<br>
-Usage&nbsp;Example:<br>
--&nbsp;Initialize&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;data&nbsp;matrix&nbsp;and&nbsp;hyperparameters.<br>
--&nbsp;Fit&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;evaluate&nbsp;clustering&nbsp;performance&nbsp;using&nbsp;silhouette&nbsp;score.<br>&nbsp;</span></td></tr>
+-&nbsp;_custom_distance_matrix:&nbsp;Calculates&nbsp;the&nbsp;pairwise&nbsp;distance&nbsp;matrix&nbsp;using&nbsp;a&nbsp;custom&nbsp;distance&nbsp;calculation&nbsp;method.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="DBSCAN-__init__"><strong>__init__</strong></a>(self, X, eps=0.5, min_samples=5)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
@@ -124,6 +112,9 @@ Algorithm&nbsp;Steps:<br>
 1.&nbsp;Calculate&nbsp;the&nbsp;distance&nbsp;matrix&nbsp;between&nbsp;all&nbsp;points&nbsp;in&nbsp;the&nbsp;dataset.<br>
 2.&nbsp;Identify&nbsp;core&nbsp;points&nbsp;based&nbsp;on&nbsp;the&nbsp;minimum&nbsp;number&nbsp;of&nbsp;neighbors&nbsp;within&nbsp;eps&nbsp;distance.<br>
 3.&nbsp;Assign&nbsp;cluster&nbsp;labels&nbsp;using&nbsp;depth-first&nbsp;search&nbsp;(DFS)&nbsp;starting&nbsp;from&nbsp;core&nbsp;points.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;metric:&nbsp;The&nbsp;distance&nbsp;metric&nbsp;to&nbsp;use&nbsp;('euclidean',&nbsp;'manhattan',&nbsp;or&nbsp;'cosine').<br>
 &nbsp;<br>
 Returns:<br>
 -&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.</span></dd></dl>
@@ -188,15 +179,16 @@ Methods:<br>
 -&nbsp;silhouette_score:&nbsp;Calculates&nbsp;the&nbsp;Silhouette&nbsp;Score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
 -&nbsp;find_optimal_clusters:&nbsp;Implements&nbsp;methods&nbsp;to&nbsp;find&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;using&nbsp;the&nbsp;elbow&nbsp;method,&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calinski-Harabasz&nbsp;Index,&nbsp;Davies-Bouldin&nbsp;Index,&nbsp;and&nbsp;Silhouette&nbsp;Score.&nbsp;It&nbsp;also&nbsp;plots&nbsp;the&nbsp;evaluation&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;metrics&nbsp;to&nbsp;aid&nbsp;in&nbsp;determining&nbsp;the&nbsp;optimal&nbsp;k&nbsp;value.<br>
-&nbsp;<br>
-Usage&nbsp;Example:<br>
--&nbsp;Initialize&nbsp;<a href="#KMeans">KMeans</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;data&nbsp;matrix,&nbsp;number&nbsp;of&nbsp;clusters,&nbsp;and&nbsp;other&nbsp;parameters.<br>
--&nbsp;Fit&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;evaluate&nbsp;clustering&nbsp;performance&nbsp;using&nbsp;various&nbsp;metrics.<br>
--&nbsp;Visualize&nbsp;the&nbsp;clustering&nbsp;results&nbsp;and&nbsp;determine&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;metrics&nbsp;to&nbsp;aid&nbsp;in&nbsp;determining&nbsp;the&nbsp;optimal&nbsp;k&nbsp;value.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="KMeans-__init__"><strong>__init__</strong></a>(self, X, n_clusters=3, max_iter=300, tol=0.0001)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
+<dl><dt><a name="KMeans-__init__"><strong>__init__</strong></a>(self, X, n_clusters=3, max_iter=300, tol=0.0001)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array,&nbsp;pandas&nbsp;DataFrame,&nbsp;or&nbsp;list).<br>
+-&nbsp;n_clusters:&nbsp;The&nbsp;number&nbsp;of&nbsp;clusters.<br>
+-&nbsp;max_iter:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations.<br>
+-&nbsp;tol:&nbsp;The&nbsp;tolerance&nbsp;to&nbsp;declare&nbsp;convergence.</span></dd></dl>
 
 <dl><dt><a name="KMeans-assign_clusters"><strong>assign_clusters</strong></a>(self, centroids)</dt><dd><span class="code">Assign&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;nearest&nbsp;centroid.<br>
 &nbsp;<br>
@@ -229,7 +221,6 @@ Returns:<br>
 <dl><dt><a name="KMeans-elbow_method"><strong>elbow_method</strong></a>(self, max_k=10)</dt><dd><span class="code">Implement&nbsp;the&nbsp;elbow&nbsp;method&nbsp;to&nbsp;determine&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters.<br>
 &nbsp;<br>
 Parameters:<br>
--&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
 -&nbsp;max_k:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;clusters&nbsp;to&nbsp;test.<br>
 &nbsp;<br>
 Returns:<br>

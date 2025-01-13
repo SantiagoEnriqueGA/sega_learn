@@ -73,7 +73,7 @@ The&nbsp;module&nbsp;includes&nbsp;the&nbsp;following&nbsp;classes:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomForestClassifier">class <strong>RandomForestClassifier</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestClassifier">RandomForestClassifier</a>(X,&nbsp;y,&nbsp;max_depth=5,&nbsp;forest_size=5,&nbsp;display=False,&nbsp;random_seed=0)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestClassifier">RandomForestClassifier</a>(X=None,&nbsp;y=None,&nbsp;max_depth=5,&nbsp;forest_size=5,&nbsp;display=False,&nbsp;random_seed=0)<br>
 &nbsp;<br>
 Random&nbsp;Forest&nbsp;classifier.<br>
 &nbsp;<br>
@@ -93,7 +93,7 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestClassifier-voting">voting</a>(self,&nbsp;X):&nbsp;Performs&nbsp;voting&nbsp;to&nbsp;classify&nbsp;the&nbsp;input&nbsp;records.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RandomForestClassifier-__init__"><strong>__init__</strong></a>(self, X, y, max_depth=5, forest_size=5, display=False, random_seed=0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
+<dl><dt><a name="RandomForestClassifier-__init__"><strong>__init__</strong></a>(self, X=None, y=None, max_depth=5, forest_size=5, display=False, random_seed=0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;num_trees&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
@@ -106,7 +106,7 @@ Args:<br>
 
 <dl><dt><a name="RandomForestClassifier-display_info_gains"><strong>display_info_gains</strong></a>(self)</dt><dd><span class="code">Displays&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.</span></dd></dl>
 
-<dl><dt><a name="RandomForestClassifier-fit"><strong>fit</strong></a>(self, verbose=True)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
+<dl><dt><a name="RandomForestClassifier-fit"><strong>fit</strong></a>(self, X=None, y=None, verbose=False)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>&nbsp;and&nbsp;the&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
@@ -119,6 +119,14 @@ Raises:<br>
 <dl><dt><a name="RandomForestClassifier-plot_info_gains"><strong>plot_info_gains</strong></a>(self)</dt><dd><span class="code">Plots&nbsp;the&nbsp;information&nbsp;gain&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree&nbsp;separately.</span></dd></dl>
 
 <dl><dt><a name="RandomForestClassifier-plot_info_gains_together"><strong>plot_info_gains_together</strong></a>(self)</dt><dd><span class="code">Plots&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;all&nbsp;decision&nbsp;trees&nbsp;together.</span></dd></dl>
+
+<dl><dt><a name="RandomForestClassifier-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;the&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;records.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(list):&nbsp;The&nbsp;input&nbsp;records.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;list:&nbsp;The&nbsp;predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;records.</span></dd></dl>
 
 <dl><dt><a name="RandomForestClassifier-reset"><strong>reset</strong></a>(self)</dt><dd><span class="code">Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
 

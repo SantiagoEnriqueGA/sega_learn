@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.utils.metrics</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.utils.html" class="white">utils</a>.metrics</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.utils.metrics.html#Metrics">Metrics</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Metrics">class <strong>Metrics</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Metrics-accuracy"><strong>accuracy</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;accuracy&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;accuracy&nbsp;score.</span></dd></dl>
+
+<dl><dt><a name="Metrics-mean_squared_error"><strong>mean_squared_error</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;mse&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;squared&nbsp;error.</span></dd></dl>
+
+<dl><dt><a name="Metrics-precision"><strong>precision</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;precision&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;precision&nbsp;(float):&nbsp;The&nbsp;precision&nbsp;score.</span></dd></dl>
+
+<dl><dt><a name="Metrics-r_squared"><strong>r_squared</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;R-squared&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;r_squared&nbsp;(float):&nbsp;The&nbsp;R-squared&nbsp;score.</span></dd></dl>
+
+<dl><dt><a name="Metrics-recall"><strong>recall</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;recall&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;recall&nbsp;(float):&nbsp;The&nbsp;recall&nbsp;score.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>

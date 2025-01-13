@@ -86,7 +86,10 @@ td.singlecolumn { width: 100%; }
 </dt><dt class="heading-text"><a href="sega_learn.trees.treeRegressor.html#RegressorTree">sega_learn.trees.treeRegressor.RegressorTree</a>
 </dt><dt class="heading-text"><a href="sega_learn.trees.treeRegressor.html#RegressorTreeUtility">sega_learn.trees.treeRegressor.RegressorTreeUtility</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.dataPrep.html#DataPrep">sega_learn.utils.dataPrep.DataPrep</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.metrics.html#Metrics">sega_learn.utils.metrics.Metrics</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.model_selection.html#GridSearchCV">sega_learn.utils.model_selection.GridSearchCV</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.polynomialTransform.html#PolynomialTransform">sega_learn.utils.polynomialTransform.PolynomialTransform</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.voting.html#VotingRegressor">sega_learn.utils.voting.VotingRegressor</a>
 </dt></dl>
 </dd>
 </dl>
@@ -292,7 +295,24 @@ Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;posterior&nbsp;covariance&nbsp;of&nbsp;the&nbsp;weights.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="Bayesian-__init__"><strong>__init__</strong></a>(self, max_iter=300, tol=0.001, alpha_1=1e-06, alpha_2=1e-06, lambda_1=1e-06, lambda_2=1e-06, fit_intercept=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="Bayesian-__init__"><strong>__init__</strong></a>(self, max_iter=300, tol=0.001, alpha_1=1e-06, alpha_2=1e-06, lambda_1=1e-06, lambda_2=1e-06, fit_intercept=None)</dt><dd><span class="code">This&nbsp;class&nbsp;implements&nbsp;<a href="#Bayesian">Bayesian</a>&nbsp;Regression&nbsp;using&nbsp;Coordinate&nbsp;Descent.<br>
+<a href="#Bayesian">Bayesian</a>&nbsp;regression&nbsp;implements&nbsp;both&nbsp;L1&nbsp;and&nbsp;L2&nbsp;regularization,&nbsp;which&nbsp;helps&nbsp;to&nbsp;prevent&nbsp;overfitting&nbsp;by&nbsp;adding&nbsp;a&nbsp;penalty&nbsp;term&nbsp;to&nbsp;the&nbsp;loss&nbsp;function.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;max_iter:&nbsp;int,&nbsp;default=300<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;to&nbsp;perform.<br>
+-&nbsp;tol:&nbsp;float,&nbsp;default=0.001<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;convergence&nbsp;threshold.&nbsp;The&nbsp;algorithm&nbsp;will&nbsp;stop&nbsp;if&nbsp;the&nbsp;coefficients&nbsp;change&nbsp;less&nbsp;than&nbsp;the&nbsp;threshold.<br>
+-&nbsp;alpha_1:&nbsp;float,&nbsp;default=1e-06<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;shape&nbsp;parameter&nbsp;for&nbsp;the&nbsp;prior&nbsp;on&nbsp;the&nbsp;weights.<br>
+-&nbsp;alpha_2:&nbsp;float,&nbsp;default=1e-06<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;scale&nbsp;parameter&nbsp;for&nbsp;the&nbsp;prior&nbsp;on&nbsp;the&nbsp;weights.<br>
+-&nbsp;lambda_1:&nbsp;float,&nbsp;default=1e-06<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;shape&nbsp;parameter&nbsp;for&nbsp;the&nbsp;prior&nbsp;on&nbsp;the&nbsp;noise.<br>
+-&nbsp;lambda_2:&nbsp;float,&nbsp;default=1e-06<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;scale&nbsp;parameter&nbsp;for&nbsp;the&nbsp;prior&nbsp;on&nbsp;the&nbsp;noise.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+-&nbsp;fit_intercept:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;calculate&nbsp;the&nbsp;intercept&nbsp;for&nbsp;this&nbsp;model.</span></dd></dl>
 
 <dl><dt><a name="Bayesian-__str__"><strong>__str__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;str(self).</span></dd></dl>
 
@@ -439,15 +459,9 @@ Methods:<br>
 -&nbsp;predict:&nbsp;Predicts&nbsp;the&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;new&nbsp;data&nbsp;points.<br>
 -&nbsp;fit_predict:&nbsp;Fits&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;and&nbsp;returns&nbsp;cluster&nbsp;labels.<br>
 -&nbsp;silhouette_score:&nbsp;Calculates&nbsp;the&nbsp;Silhouette&nbsp;Score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
-&nbsp;<br>
-Custom&nbsp;Methods:<br>
 -&nbsp;_handle_categorical:&nbsp;Handles&nbsp;categorical&nbsp;columns&nbsp;by&nbsp;one-hot&nbsp;encoding.<br>
 -&nbsp;_convert_to_ndarray:&nbsp;Converts&nbsp;input&nbsp;data&nbsp;to&nbsp;a&nbsp;NumPy&nbsp;ndarray&nbsp;and&nbsp;handles&nbsp;categorical&nbsp;columns.<br>
--&nbsp;_custom_distance_matrix:&nbsp;Calculates&nbsp;the&nbsp;pairwise&nbsp;distance&nbsp;matrix&nbsp;using&nbsp;a&nbsp;custom&nbsp;distance&nbsp;calculation&nbsp;method.<br>
-&nbsp;<br>
-Usage&nbsp;Example:<br>
--&nbsp;Initialize&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;data&nbsp;matrix&nbsp;and&nbsp;hyperparameters.<br>
--&nbsp;Fit&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;evaluate&nbsp;clustering&nbsp;performance&nbsp;using&nbsp;silhouette&nbsp;score.<br>&nbsp;</span></td></tr>
+-&nbsp;_custom_distance_matrix:&nbsp;Calculates&nbsp;the&nbsp;pairwise&nbsp;distance&nbsp;matrix&nbsp;using&nbsp;a&nbsp;custom&nbsp;distance&nbsp;calculation&nbsp;method.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="DBSCAN-__init__"><strong>__init__</strong></a>(self, X, eps=0.5, min_samples=5)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
@@ -476,6 +490,9 @@ Algorithm&nbsp;Steps:<br>
 1.&nbsp;Calculate&nbsp;the&nbsp;distance&nbsp;matrix&nbsp;between&nbsp;all&nbsp;points&nbsp;in&nbsp;the&nbsp;dataset.<br>
 2.&nbsp;Identify&nbsp;core&nbsp;points&nbsp;based&nbsp;on&nbsp;the&nbsp;minimum&nbsp;number&nbsp;of&nbsp;neighbors&nbsp;within&nbsp;eps&nbsp;distance.<br>
 3.&nbsp;Assign&nbsp;cluster&nbsp;labels&nbsp;using&nbsp;depth-first&nbsp;search&nbsp;(DFS)&nbsp;starting&nbsp;from&nbsp;core&nbsp;points.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;metric:&nbsp;The&nbsp;distance&nbsp;metric&nbsp;to&nbsp;use&nbsp;('euclidean',&nbsp;'manhattan',&nbsp;or&nbsp;'cosine').<br>
 &nbsp;<br>
 Returns:<br>
 -&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.</span></dd></dl>
@@ -526,6 +543,17 @@ Returns:<br>
 -&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.<br>
 -&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.</span></dd></dl>
 
+<dl><dt><a name="DataPrep-k_split"><strong>k_split</strong></a>(X, y, k=5)</dt><dd><span class="code">Splits&nbsp;the&nbsp;data&nbsp;into&nbsp;k&nbsp;folds&nbsp;for&nbsp;cross-validation.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
+-&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
+-&nbsp;k&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds.&nbsp;Default&nbsp;is&nbsp;5.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X_folds&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;feature&nbsp;columns.<br>
+-&nbsp;y_folds&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;label&nbsp;columns.</span></dd></dl>
+
 <dl><dt><a name="DataPrep-one_hot_encode"><strong>one_hot_encode</strong></a>(df, cols)</dt><dd><span class="code">One-hot&nbsp;encodes&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame.<br>
 Drops&nbsp;the&nbsp;original&nbsp;columns&nbsp;after&nbsp;encoding.<br>
 &nbsp;<br>
@@ -569,7 +597,7 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="GradientBoostedRegressor">class <strong>GradientBoostedRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#GradientBoostedRegressor">GradientBoostedRegressor</a>(X,&nbsp;y,&nbsp;num_trees:&nbsp;int&nbsp;=&nbsp;10,&nbsp;max_depth:&nbsp;int&nbsp;=&nbsp;10,&nbsp;random_seed:&nbsp;int&nbsp;=&nbsp;0)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#GradientBoostedRegressor">GradientBoostedRegressor</a>(X=None,&nbsp;y=None,&nbsp;num_trees:&nbsp;int&nbsp;=&nbsp;10,&nbsp;max_depth:&nbsp;int&nbsp;=&nbsp;10,&nbsp;random_seed:&nbsp;int&nbsp;=&nbsp;0)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;to&nbsp;represent&nbsp;a&nbsp;Gradient&nbsp;Boosted&nbsp;Decision&nbsp;Tree&nbsp;Regressor.<br>
 &nbsp;<br>
@@ -591,15 +619,17 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#GradientBoostedRegressor-get_stats">get_stats</a>(y_predicted):&nbsp;Calculates&nbsp;various&nbsp;evaluation&nbsp;metrics&nbsp;for&nbsp;the&nbsp;predicted&nbsp;target&nbsp;values.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="GradientBoostedRegressor-__init__"><strong>__init__</strong></a>(self, X, y, num_trees: int = 10, max_depth: int = 10, random_seed: int = 0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="GradientBoostedRegressor-__init__"><strong>__init__</strong></a>(self, X=None, y=None, num_trees: int = 10, max_depth: int = 10, random_seed: int = 0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
 
-<dl><dt><a name="GradientBoostedRegressor-fit"><strong>fit</strong></a>(self, stats=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;gradient&nbsp;boosted&nbsp;decision&nbsp;tree&nbsp;regressor&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+<dl><dt><a name="GradientBoostedRegressor-fit"><strong>fit</strong></a>(self, X=None, y=None, stats=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;gradient&nbsp;boosted&nbsp;decision&nbsp;tree&nbsp;regressor&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
 &nbsp;<br>
 This&nbsp;method&nbsp;trains&nbsp;the&nbsp;ensemble&nbsp;of&nbsp;decision&nbsp;trees&nbsp;by&nbsp;iteratively&nbsp;fitting&nbsp;each&nbsp;tree&nbsp;to&nbsp;the&nbsp;residuals<br>
 of&nbsp;the&nbsp;previous&nbsp;iteration.&nbsp;The&nbsp;residuals&nbsp;are&nbsp;updated&nbsp;after&nbsp;each&nbsp;iteration&nbsp;by&nbsp;subtracting&nbsp;the&nbsp;predictions<br>
 made&nbsp;by&nbsp;the&nbsp;current&nbsp;tree&nbsp;from&nbsp;the&nbsp;target&nbsp;values.<br>
 &nbsp;<br>
 Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;input&nbsp;data&nbsp;features.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;stats&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;decide&nbsp;whether&nbsp;to&nbsp;return&nbsp;stats&nbsp;or&nbsp;not.&nbsp;Default&nbsp;is&nbsp;False.<br>
 &nbsp;<br>
 Returns:<br>
@@ -618,12 +648,50 @@ Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;MAE&nbsp;(float):&nbsp;Mean&nbsp;Absolute&nbsp;Error<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;RMSE&nbsp;(float):&nbsp;Root&nbsp;Mean&nbsp;Squared&nbsp;Error</span></dd></dl>
 
-<dl><dt><a name="GradientBoostedRegressor-predict"><strong>predict</strong></a>(self)</dt><dd><span class="code">Predicts&nbsp;the&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data&nbsp;using&nbsp;the&nbsp;gradient&nbsp;boosted&nbsp;decision&nbsp;tree&nbsp;regressor.<br>
+<dl><dt><a name="GradientBoostedRegressor-predict"><strong>predict</strong></a>(self, X=None)</dt><dd><span class="code">Predicts&nbsp;the&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data&nbsp;using&nbsp;the&nbsp;gradient&nbsp;boosted&nbsp;decision&nbsp;tree&nbsp;regressor.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;input&nbsp;data&nbsp;features.&nbsp;Default&nbsp;is&nbsp;None.<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;predictions&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;predicted&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
 
 <dl><dt><a name="GradientBoostedRegressor-reset"><strong>reset</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="GridSearchCV">class <strong>GridSearchCV</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#GridSearchCV">GridSearchCV</a>(model,&nbsp;param_grid,&nbsp;cv=5,&nbsp;metric='mse',&nbsp;direction='minimize')<br>
+&nbsp;<br>
+Implements&nbsp;a&nbsp;grid&nbsp;search&nbsp;cross-validation&nbsp;for&nbsp;hyperparameter&nbsp;tuning.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="GridSearchCV-__init__"><strong>__init__</strong></a>(self, model, param_grid, cv=5, metric='mse', direction='minimize')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#GridSearchCV">GridSearchCV</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
+-&nbsp;param_grid&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
+-&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
+-&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+-&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
+
+<dl><dt><a name="GridSearchCV-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;for&nbsp;all&nbsp;hyperparameter&nbsp;combinations.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
+-&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
+-&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -666,15 +734,16 @@ Methods:<br>
 -&nbsp;silhouette_score:&nbsp;Calculates&nbsp;the&nbsp;Silhouette&nbsp;Score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
 -&nbsp;find_optimal_clusters:&nbsp;Implements&nbsp;methods&nbsp;to&nbsp;find&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;using&nbsp;the&nbsp;elbow&nbsp;method,&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calinski-Harabasz&nbsp;Index,&nbsp;Davies-Bouldin&nbsp;Index,&nbsp;and&nbsp;Silhouette&nbsp;Score.&nbsp;It&nbsp;also&nbsp;plots&nbsp;the&nbsp;evaluation&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;metrics&nbsp;to&nbsp;aid&nbsp;in&nbsp;determining&nbsp;the&nbsp;optimal&nbsp;k&nbsp;value.<br>
-&nbsp;<br>
-Usage&nbsp;Example:<br>
--&nbsp;Initialize&nbsp;<a href="#KMeans">KMeans</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;data&nbsp;matrix,&nbsp;number&nbsp;of&nbsp;clusters,&nbsp;and&nbsp;other&nbsp;parameters.<br>
--&nbsp;Fit&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;evaluate&nbsp;clustering&nbsp;performance&nbsp;using&nbsp;various&nbsp;metrics.<br>
--&nbsp;Visualize&nbsp;the&nbsp;clustering&nbsp;results&nbsp;and&nbsp;determine&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;metrics&nbsp;to&nbsp;aid&nbsp;in&nbsp;determining&nbsp;the&nbsp;optimal&nbsp;k&nbsp;value.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="KMeans-__init__"><strong>__init__</strong></a>(self, X, n_clusters=3, max_iter=300, tol=0.0001)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
+<dl><dt><a name="KMeans-__init__"><strong>__init__</strong></a>(self, X, n_clusters=3, max_iter=300, tol=0.0001)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array,&nbsp;pandas&nbsp;DataFrame,&nbsp;or&nbsp;list).<br>
+-&nbsp;n_clusters:&nbsp;The&nbsp;number&nbsp;of&nbsp;clusters.<br>
+-&nbsp;max_iter:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations.<br>
+-&nbsp;tol:&nbsp;The&nbsp;tolerance&nbsp;to&nbsp;declare&nbsp;convergence.</span></dd></dl>
 
 <dl><dt><a name="KMeans-assign_clusters"><strong>assign_clusters</strong></a>(self, centroids)</dt><dd><span class="code">Assign&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;nearest&nbsp;centroid.<br>
 &nbsp;<br>
@@ -707,7 +776,6 @@ Returns:<br>
 <dl><dt><a name="KMeans-elbow_method"><strong>elbow_method</strong></a>(self, max_k=10)</dt><dd><span class="code">Implement&nbsp;the&nbsp;elbow&nbsp;method&nbsp;to&nbsp;determine&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters.<br>
 &nbsp;<br>
 Parameters:<br>
--&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
 -&nbsp;max_k:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;clusters&nbsp;to&nbsp;test.<br>
 &nbsp;<br>
 Returns:<br>
@@ -791,7 +859,18 @@ Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Independent&nbsp;term&nbsp;in&nbsp;the&nbsp;linear&nbsp;model.&nbsp;Set&nbsp;to&nbsp;0.0&nbsp;if&nbsp;`fit_intercept`&nbsp;is&nbsp;False.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="Lasso-__init__"><strong>__init__</strong></a>(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=0.0001)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="Lasso-__init__"><strong>__init__</strong></a>(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=0.0001)</dt><dd><span class="code">This&nbsp;class&nbsp;implements&nbsp;<a href="#Lasso">Lasso</a>&nbsp;Regression&nbsp;using&nbsp;Coordinate&nbsp;Descent.<br>
+<a href="#Lasso">Lasso</a>&nbsp;regression&nbsp;implements&nbsp;L1&nbsp;regularization,&nbsp;which&nbsp;helps&nbsp;to&nbsp;prevent&nbsp;overfitting&nbsp;by&nbsp;adding&nbsp;a&nbsp;penalty&nbsp;term&nbsp;to&nbsp;the&nbsp;loss&nbsp;function.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;alpha&nbsp;:&nbsp;float,&nbsp;default=1.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Regularization&nbsp;strength;&nbsp;must&nbsp;be&nbsp;a&nbsp;positive&nbsp;float.&nbsp;Regularization&nbsp;improves&nbsp;the&nbsp;conditioning&nbsp;of&nbsp;the&nbsp;problem&nbsp;and&nbsp;reduces&nbsp;the&nbsp;variance&nbsp;of&nbsp;the&nbsp;estimates.<br>
+-&nbsp;fit_intercept&nbsp;:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;calculate&nbsp;the&nbsp;intercept&nbsp;for&nbsp;this&nbsp;model.<br>
+-&nbsp;max_iter&nbsp;:&nbsp;int,&nbsp;default=10000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;the&nbsp;coordinate&nbsp;descent&nbsp;solver.<br>
+-&nbsp;tol&nbsp;:&nbsp;float,&nbsp;default=1e-4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Tolerance&nbsp;for&nbsp;the&nbsp;optimization.&nbsp;The&nbsp;optimization&nbsp;stops&nbsp;when&nbsp;the&nbsp;change&nbsp;in&nbsp;the&nbsp;coefficients&nbsp;is&nbsp;less&nbsp;than&nbsp;this&nbsp;tolerance.</span></dd></dl>
 
 <dl><dt><a name="Lasso-__str__"><strong>__str__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;str(self).</span></dd></dl>
 
@@ -871,7 +950,16 @@ Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="LinearDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, solver='svd', priors=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="LinearDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, solver='svd', priors=None)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;Linear&nbsp;Discriminant&nbsp;Analysis&nbsp;model&nbsp;with&nbsp;the&nbsp;specified&nbsp;solver&nbsp;and&nbsp;prior&nbsp;probabilities.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;solver&nbsp;:&nbsp;{'svd',&nbsp;'lsqr',&nbsp;'eigen'},&nbsp;default='svd'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Solver&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;LDA.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'svd'&nbsp;is&nbsp;the&nbsp;default&nbsp;and&nbsp;recommended&nbsp;solver.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'lsqr'&nbsp;is&nbsp;a&nbsp;faster&nbsp;alternative&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;is&nbsp;large.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'eigen'&nbsp;is&nbsp;an&nbsp;alternative&nbsp;solver&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;is&nbsp;small.<br>
+-&nbsp;priors&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_classes,),&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.</span></dd></dl>
 
 <dl><dt><a name="LinearDiscriminantAnalysis-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;decision&nbsp;function&nbsp;to&nbsp;an&nbsp;array&nbsp;of&nbsp;samples.&nbsp;<br>
 The&nbsp;decision&nbsp;function&nbsp;is&nbsp;the&nbsp;log-likelihood&nbsp;of&nbsp;each&nbsp;class.<br>
@@ -896,6 +984,66 @@ Parameters:<br>
 &nbsp;<br>
 Returns:<br>
 -&nbsp;array,&nbsp;shape&nbsp;(n_samples,):&nbsp;Predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Metrics">class <strong>Metrics</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Metrics-accuracy"><strong>accuracy</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;accuracy&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;accuracy&nbsp;score.</span></dd></dl>
+
+<dl><dt><a name="Metrics-mean_squared_error"><strong>mean_squared_error</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;mse&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;squared&nbsp;error.</span></dd></dl>
+
+<dl><dt><a name="Metrics-precision"><strong>precision</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;precision&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;precision&nbsp;(float):&nbsp;The&nbsp;precision&nbsp;score.</span></dd></dl>
+
+<dl><dt><a name="Metrics-r_squared"><strong>r_squared</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;R-squared&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;r_squared&nbsp;(float):&nbsp;The&nbsp;R-squared&nbsp;score.</span></dd></dl>
+
+<dl><dt><a name="Metrics-recall"><strong>recall</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;recall&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;recall&nbsp;(float):&nbsp;The&nbsp;recall&nbsp;score.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -964,7 +1112,7 @@ Returns:<br>
 Args:&nbsp;X&nbsp;(ndarray):&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;input_size).<br>
 Returns:&nbsp;ndarray:&nbsp;Output&nbsp;predictions&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;output_size).</span></dd></dl>
 
-<dl><dt><a name="NeuralNetwork-train"><strong>train</strong></a>(self, X_train, y_train, X_test=None, y_test=None, optimizer=&lt;sega_learn.neural_networks.optimizers.AdamOptimizer object at 0x0000025F92DF1C90&gt;, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
+<dl><dt><a name="NeuralNetwork-train"><strong>train</strong></a>(self, X_train, y_train, X_test=None, y_test=None, optimizer=&lt;sega_learn.neural_networks.optimizers.AdamOptimizer object at 0x0000021F5761F190&gt;, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
 Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;features.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;labels.<br>
@@ -1102,17 +1250,28 @@ Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Whether&nbsp;to&nbsp;save&nbsp;the&nbsp;weights&nbsp;and&nbsp;intercept&nbsp;at&nbsp;each&nbsp;iteration.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="PassiveAggressiveRegressor-__init__"><strong>__init__</strong></a>(self, C=1.0, max_iter=1000, tol=0.001)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;linear&nbsp;model&nbsp;with&nbsp;the&nbsp;given&nbsp;parameters.</span></dd></dl>
+<dl><dt><a name="PassiveAggressiveRegressor-__init__"><strong>__init__</strong></a>(self, C=1.0, max_iter=1000, tol=0.001)</dt><dd><span class="code">Implements&nbsp;Passive&nbsp;Aggressive&nbsp;Regression&nbsp;using&nbsp;the&nbsp;Passive&nbsp;Aggressive&nbsp;algorithm.<br>
+The&nbsp;algorithm&nbsp;is&nbsp;a&nbsp;type&nbsp;of&nbsp;online&nbsp;learning&nbsp;algorithm&nbsp;that&nbsp;updates&nbsp;the&nbsp;model&nbsp;parameters&nbsp;based&nbsp;on&nbsp;the&nbsp;current&nbsp;sample.<br>
+If&nbsp;the&nbsp;prediction&nbsp;is&nbsp;within&nbsp;a&nbsp;certain&nbsp;tolerance,&nbsp;the&nbsp;model&nbsp;parameters&nbsp;are&nbsp;updated.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;C:&nbsp;float,&nbsp;default=1.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Regularization&nbsp;parameter/step&nbsp;size.<br>
+-&nbsp;max_iter:&nbsp;int,&nbsp;default=1000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;passes&nbsp;over&nbsp;the&nbsp;training&nbsp;data.<br>
+-&nbsp;tol:&nbsp;float,&nbsp;default=1e-3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;stopping&nbsp;criterion.</span></dd></dl>
 
 <dl><dt><a name="PassiveAggressiveRegressor-__str__"><strong>__str__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;str(self).</span></dd></dl>
 
-<dl><dt><a name="PassiveAggressiveRegressor-fit"><strong>fit</strong></a>(self, X, y, save_steps=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
+<dl><dt><a name="PassiveAggressiveRegressor-fit"><strong>fit</strong></a>(self, X, y, save_steps=False, verbose=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
 Save&nbsp;the&nbsp;weights&nbsp;and&nbsp;the&nbsp;intercept&nbsp;at&nbsp;each&nbsp;iteration&nbsp;if&nbsp;save_steps&nbsp;is&nbsp;True.<br>
 &nbsp;<br>
 Parameters:<br>
 -&nbsp;X&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data.<br>
 -&nbsp;y&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_samples,&nbsp;n_targets):&nbsp;Target&nbsp;values.<br>
--&nbsp;save_steps:&nbsp;bool,&nbsp;default=False</span></dd></dl>
+-&nbsp;save_steps:&nbsp;bool,&nbsp;default=False<br>
+-&nbsp;verbose:&nbsp;bool,&nbsp;default=False</span></dd></dl>
 
 <dl><dt><a name="PassiveAggressiveRegressor-get_formula"><strong>get_formula</strong></a>(self)</dt><dd><span class="code">Computes&nbsp;the&nbsp;formula&nbsp;of&nbsp;the&nbsp;model.<br>
 &nbsp;<br>
@@ -1195,7 +1354,12 @@ Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Regularization&nbsp;parameter.&nbsp;If&nbsp;greater&nbsp;than&nbsp;0,&nbsp;the&nbsp;covariance&nbsp;matrices&nbsp;are&nbsp;regularized&nbsp;by&nbsp;adding&nbsp;a&nbsp;scaled&nbsp;identity&nbsp;matrix&nbsp;to&nbsp;them.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="QuadraticDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, priors=None, reg_param=0.0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="QuadraticDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, priors=None, reg_param=0.0)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;Quadratic&nbsp;Discriminant&nbsp;Analysis&nbsp;model&nbsp;with&nbsp;the&nbsp;specified&nbsp;prior&nbsp;probabilities&nbsp;and&nbsp;regularization&nbsp;parameter.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;priors&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_classes,),&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.<br>
+-&nbsp;reg_param&nbsp;:&nbsp;float,&nbsp;default=0.0</span></dd></dl>
 
 <dl><dt><a name="QuadraticDiscriminantAnalysis-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;decision&nbsp;function&nbsp;to&nbsp;an&nbsp;array&nbsp;of&nbsp;samples.<br>
 The&nbsp;decision&nbsp;function&nbsp;is&nbsp;the&nbsp;log-likelihood&nbsp;of&nbsp;each&nbsp;class.<br>
@@ -1272,7 +1436,28 @@ Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;best&nbsp;model&nbsp;fit.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RANSAC-__init__"><strong>__init__</strong></a>(self, n=10, k=100, t=0.05, d=10, model=None, auto_scale_t=False, scale_t_factor=2, auto_scale_n=False, scale_n_factor=2)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;linear&nbsp;model&nbsp;with&nbsp;the&nbsp;given&nbsp;parameters.</span></dd></dl>
+<dl><dt><a name="RANSAC-__init__"><strong>__init__</strong></a>(self, n=10, k=100, t=0.05, d=10, model=None, auto_scale_t=False, scale_t_factor=2, auto_scale_n=False, scale_n_factor=2)</dt><dd><span class="code">Implements&nbsp;<a href="#RANSAC">RANSAC</a>&nbsp;(RANdom&nbsp;SAmple&nbsp;Consensus)&nbsp;algorithm&nbsp;for&nbsp;robust&nbsp;linear&nbsp;regression.<br>
+This&nbsp;uses&nbsp;the&nbsp;<a href="#RANSAC">RANSAC</a>&nbsp;algorithm&nbsp;to&nbsp;fit&nbsp;a&nbsp;linear&nbsp;model&nbsp;to&nbsp;the&nbsp;data,&nbsp;while&nbsp;ignoring&nbsp;outliers.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;n:&nbsp;int,&nbsp;default=10<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;of&nbsp;data&nbsp;points&nbsp;to&nbsp;estimate&nbsp;parameters.<br>
+-&nbsp;k:&nbsp;int,&nbsp;default=100<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Maximum&nbsp;iterations&nbsp;allowed.<br>
+-&nbsp;t:&nbsp;float,&nbsp;default=0.05<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Threshold&nbsp;value&nbsp;to&nbsp;determine&nbsp;if&nbsp;points&nbsp;are&nbsp;fit&nbsp;well,&nbsp;in&nbsp;terms&nbsp;of&nbsp;residuals.<br>
+-&nbsp;d:&nbsp;int,&nbsp;default=10<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;of&nbsp;close&nbsp;data&nbsp;points&nbsp;required&nbsp;to&nbsp;assert&nbsp;model&nbsp;fits&nbsp;well.&nbsp;<br>
+-&nbsp;model:&nbsp;<a href="builtins.html#object">object</a>,&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;model&nbsp;to&nbsp;use&nbsp;for&nbsp;fitting.&nbsp;If&nbsp;None,&nbsp;uses&nbsp;Ordinary&nbsp;Least&nbsp;Squares.<br>
+-&nbsp;auto_scale_t:&nbsp;bool,&nbsp;default=False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Whether&nbsp;to&nbsp;automatically&nbsp;scale&nbsp;the&nbsp;threshold&nbsp;until&nbsp;a&nbsp;model&nbsp;is&nbsp;fit.<br>
+-&nbsp;scale_t_factor:&nbsp;float,&nbsp;default=2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Factor&nbsp;by&nbsp;which&nbsp;to&nbsp;scale&nbsp;the&nbsp;threshold&nbsp;until&nbsp;a&nbsp;model&nbsp;is&nbsp;fit.<br>
+-&nbsp;auto_scale_n:&nbsp;bool,&nbsp;default=False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Whether&nbsp;to&nbsp;automatically&nbsp;scale&nbsp;the&nbsp;number&nbsp;of&nbsp;data&nbsp;points&nbsp;until&nbsp;a&nbsp;model&nbsp;is&nbsp;fit.<br>
+-&nbsp;scale_n_factor:&nbsp;float,&nbsp;default=2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Factor&nbsp;by&nbsp;which&nbsp;to&nbsp;scale&nbsp;the&nbsp;number&nbsp;of&nbsp;data&nbsp;points&nbsp;until&nbsp;a&nbsp;model&nbsp;is&nbsp;fit.</span></dd></dl>
 
 <dl><dt><a name="RANSAC-__str__"><strong>__str__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;str(self).</span></dd></dl>
 
@@ -1303,7 +1488,7 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomForestClassifier">class <strong>RandomForestClassifier</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestClassifier">RandomForestClassifier</a>(X,&nbsp;y,&nbsp;max_depth=5,&nbsp;forest_size=5,&nbsp;display=False,&nbsp;random_seed=0)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestClassifier">RandomForestClassifier</a>(X=None,&nbsp;y=None,&nbsp;max_depth=5,&nbsp;forest_size=5,&nbsp;display=False,&nbsp;random_seed=0)<br>
 &nbsp;<br>
 Random&nbsp;Forest&nbsp;classifier.<br>
 &nbsp;<br>
@@ -1323,7 +1508,7 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestClassifier-voting">voting</a>(self,&nbsp;X):&nbsp;Performs&nbsp;voting&nbsp;to&nbsp;classify&nbsp;the&nbsp;input&nbsp;records.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RandomForestClassifier-__init__"><strong>__init__</strong></a>(self, X, y, max_depth=5, forest_size=5, display=False, random_seed=0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
+<dl><dt><a name="RandomForestClassifier-__init__"><strong>__init__</strong></a>(self, X=None, y=None, max_depth=5, forest_size=5, display=False, random_seed=0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;num_trees&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
@@ -1336,7 +1521,7 @@ Args:<br>
 
 <dl><dt><a name="RandomForestClassifier-display_info_gains"><strong>display_info_gains</strong></a>(self)</dt><dd><span class="code">Displays&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.</span></dd></dl>
 
-<dl><dt><a name="RandomForestClassifier-fit"><strong>fit</strong></a>(self, verbose=True)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
+<dl><dt><a name="RandomForestClassifier-fit"><strong>fit</strong></a>(self, X=None, y=None, verbose=False)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>&nbsp;and&nbsp;the&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
@@ -1349,6 +1534,14 @@ Raises:<br>
 <dl><dt><a name="RandomForestClassifier-plot_info_gains"><strong>plot_info_gains</strong></a>(self)</dt><dd><span class="code">Plots&nbsp;the&nbsp;information&nbsp;gain&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree&nbsp;separately.</span></dd></dl>
 
 <dl><dt><a name="RandomForestClassifier-plot_info_gains_together"><strong>plot_info_gains_together</strong></a>(self)</dt><dd><span class="code">Plots&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;all&nbsp;decision&nbsp;trees&nbsp;together.</span></dd></dl>
+
+<dl><dt><a name="RandomForestClassifier-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;the&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;records.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(list):&nbsp;The&nbsp;input&nbsp;records.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;list:&nbsp;The&nbsp;predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;records.</span></dd></dl>
 
 <dl><dt><a name="RandomForestClassifier-reset"><strong>reset</strong></a>(self)</dt><dd><span class="code">Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
 
@@ -1400,7 +1593,7 @@ Data and other attributes defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomForestRegressor">class <strong>RandomForestRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestRegressor">RandomForestRegressor</a>(X,&nbsp;y,&nbsp;forest_size=10,&nbsp;random_seed=0,&nbsp;max_depth=10)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestRegressor">RandomForestRegressor</a>(X=None,&nbsp;y=None,&nbsp;forest_size=10,&nbsp;random_seed=0,&nbsp;max_depth=10)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;representing&nbsp;a&nbsp;Random&nbsp;Forest&nbsp;model.<br>
 &nbsp;<br>
@@ -1420,7 +1613,7 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;user():&nbsp;Returns&nbsp;the&nbsp;user's&nbsp;GTUsername.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RandomForestRegressor-__init__"><strong>__init__</strong></a>(self, X, y, forest_size=10, random_seed=0, max_depth=10)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
+<dl><dt><a name="RandomForestRegressor-__init__"><strong>__init__</strong></a>(self, X=None, y=None, forest_size=10, random_seed=0, max_depth=10)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(ndarray):&nbsp;The&nbsp;input&nbsp;data&nbsp;features.<br>
@@ -1434,11 +1627,13 @@ Args:<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;XX&nbsp;(list):&nbsp;The&nbsp;dataset.</span></dd></dl>
 
-<dl><dt><a name="RandomForestRegressor-fit"><strong>fit</strong></a>(self, verbose=True)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.</span></dd></dl>
+<dl><dt><a name="RandomForestRegressor-fit"><strong>fit</strong></a>(self, X=None, y=None, verbose=False)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.</span></dd></dl>
 
 <dl><dt><a name="RandomForestRegressor-fitting"><strong>fitting</strong></a>(self)</dt><dd><span class="code">Fits&nbsp;the&nbsp;decision&nbsp;trees&nbsp;to&nbsp;the&nbsp;bootstrapped&nbsp;datasets.</span></dd></dl>
 
 <dl><dt><a name="RandomForestRegressor-get_stats"><strong>get_stats</strong></a>(self, verbose=True)</dt><dd><span class="code">Returns&nbsp;the&nbsp;evaluation&nbsp;metrics.</span></dd></dl>
+
+<dl><dt><a name="RandomForestRegressor-predict"><strong>predict</strong></a>(self, X=None)</dt><dd><span class="code">Predicts&nbsp;the&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
 
 <dl><dt><a name="RandomForestRegressor-reset"><strong>reset</strong></a>(self)</dt><dd><span class="code">Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
 
@@ -1611,7 +1806,18 @@ Methods:<br>
 -&nbsp;<a href="#Ridge-get_formula">get_formula</a>():&nbsp;Returns&nbsp;the&nbsp;formula&nbsp;of&nbsp;the&nbsp;model&nbsp;as&nbsp;a&nbsp;string.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="Ridge-__init__"><strong>__init__</strong></a>(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=0.0001)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="Ridge-__init__"><strong>__init__</strong></a>(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=0.0001)</dt><dd><span class="code">This&nbsp;class&nbsp;implements&nbsp;<a href="#Ridge">Ridge</a>&nbsp;Regression&nbsp;using&nbsp;Coordinate&nbsp;Descent.<br>
+<a href="#Ridge">Ridge</a>&nbsp;regression&nbsp;implements&nbsp;L2&nbsp;regularization,&nbsp;which&nbsp;helps&nbsp;to&nbsp;prevent&nbsp;overfitting&nbsp;by&nbsp;adding&nbsp;a&nbsp;penalty&nbsp;term&nbsp;to&nbsp;the&nbsp;loss&nbsp;function.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;alpha&nbsp;:&nbsp;float,&nbsp;default=1.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Regularization&nbsp;strength;&nbsp;must&nbsp;be&nbsp;a&nbsp;positive&nbsp;float.&nbsp;Regularization&nbsp;improves&nbsp;the&nbsp;conditioning&nbsp;of&nbsp;the&nbsp;problem&nbsp;and&nbsp;reduces&nbsp;the&nbsp;variance&nbsp;of&nbsp;the&nbsp;estimates.<br>
+-&nbsp;fit_intercept&nbsp;:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;calculate&nbsp;the&nbsp;intercept&nbsp;for&nbsp;this&nbsp;model.<br>
+-&nbsp;max_iter&nbsp;:&nbsp;int,&nbsp;default=10000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;the&nbsp;coordinate&nbsp;descent&nbsp;solver.<br>
+-&nbsp;tol&nbsp;:&nbsp;float,&nbsp;default=1e-4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Tolerance&nbsp;for&nbsp;the&nbsp;optimization.&nbsp;The&nbsp;optimization&nbsp;stops&nbsp;when&nbsp;the&nbsp;change&nbsp;in&nbsp;the&nbsp;coefficients&nbsp;is&nbsp;less&nbsp;than&nbsp;this&nbsp;tolerance.</span></dd></dl>
 
 <dl><dt><a name="Ridge-__str__"><strong>__str__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;str(self).</span></dd></dl>
 
@@ -1668,6 +1874,47 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;(ndarray):&nbsp;The&nbsp;gradient&nbsp;of&nbsp;the&nbsp;biases.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;layer.<br>
 Returns:&nbsp;None</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="VotingRegressor">class <strong>VotingRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#VotingRegressor">VotingRegressor</a>(models,&nbsp;model_weights=None)<br>
+&nbsp;<br>
+Implements&nbsp;a&nbsp;voting&nbsp;regressor.<br>
+Takes&nbsp;a&nbsp;list&nbsp;of&nbsp;fitted&nbsp;models&nbsp;and&nbsp;their&nbsp;weights&nbsp;and&nbsp;returns&nbsp;a&nbsp;weighted&nbsp;average&nbsp;of&nbsp;the&nbsp;predictions.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="VotingRegressor-__init__"><strong>__init__</strong></a>(self, models, model_weights=None)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#VotingRegressor">VotingRegressor</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;models:&nbsp;list&nbsp;of&nbsp;models&nbsp;to&nbsp;be&nbsp;stacked<br>
+-&nbsp;model_weights:&nbsp;list&nbsp;of&nbsp;weights&nbsp;for&nbsp;each&nbsp;model.&nbsp;Default&nbsp;is&nbsp;None.</span></dd></dl>
+
+<dl><dt><a name="VotingRegressor-get_params"><strong>get_params</strong></a>(self)</dt><dd><span class="code">Get&nbsp;the&nbsp;parameters&nbsp;of&nbsp;the&nbsp;<a href="#VotingRegressor">VotingRegressor</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;params:&nbsp;dictionary&nbsp;of&nbsp;parameters</span></dd></dl>
+
+<dl><dt><a name="VotingRegressor-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;the&nbsp;target&nbsp;variable&nbsp;using&nbsp;the&nbsp;fitted&nbsp;models.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;input&nbsp;features<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;y_pred:&nbsp;predicted&nbsp;target&nbsp;variable</span></dd></dl>
+
+<dl><dt><a name="VotingRegressor-show_models"><strong>show_models</strong></a>(self, formula=False)</dt><dd><span class="code">Print&nbsp;the&nbsp;models&nbsp;and&nbsp;their&nbsp;weights.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -1782,5 +2029,5 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
     
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'KMeans', 'DBSCAN', 'OrdinaryLeastSquares', 'Ridge', 'Lasso', 'Bayesian', 'RANSAC', 'PassiveAggressiveRegressor', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'make_dataClassifierTreeUtility', 'ClassifierTree', 'RegressorTreeUtility', 'RegressorTree', 'RandomForestClassifier', 'RandomForestRegressor', 'GradientBoostedRegressor', 'AdamOptimizer', ...]</td></tr></table>
+<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'GridSearchCV', 'Metrics', 'KMeans', 'DBSCAN', 'OrdinaryLeastSquares', 'Ridge', 'Lasso', 'Bayesian', 'RANSAC', 'PassiveAggressiveRegressor', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'make_dataClassifierTreeUtility', 'ClassifierTree', 'RegressorTreeUtility', 'RegressorTree', 'RandomForestClassifier', ...]</td></tr></table>
 </body></html>

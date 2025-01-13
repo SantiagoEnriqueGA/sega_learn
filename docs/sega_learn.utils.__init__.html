@@ -48,6 +48,8 @@ td.singlecolumn { width: 100%; }
 </dt><dd>
 <dl>
 <dt class="heading-text"><a href="sega_learn.utils.dataPrep.html#DataPrep">sega_learn.utils.dataPrep.DataPrep</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.metrics.html#Metrics">sega_learn.utils.metrics.Metrics</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.model_selection.html#GridSearchCV">sega_learn.utils.model_selection.GridSearchCV</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.polynomialTransform.html#PolynomialTransform">sega_learn.utils.polynomialTransform.PolynomialTransform</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.voting.html#VotingRegressor">sega_learn.utils.voting.VotingRegressor</a>
 </dt></dl>
@@ -71,6 +73,17 @@ Parameters:<br>
 Returns:<br>
 -&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.<br>
 -&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.</span></dd></dl>
+
+<dl><dt><a name="DataPrep-k_split"><strong>k_split</strong></a>(X, y, k=5)</dt><dd><span class="code">Splits&nbsp;the&nbsp;data&nbsp;into&nbsp;k&nbsp;folds&nbsp;for&nbsp;cross-validation.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
+-&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
+-&nbsp;k&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds.&nbsp;Default&nbsp;is&nbsp;5.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X_folds&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;feature&nbsp;columns.<br>
+-&nbsp;y_folds&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;label&nbsp;columns.</span></dd></dl>
 
 <dl><dt><a name="DataPrep-one_hot_encode"><strong>one_hot_encode</strong></a>(df, cols)</dt><dd><span class="code">One-hot&nbsp;encodes&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame.<br>
 Drops&nbsp;the&nbsp;original&nbsp;columns&nbsp;after&nbsp;encoding.<br>
@@ -100,6 +113,101 @@ Returns:<br>
 Parameters:<br>
 -&nbsp;df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;DataFrame&nbsp;to&nbsp;be&nbsp;written.<br>
 -&nbsp;csv_file&nbsp;(str):&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;CSV&nbsp;file&nbsp;to&nbsp;write&nbsp;to.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="GridSearchCV">class <strong>GridSearchCV</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#GridSearchCV">GridSearchCV</a>(model,&nbsp;param_grid,&nbsp;cv=5,&nbsp;metric='mse',&nbsp;direction='minimize')<br>
+&nbsp;<br>
+Implements&nbsp;a&nbsp;grid&nbsp;search&nbsp;cross-validation&nbsp;for&nbsp;hyperparameter&nbsp;tuning.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="GridSearchCV-__init__"><strong>__init__</strong></a>(self, model, param_grid, cv=5, metric='mse', direction='minimize')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#GridSearchCV">GridSearchCV</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
+-&nbsp;param_grid&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
+-&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
+-&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+-&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
+
+<dl><dt><a name="GridSearchCV-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;for&nbsp;all&nbsp;hyperparameter&nbsp;combinations.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
+-&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
+-&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Metrics">class <strong>Metrics</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Metrics-accuracy"><strong>accuracy</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;accuracy&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;accuracy&nbsp;score.</span></dd></dl>
+
+<dl><dt><a name="Metrics-mean_squared_error"><strong>mean_squared_error</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;mse&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;squared&nbsp;error.</span></dd></dl>
+
+<dl><dt><a name="Metrics-precision"><strong>precision</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;precision&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;precision&nbsp;(float):&nbsp;The&nbsp;precision&nbsp;score.</span></dd></dl>
+
+<dl><dt><a name="Metrics-r_squared"><strong>r_squared</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;R-squared&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;r_squared&nbsp;(float):&nbsp;The&nbsp;R-squared&nbsp;score.</span></dd></dl>
+
+<dl><dt><a name="Metrics-recall"><strong>recall</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;recall&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;recall&nbsp;(float):&nbsp;The&nbsp;recall&nbsp;score.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -201,5 +309,5 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
     
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor']</td></tr></table>
+<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'GridSearchCV', 'Metrics']</td></tr></table>
 </body></html>

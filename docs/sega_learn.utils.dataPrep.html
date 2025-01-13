@@ -77,6 +77,17 @@ Returns:<br>
 -&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.<br>
 -&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.</span></dd></dl>
 
+<dl><dt><a name="DataPrep-k_split"><strong>k_split</strong></a>(X, y, k=5)</dt><dd><span class="code">Splits&nbsp;the&nbsp;data&nbsp;into&nbsp;k&nbsp;folds&nbsp;for&nbsp;cross-validation.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
+-&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
+-&nbsp;k&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds.&nbsp;Default&nbsp;is&nbsp;5.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X_folds&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;feature&nbsp;columns.<br>
+-&nbsp;y_folds&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;label&nbsp;columns.</span></dd></dl>
+
 <dl><dt><a name="DataPrep-one_hot_encode"><strong>one_hot_encode</strong></a>(df, cols)</dt><dd><span class="code">One-hot&nbsp;encodes&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame.<br>
 Drops&nbsp;the&nbsp;original&nbsp;columns&nbsp;after&nbsp;encoding.<br>
 &nbsp;<br>

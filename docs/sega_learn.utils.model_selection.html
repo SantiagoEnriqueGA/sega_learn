@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.utils.model_selection</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.utils.html" class="white">utils</a>.model_selection</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.utils.model_selection.html#GridSearchCV">GridSearchCV</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="GridSearchCV">class <strong>GridSearchCV</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#GridSearchCV">GridSearchCV</a>(model,&nbsp;param_grid,&nbsp;cv=5,&nbsp;metric='mse',&nbsp;direction='minimize')<br>
+&nbsp;<br>
+Implements&nbsp;a&nbsp;grid&nbsp;search&nbsp;cross-validation&nbsp;for&nbsp;hyperparameter&nbsp;tuning.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="GridSearchCV-__init__"><strong>__init__</strong></a>(self, model, param_grid, cv=5, metric='mse', direction='minimize')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#GridSearchCV">GridSearchCV</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
+-&nbsp;param_grid&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
+-&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
+-&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+-&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
+
+<dl><dt><a name="GridSearchCV-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;for&nbsp;all&nbsp;hyperparameter&nbsp;combinations.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
+-&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
+-&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>

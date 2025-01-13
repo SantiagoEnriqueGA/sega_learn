@@ -57,7 +57,6 @@ td.singlecolumn { width: 100%; }
 <dl>
 <dt class="heading-text"><a href="sega_learn.linear_models.discriminantAnalysis.html#LinearDiscriminantAnalysis">LinearDiscriminantAnalysis</a>
 </dt><dt class="heading-text"><a href="sega_learn.linear_models.discriminantAnalysis.html#QuadraticDiscriminantAnalysis">QuadraticDiscriminantAnalysis</a>
-</dt><dt class="heading-text"><a href="sega_learn.linear_models.discriminantAnalysis.html#Utility">Utility</a>
 </dt></dl>
 </dd>
 </dl>
@@ -82,7 +81,16 @@ Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="LinearDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, solver='svd', priors=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="LinearDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, solver='svd', priors=None)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;Linear&nbsp;Discriminant&nbsp;Analysis&nbsp;model&nbsp;with&nbsp;the&nbsp;specified&nbsp;solver&nbsp;and&nbsp;prior&nbsp;probabilities.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;solver&nbsp;:&nbsp;{'svd',&nbsp;'lsqr',&nbsp;'eigen'},&nbsp;default='svd'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Solver&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;LDA.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'svd'&nbsp;is&nbsp;the&nbsp;default&nbsp;and&nbsp;recommended&nbsp;solver.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'lsqr'&nbsp;is&nbsp;a&nbsp;faster&nbsp;alternative&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;is&nbsp;large.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'eigen'&nbsp;is&nbsp;an&nbsp;alternative&nbsp;solver&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;is&nbsp;small.<br>
+-&nbsp;priors&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_classes,),&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.</span></dd></dl>
 
 <dl><dt><a name="LinearDiscriminantAnalysis-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;decision&nbsp;function&nbsp;to&nbsp;an&nbsp;array&nbsp;of&nbsp;samples.&nbsp;<br>
 The&nbsp;decision&nbsp;function&nbsp;is&nbsp;the&nbsp;log-likelihood&nbsp;of&nbsp;each&nbsp;class.<br>
@@ -135,7 +143,12 @@ Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Regularization&nbsp;parameter.&nbsp;If&nbsp;greater&nbsp;than&nbsp;0,&nbsp;the&nbsp;covariance&nbsp;matrices&nbsp;are&nbsp;regularized&nbsp;by&nbsp;adding&nbsp;a&nbsp;scaled&nbsp;identity&nbsp;matrix&nbsp;to&nbsp;them.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="QuadraticDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, priors=None, reg_param=0.0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="QuadraticDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, priors=None, reg_param=0.0)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;Quadratic&nbsp;Discriminant&nbsp;Analysis&nbsp;model&nbsp;with&nbsp;the&nbsp;specified&nbsp;prior&nbsp;probabilities&nbsp;and&nbsp;regularization&nbsp;parameter.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;priors&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_classes,),&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.<br>
+-&nbsp;reg_param&nbsp;:&nbsp;float,&nbsp;default=0.0</span></dd></dl>
 
 <dl><dt><a name="QuadraticDiscriminantAnalysis-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;decision&nbsp;function&nbsp;to&nbsp;an&nbsp;array&nbsp;of&nbsp;samples.<br>
 The&nbsp;decision&nbsp;function&nbsp;is&nbsp;the&nbsp;log-likelihood&nbsp;of&nbsp;each&nbsp;class.<br>
@@ -162,21 +175,6 @@ Returns:<br>
 
 <hr>
 Data descriptors defined here:<br>
-<dl><dt><strong>__dict__</strong></dt>
-<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
-</dl>
-<dl><dt><strong>__weakref__</strong></dt>
-<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
-</dl>
-</td></tr></table> <p>
-<table class="section">
-<tr class="decor title-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><a name="Utility">class <strong>Utility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
-<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#Utility">Utility</a>&nbsp;class<br>&nbsp;</span></td></tr>
-<tr><td>&nbsp;</td>
-<td class="singlecolumn">Data descriptors defined here:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
 </dl>
