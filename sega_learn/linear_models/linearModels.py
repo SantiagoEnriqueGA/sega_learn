@@ -813,7 +813,7 @@ class PassiveAggressiveRegressor(object):
     def __str__(self):
         return "Passive Aggressive Regressor"
     
-    def fit(self, X, y, save_steps=False):
+    def fit(self, X, y, save_steps=False, verbose=False):
         """
         Fit the model to the data.
         Save the weights and the intercept at each iteration if save_steps is True.
@@ -822,6 +822,7 @@ class PassiveAggressiveRegressor(object):
         - X : array-like of shape (n_samples, n_features): Training data.
         - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
         - save_steps: bool, default=False
+        - verbose: bool, default=False
         """
         # Initialize the weights and the intercept
         self.coef_ = np.zeros(X.shape[1])
@@ -833,7 +834,7 @@ class PassiveAggressiveRegressor(object):
 
         # For each iteration
         for _ in range(self.max_iter):
-            print(f"\tIteration: {_}")
+            if verbose: print(f"\tIteration: {_}")
             # Copy the weights for the previous iteration
             prev_coef = self.coef_.copy()
             

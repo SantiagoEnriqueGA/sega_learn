@@ -83,3 +83,34 @@ class DataPrep(object):
         X = df.drop(df.columns[y_col], axis=1).values  # Get the feature columns as a NumPy array
         
         return X, y
+    
+    def k_split(X, y, k=5):
+        """
+        Splits the data into k folds for cross-validation.
+        
+        Parameters:
+        - X (numpy.ndarray): The feature columns.
+        - y (numpy.ndarray): The label column.
+        - k (int): The number of folds. Default is 5.
+        
+        Returns:
+        - X_folds (list): A list of k folds of feature columns.
+        - y_folds (list): A list of k folds of label columns.
+        """
+        n_samples = len(y)                      # Get the number of samples
+        fold_size = n_samples // k              # Calculate the fold size
+        
+        X_folds = []                            # Initialize a list to store the feature column folds
+        y_folds = []                            # Initialize a list to store the label column folds
+        
+        for i in range(k):                      # For each fold
+            start = i * fold_size                # Calculate the start index of the fold
+            end = (i + 1) * fold_size            # Calculate the end index of the fold
+            
+            if i == k - 1:                       # If it is the last fold
+                end = n_samples                  # Set the end index to the number of samples
+                
+            X_folds.append(X[start:end])         # Add the feature columns to the list of folds
+            y_folds.append(y[start:end])         # Add the label columns to the list of folds
+        
+        return X_folds, y_folds

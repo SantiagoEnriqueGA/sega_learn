@@ -28,7 +28,7 @@ class GradientBoostedRegressor(object):
         get_stats(y_predicted): Calculates various evaluation metrics for the predicted target values.
     """
 
-    def __init__(self, X, y, num_trees: int = 10, max_depth: int = 10, random_seed: int = 0):
+    def __init__(self, X=None, y=None, num_trees: int = 10, max_depth: int = 10, random_seed: int = 0):
         self.random_seed = random_seed  # Set the random seed for reproducibility
         self.num_trees = num_trees      # Set the number of trees in the ensemble
         self.max_depth = max_depth      # Set the maximum depth of each tree
@@ -41,12 +41,12 @@ class GradientBoostedRegressor(object):
         self.mean_absolute_residuals = []   # Initialize the list of Mean Absolute Residuals for each tree
 
         self.utility = RegressorTreeUtility()            # Initialize the Utility object
-        self.trees = [RegressorTree(self.max_depth) for i in range(self.num_trees)] # Initialize the list of decision trees
+        self.trees = [RegressorTree(self.max_depth) for i in range(self.num_trees)] # Initialize the list of decision trees, each with the specified maximum depth
         self.numerical_cols = set()         # Initialize the set of indices of numeric attributes (columns)
 
-        self.X = X.tolist()             # Convert ndarray to list
-        self.y = y.tolist()             # Convert ndarray to list
-        self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
+        if X is not None: self.X = X.tolist()             # Convert ndarray to list
+        if y is not None: self.y = y.tolist()             # Convert ndarray to list
+        if X is not None and y is not None: self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
 
     def reset(self):
         # Reset the GBDT object
@@ -59,7 +59,7 @@ class GradientBoostedRegressor(object):
         self.numerical_cols = 0
         self.mean_absolute_residuals = []
 
-    def fit(self, stats=False):
+    def fit(self, X=None, y=None, stats=False):
         """
         Fits the gradient boosted decision tree regressor to the training data.
 
@@ -68,11 +68,17 @@ class GradientBoostedRegressor(object):
         made by the current tree from the target values.
 
         Args:
+            X (numpy.ndarray): An array of input data features. Default is None.
+            y (numpy.ndarray): An array of target values. Default is None.
             stats (bool): A flag to decide whether to return stats or not. Default is False.
 
         Returns:
             None
         """
+        if X is not None: self.X = X.tolist()
+        if y is not None: self.y = y.tolist()
+        if X is not None and y is not None: self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
+        
         if not self.X or not self.y:    # If the input data X or target values y are empty
             raise ValueError("Input data X and target values y cannot be empty.")
         
@@ -92,13 +98,18 @@ class GradientBoostedRegressor(object):
             if stats:   # If stats is True, print the mean absolute residuals
                 print(f"Tree {i+1} trained. Mean Absolute Residuals: {mean_absolute_residual}")
 
-    def predict(self):
+    def predict(self, X=None):
         """
         Predicts the target values for the input data using the gradient boosted decision tree regressor.
 
+        Parameters:
+        - X (numpy.ndarray): An array of input data features. Default is None.
+        
         Returns:
             predictions (numpy.ndarray): An array of predicted target values for the input data.
         """
+        if X is not None: self.X = X.tolist()
+        
         predictions = np.zeros(len(self.X))     # Initialize an array of zeros for the predictions
 
         for i in range(self.num_trees):                     # Loop over the number of trees in the ensemble

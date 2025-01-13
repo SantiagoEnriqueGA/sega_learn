@@ -60,6 +60,9 @@ The project directory structure is as follows:
     - [`__init__.py`](sega_learn/utils/__init__.py): Initializes the utils package.
     - [`dataPrep.py`](sega_learn/utils/dataPrep.py): Implements data preparation functions.
     - [`voting.py`](sega_learn/utils/voting.py): Implements voting regressor.
+    - [`metrics.py`](sega_learn/utils/metrics.py): Implements evaluation metrics.
+    - [`model_selection.py`](sega_learn/utils/model_selection.py): Implements model selection algorithms.
+    - [`polynomialTransform.py`](sega_learn/utils/polynomialTransform.py): Implements polynomial transformation.
 
 - **tests/**: Contains unit and performance tests for the database library.
   - **Core Tests**:
@@ -112,6 +115,11 @@ The project directory structure is as follows:
   - **utils/**: Contains utility functions.
     - [`votingRegressor.py`](examples/utils/votingRegressor.py): Demonstrates Voting Regressor.
     - [`polynomialTransform.py`](examples/utils/polynomialTransform.py): Demonstrates Polynomial Transform.
+    - [`gridSearchCV_bayes.py`](examples/utils/gridSearchCV_bayes.py): Demonstrates Grid Search Cross Validation with Bayesian Regression.
+    - [`gridSearchCV_gbr.py`](examples/utils/gridSearchCV_gbr.py): Demonstrates Grid Search Cross Validation with Gradient Boosted Regressor.
+    - [`gridSearchCV_passiveAggressive.py`](examples/utils/gridSearchCV_passiveAggressive.py): Demonstrates Grid Search Cross Validation with Passive Aggressive Regressor.
+    - [`gridSearchCV_rfc.py`](examples/utils/gridSearchCV_rfc.py): Demonstrates Grid Search Cross Validation with Random Forest Classifier.
+    - [`gridSearchCV_rfr.py`](examples/utils/gridSearchCV_rfr.py): Demonstrates Grid Search Cross Validation with Random Forest Regressor.
   
 - **docs/**: Contains the generated documentation for the SEGA_LEARN library.
   - [`documentation.md`](docs/documentation.md): Contains the generated documentation for the SEGA_LEARN library.
@@ -159,6 +167,11 @@ The project directory structure is as follows:
 ### Utils
 - [`votingRegressor.py`](examples/utils/votingRegressor.py): Demonstrates Voting Regressor.
 - [`polynomialTransform.py`](examples/utils/polynomialTransform.py): Demonstrates Polynomial Transform.
+- [`gridSearchCV_bayes.py`](examples/utils/gridSearchCV_bayes.py): Demonstrates Grid Search Cross Validation with Bayesian Regression.
+- [`gridSearchCV_gbr.py`](examples/utils/gridSearchCV_gbr.py): Demonstrates Grid Search Cross Validation with Gradient Boosted Regressor.
+- [`gridSearchCV_passiveAggressive.py`](examples/utils/gridSearchCV_passiveAggressive.py): Demonstrates Grid Search Cross Validation with Passive Aggressive Regressor.
+- [`gridSearchCV_rfc.py`](examples/utils/gridSearchCV_rfc.py): Demonstrates Grid Search Cross Validation with Random Forest Classifier.
+- [`gridSearchCV_rfr.py`](examples/utils/gridSearchCV_rfr.py): Demonstrates Grid Search Cross Validation with Random Forest Regressor.
 
 
 ## Scripts
@@ -221,7 +234,9 @@ Testing Imports - Clustering
 ..............Testing Regressor Tree
 .....Testing Regressor Tree Utility
 .................Testing Data Prep
-....Testing Polynomial Transform
+......Testing GridSearchCV
+..........Testing Metrics
+.....Testing Polynomial Transform
 ....Testing Voting Regressor
 ....Testing file: dbscan.py
 .Testing file: dbscan_3d.py
@@ -239,16 +254,21 @@ Testing Imports - Clustering
 .Testing file: ridge.py
 .Testing file: neuralNetwork.py
 .Testing file: neuralNetwork_hyper.py
-Tuning Hyperparameters: 100%|████████| 4/4 [00:05<00:00,  1.38s/it]
-Tuning Hyperparameters: 100%|████████| 4/4 [00:04<00:00,  1.03s/it]
+Tuning Hyperparameters: 100%|████████████| 4/4 [00:05<00:00,  1.47s/it]
+Tuning Hyperparameters: 100%|████████████| 4/4 [00:04<00:00,  1.08s/it]
 .Testing file: gradientBoostedRegressor.py
 .Testing file: randomForestClassifier.py
 .Testing file: randomForestRegressor.py
+.Testing file: GridSearchCV_bayes.py
+.Testing file: GridSearchCV_gbr.py
+.Testing file: GridSearchCV_passiveAggReg.py
+.Testing file: GridSearchCV_rfc.py
+.Testing file: GridSearchCV_rfr.py
 .Testing file: polynomialTransform.py
 .Testing file: votingRegressor.py
 .
 ----------------------------------------------------------------------
-Ran 212 tests in 60.150s
+Ran 234 tests in 99.493s
 
 OK
 ```

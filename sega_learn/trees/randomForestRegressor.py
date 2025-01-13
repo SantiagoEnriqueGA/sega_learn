@@ -53,7 +53,7 @@ class RandomForestRegressor(object):
     XX = list()         # Contains both data features and data labels
     numerical_cols = 0  # Number of numeric attributes (columns)
 
-    def __init__(self, X, y, forest_size=10, random_seed=0, max_depth=10):
+    def __init__(self, X=None, y=None, forest_size=10, random_seed=0, max_depth=10):
         """
         Initializes the RandomForest object.
 
@@ -71,10 +71,10 @@ class RandomForestRegressor(object):
 
         self.forest_size = forest_size  # Set the number of trees in the random forest
         self.max_depth = max_depth      # Set the maximum depth of each decision tree
-        
-        self.X = X.tolist()             # Convert ndarray to list
-        self.y = y.tolist()             # Convert ndarray to list
-        self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
+            
+        if X is not None: self.X = X.tolist()             # Convert ndarray to list
+        if y is not None: self.y = y.tolist()             # Convert ndarray to list
+        if X is not None and y is not None: self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
 
         self.num_trees = forest_size    # Set the number of trees
         self.max_depth = max_depth      # Set the maximum depth
@@ -177,10 +177,14 @@ class RandomForestRegressor(object):
 
         return y
 
-    def fit(self, verbose=True):
+    def fit(self, X=None, y=None, verbose=False):
         """
         Runs the random forest algorithm.
         """
+        if X is not None: self.X = X.tolist()
+        if y is not None: self.y = y.tolist()
+        if X is not None and y is not None: self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
+        
         start = datetime.now()  # Start time
  
         if verbose: print("creating the bootstrap datasets")
@@ -215,3 +219,9 @@ class RandomForestRegressor(object):
         """
         return {"MSE": self.mse,"R^2": self.r2,"MAPE": self.mape,"MAE": self.mae,"RMSE": self.rmse}
     
+    def predict(self, X=None):
+        """
+        Predicts the target values for the input data.
+        """
+        if X is not None: self.X = X.tolist()
+        return self.voting(self.X)

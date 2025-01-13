@@ -2,6 +2,8 @@ from .utils import (
     PolynomialTransform,
     DataPrep,
     VotingRegressor,
+    GridSearchCV,
+    Metrics,
 )
 
 from .clustering import (
@@ -49,6 +51,9 @@ __all__ = [
     # Utils
     "PolynomialTransform",
     "DataPrep",
+    "VotingRegressor",
+    "GridSearchCV",
+    "Metrics",
     
     # Clustering
     "KMeans",

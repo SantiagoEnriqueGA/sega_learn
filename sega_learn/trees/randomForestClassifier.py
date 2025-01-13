@@ -54,7 +54,7 @@ class RandomForestClassifier(object):
     XX = list()         # Contains both data features and data labels
     numerical_cols = 0  # Number of numeric attributes (columns)
     
-    def __init__(self, X, y, max_depth=5, forest_size=5, display=False, random_seed=0):
+    def __init__(self, X=None, y=None, max_depth=5, forest_size=5, display=False, random_seed=0):
         """
         Initializes the RandomForest object.
 
@@ -71,10 +71,10 @@ class RandomForestClassifier(object):
         self.max_depth = max_depth      # Set the maximum depth of each decision tree
         self.display = display          # Set the flag to display additional information about info gain
         
-        self.X = X.tolist()             # Convert ndarray to list
-        self.y = y.tolist()             # Convert ndarray to list
-        self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
-        
+        if X is not None: self.X = X.tolist()             # Convert ndarray to list
+        if y is not None: self.y = y.tolist()             # Convert ndarray to list
+        if X is not None and y is not None: self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
+                
         self.num_trees = forest_size    # Set the number of decision trees in the random forest
         self.max_depth = max_depth      # Set the maximum depth of each decision tree
 
@@ -158,7 +158,8 @@ class RandomForestClassifier(object):
             for i, dataset in enumerate(self.bootstraps_datasets):  # For each bootstrapped dataset
 
                 # Records not in the dataset are considered out-of-bag (OOB) records, which can be used for voting
-                if record not in dataset:                           # If the record is not in the dataset
+                if not any(np.array_equal(record, data) for data in dataset):  # If the record is not in the dataset
+                # if record not in dataset:                           # If the record is not in the dataset
                     OOB_tree = self.decision_trees[i]               # Get the decision tree corresponding to the dataset
                     effective_vote = ClassifierTree.classify(OOB_tree,record) # Classify the record using the decision tree
                     votes.append(effective_vote)                    # Append the classification to the votes list
@@ -174,7 +175,7 @@ class RandomForestClassifier(object):
 
         return y
     
-    def fit(self, verbose=True):
+    def fit(self, X=None, y=None, verbose=False):
         """
         Runs the random forest algorithm.
 
@@ -184,6 +185,10 @@ class RandomForestClassifier(object):
         Raises:
             FileNotFoundError: If the file specified by file_loc does not exist.
         """
+        if X is not None: self.X = X.tolist()             # Convert ndarray to list
+        if y is not None: self.y = y.tolist()             # Convert ndarray to list
+        if X is not None and y is not None: self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
+        
         start = datetime.now()  # Start time
 
         # if(self.display==False):    
@@ -246,3 +251,15 @@ class RandomForestClassifier(object):
             plt.ylabel("Information Gain")
             plt.title(f"Information Gain of Decision Tree {i+1}")
             plt.show()
+
+    def predict(self, X):
+        """
+        Predicts the class labels for the input records.
+
+        Args:
+            X (list): The input records.
+
+        Returns:
+            list: The predicted class labels for the input records.
+        """
+        return self.voting(X)
