@@ -151,6 +151,8 @@ Parameters:<br>
 -&nbsp;param_grid&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
 -&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
 -&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
 -&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
 
 <dl><dt><a name="GridSearchCV-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;for&nbsp;all&nbsp;hyperparameter&nbsp;combinations.<br>
@@ -174,8 +176,8 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="Metrics">class <strong>Metrics</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="Metrics-accuracy"><strong>accuracy</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;accuracy&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+<td class="singlecolumn">Class methods defined here:<br>
+<dl><dt><a name="Metrics-accuracy"><strong>accuracy</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;accuracy&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Parameters:<br>
 -&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
@@ -184,7 +186,70 @@ Parameters:<br>
 Returns:<br>
 -&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;accuracy&nbsp;score.</span></dd></dl>
 
-<dl><dt><a name="Metrics-mean_squared_error"><strong>mean_squared_error</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+<dl><dt><a name="Metrics-classification_report"><strong>classification_report</strong></a>(y_true, y_pred)</dt><dd><span class="code">Generates&nbsp;a&nbsp;classification&nbsp;report&nbsp;for&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;report&nbsp;(dict):&nbsp;The&nbsp;classification&nbsp;report.</span></dd></dl>
+
+<dl><dt><a name="Metrics-confusion_matrix"><strong>confusion_matrix</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;confusion&nbsp;matrix&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;cm&nbsp;(numpy.ndarray):&nbsp;The&nbsp;confusion&nbsp;matrix.</span></dd></dl>
+
+<dl><dt><a name="Metrics-f1_score"><strong>f1_score</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;F1&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;f1_score&nbsp;(float):&nbsp;The&nbsp;F1&nbsp;score.</span></dd></dl>
+
+<dl><dt><a name="Metrics-log_loss"><strong>log_loss</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;log&nbsp;loss&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;probabilities.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;log_loss&nbsp;(float):&nbsp;The&nbsp;log&nbsp;loss.</span></dd></dl>
+
+<dl><dt><a name="Metrics-mean_absolute_error"><strong>mean_absolute_error</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;mae&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;absolute&nbsp;error.</span></dd></dl>
+
+<dl><dt><a name="Metrics-mean_absolute_percentage_error"><strong>mean_absolute_percentage_error</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;mean&nbsp;absolute&nbsp;percentage&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;mape&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;absolute&nbsp;percentage&nbsp;error&nbsp;as&nbsp;a&nbsp;decimal.&nbsp;Returns&nbsp;np.nan&nbsp;if&nbsp;y_true&nbsp;is&nbsp;all&nbsp;zeros.</span></dd></dl>
+
+<dl><dt><a name="Metrics-mean_percentage_error"><strong>mean_percentage_error</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;mean&nbsp;percentage&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;mpe&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;percentage&nbsp;error.</span></dd></dl>
+
+<dl><dt><a name="Metrics-mean_squared_error"><strong>mean_squared_error</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Parameters:<br>
 -&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
@@ -193,7 +258,7 @@ Parameters:<br>
 Returns:<br>
 -&nbsp;mse&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;squared&nbsp;error.</span></dd></dl>
 
-<dl><dt><a name="Metrics-precision"><strong>precision</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;precision&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+<dl><dt><a name="Metrics-precision"><strong>precision</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;precision&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Parameters:<br>
 -&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
@@ -202,7 +267,7 @@ Parameters:<br>
 Returns:<br>
 -&nbsp;precision&nbsp;(float):&nbsp;The&nbsp;precision&nbsp;score.</span></dd></dl>
 
-<dl><dt><a name="Metrics-r_squared"><strong>r_squared</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;R-squared&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+<dl><dt><a name="Metrics-r_squared"><strong>r_squared</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;R-squared&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Parameters:<br>
 -&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
@@ -211,7 +276,7 @@ Parameters:<br>
 Returns:<br>
 -&nbsp;r_squared&nbsp;(float):&nbsp;The&nbsp;R-squared&nbsp;score.</span></dd></dl>
 
-<dl><dt><a name="Metrics-recall"><strong>recall</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;recall&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+<dl><dt><a name="Metrics-recall"><strong>recall</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;recall&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Parameters:<br>
 -&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
@@ -219,6 +284,33 @@ Parameters:<br>
 &nbsp;<br>
 Returns:<br>
 -&nbsp;recall&nbsp;(float):&nbsp;The&nbsp;recall&nbsp;score.</span></dd></dl>
+
+<dl><dt><a name="Metrics-root_mean_squared_error"><strong>root_mean_squared_error</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;root&nbsp;mean&nbsp;squared&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;rmse&nbsp;(float):&nbsp;The&nbsp;root&nbsp;mean&nbsp;squared&nbsp;error.</span></dd></dl>
+
+<dl><dt><a name="Metrics-show_classification_report"><strong>show_classification_report</strong></a>(y_true, y_pred)</dt><dd><span class="code">Generates&nbsp;and&nbsp;displays&nbsp;a&nbsp;classification&nbsp;report&nbsp;for&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;report&nbsp;(dict):&nbsp;The&nbsp;classification&nbsp;report.</span></dd></dl>
+
+<dl><dt><a name="Metrics-show_confusion_matrix"><strong>show_confusion_matrix</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;and&nbsp;displays&nbsp;the&nbsp;confusion&nbsp;matrix&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
+-&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;cm&nbsp;(numpy.ndarray):&nbsp;The&nbsp;confusion&nbsp;matrix.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>

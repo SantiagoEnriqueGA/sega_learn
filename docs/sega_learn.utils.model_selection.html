@@ -76,6 +76,8 @@ Parameters:<br>
 -&nbsp;param_grid&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
 -&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
 -&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;Metrics:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;Metrics:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
 -&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
 
 <dl><dt><a name="GridSearchCV-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;for&nbsp;all&nbsp;hyperparameter&nbsp;combinations.<br>
