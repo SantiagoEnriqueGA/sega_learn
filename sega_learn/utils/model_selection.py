@@ -96,4 +96,6 @@ class GridSearchCV(object):
         
         return self.best_model
 
-    
+
+# TODO: Implement RandomSearchCV
+# TODO: Implement BayesSearchCV
