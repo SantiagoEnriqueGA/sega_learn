@@ -157,6 +157,7 @@ class TestGridSearchCV(unittest.TestCase):
     - test_randomForestClassifier: Tests the GridSearchCV class with the Random Forest Classifier model.
     - test_randomForestRegressor: Tests the GridSearchCV class with the Random Forest Regressor model.
     - test_gradientBoostiedRegressor: Tests the GridSearchCV class with the Gradient Boosted Regressor model
+    - test_invalid_param_grid: Tests the GridSearchCV class with invalid param_grid
     """
     @classmethod
     def setUpClass(cls):
@@ -226,6 +227,109 @@ class TestGridSearchCV(unittest.TestCase):
         grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=3)
         grid_search.fit(self.X_reg, self.y_reg)
         
+    def test_invalid_param_grid(self):
+        with self.assertRaises(Exception):
+            grid_search = GridSearchCV(model=Ridge, param_grid=None)
+            grid_search.fit(self.X_reg, self.y_reg)
+
+class TestRandomSearchCV(unittest.TestCase):
+    """
+    Unit test for the RandomSearchCV class.
+    Methods:
+    - setUp: Initializes a new instance of the RandomSearchCV_ class before each test method is run.
+    - test_init: Tests the initialization of the RandomSearchCV_ class.
+    - test_param_combinations: Tests the _get_param_combinations method of the RandomSearchCV_ class.
+    - test_ols: Tests the RandomSearchCV_ class with the Ordinary Least Squares model.
+    - test_ridge: Tests the RandomSearchCV_ class with the Ridge model.
+    - test_lasso: Tests the RandomSearchCV_ class with the Lasso model.
+    - test_bayesian: Tests the RandomSearchCV_ class with the Bayesian Ridge model.
+    - test_passiveAggReg: Tests the RandomSearchCV_ class with the Passive Aggressive Regressor model.
+    - test_randomForestClassifier: Tests the RandomSearchCV_ class with the Random Forest Classifier model.
+    - test_randomForestRegressor: Tests the RandomSearchCV_ class with the Random Forest Regressor model.
+    - test_gradientBoostiedRegressor: Tests the RandomSearchCV_ class with the Gradient Boosted Regressor model
+    """
+    @classmethod
+    def setUpClass(cls):
+        print("Testing RandomSearchCV")
+    
+    def setUp(self):
+        self.X_reg, self.y_reg = make_regression(n_samples=100, n_features=5, noise=25, random_state=42)
+        self.X_class, self.y_class = make_classification(n_samples=100, n_features=5, n_classes=2, random_state=42)
+    
+    def test_init(self):
+        rand_search = RandomSearchCV(model=Ridge, param_grid=[{'alpha': [0.1, 1, 10]}], iter=3)
+        self.assertEqual(rand_search.model, Ridge)
+        self.assertEqual(rand_search.param_grid, [{'alpha': [0.1, 1, 10]}])
+        self.assertEqual(rand_search.cv, 5)
+        self.assertEqual(rand_search.metric, 'mse')
+        self.assertEqual(rand_search.direction, 'minimize')
+    
+    def test_param_combinations(self):
+        rand_search = RandomSearchCV(model=Ridge, param_grid=[{'alpha': [0.1, 1, 10], 'fit_intercept': [True, False]}], iter=2)
+        self.assertEqual(len(rand_search.param_combinations), 6)
+    
+    def test_ols(self):
+        ols = OrdinaryLeastSquares
+        param_grid = [{'fit_intercept': [True, False]}]
+        rand_search = RandomSearchCV(model=ols, param_grid=param_grid, cv=3, iter=2)
+        rand_search.fit(self.X_reg, self.y_reg)
+        
+    def test_ridge(self):
+        ridge = Ridge
+        param_grid = [{'alpha': [0.1, 1, 10]}]
+        rand_search = RandomSearchCV(model=ridge, param_grid=param_grid, cv=3, iter=2)
+        rand_search.fit(self.X_reg, self.y_reg)
+        
+    def test_lasso(self):
+        lasso = Lasso
+        param_grid = [{'alpha': [0.1, 1, 10]}]
+        rand_search = RandomSearchCV(model=lasso, param_grid=param_grid, cv=3, iter=2)
+        rand_search.fit(self.X_reg, self.y_reg)
+        
+    def test_bayesian(self):
+        bayesian_ridge = Bayesian
+        param_grid = [{'max_iter': [100, 200, 300]}]
+        rand_search = RandomSearchCV(model=bayesian_ridge, param_grid=param_grid, cv=3, iter=2)
+        rand_search.fit(self.X_reg, self.y_reg)
+        
+    def test_passiveAggReg(self):
+        passive_agg = PassiveAggressiveRegressor
+        param_grid = [{'C': [0.1, 1, 10]}]
+        rand_search = RandomSearchCV(model=passive_agg, param_grid=param_grid, cv=3, iter=2)
+        rand_search.fit(self.X_reg, self.y_reg)
+    
+    def test_randomForestClassifier(self):
+        decision_tree = RandomForestClassifier
+        param_grid = [{'max_depth': [3, 5, 7]}]
+        rand_search = RandomSearchCV(model=decision_tree, param_grid=param_grid, cv=3, iter=2)
+        rand_search.fit(self.X_class, self.y_class)
+        
+    def test_randomForestRegressor(self):
+        decision_tree = RandomForestRegressor
+        param_grid = [{'max_depth': [3, 5, 7]}]
+        rand_search = RandomSearchCV(model=decision_tree, param_grid=param_grid, cv=3, iter=2)
+        rand_search.fit(self.X_reg, self.y_reg)
+        
+    def test_gradientBoostiedRegressor(self):
+        decision_tree = GradientBoostedRegressor
+        param_grid = [{'num_trees': [50, 100, 150]}]
+        rand_search = RandomSearchCV(model=decision_tree, param_grid=param_grid, cv=3, iter=2)
+        rand_search.fit(self.X_reg, self.y_reg)
+        
+    def test_invalid_iter(self):
+        with self.assertRaises(Exception):
+            rand_search = RandomSearchCV(model=Ridge, param_grid=[{'alpha': [0.1, 1, 10]}], iter=0)
+            rand_search.fit(self.X_reg, self.y_reg)
+    
+    def test_iter_larger_than_param_combinations(self):
+        with suppress_print():
+            rand_search = RandomSearchCV(model=Ridge, param_grid=[{'alpha': [0.1, 1, 10]}], iter=100)
+            rand_search.fit(self.X_reg, self.y_reg)
+        
+    def test_invalid_param_grid(self):
+        with self.assertRaises(Exception):
+            rand_search = RandomSearchCV(model=Ridge, param_grid=None, iter=3)
+            rand_search.fit(self.X_reg, self.y_reg)
 
 class TestMetrics(unittest.TestCase):
     """

@@ -21,13 +21,13 @@ class TestExampleExceptions(unittest.TestCase):
     def test_main(self, example_file):
         if 'neuralNetwork.py' in example_file:
             from examples.neural_networks.neuralNetwork import main
-            print(f"Testing file: {strip_file_path(example_file)}")
+            print(f"Testing example file: {strip_file_path(example_file)}")
             with suppress_print():
                 main(diabetes=True, cancer=True)
         
         elif 'neuralNetwork_hyper.py' in example_file:
             from examples.neural_networks.neuralNetwork_hyper import main
-            print(f"Testing file: {strip_file_path(example_file)}")
+            print(f"Testing example file: {strip_file_path(example_file)}")
             with suppress_print():
                 main(diabetes=True, cancer=True, test_case=True)
 
@@ -59,7 +59,7 @@ def load_tests(loader, tests, pattern):
         
         def test_func(self, example_file=example_file):
             """Tests the functionality of a given example file by importing it as a module and executing it."""
-            print(f"Testing file: {strip_file_path(example_file)}")
+            print(f"Testing example file: {strip_file_path(example_file)}")
             
             # Import the example file as a module and execute it.
             spec = importlib.util.spec_from_file_location("module.name", example_file)

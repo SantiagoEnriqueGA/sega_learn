@@ -235,40 +235,46 @@ Testing Imports - Clustering
 .....Testing Regressor Tree Utility
 .................Testing Data Prep
 ......Testing GridSearchCV
-..........Testing Metrics
-.....Testing Polynomial Transform
-....Testing Voting Regressor
-....Testing file: dbscan.py
-.Testing file: dbscan_3d.py
-.Testing file: dbscan_3d_aimated.py
-.Testing file: kmeans.py
-.Testing file: bayes.py
-.Testing file: lasso.py
-.Testing file: lda.py
-.Testing file: ols.py
-.Testing file: passiveAggressive.py
-.Testing file: passiveAggressive_vis.py
-.Testing file: qda.py
-.Testing file: ransac.py
-.Testing file: ransac_vis.py
-.Testing file: ridge.py
-.Testing file: neuralNetwork.py
-.Testing file: neuralNetwork_hyper.py
-Tuning Hyperparameters: 100%|████████████| 4/4 [00:05<00:00,  1.47s/it]
-Tuning Hyperparameters: 100%|████████████| 4/4 [00:04<00:00,  1.08s/it]
-.Testing file: gradientBoostedRegressor.py
-.Testing file: randomForestClassifier.py
-.Testing file: randomForestRegressor.py
-.Testing file: GridSearchCV_bayes.py
-.Testing file: GridSearchCV_gbr.py
-.Testing file: GridSearchCV_passiveAggReg.py
-.Testing file: GridSearchCV_rfc.py
-.Testing file: GridSearchCV_rfr.py
-.Testing file: polynomialTransform.py
-.Testing file: votingRegressor.py
+...........Testing Metrics
+...............Testing Polynomial Transform
+....Testing RandomSearchCV
+.............Testing Voting Regressor
+....Testing example file: dbscan.py
+.Testing example file: dbscan_3d.py
+.Testing example file: dbscan_3d_aimated.py
+.Testing example file: kmeans.py
+.Testing example file: bayes.py
+.Testing example file: lasso.py
+.Testing example file: lda.py
+.Testing example file: ols.py
+.Testing example file: passiveAggressive.py
+.Testing example file: passiveAggressive_vis.py
+.Testing example file: qda.py
+.Testing example file: ransac.py
+.Testing example file: ransac_vis.py
+.Testing example file: ridge.py
+.Testing example file: neuralNetwork.py
+.Testing example file: neuralNetwork_hyper.py
+Tuning Hyperparameters: 100%|██████████| 4/4 [00:05<00:00,  1.32s/it]
+Tuning Hyperparameters: 100%|██████████| 4/4 [00:04<00:00,  1.03s/it]
+.Testing example file: gradientBoostedRegressor.py
+.Testing example file: randomForestClassifier.py
+.Testing example file: randomForestRegressor.py
+.Testing example file: gridSearchCV_bayes.py
+.Testing example file: gridSearchCV_gbr.py
+.Testing example file: gridSearchCV_passiveAggReg.py
+.Testing example file: gridSearchCV_rfc.py
+.Testing example file: gridSearchCV_rfr.py
+.Testing example file: polynomialTransform.py
+.Testing example file: randomSearchCV_bayes.py
+.Testing example file: randomSearchCV_gbr.py
+.Testing example file: randomSearchCV_passiveAggReg.py
+.Testing example file: randomSearchCV_rfc.py
+.Testing example file: randomSearchCV_rfr.py
+.Testing example file: votingRegressor.py
 .
 ----------------------------------------------------------------------
-Ran 234 tests in 99.493s
+Ran 263 tests in 114.101s
 
 OK
 ```
