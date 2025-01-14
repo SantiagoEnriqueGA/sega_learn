@@ -3,6 +3,7 @@ from .utils import (
     DataPrep,
     VotingRegressor,
     GridSearchCV,
+    RandomSearchCV,
     Metrics,
 )
 
@@ -53,6 +54,7 @@ __all__ = [
     "DataPrep",
     "VotingRegressor",
     "GridSearchCV",
+    "RandomSearchCV",
     "Metrics",
     
     # Clustering
