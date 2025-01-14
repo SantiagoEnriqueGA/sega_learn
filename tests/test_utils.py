@@ -4,6 +4,7 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn.datasets import make_regression, make_classification
+from sklearn import metrics as sk_metrics
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -228,44 +229,167 @@ class TestGridSearchCV(unittest.TestCase):
 
 class TestMetrics(unittest.TestCase):
     """
-    Unit test for the Metrics class.
+    Unit test for the Metrics class. Runs 100 tests for each method. Each test generates random data.
     Methods:
     - setUp: Initializes a new instance of the Metrics class before each test method is run.
     - test_mse: Tests the mean squared error method of the Metrics class.
     - test_r2: Tests the r squared method of the Metrics class.
+    - test_mae: Tests the mean absolute error method of the Metrics class.
+    - test_rmse: Tests the root mean squared error method of the Metrics class.
+    - test_mape: Tests the mean absolute percentage error method of the Metrics class.
+    - test_mpe: Tests the mean percentage error method of the Metrics class.
     - test_accuracy: Tests the accuracy method of the Metrics class.
     - test_precision: Tests the precision method of the Metrics class.
     - test_recall: Tests the recall method of the Metrics class.
+    - test_f1_score: Tests the f1 score method of the Metrics class.
+    - test_log_loss: Tests the log loss method of the Metrics class.
+    - test_confusion_matrix: Tests the confusion matrix method of the Metrics class.
+    - test_show_confusion_matrix: Tests the show confusion matrix method of the Metrics class.
+    - test_classification_report: Tests the classification report method of the Metrics class.
+    - test_show_classification_report: Tests the show classification report method of the Metrics class.
     """
     @classmethod
     def setUpClass(cls):
         print("Testing Metrics")
+        cls.num_tests = 100  # Define the variable for the number of tests
     
     def setUp(self):
-        self.y_true = np.array([1, 0, 1, 0, 1, 0, 1, 0, 1, 0])
-        self.y_pred = np.array([1, 1, 1, 0, 1, 0, 1, 0, 1, 0])
         self.metrics = Metrics()
     
+    def generate_regression_data(self):
+        y_true, y_pred = make_regression(n_samples=100, n_features=1, noise=0.1, random_state=None)
+        return y_true.flatten(), y_pred.flatten()
+    
+    def generate_classification_data(self):
+        X, y_true = make_classification(n_samples=100, n_features=5, n_classes=2, random_state=None)
+        y_pred = np.random.randint(0, 2, size=y_true.shape)
+        y_pred_prob = np.random.rand(100, 2)
+        y_pred_prob = y_pred_prob / y_pred_prob.sum(axis=1, keepdims=True)
+        return y_true, y_pred, y_pred_prob
+    
+    # Regression Metrics
     def test_mse(self):
-        mse = self.metrics.mean_squared_error(self.y_true, self.y_pred)
-        self.assertEqual(mse, 0.1) # MSE = 1 / 10 = 0.1
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred = self.generate_regression_data()
+                mse = self.metrics.mean_squared_error(y_true, y_pred)
+                sk_mse = sk_metrics.mean_squared_error(y_true, y_pred)
+                self.assertEqual(mse, sk_mse)
     
     def test_r2(self):
-        r2 = self.metrics.r_squared(self.y_true, self.y_pred)
-        self.assertAlmostEqual(r2, 0.6, places=2) # R2 = 1 - (SS_res / SS_tot) = 1 - (0.1 / 0.25)
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred = self.generate_regression_data()
+                r2 = self.metrics.r_squared(y_true, y_pred)
+                sk_r2 = sk_metrics.r2_score(y_true, y_pred)
+                self.assertAlmostEqual(r2, sk_r2, places=4) 
         
+    def test_mae(self):
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred = self.generate_regression_data()
+                mae = self.metrics.mean_absolute_error(y_true, y_pred)
+                sk_mae = sk_metrics.mean_absolute_error(y_true, y_pred)
+                self.assertEqual(mae, sk_mae) 
+        
+    def test_rmse(self):
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred = self.generate_regression_data()
+                rmse = self.metrics.root_mean_squared_error(y_true, y_pred)
+                sk_rmse = np.sqrt(sk_metrics.mean_squared_error(y_true, y_pred))
+                self.assertAlmostEqual(rmse, sk_rmse, places=4)
+        
+    def test_mape(self):
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred = self.generate_regression_data()
+                mape = self.metrics.mean_absolute_percentage_error(y_true, y_pred)
+                sk_mape = sk_metrics.mean_absolute_percentage_error(y_true, y_pred)
+                self.assertEqual(mape, sk_mape) 
+        
+    def test_mpe(self):
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred = self.generate_regression_data()
+                mpe = self.metrics.mean_percentage_error(y_true, y_pred)
+                sk_mpe = np.mean((y_true - y_pred) / y_true)
+                self.assertEqual(mpe, sk_mpe) 
+        
+    # Classification Metrics
     def test_accuracy(self):
-        accuracy = self.metrics.accuracy(self.y_true, self.y_pred)
-        self.assertEqual(accuracy, 0.9)
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred, _ = self.generate_classification_data()
+                accuracy = self.metrics.accuracy(y_true, y_pred)
+                sk_accuracy = sk_metrics.accuracy_score(y_true, y_pred)
+                self.assertEqual(accuracy, sk_accuracy)
 
     def test_precision(self):
-        precision = self.metrics.precision(self.y_true, self.y_pred)
-        self.assertAlmostEqual(precision, (5/6), places=2) # Precision = TP / (TP + FP)  = 5 / (5 + 1)
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred, _ = self.generate_classification_data()
+                precision = self.metrics.precision(y_true, y_pred)
+                sk_precision = sk_metrics.precision_score(y_true, y_pred)
+                self.assertAlmostEqual(precision, sk_precision, places=4) 
     
     def test_recall(self):
-        recall = self.metrics.recall(self.y_true, self.y_pred)
-        self.assertAlmostEqual(recall, (5/5), places=2) # Recall = TP / (TP + FN) = 5 / (5 + 0)
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred, _ = self.generate_classification_data()
+                recall = self.metrics.recall(y_true, y_pred)
+                sk_recall = sk_metrics.recall_score(y_true, y_pred)
+                self.assertAlmostEqual(recall, sk_recall, places=4) 
     
+    def test_f1_score(self):
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred, _ = self.generate_classification_data()
+                f1 = self.metrics.f1_score(y_true, y_pred)
+                sk_f1 = sk_metrics.f1_score(y_true, y_pred)
+                self.assertAlmostEqual(f1, sk_f1, places=4) 
+    
+    def test_log_loss(self):
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, _, y_pred_prob = self.generate_classification_data()
+                log_loss = self.metrics.log_loss(y_true, y_pred_prob)
+                sk_log_loss = sk_metrics.log_loss(y_true, y_pred_prob)
+                self.assertAlmostEqual(log_loss, sk_log_loss, places=4)
+
+    def test_confusion_matrix(self):
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred, _ = self.generate_classification_data()
+                cm = self.metrics.confusion_matrix(y_true, y_pred)
+                sk_cm = sk_metrics.confusion_matrix(y_true, y_pred)
+                self.assertTrue(np.array_equal(cm, sk_cm))
+                
+    def test_show_confusion_matrix(self):
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred, _ = self.generate_classification_data()
+                with suppress_print():
+                    self.metrics.show_confusion_matrix(y_true, y_pred)
+                    
+    def test_classification_report(self):
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred, _ = self.generate_classification_data()
+                report = self.metrics.classification_report(y_true, y_pred)
+                sk_report = sk_metrics.classification_report(y_true, y_pred, output_dict=True)
+                for cls in report.keys():
+                    self.assertAlmostEqual(report[cls]['recall'], sk_report[str(cls)]['recall'], places=4)
+                    self.assertAlmostEqual(report[cls]['precision'], sk_report[str(cls)]['precision'], places=4)
+                    self.assertAlmostEqual(report[cls]['f1-score'], sk_report[str(cls)]['f1-score'], places=4)
+                    self.assertAlmostEqual(report[cls]['support'], sk_report[str(cls)]['support'], places=4)
+                                                        
+    def test_show_classification_report(self):
+        for _ in range(self.num_tests):
+            with self.subTest(i=_):
+                y_true, y_pred, _ = self.generate_classification_data()
+                with suppress_print():
+                    self.metrics.show_classification_report(y_true, y_pred)
 
 if __name__ == '__main__':
     unittest.main()

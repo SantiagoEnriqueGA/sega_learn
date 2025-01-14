@@ -18,6 +18,8 @@ class GridSearchCV(object):
         - param_grid (list): A list of dictionaries containing hyperparameters to be tuned.
         - cv (int): The number of folds for cross-validation. Default is 5.
         - metric (str): The metric to be used for evaluation. Default is 'mse'.
+            - Regression Metrics: 'mse', 'r2', 'mae', 'rmse', 'mape', 'mpe'
+            - Classification Metrics: 'accuracy', 'precision', 'recall', 'f1', 'log_loss'
         - direction (str): The direction to optimize the metric. Default is 'minimize'.
         """
         self.model = model
@@ -72,11 +74,21 @@ class GridSearchCV(object):
                 self.active_model.fit(X_train, y_train)
                 y_pred = self.active_model.predict(X_test)
                 
-                if self.metric == 'mse': s = Metrics().mean_squared_error(y_test, y_pred)
-                elif self.metric == 'r2': s = Metrics().r_squared(y_test, y_pred)
-                elif self.metric == 'accuracy': s = Metrics().accuracy(y_test, y_pred)
-                elif self.metric == 'precision': s = Metrics().precision(y_test, y_pred)
-                elif self.metric == 'recall': s = Metrics().recall(y_test, y_pred)
+                # Regression Metrics
+                if self.metric in ['mse', 'mean_squared_error']: s = Metrics.mean_squared_error(y_test, y_pred)
+                elif self.metric in ['r2', 'r_squared']: s = Metrics.r_squared(y_test, y_pred)
+                elif self.metric in ['mae', 'mean_absolute_error']: s = Metrics.mean_absolute_error(y_test, y_pred)
+                elif self.metric in ['rmse', 'root_mean_squared_error']: s = Metrics.root_mean_squared_error(y_test, y_pred)
+                elif self.metric in ['mape', 'mean_absolute_percentage_error']: s = Metrics.mean_absolute_percentage_error(y_test, y_pred)
+                elif self.metric in ['mpe', 'mean_percentage_error']: s = Metrics.mean_percentage_error(y_test, y_pred)
+                
+                # Classification Metrics
+                elif self.metric == 'accuracy': s = Metrics.accuracy(y_test, y_pred)
+                elif self.metric == 'precision': s = Metrics.precision(y_test, y_pred)
+                elif self.metric == 'recall': s = Metrics.recall(y_test, y_pred)
+                elif self.metric == 'f1': s = Metrics.f1_score(y_test, y_pred)
+                elif self.metric == 'log_loss': s = Metrics.log_loss(y_test, y_pred)
+                
                 scores.append(s)
                     
                 if verbose: print(f"\tCV Fold {i+1}: - {self.metric}: {s:.2f}")
