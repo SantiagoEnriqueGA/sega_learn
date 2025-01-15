@@ -23,13 +23,12 @@ This project was heavily inspired by [scikit-learn](https://scikit-learn.org/sta
 - **Linear Models**: Implements various linear models like Bayesian Regression, Lasso Regression, Linear Discriminant Analysis, Ordinary Least Squares, Passive Aggressive Regressor, Quadratic Discriminant Analysis, RANSAC Regression, and Ridge Regression.
 - **Neural Networks**: Implements neural network components like optimizers (Adadelta, Adam, SGD), loss functions (BCEWithLogitsLoss, CrossEntropyLoss), and the NeuralNetwork class.
 - **Trees**: Implements tree-based algorithms like Classifier Tree, Random Forest Classifier, Gradient Boosted Regressor, Random Forest Regressor, Regressor Tree, and utilities for computing variance, partitioning classes, and calculating information gain.
-- **Utils**: Implements utility functions for data preparation and voting regressor.
+- **Utils**: Implements utility functions for data preparation, voting regressor, polynomial transformation, evaluation metrics, model selection algorithms like Grid Search Cross Validation, Random Search Cross Validation.
 
 ## Planned Features - Future Work
 - Implement dimensionality reduction algorithms like Principal Component Analysis (PCA), truncated Singular Value Decomposition (t-SVD)
 - Implement OPTICS clustering algorithm
-- Implement model selection algorithms like cross-validation, grid search, and random search
-  - Implement novel model selection algorithms like Bayesian Optimization, Bayesian Model Averaging, and Bayesian Model Selection.
+- Implement novel model selection algorithms like Bayesian Optimization, Bayesian Model Averaging, and Bayesian Model Selection.
 
 ## File Structure
 The project directory structure is as follows:
@@ -101,7 +100,9 @@ The project directory structure is as follows:
     - [`lasso.py`](examples/linear_models/lasso.py): Demonstrates Lasso Regression.
     - [`bayes.py`](examples/linear_models/bayes.py): Demonstrates Bayesian Regression.
     - [`ransac.py`](examples/linear_models/ransac.py): Demonstrates RANSAC Regression.
+    - [`ransac_vis.py`](examples/linear_models/ransac_vis.py): Demonstrates RANSAC Regression with visualization.
     - [`passiveAggressive.py`](examples/linear_models/passiveAggressive.py): Demonstrates Passive Aggressive Regressor.
+    - [`passiveAggressive_vis.py`](examples/linear_models/passiveAggressive_vis.py): Demonstrates Passive Aggressive Regressor with visualization.
     - [`lda.py`](examples/linear_models/lda.py): Demonstrates Linear Discriminant Analysis.
     - [`qda.py`](examples/linear_models/qda.py): Demonstrates Quadratic Discriminant Analysis.
   - **neural_networks/**: Contains neural network components.
@@ -120,6 +121,11 @@ The project directory structure is as follows:
     - [`gridSearchCV_passiveAggressive.py`](examples/utils/gridSearchCV_passiveAggressive.py): Demonstrates Grid Search Cross Validation with Passive Aggressive Regressor.
     - [`gridSearchCV_rfc.py`](examples/utils/gridSearchCV_rfc.py): Demonstrates Grid Search Cross Validation with Random Forest Classifier.
     - [`gridSearchCV_rfr.py`](examples/utils/gridSearchCV_rfr.py): Demonstrates Grid Search Cross Validation with Random Forest Regressor.
+    - [`randomSearchCV_bayes.py`](examples/utils/randomSearchCV_bayes.py): Demonstrates Random Search Cross Validation with Bayesian Regression.
+    - [`randomSearchCV_gbr.py`](examples/utils/randomSearchCV_gbr.py): Demonstrates Random Search Cross Validation with Gradient Boosted Regressor.
+    - [`randomSearchCV_passiveAggressive.py`](examples/utils/randomSearchCV_passiveAggressive.py): Demonstrates Random Search Cross Validation with Passive Aggressive Regressor.
+    - [`randomSearchCV_rfc.py`](examples/utils/randomSearchCV_rfc.py): Demonstrates Random Search Cross Validation with Random Forest Classifier.
+    - [`randomSearchCV_rfr.py`](examples/utils/randomSearchCV_rfr.py): Demonstrates Random Search Cross Validation with Random Forest Regressor.
   
 - **docs/**: Contains the generated documentation for the SEGA_LEARN library.
   - [`documentation.md`](docs/documentation.md): Contains the generated documentation for the SEGA_LEARN library.
@@ -150,7 +156,9 @@ The project directory structure is as follows:
 - [`lasso.py`](examples/linear_models/lasso.py): Demonstrates Lasso Regression.
 - [`bayes.py`](examples/linear_models/bayes.py): Demonstrates Bayesian Regression.
 - [`ransac.py`](examples/linear_models/ransac.py): Demonstrates RANSAC Regression.
+- [`ransac_vis.py`](examples/linear_models/ransac_vis.py): Demonstrates RANSAC Regression with visualization.
 - [`passiveAggressive.py`](examples/linear_models/passiveAggressive.py): Demonstrates Passive Aggressive Regressor.
+- [`passiveAggressive_vis.py`](examples/linear_models/passiveAggressive_vis.py): Demonstrates Passive Aggressive Regressor with visualization.
 - [`lda.py`](examples/linear_models/lda.py): Demonstrates Linear Discriminant Analysis.
 - [`qda.py`](examples/linear_models/qda.py): Demonstrates Quadratic Discriminant Analysis.
 
@@ -172,7 +180,11 @@ The project directory structure is as follows:
 - [`gridSearchCV_passiveAggressive.py`](examples/utils/gridSearchCV_passiveAggressive.py): Demonstrates Grid Search Cross Validation with Passive Aggressive Regressor.
 - [`gridSearchCV_rfc.py`](examples/utils/gridSearchCV_rfc.py): Demonstrates Grid Search Cross Validation with Random Forest Classifier.
 - [`gridSearchCV_rfr.py`](examples/utils/gridSearchCV_rfr.py): Demonstrates Grid Search Cross Validation with Random Forest Regressor.
-
+- [`randomSearchCV_bayes.py`](examples/utils/randomSearchCV_bayes.py): Demonstrates Random Search Cross Validation with Bayesian Regression.
+- [`randomSearchCV_gbr.py`](examples/utils/randomSearchCV_gbr.py): Demonstrates Random Search Cross Validation with Gradient Boosted Regressor.
+- [`randomSearchCV_passiveAggressive.py`](examples/utils/randomSearchCV_passiveAggressive.py): Demonstrates Random Search Cross Validation with Passive Aggressive Regressor.
+- [`randomSearchCV_rfc.py`](examples/utils/randomSearchCV_rfc.py): Demonstrates Random Search Cross Validation with Random Forest Classifier.
+- [`randomSearchCV_rfr.py`](examples/utils/randomSearchCV_rfr.py): Demonstrates Random Search Cross Validation with Random Forest Regressor.
 
 ## Scripts
 The following PowerShell scripts are included in the `scripts/` folder to help with various tasks:
@@ -236,7 +248,8 @@ Testing Imports - Clustering
 .................Testing Data Prep
 ......Testing GridSearchCV
 ...........Testing Metrics
-...............Testing Polynomial Transform
+...............Testing Model Selection Utils
+..........Testing Polynomial Transform
 ....Testing RandomSearchCV
 .............Testing Voting Regressor
 ....Testing example file: dbscan.py
@@ -255,8 +268,8 @@ Testing Imports - Clustering
 .Testing example file: ridge.py
 .Testing example file: neuralNetwork.py
 .Testing example file: neuralNetwork_hyper.py
-Tuning Hyperparameters: 100%|██████████| 4/4 [00:05<00:00,  1.32s/it]
-Tuning Hyperparameters: 100%|██████████| 4/4 [00:04<00:00,  1.03s/it]
+Tuning Hyperparameters: 100%|██████████| 4/4 [00:05<00:00,  1.49s/it]
+Tuning Hyperparameters: 100%|██████████| 4/4 [00:05<00:00,  1.33s/it]
 .Testing example file: gradientBoostedRegressor.py
 .Testing example file: randomForestClassifier.py
 .Testing example file: randomForestRegressor.py
@@ -271,10 +284,11 @@ Tuning Hyperparameters: 100%|██████████| 4/4 [00:04<00:00,  
 .Testing example file: randomSearchCV_passiveAggReg.py
 .Testing example file: randomSearchCV_rfc.py
 .Testing example file: randomSearchCV_rfr.py
+.Testing example file: segaSearchCV_rfr.py
 .Testing example file: votingRegressor.py
 .
 ----------------------------------------------------------------------
-Ran 263 tests in 114.101s
+Ran 274 tests in 114.101s
 
 OK
 ```
