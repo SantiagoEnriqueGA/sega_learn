@@ -5,7 +5,7 @@ from .dataPrep import DataPrep
 from .metrics import Metrics
 
 
-class Utility:
+class ModelSelectionUtility:
     @staticmethod
     def get_param_combinations(param_grid):
         """
@@ -21,7 +21,60 @@ class Utility:
         keys, values = zip(*all_params.items())
         param_combinations = [dict(zip(keys, v)) for v in product(*values)]
         return param_combinations
-
+    
+    @staticmethod
+    def cross_validate(model, X, y, params, cv=5, metric='mse', direction='minimize', verbose=False):
+        """
+        Implements a custom cross-validation for hyperparameter tuning.
+        
+        Parameters:
+        - model: The model Object to be tuned.
+        - X (numpy.ndarray): The feature columns.
+        - y (numpy.ndarray): The label column.
+        - params (dict): The hyperparameters to be tuned.
+        - cv (int): The number of folds for cross-validation. Default is 5.
+        - metric (str): The metric to be used for evaluation. Default is 'mse'.
+            - Regression Metrics: 'mse', 'r2', 'mae', 'rmse', 'mape', 'mpe'
+            - Classification Metrics: 'accuracy', 'precision', 'recall', 'f1', 'log_loss'
+        - direction (str): The direction to optimize the metric. Default is 'minimize'.
+        - verbose (bool): A flag to display the training progress. Default is False.
+        
+        Returns:
+        - tuple: A tuple containing the scores (list) and the trained model.
+        """
+        scores = []
+        if verbose: print(f"Training Model with Params: {params}")
+        for i in range(cv):
+            active_model = model(**params)
+            
+            
+            X_folds, y_folds = DataPrep.k_split(X, y, k=cv)
+            X_train, y_train = np.concatenate(X_folds[:i] + X_folds[i+1:]), np.concatenate(y_folds[:i] + y_folds[i+1:])
+            X_test, y_test = X_folds[i], y_folds[i]
+            
+            active_model.fit(X_train, y_train)
+            y_pred = active_model.predict(X_test)
+            
+            # Regression Metrics
+            if metric in ['mse', 'mean_squared_error']: s = Metrics.mean_squared_error(y_test, y_pred)
+            elif metric in ['r2', 'r_squared']: s = Metrics.r_squared(y_test, y_pred)
+            elif metric in ['mae', 'mean_absolute_error']: s = Metrics.mean_absolute_error(y_test, y_pred)
+            elif metric in ['rmse', 'root_mean_squared_error']: s = Metrics.root_mean_squared_error(y_test, y_pred)
+            elif metric in ['mape', 'mean_absolute_percentage_error']: s = Metrics.mean_absolute_percentage_error(y_test, y_pred)
+            elif metric in ['mpe', 'mean_percentage_error']: s = Metrics.mean_percentage_error(y_test, y_pred)
+            
+            # Classification Metrics
+            elif metric == 'accuracy': s = Metrics.accuracy(y_test, y_pred)
+            elif metric == 'precision': s = Metrics.precision(y_test, y_pred)
+            elif metric == 'recall': s = Metrics.recall(y_test, y_pred)
+            elif metric == 'f1': s = Metrics.f1_score(y_test, y_pred)
+            elif metric == 'log_loss': s = Metrics.log_loss(y_test, y_pred)
+            
+            scores.append(s)
+                
+            if verbose: print(f"\tCV Fold {i+1}: - {metric}: {s:.2f}")
+        
+        return scores, active_model
 
 class GridSearchCV(object):
     """
@@ -49,7 +102,7 @@ class GridSearchCV(object):
         assert self.param_grid, "param_grid cannot be empty."
         
         # Generate all possible hyperparameter combinations
-        self.param_combinations = Utility.get_param_combinations(self.param_grid)
+        self.param_combinations = ModelSelectionUtility.get_param_combinations(self.param_grid)
     
     def fit(self, X, y, verbose=False):
         """
@@ -59,45 +112,19 @@ class GridSearchCV(object):
         - X (numpy.ndarray): The feature columns.
         - y (numpy.ndarray): The label column.
         - verbose (bool): A flag to display the training progress. Default is True.
+        
+        Returns:
+        - model: The best model with the optimal hyperparameters.
         """
         if self.direction == 'minimize': self.best_score_ = np.inf
         if self.direction == 'maximize': self.best_score_ = -np.inf
         self.best_params_ = None
         
         for params in self.param_combinations:
-            scores = []
-            
-            if verbose: print(f"Training Model with Params: {params}")
-            for i in range(self.cv):
-                self.active_model = self.model(**params)
-                
-                
-                X_folds, y_folds = DataPrep.k_split(X, y, k=self.cv)
-                X_train, y_train = np.concatenate(X_folds[:i] + X_folds[i+1:]), np.concatenate(y_folds[:i] + y_folds[i+1:])
-                X_test, y_test = X_folds[i], y_folds[i]
-                
-                self.active_model.fit(X_train, y_train)
-                y_pred = self.active_model.predict(X_test)
-                
-                # Regression Metrics
-                if self.metric in ['mse', 'mean_squared_error']: s = Metrics.mean_squared_error(y_test, y_pred)
-                elif self.metric in ['r2', 'r_squared']: s = Metrics.r_squared(y_test, y_pred)
-                elif self.metric in ['mae', 'mean_absolute_error']: s = Metrics.mean_absolute_error(y_test, y_pred)
-                elif self.metric in ['rmse', 'root_mean_squared_error']: s = Metrics.root_mean_squared_error(y_test, y_pred)
-                elif self.metric in ['mape', 'mean_absolute_percentage_error']: s = Metrics.mean_absolute_percentage_error(y_test, y_pred)
-                elif self.metric in ['mpe', 'mean_percentage_error']: s = Metrics.mean_percentage_error(y_test, y_pred)
-                
-                # Classification Metrics
-                elif self.metric == 'accuracy': s = Metrics.accuracy(y_test, y_pred)
-                elif self.metric == 'precision': s = Metrics.precision(y_test, y_pred)
-                elif self.metric == 'recall': s = Metrics.recall(y_test, y_pred)
-                elif self.metric == 'f1': s = Metrics.f1_score(y_test, y_pred)
-                elif self.metric == 'log_loss': s = Metrics.log_loss(y_test, y_pred)
-                
-                scores.append(s)
-                    
-                if verbose: print(f"\tCV Fold {i+1}: - {self.metric}: {s:.2f}")
-                
+            scores, self.active_model = ModelSelectionUtility.cross_validate(self.model, X, y, 
+                                                               params, cv=self.cv, 
+                                                               metric=self.metric, direction=self.direction, 
+                                                               verbose=verbose)
             
             mean_score = np.mean(scores)
             if verbose: print(f"\t-Mean Score: {mean_score:.2f}")
@@ -110,9 +137,9 @@ class GridSearchCV(object):
                 self.best_score_ = mean_score
                 self.best_params_ = params
                 self.best_model = self.active_model
-        
+            
         return self.best_model
-
+        
 class RandomSearchCV(object):
     """
     Implements a random search cross-validation for hyperparameter tuning.
@@ -142,7 +169,7 @@ class RandomSearchCV(object):
         assert self.param_grid, "param_grid cannot be empty."
         
         # Generate all possible hyperparameter combinations
-        self.param_combinations = Utility.get_param_combinations(self.param_grid)
+        self.param_combinations = ModelSelectionUtility.get_param_combinations(self.param_grid)
         
     def fit(self, X, y, verbose=False):
         """
@@ -152,6 +179,9 @@ class RandomSearchCV(object):
         - X (numpy.ndarray): The feature columns.
         - y (numpy.ndarray): The label column.
         - verbose (bool): A flag to display the training progress. Default is True.
+        
+        Returns:
+        - model: The best model with the optimal hyperparameters.
         """
         if self.direction == 'minimize': self.best_score_ = np.inf
         if self.direction == 'maximize': self.best_score_ = -np.inf
@@ -173,38 +203,11 @@ class RandomSearchCV(object):
             
             # Store tried combinations
             self.tried_params.append(params)
-            scores = []
-            
-            if verbose: print(f"Training Model with Params: {params}")
-            for i in range(self.cv):
-                self.active_model = self.model(**params)
-                
-                X_folds, y_folds = DataPrep.k_split(X, y, k=self.cv)
-                X_train, y_train = np.concatenate(X_folds[:i] + X_folds[i+1:]), np.concatenate(y_folds[:i] + y_folds[i+1:])
-                X_test, y_test = X_folds[i], y_folds[i]
-                
-                self.active_model.fit(X_train, y_train)
-                y_pred = self.active_model.predict(X_test)
-                
-                # Regression Metrics
-                if self.metric in ['mse', 'mean_squared_error']: s = Metrics.mean_squared_error(y_test, y_pred)
-                elif self.metric in ['r2', 'r_squared']: s = Metrics.r_squared(y_test, y_pred)
-                elif self.metric in ['mae', 'mean_absolute_error']: s = Metrics.mean_absolute_error(y_test, y_pred)
-                elif self.metric in ['rmse', 'root_mean_squared_error']: s = Metrics.root_mean_squared_error(y_test, y_pred)
-                elif self.metric in ['mape', 'mean_absolute_percentage_error']: s = Metrics.mean_absolute_percentage_error(y_test, y_pred)
-                elif self.metric in ['mpe', 'mean_percentage_error']: s = Metrics.mean_percentage_error(y_test, y_pred)
-                
-                # Classification Metrics
-                elif self.metric == 'accuracy': s = Metrics.accuracy(y_test, y_pred)
-                elif self.metric == 'precision': s = Metrics.precision(y_test, y_pred)
-                elif self.metric == 'recall': s = Metrics.recall(y_test, y_pred)
-                elif self.metric == 'f1': s = Metrics.f1_score(y_test, y_pred)
-                elif self.metric == 'log_loss': s = Metrics.log_loss(y_test, y_pred)
-                
-                scores.append(s)
-                    
-                if verbose: print(f"\tCV Fold {i+1}: - {self.metric}: {s:.2f}")
-                
+                        
+            scores, self.active_model = ModelSelectionUtility.cross_validate(self.model, X, y,
+                                                               params, cv=self.cv,
+                                                               metric=self.metric, direction=self.direction,
+                                                               verbose=verbose)
             
             mean_score = np.mean(scores)
             if verbose: print(f"\t-Mean Score: {mean_score:.2f}")
@@ -219,7 +222,6 @@ class RandomSearchCV(object):
                 self.best_model = self.active_model
         
         return self.best_model
-            
 
 class segaSearchCV(object):
     """

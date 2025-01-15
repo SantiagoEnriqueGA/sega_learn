@@ -48,6 +48,7 @@ class TestPolynomialTransform(unittest.TestCase):
         with self.assertRaises(Exception):
             self.transform.transform(None)      
             
+            
 class TestDataPrep(unittest.TestCase):
     """
     Unit test for the Data Prep class.
@@ -99,7 +100,8 @@ class TestDataPrep(unittest.TestCase):
     def test_k_split_invalid(self):
         with self.assertRaises(Exception):
             DataPrep.k_split(None, None, k=5)
-        
+
+
 class TestVotingRegressor(unittest.TestCase):
     """
     Unit test for the Voting Regressor class.
@@ -140,8 +142,78 @@ class TestVotingRegressor(unittest.TestCase):
         with suppress_print():
             self.voter.show_models()
             self.voter.show_models(formula=True)
-            
 
+class TestModelSelectionUtils(unittest.TestCase):
+    """
+    Unit tests for the Utility functions in the Model Selection module.
+    Methods:
+    - setUp: Initializes a new instance of the Model Selection Utility class before each test method is run.
+    - test_get_param_combinations: Tests the get_param_combinations method of the Model Selection Utility class.
+    - test_get_param_combinations_invalid: Tests the get_param_combinations method with invalid input.
+    - test_get_param_combinations_empty: Tests the get_param_combinations method with empty input.
+    - test_get_param_combinations_single: Tests the get_param_combinations method with a single parameter.
+    - test_cross_validate: Tests the cross_validate method of the Model Selection Utility class.
+    - test_cross_validate_invalid: Tests the cross_validate method with invalid input.
+    - test_cross_validate_invalid_cv: Tests the cross_validate method with invalid cv.
+    - test_cross_validate_invalid_params: Tests the cross_validate method with invalid params.
+    - test_cross_validate_invalid_params_type: Tests the cross_validate method with invalid params type.
+    - test_cross_validate_cv_1: Tests the cross_validate method with cv=1.
+    """
+    @classmethod
+    def setUpClass(cls):
+        print("Testing Model Selection Utils")
+        
+    def setUp(self):
+        self.X, self.y = make_regression(n_samples=100, n_features=5, noise=25, random_state=42)
+        self.num_tests = 100
+    
+    def test_get_param_combinations(self):
+        param_grid = [{'alpha': [0.1, 1, 10], 'fit_intercept': [True, False]}]
+        param_combinations = ModelSelectionUtility.get_param_combinations(param_grid)
+        self.assertEqual(len(param_combinations), 6)
+        
+    def test_get_param_combinations_invalid(self):
+        with self.assertRaises(Exception):
+            ModelSelectionUtility.get_param_combinations(None)
+            
+    def test_get_param_combinations_empty(self):
+        with self.assertRaises(Exception):
+            ModelSelectionUtility.get_param_combinations([])
+            
+    def test_get_param_combinations_single(self):
+        param_grid = [{'alpha': [0.1, 1, 10]}]
+        param_combinations = ModelSelectionUtility.get_param_combinations(param_grid)
+        self.assertEqual(len(param_combinations), 3)
+        
+    def test_cross_validate(self):
+        ols = OrdinaryLeastSquares
+        mse_scores, _ = ModelSelectionUtility.cross_validate(ols, self.X, self.y, params={'fit_intercept': [True]}, cv=5)
+        self.assertEqual(len(mse_scores), 5)
+        for score in mse_scores:
+            self.assertIsInstance(score, float)
+    
+    def test_cross_validate_invalid(self):
+        with self.assertRaises(Exception):
+            ModelSelectionUtility.cross_validate(None, None, None, params=None, cv=5)
+            
+    def test_cross_validate_invalid_cv(self):
+        with self.assertRaises(Exception):
+            ModelSelectionUtility.cross_validate(OrdinaryLeastSquares, self.X, self.y, params=None, cv=0)
+            
+    def test_cross_validate_invalid_params(self):
+        with self.assertRaises(Exception):
+            ModelSelectionUtility.cross_validate(OrdinaryLeastSquares, self.X, self.y, params=None, cv=5)
+            
+    def test_cross_validate_invalid_params_type(self):
+        with self.assertRaises(Exception):
+            ModelSelectionUtility.cross_validate(OrdinaryLeastSquares, self.X, self.y, params='params', cv=5)
+            
+    def test_cross_validate_cv_1(self):
+        ols = OrdinaryLeastSquares
+        with self.assertRaises(Exception):
+            mse_scores, _ = ModelSelectionUtility.cross_validate(ols, self.X, self.y, params={'fit_intercept': [True]}, cv=1)
+          
+          
 class TestGridSearchCV(unittest.TestCase):
     """
     Unit test for the GridSearchCV class.
