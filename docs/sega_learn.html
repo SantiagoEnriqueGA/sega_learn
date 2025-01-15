@@ -88,6 +88,8 @@ td.singlecolumn { width: 100%; }
 </dt><dt class="heading-text"><a href="sega_learn.utils.dataPrep.html#DataPrep">sega_learn.utils.dataPrep.DataPrep</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.metrics.html#Metrics">sega_learn.utils.metrics.Metrics</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.model_selection.html#GridSearchCV">sega_learn.utils.model_selection.GridSearchCV</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.model_selection.html#ModelSelectionUtility">sega_learn.utils.model_selection.ModelSelectionUtility</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.model_selection.html#RandomSearchCV">sega_learn.utils.model_selection.RandomSearchCV</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.polynomialTransform.html#PolynomialTransform">sega_learn.utils.polynomialTransform.PolynomialTransform</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.voting.html#VotingRegressor">sega_learn.utils.voting.VotingRegressor</a>
 </dt></dl>
@@ -693,7 +695,10 @@ Parameters:<br>
 Parameters:<br>
 -&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
 -&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
--&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.</span></dd></dl>
+-&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;model:&nbsp;The&nbsp;best&nbsp;model&nbsp;with&nbsp;the&nbsp;optimal&nbsp;hyperparameters.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -1148,6 +1153,43 @@ Data descriptors defined here:<br>
 </td></tr></table> <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="ModelSelectionUtility">class <strong>ModelSelectionUtility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn">Static methods defined here:<br>
+<dl><dt><a name="ModelSelectionUtility-cross_validate"><strong>cross_validate</strong></a>(model, X, y, params, cv=5, metric='mse', direction='minimize', verbose=False)</dt><dd><span class="code">Implements&nbsp;a&nbsp;custom&nbsp;cross-validation&nbsp;for&nbsp;hyperparameter&nbsp;tuning.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
+-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
+-&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
+-&nbsp;params&nbsp;(dict):&nbsp;The&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
+-&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
+-&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
+-&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.<br>
+-&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;False.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;the&nbsp;scores&nbsp;(list)&nbsp;and&nbsp;the&nbsp;trained&nbsp;model.</span></dd></dl>
+
+<dl><dt><a name="ModelSelectionUtility-get_param_combinations"><strong>get_param_combinations</strong></a>(param_grid)</dt><dd><span class="code">Generates&nbsp;all&nbsp;possible&nbsp;combinations&nbsp;of&nbsp;hyperparameters.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;param_combinations&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameter&nbsp;combinations.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="NeuralNetwork">class <strong>NeuralNetwork</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
@@ -1204,7 +1246,7 @@ Returns:<br>
 Args:&nbsp;X&nbsp;(ndarray):&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;input_size).<br>
 Returns:&nbsp;ndarray:&nbsp;Output&nbsp;predictions&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;output_size).</span></dd></dl>
 
-<dl><dt><a name="NeuralNetwork-train"><strong>train</strong></a>(self, X_train, y_train, X_test=None, y_test=None, optimizer=&lt;sega_learn.neural_networks.optimizers.AdamOptimizer object at 0x000001E4D1057610&gt;, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
+<dl><dt><a name="NeuralNetwork-train"><strong>train</strong></a>(self, X_train, y_train, X_test=None, y_test=None, optimizer=&lt;sega_learn.neural_networks.optimizers.AdamOptimizer object at 0x000002564C824D50&gt;, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
 Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;features.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;labels.<br>
@@ -1774,6 +1816,47 @@ Data and other attributes defined here:<br>
 </td></tr></table> <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="RandomSearchCV">class <strong>RandomSearchCV</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomSearchCV">RandomSearchCV</a>(model,&nbsp;param_grid,&nbsp;iter=10,&nbsp;cv=5,&nbsp;metric='mse',&nbsp;direction='minimize')<br>
+&nbsp;<br>
+Implements&nbsp;a&nbsp;random&nbsp;search&nbsp;cross-validation&nbsp;for&nbsp;hyperparameter&nbsp;tuning.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="RandomSearchCV-__init__"><strong>__init__</strong></a>(self, model, param_grid, iter=10, cv=5, metric='mse', direction='minimize')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#RandomSearchCV">RandomSearchCV</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
+-&nbsp;param_grid&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
+-&nbsp;iter&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;random&nbsp;search.&nbsp;Default&nbsp;is&nbsp;10.<br>
+-&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
+-&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
+-&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
+
+<dl><dt><a name="RandomSearchCV-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;for&nbsp;iter&nbsp;random&nbsp;hyperparameter&nbsp;combinations.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
+-&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
+-&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;model:&nbsp;The&nbsp;best&nbsp;model&nbsp;with&nbsp;the&nbsp;optimal&nbsp;hyperparameters.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="RegressorTree">class <strong>RegressorTree</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
@@ -2121,5 +2204,5 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
     
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'GridSearchCV', 'Metrics', 'KMeans', 'DBSCAN', 'OrdinaryLeastSquares', 'Ridge', 'Lasso', 'Bayesian', 'RANSAC', 'PassiveAggressiveRegressor', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'make_dataClassifierTreeUtility', 'ClassifierTree', 'RegressorTreeUtility', 'RegressorTree', 'RandomForestClassifier', ...]</td></tr></table>
+<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'ModelSelectionUtility', 'GridSearchCV', 'RandomSearchCV', 'Metrics', 'KMeans', 'DBSCAN', 'OrdinaryLeastSquares', 'Ridge', 'Lasso', 'Bayesian', 'RANSAC', 'PassiveAggressiveRegressor', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'make_dataClassifierTreeUtility', 'ClassifierTree', 'RegressorTreeUtility', ...]</td></tr></table>
 </body></html>
