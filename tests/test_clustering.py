@@ -49,18 +49,95 @@ class TestKMeans(unittest.TestCase):
         self.assertEqual(self.kmeans.tol, 1e-4)
         self.assertIsNone(self.kmeans.centroids)
         self.assertIsNone(self.kmeans.labels)
+        
+    def test_initialization_fail_n_clusters_zero(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=0)
+    def test_initialization_fail_n_clusters_negative(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=-1)
+    def test_initialization_fail_n_clusters_too_large(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=10)
+    def test_initialization_fail_n_clusters_non_integer(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=2.5)
+    def test_initialization_fail_n_clusters_string(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters="3")
+    def test_initialization_fail_n_clusters_none(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=None)
+    def test_initialization_fail_n_clusters_list(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=[3])
+    def test_initialization_fail_n_clusters_tuple(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=(3,))
+            
+    def test_initialization_fail_max_iter_zero(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, max_iter=0)
+    def test_initialization_fail_max_iter_negative(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, max_iter=-1)
+    def test_initialization_fail_max_iter_non_integer(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, max_iter=300.5)
+    def test_initialization_fail_max_iter_string(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, max_iter="300")
+    def test_initialization_fail_max_iter_none(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, max_iter=None)
+    def test_initialization_fail_max_iter_list(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, max_iter=[300])
+    def test_initialization_fail_max_iter_tuple(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, max_iter=(300,))
+    
+    def test_initialization_fail_tol_zero(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, tol=0)
+    def test_initialization_fail_tol_negative(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, tol=-1)
+    def test_initialization_fail_tol_string(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, tol="1e-4")
+    def test_initialization_fail_tol_none(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, tol=None)
+    def test_initialization_fail_tol_list(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, tol=[1e-4])
+    def test_initialization_fail_tol_tuple(self):
+        with self.assertRaises(ValueError):
+            KMeans(self.X, n_clusters=self.true_k, tol=(1e-4,))
 
     def test_fit(self):
         self.kmeans.fit()
         self.assertEqual(len(self.kmeans.centroids), self.true_k)
         self.assertEqual(len(self.kmeans.labels), len(self.X))
-
+        
     def test_predict(self):
         self.kmeans.fit()
         new_X = np.array([[0.0, 0.0], [12.0, 3.0]])
         labels = self.kmeans.predict(new_X)
         self.assertEqual(len(labels), len(new_X))
-
+        
+    def test_predict_fail_not_fitted(self):
+        with self.assertRaises(ValueError):
+            self.kmeans.predict(np.array([[0.0, 0.0], [12.0, 3.0]]))
+    def test_predict_fail_X_not_2d(self):
+        with self.assertRaises(IndexError):
+            self.kmeans.predict(np.array([0.0, 0.0]))    
+    def test_predict_fail_X_3d(self):
+        with self.assertRaises(ValueError):
+            # X must be a 2D array, not a 3D array
+            self.kmeans.predict(np.array([[[0.0, 0.0], [12.0, 3.0]]]))
+            
     def test_elbow_method(self):
         distortions = self.kmeans.elbow_method(max_k=5)
         self.assertEqual(len(distortions), 5)
@@ -96,10 +173,14 @@ class TestKMeans(unittest.TestCase):
         self.assertEqual(len(self.centroids), self.true_k)
         
     def test_initialize_centroids_random(self):
-        # TODO: There is a non-zero chance that the centroids are equal, so we need to run this test multiple times to ensure that the centroids are not equal.
-        self.X = np.array([np.random.rand(10000, 10000)])        
-        self.centroids1 = self.kmeans.initialize_centroids()
-        self.centroids2 = self.kmeans.initialize_centroids()
+        # Run the test multiple times to ensure that the centroids are not equal
+        for _ in range(10):
+            self.X = np.random.rand(100, 2)
+            self.kmeans = KMeans(self.X, n_clusters=self.true_k)
+            self.centroids1 = self.kmeans.initialize_centroids()
+            self.centroids2 = self.kmeans.initialize_centroids()
+            if not np.array_equal(self.centroids1, self.centroids2):
+                break
         self.assertFalse(np.array_equal(self.centroids1, self.centroids2))
         
     def tearDown(self):

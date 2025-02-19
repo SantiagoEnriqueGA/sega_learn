@@ -41,6 +41,16 @@ class KMeans:
         - max_iter: The maximum number of iterations.
         - tol: The tolerance to declare convergence.
         """
+        # Validate input parameters
+        if not isinstance(n_clusters, int) or n_clusters < 1:
+            raise ValueError("n_clusters must be a positive integer.")
+        if n_clusters > X.shape[0]:
+            raise ValueError("n_clusters must be less than or equal to the number of samples.")
+        if not isinstance(max_iter, int) or max_iter < 1:
+            raise ValueError("max_iter must be a positive integer.")
+        if not isinstance(tol, (int, float)) or tol <= 0:
+            raise ValueError("tol must be a positive number.")
+        
         self.X = self._convert_to_ndarray(X).astype(float)  # Convert input data to ndarray
         self.n_clusters = n_clusters                        # Number of clusters
         self.max_iter = max_iter                            # Maximum number of iterations
@@ -169,6 +179,16 @@ class KMeans:
         Returns:
         - labels: The predicted cluster labels.
         """
+        # Validate input data
+        if not isinstance(new_X, (np.ndarray, list, pd.DataFrame)):  # Check if input is a valid type
+            raise ValueError("Unsupported input type. Input must be a list, NumPy array, or DataFrame.")
+        if new_X.shape[1] != self.X.shape[1]:                       # Check if number of features match
+            raise ValueError(f"Number of features in new_X ({new_X.shape[1]}) does not match the model ({self.X.shape[1]}).")
+        if self.labels is None:                                     # Check if model has been fitted
+            raise ValueError("Fit the model before predicting.")        
+        
+        new_X = self._convert_to_ndarray(new_X).astype(float)   # Convert input data to ndarray
+        
         distances = np.sqrt(((new_X - self.centroids[:, np.newaxis])**2).sum(axis=2))   # Calculate pairwise distances
         labels = np.argmin(distances, axis=0)                                           # Assign labels based on minimum distance
         
