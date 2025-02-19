@@ -1,34 +1,235 @@
 # SEGA_LEARN
 
-SEGA_LEARN is a custom package implementating machine learning algorithms built from the Python standard library and NumPy. It includes scratch implementations of various machine learning algorithms, including clustering, linear models, neural networks, and trees. The project also includes scripts for testing, documentation generation, and other tasks.
+SEGA_LEARN is a custom package implementating machine learning algorithms built from the Python standard library as well as NumPy and SciPy. 
+It includes scratch implementations of various machine learning algorithms, including clustering, linear models, neural networks, and trees. 
+The project also includes scripts for testing, documentation generation, and other tasks.
 
-The project is organized into several directories, each with its own purpose. The `SEGA_LEARN/` directory contains the main library code, while the `tests/` directory contains unit and performance tests. The `examples/` directory contains example usages of the library, and the `docs/` directory contains the generated documentation. The `scripts/` directory contains PowerShell scripts to help with various tasks.
+The project is organized into several directories, each with its own purpose. 
+The `SEGA_LEARN/` directory contains the main library code, while the `tests/` directory contains unit and performance tests. 
+The `examples/` directory contains example usages of the library, and the `docs/` directory contains the generated documentation. 
+The `scripts/` directory contains PowerShell scripts to help with various tasks.
 
-This project was created with the goal of learning about machine learning and improving coding skills in Python programming. It is not intended for production use and should be used for educational purposes only (See performance tests). Many of the algorithms are not optimized for performance and may not be suitable for large datasets.
+This project was created with the goal of learning about the internals of machine learning algorithms and how they work under the hood.
+It is not intended for production use and should be used for educational purposes only (See performance tests). 
+Many of the algorithms are not optimized for performance and may not be suitable for large datasets.
 
 This project was heavily inspired by [scikit-learn](https://scikit-learn.org/stable/), and [pytorch](https://pytorch.org/).
 
 ## Navigation
 <!-- Add Links to Other Sections Here! -->
 - [Features](#features)
-- [File Structure](#file-structure)
 - [Usage Example](#usage-examples)
 - [Scripts](#scripts)
 - [Documentation](#documentation)
 - [Tests](#tests)
 - [Installation](#installation)
+- [File Structure](#file-structure)
 
-## Current Features
-- **Clustering**: Implements clustering algorithms like DBSCAN and KMeans.
-- **Linear Models**: Implements various linear models like Bayesian Regression, Lasso Regression, Linear Discriminant Analysis, Ordinary Least Squares, Passive Aggressive Regressor, Quadratic Discriminant Analysis, RANSAC Regression, and Ridge Regression.
-- **Neural Networks**: Implements neural network components like optimizers (Adadelta, Adam, SGD), loss functions (BCEWithLogitsLoss, CrossEntropyLoss), and the NeuralNetwork class.
-- **Trees**: Implements tree-based algorithms like Classifier Tree, Random Forest Classifier, Gradient Boosted Regressor, Random Forest Regressor, Regressor Tree, and utilities for computing variance, partitioning classes, and calculating information gain.
-- **Utils**: Implements utility functions for data preparation, voting regressor, polynomial transformation, evaluation metrics, model selection algorithms like Grid Search Cross Validation, Random Search Cross Validation.
+## Features
+The SEGA_LEARN library includes the following features:
 
-## Planned Features - Future Work
+### Clustering
+- **DBSCAN**: Density-Based Spatial Clustering of Applications with Noise (DBSCAN) is a clustering algorithm that groups together points that are closely packed, marking as outliers points that lie alone in low-density regions.
+- **KMeans**: KMeans is a clustering algorithm that partitions n data points into k clusters in which each point belongs to the cluster with the nearest mean.
+
+### Linear Models
+- **Bayesian Regression**: Bayesian regression is a probabilistic approach to linear regression that allows incorporating prior knowledge about the model parameters.
+- **Lasso Regression**: Lasso (Least Absolute Shrinkage and Selection Operator) regression is a linear regression model that uses L1 regularization to perform feature selection.
+- **Ridge Regression**: Ridge regression is a linear regression model that uses L2 regularization to prevent overfitting by penalizing large coefficients.
+- **Linear Discriminant Analysis**: Linear Discriminant Analysis (LDA) is a classification algorithm that finds the linear combination of features that best separates two or more classes.
+- **Ordinary Least Squares**: Ordinary Least Squares (OLS) is a linear regression model that minimizes the sum of the squared differences between the observed and predicted values.
+- **Passive Aggressive Regressor**: Passive Aggressive Regressor is a linear regression model that updates its parameters using a passive or aggressive strategy based on the loss function.
+- **Quadratic Discriminant Analysis**: Quadratic Discriminant Analysis (QDA) is a classification algorithm that finds the quadratic combination of features that best separates two or more classes.
+- **RANSAC Regression**: Random Sample Consensus (RANSAC) regression is a linear regression model that fits a model to the data by iteratively selecting a subset of inliers and estimating the model parameters.
+
+
+### Neural Networks
+- **NeuralNetwork**: Implements a neural network class that can be used to create and train neural networks with multiple layers and activation functions.
+  - **Optimizers**: Implements various optimizers like Adadelta, Adam, and SGD.
+  - **Loss Functions**: Implements loss functions like BCEWithLogitsLoss and CrossEntropyLoss.
+  - **Schedulers**: Implements learning rate schedulers like StepLR and ReduceLROnPlateau.
+  - **Activation Functions**: Implements activation functions like ReLU, Sigmoid, Softmax and more.
+
+### Trees
+- **Classifier Tree**: Implements a decision tree classifier that recursively splits the data based on the feature that maximizes the information gain.
+- **Regressor Tree**: Implements a decision tree regressor that recursively splits the data based on the feature that minimizes the variance.
+- **Random Forest Classifier**: Implements an ensemble classifier that fits multiple decision trees on random subsets of the data and averages their predictions.
+- **Random Forest Regressor**: Implements an ensemble regressor that fits multiple decision trees on random subsets of the data and averages their predictions.
+- **Gradient Boosted Regressor**: Implements a gradient boosted regressor that fits multiple decision trees sequentially, each one correcting the errors of the previous trees.
+
+
+### Utilities
+- **Data Preparation**: Implements utility functions for data preparation like train-test split, normalization, and standardization.
+- **Voting Regressor**: Implements a voting regressor that combines the predictions of multiple regressors using a weighted average.
+- **Polynomial Transformation**: Implements polynomial transformation of features to create higher-order polynomial features.
+- **Evaluation Metrics**: Implements evaluation metrics like mean squared error, mean absolute error, and R-squared.
+- **Model Selection Algorithms**: Implements model selection algorithms like Grid Search Cross Validation and Random Search Cross Validation.
+
+### Planned Features - Future Work
 - Implement dimensionality reduction algorithms like Principal Component Analysis (PCA), truncated Singular Value Decomposition (t-SVD)
 - Implement OPTICS clustering algorithm
-- Implement novel model selection algorithms like Bayesian Optimization, Bayesian Model Averaging, and Bayesian Model Selection.
+- Implement new model selection algorithms like Bayesian Optimization, Bayesian Model Averaging, and Bayesian Model Selection.
+
+
+## Usage Examples
+
+### Clustering
+- [`kmeans.py`](examples/clustering/kmeans.py): Demonstrates KMeans.
+- [`dbscan.py`](examples/clustering/dbscan.py): Demonstrates DBSCAN.
+- [`dbscan_3d.py`](examples/clustering/dbscan_3d.py): Demonstrates DBSCAN with 3D data.
+- [`dbscan_3d_aimated.py`](examples/clustering/dbscan_3d_aimated.py): Demonstrates DBSCAN with 3D data and animated plot.
+
+### Linear Models
+- [`ols.py`](examples/linear_models/ols.py): Demonstrates Ordinary Least Squares.
+- [`ridge.py`](examples/linear_models/ridge.py): Demonstrates Ridge Regression.
+- [`lasso.py`](examples/linear_models/lasso.py): Demonstrates Lasso Regression.
+- [`bayes.py`](examples/linear_models/bayes.py): Demonstrates Bayesian Regression.
+- [`ransac.py`](examples/linear_models/ransac.py): Demonstrates RANSAC Regression.
+- [`ransac_vis.py`](examples/linear_models/ransac_vis.py): Demonstrates RANSAC Regression with visualization.
+- [`passiveAggressive.py`](examples/linear_models/passiveAggressive.py): Demonstrates Passive Aggressive Regressor.
+- [`passiveAggressive_vis.py`](examples/linear_models/passiveAggressive_vis.py): Demonstrates Passive Aggressive Regressor with visualization.
+- [`lda.py`](examples/linear_models/lda.py): Demonstrates Linear Discriminant Analysis.
+- [`qda.py`](examples/linear_models/qda.py): Demonstrates Quadratic Discriminant Analysis.
+
+### Neural Networks
+- [`neuralNetwork.py`](examples/neural_networks/neuralNetwork.py): Demonstrates the NeuralNetwork class.
+- [`neuralNetwork_hyper.py`](examples/neural_networks/neuralNetwork_hyper.py): Demonstrates the NeuralNetwork class with hyper-parameter tuning.
+
+### Trees
+- [`gradientBoostedRegressor.py`](examples/trees/gradientBoostedRegressor.py): Demonstrates Gradient Boosted Regressor.
+- [`randomForestClassifier.py`](examples/trees/randomForestClassifier.py): Demonstrates Random Forest Classifier.
+- [`randomForestRegressor.py`](examples/trees/randomForestRegressor.py): Demonstrates Random Forest Regressor.
+- [`regressorTree.py`](examples/trees/regressorTree.py): Demonstrates Regressor Tree.
+
+### Utils
+- [`votingRegressor.py`](examples/utils/votingRegressor.py): Demonstrates Voting Regressor.
+- [`polynomialTransform.py`](examples/utils/polynomialTransform.py): Demonstrates Polynomial Transform.
+- [`gridSearchCV_bayes.py`](examples/utils/gridSearchCV_bayes.py): Demonstrates Grid Search Cross Validation with Bayesian Regression.
+- [`gridSearchCV_gbr.py`](examples/utils/gridSearchCV_gbr.py): Demonstrates Grid Search Cross Validation with Gradient Boosted Regressor.
+- [`gridSearchCV_passiveAggressive.py`](examples/utils/gridSearchCV_passiveAggressive.py): Demonstrates Grid Search Cross Validation with Passive Aggressive Regressor.
+- [`gridSearchCV_rfc.py`](examples/utils/gridSearchCV_rfc.py): Demonstrates Grid Search Cross Validation with Random Forest Classifier.
+- [`gridSearchCV_rfr.py`](examples/utils/gridSearchCV_rfr.py): Demonstrates Grid Search Cross Validation with Random Forest Regressor.
+- [`randomSearchCV_bayes.py`](examples/utils/randomSearchCV_bayes.py): Demonstrates Random Search Cross Validation with Bayesian Regression.
+- [`randomSearchCV_gbr.py`](examples/utils/randomSearchCV_gbr.py): Demonstrates Random Search Cross Validation with Gradient Boosted Regressor.
+- [`randomSearchCV_passiveAggressive.py`](examples/utils/randomSearchCV_passiveAggressive.py): Demonstrates Random Search Cross Validation with Passive Aggressive Regressor.
+- [`randomSearchCV_rfc.py`](examples/utils/randomSearchCV_rfc.py): Demonstrates Random Search Cross Validation with Random Forest Classifier.
+- [`randomSearchCV_rfr.py`](examples/utils/randomSearchCV_rfr.py): Demonstrates Random Search Cross Validation with Random Forest Regressor.
+
+## Scripts
+The following PowerShell scripts are included in the `scripts/` folder to help with various tasks:
+
+- **_run_all_scripts.ps1**: Runs all PowerShell scripts in the `scripts/` folder sequentially.
+- **todo_comments.ps1**: Finds and lists all TODO comments in Python files.
+- **count_lines.ps1**: Counts the number of lines in each Python file, sorts the files by line count in descending order, and calculates the total number of lines.
+- **comment_density.ps1**: Calculates the comment density (percentage of lines that are comments) in Python files.
+- **documentation_html.ps1**: Generates HTML documentation for Python files in the `SEGA_LEARN/` folder, and moves the generated HTML files to the `docs/` folder.
+- **documentation_md.ps1**: Generates markdown documentation for Python files in the `SEGA_LEARN/` folder.
+- **export_env.ps1**: Exports the conda environment to a YAML file. Remove the prefix from the environment name to make it compatible with other systems.
+
+## Documentation
+### HTML Documentation
+Pydoc documentation is generated from the PowerShell script `documentation_html.ps1`.  
+To see live version: https://santiagoenriquega.github.io/sega_learn/sega_learn  
+
+Self host documentation, run the following command in the terminal: `python -m pydoc -p 8080`  
+Then open a web browser and navigate to http://localhost:8080/SEGA_LEARN.html
+
+### Markdown Documentation
+Pydoc Markdown is also availible and is generated from the PowerShell script `documentation_md.ps1`.  
+The output file is located in [`docs/documentation.md`](docs/documentation.md)
+
+## Tests
+To run the tests, use the following command: `python -m unittest discover -s tests`  
+Or run the all tests file: `python run_all_tests.py`
+
+### Test Results
+The following are the results of running the tests:
+```sh
+(sega_learn) PS .../sega_learn/tests/run_all_tests.py
+Testing Imports - Clustering                                                                                   
+..Testing Imports - Main Package
+..Testing Imports - Linear Models
+..Testing Imports - Neural Networks
+..Testing Imports - Trees
+..Testing DBSCAN
+.....Testing KMeans
+..................................Testing Bayesian Regression Model
+..........Testing Lasso Regression Model
+.........Testing Linear Discriminant Analysis
+.......Testing Ordinary Least Squares Model
+.......Testing Passive Aggressive Regressor Model
+..........Testing Quadratic Discriminant Analysis
+.......Testing RANSAC Regression Model
+...........Testing Ridge Regression Model
+.........Testing the AdadeltaOptimizer class
+..Testing the AdamOptimizer class
+..Testing the BCEWithLogitsLoss class
+..Testing the CrossEntropyLoss class
+..Testing the NeuralNetwork class
+......Testing the SGDOptimizer class
+..Testing Classifier Tree
+....Testing Classifier Tree Utility
+.....Testing Random Forest Classifier
+...........Testing Gradient Boosted Regressor
+............Testing Random Forest Regressor
+..............Testing Regressor Tree
+.....Testing Regressor Tree Utility
+.................Testing Data Prep
+......Testing GridSearchCV
+...........Testing Metrics
+...............Testing Model Selection Utils
+..........Testing Polynomial Transform
+....Testing RandomSearchCV
+.............Testing Voting Regressor
+....Testing example file: dbscan.py
+.Testing example file: dbscan_3d.py
+.Testing example file: dbscan_3d_aimated.py
+.Testing example file: kmeans.py
+.Testing example file: bayes.py
+.Testing example file: lasso.py
+.Testing example file: lda.py
+.Testing example file: ols.py
+.Testing example file: passiveAggressive.py
+.Testing example file: passiveAggressive_vis.py
+.Testing example file: qda.py
+.Testing example file: ransac.py
+.Testing example file: ransac_vis.py
+.Testing example file: ridge.py
+.Testing example file: neuralNetwork.py
+.Testing example file: neuralNetwork_hyper.py
+Tuning Hyperparameters: 100%|██████████| 4/4 [00:05<00:00,  1.40s/it]
+Tuning Hyperparameters: 100%|██████████| 4/4 [00:03<00:00,  1.01it/s]
+.Testing example file: gradientBoostedRegressor.py
+.Testing example file: randomForestClassifier.py
+.Testing example file: randomForestRegressor.py
+.Testing example file: gridSearchCV_bayes.py
+.Testing example file: gridSearchCV_gbr.py
+.Testing example file: gridSearchCV_passiveAggReg.py
+.Testing example file: gridSearchCV_rfc.py
+.Testing example file: gridSearchCV_rfr.py
+.Testing example file: polynomialTransform.py
+.Testing example file: randomSearchCV_bayes.py
+.Testing example file: randomSearchCV_gbr.py
+.Testing example file: randomSearchCV_passiveAggReg.py
+.Testing example file: randomSearchCV_rfc.py
+.Testing example file: randomSearchCV_rfr.py
+.Testing example file: segaSearchCV_rfr.py
+.Testing example file: votingRegressor.py
+.
+----------------------------------------------------------------------
+Ran 298 tests in 122.866s
+
+OK
+```
+
+## Installation
+
+To set up the project environment, you can use the provided `environment.yml` file to create a conda environment with all the necessary dependencies.
+
+1. Open a terminal or command prompt.
+2. Navigate to the directory where your repository is located.
+3. Run the following command to create the conda environment: `conda env create -f environment.yml`  
+4. Activate the newly created environment: `conda activate sega_learn`
 
 ## File Structure
 The project directory structure is as follows:
@@ -141,164 +342,3 @@ The project directory structure is as follows:
   - [`documentation_html.ps1`](scripts/documentation_html.ps1): Generates HTML documentation.
   - [`documentation_md.ps1`](scripts/documentation_md.ps1): Generates markdown documentation.
   - [`export_env.ps1`](scripts/export_env.ps1): Exports the conda environment to a YAML file.
-
-## Usage Examples
-
-### Clustering
-- [`kmeans.py`](examples/clustering/kmeans.py): Demonstrates KMeans.
-- [`dbscan.py`](examples/clustering/dbscan.py): Demonstrates DBSCAN.
-- [`dbscan_3d.py`](examples/clustering/dbscan_3d.py): Demonstrates DBSCAN with 3D data.
-- [`dbscan_3d_aimated.py`](examples/clustering/dbscan_3d_aimated.py): Demonstrates DBSCAN with 3D data and animated plot.
-
-### Linear Models
-- [`ols.py`](examples/linear_models/ols.py): Demonstrates Ordinary Least Squares.
-- [`ridge.py`](examples/linear_models/ridge.py): Demonstrates Ridge Regression.
-- [`lasso.py`](examples/linear_models/lasso.py): Demonstrates Lasso Regression.
-- [`bayes.py`](examples/linear_models/bayes.py): Demonstrates Bayesian Regression.
-- [`ransac.py`](examples/linear_models/ransac.py): Demonstrates RANSAC Regression.
-- [`ransac_vis.py`](examples/linear_models/ransac_vis.py): Demonstrates RANSAC Regression with visualization.
-- [`passiveAggressive.py`](examples/linear_models/passiveAggressive.py): Demonstrates Passive Aggressive Regressor.
-- [`passiveAggressive_vis.py`](examples/linear_models/passiveAggressive_vis.py): Demonstrates Passive Aggressive Regressor with visualization.
-- [`lda.py`](examples/linear_models/lda.py): Demonstrates Linear Discriminant Analysis.
-- [`qda.py`](examples/linear_models/qda.py): Demonstrates Quadratic Discriminant Analysis.
-
-### Neural Networks
-- [`neuralNetwork.py`](examples/neural_networks/neuralNetwork.py): Demonstrates the NeuralNetwork class.
-- [`neuralNetwork_hyper.py`](examples/neural_networks/neuralNetwork_hyper.py): Demonstrates the NeuralNetwork class with hyper-parameter tuning.
-
-### Trees
-- [`gradientBoostedRegressor.py`](examples/trees/gradientBoostedRegressor.py): Demonstrates Gradient Boosted Regressor.
-- [`randomForestClassifier.py`](examples/trees/randomForestClassifier.py): Demonstrates Random Forest Classifier.
-- [`randomForestRegressor.py`](examples/trees/randomForestRegressor.py): Demonstrates Random Forest Regressor.
-- [`regressorTree.py`](examples/trees/regressorTree.py): Demonstrates Regressor Tree.
-
-### Utils
-- [`votingRegressor.py`](examples/utils/votingRegressor.py): Demonstrates Voting Regressor.
-- [`polynomialTransform.py`](examples/utils/polynomialTransform.py): Demonstrates Polynomial Transform.
-- [`gridSearchCV_bayes.py`](examples/utils/gridSearchCV_bayes.py): Demonstrates Grid Search Cross Validation with Bayesian Regression.
-- [`gridSearchCV_gbr.py`](examples/utils/gridSearchCV_gbr.py): Demonstrates Grid Search Cross Validation with Gradient Boosted Regressor.
-- [`gridSearchCV_passiveAggressive.py`](examples/utils/gridSearchCV_passiveAggressive.py): Demonstrates Grid Search Cross Validation with Passive Aggressive Regressor.
-- [`gridSearchCV_rfc.py`](examples/utils/gridSearchCV_rfc.py): Demonstrates Grid Search Cross Validation with Random Forest Classifier.
-- [`gridSearchCV_rfr.py`](examples/utils/gridSearchCV_rfr.py): Demonstrates Grid Search Cross Validation with Random Forest Regressor.
-- [`randomSearchCV_bayes.py`](examples/utils/randomSearchCV_bayes.py): Demonstrates Random Search Cross Validation with Bayesian Regression.
-- [`randomSearchCV_gbr.py`](examples/utils/randomSearchCV_gbr.py): Demonstrates Random Search Cross Validation with Gradient Boosted Regressor.
-- [`randomSearchCV_passiveAggressive.py`](examples/utils/randomSearchCV_passiveAggressive.py): Demonstrates Random Search Cross Validation with Passive Aggressive Regressor.
-- [`randomSearchCV_rfc.py`](examples/utils/randomSearchCV_rfc.py): Demonstrates Random Search Cross Validation with Random Forest Classifier.
-- [`randomSearchCV_rfr.py`](examples/utils/randomSearchCV_rfr.py): Demonstrates Random Search Cross Validation with Random Forest Regressor.
-
-## Scripts
-The following PowerShell scripts are included in the `scripts/` folder to help with various tasks:
-
-- **_run_all_scripts.ps1**: Runs all PowerShell scripts in the `scripts/` folder sequentially.
-- **todo_comments.ps1**: Finds and lists all TODO comments in Python files.
-- **count_lines.ps1**: Counts the number of lines in each Python file, sorts the files by line count in descending order, and calculates the total number of lines.
-- **comment_density.ps1**: Calculates the comment density (percentage of lines that are comments) in Python files.
-- **documentation_html.ps1**: Generates HTML documentation for Python files in the `SEGA_LEARN/` folder, and moves the generated HTML files to the `docs/` folder.
-- **documentation_md.ps1**: Generates markdown documentation for Python files in the `SEGA_LEARN/` folder.
-- **export_env.ps1**: Exports the conda environment to a YAML file. Remove the prefix from the environment name to make it compatible with other systems.
-
-## Documentation
-### HTML Documentation
-Pydoc documentation is generated from the PowerShell script `documentation_html.ps1`.  
-To see live version: https://santiagoenriquega.github.io/sega_learn/sega_learn  
-
-Self host documentation, run the following command in the terminal: `python -m pydoc -p 8080`  
-Then open a web browser and navigate to http://localhost:8080/SEGA_LEARN.html
-
-### Markdown Documentation
-Pydoc Markdown is also availible and is generated from the PowerShell script `documentation_md.ps1`.  
-The output file is located in [`docs/documentation.md`](docs/documentation.md)
-
-## Tests
-To run the tests, use the following command: `python -m unittest discover -s tests`  
-Or run the all tests file: `python run_all_tests.py`
-
-### Test Results
-The following are the results of running the tests:
-```sh
-(sega_learn) PS .../sega_learn/tests/run_all_tests.py
-Testing Imports - Clustering
-..Testing Imports - Main Package
-..Testing Imports - Linear Models
-..Testing Imports - Neural Networks
-..Testing Imports - Trees
-..Testing DBSCAN
-.....Testing KMeans
-..........Testing Bayesian Regression Model
-..........Testing Lasso Regression Model
-.........Testing Linear Discriminant Analysis
-.......Testing Ordinary Least Squares Model
-.......Testing Passive Aggressive Regressor Model
-..........Testing Quadratic Discriminant Analysis
-.......Testing RANSAC Regression Model
-...........Testing Ridge Regression Model
-.........Testing the AdadeltaOptimizer class
-..Testing the AdamOptimizer class
-..Testing the BCEWithLogitsLoss class
-..Testing the CrossEntropyLoss class
-..Testing the NeuralNetwork class
-......Testing the SGDOptimizer class
-..Testing Classifier Tree
-....Testing Classifier Tree Utility
-.....Testing Random Forest Classifier
-...........Testing Gradient Boosted Regressor
-............Testing Random Forest Regressor
-..............Testing Regressor Tree
-.....Testing Regressor Tree Utility
-.................Testing Data Prep
-......Testing GridSearchCV
-...........Testing Metrics
-...............Testing Model Selection Utils
-..........Testing Polynomial Transform
-....Testing RandomSearchCV
-.............Testing Voting Regressor
-....Testing example file: dbscan.py
-.Testing example file: dbscan_3d.py
-.Testing example file: dbscan_3d_aimated.py
-.Testing example file: kmeans.py
-.Testing example file: bayes.py
-.Testing example file: lasso.py
-.Testing example file: lda.py
-.Testing example file: ols.py
-.Testing example file: passiveAggressive.py
-.Testing example file: passiveAggressive_vis.py
-.Testing example file: qda.py
-.Testing example file: ransac.py
-.Testing example file: ransac_vis.py
-.Testing example file: ridge.py
-.Testing example file: neuralNetwork.py
-.Testing example file: neuralNetwork_hyper.py
-Tuning Hyperparameters: 100%|██████████| 4/4 [00:05<00:00,  1.49s/it]
-Tuning Hyperparameters: 100%|██████████| 4/4 [00:05<00:00,  1.33s/it]
-.Testing example file: gradientBoostedRegressor.py
-.Testing example file: randomForestClassifier.py
-.Testing example file: randomForestRegressor.py
-.Testing example file: gridSearchCV_bayes.py
-.Testing example file: gridSearchCV_gbr.py
-.Testing example file: gridSearchCV_passiveAggReg.py
-.Testing example file: gridSearchCV_rfc.py
-.Testing example file: gridSearchCV_rfr.py
-.Testing example file: polynomialTransform.py
-.Testing example file: randomSearchCV_bayes.py
-.Testing example file: randomSearchCV_gbr.py
-.Testing example file: randomSearchCV_passiveAggReg.py
-.Testing example file: randomSearchCV_rfc.py
-.Testing example file: randomSearchCV_rfr.py
-.Testing example file: segaSearchCV_rfr.py
-.Testing example file: votingRegressor.py
-.
-----------------------------------------------------------------------
-Ran 274 tests in 114.101s
-
-OK
-```
-
-## Installation
-
-To set up the project environment, you can use the provided `environment.yml` file to create a conda environment with all the necessary dependencies.
-
-1. Open a terminal or command prompt.
-2. Navigate to the directory where your repository is located.
-3. Run the following command to create the conda environment: `conda env create -f environment.yml`  
-4. Activate the newly created environment: `conda activate sega_learn`
-
