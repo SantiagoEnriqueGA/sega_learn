@@ -226,7 +226,6 @@ class RandomSearchCV(object):
 class segaSearchCV(object):
     """
     Implements a custom search cross-validation for hyperparameter tuning.
-    --DO NOT USE, WORK IN PROGRESS--
     """
     def __init__(self, model, param_space, iter=10, cv=5, metric='mse', direction='minimize'):
         """
@@ -251,7 +250,7 @@ class segaSearchCV(object):
         self.direction = direction
         
         assert self.iter > 0, "iter must be greater than 0."
-        assert self.param_space, "param_grid cannot be empty."
+        assert self.param_space, "param_space cannot be empty."
         
         self.param_lims = {}
         for param in self.param_space:
@@ -267,12 +266,16 @@ class segaSearchCV(object):
         - y (numpy.ndarray): The label column.
         - verbose (bool): A flag to display the training progress. Default is True.
         """
+        # TODO: Store search path as binary tree, each has high, low
         if self.direction == 'minimize': self.best_score_ = np.inf
         if self.direction == 'maximize': self.best_score_ = -np.inf
         self.best_params_ = None
         
         params = {}
-        directions = {}
+        param_high = {}
+        param_mid = {}
+        param_low = {}
+        curr_h_l = None
         self.tried_params = []
         
         for i in range(self.iter):
@@ -282,96 +285,91 @@ class segaSearchCV(object):
                     key = list(param.keys())[0]
                     if param[key][0] == int:
                         params[key] = (param[key][1] + param[key][2]) // 2
-                        step_size = (param[key][2] - param[key][1]) // 4
-                        directions[key] = [1, step_size]    # [direction, step_size]
                     elif param[key][0] == float:
                         params[key] = (param[key][1] + param[key][2]) / 2
-                        step_size = (param[key][2] - param[key][1]) / 4
-                        directions[key] = [1, step_size]    # [direction, step_size]
-            
+
+            if param_high:
+                if param_mid == {}: param_mid = params.copy()
+                params = param_high.copy()
+                param_high = {}
+                curr_h_l = 'high'
+            elif param_low:
+                if param_mid == {}: param_mid = params.copy()
+                params = param_low.copy()
+                param_low = {}
+                curr_h_l = 'low'
+
             # If params were already tried, find closest untried params
-            while params in self.tried_params:
+            while params in self.tried_params:                    
                 for param in self.param_space:
                     key = list(param.keys())[0]
-                    step_size = directions[key][1] // 2
-                    
-                    if directions[key][0] == 1:
+                    # step_size = (self.param_lims[key][1] - self.param_lims[key][0]) // 2
+                    step_size = 1
+                    if np.random.rand() > 0.5:
                         params[key] = min(params[key] + step_size, self.param_lims[key][1])
                     else:
                         params[key] = max(params[key] - step_size, self.param_lims[key][0])
-                        
-            
+
+                    # If params are out of bounds break
+                    if params[key] < self.param_lims[key][0] or params[key] > self.param_lims[key][1]:
+                        break
+                    
             # If params are out of bounds break
             if any(params[key] < self.param_lims[key][0] or params[key] > self.param_lims[key][1] for key in params):
                 break
             
             self.tried_params.append(params.copy())
-            scores = []            
-            if verbose: print(f"Training Model with Params: {params}")
-            for i in range(self.cv):
-                self.active_model = self.model(**params)
-                
-                X_folds, y_folds = DataPrep.k_split(X, y, k=self.cv)
-                X_train, y_train = np.concatenate(X_folds[:i] + X_folds[i+1:]), np.concatenate(y_folds[:i] + y_folds[i+1:])
-                X_test, y_test = X_folds[i], y_folds[i]
-                
-                self.active_model.fit(X_train, y_train)
-                y_pred = self.active_model.predict(X_test)
-                
-                # Regression Metrics
-                if self.metric in ['mse', 'mean_squared_error']: s = Metrics.mean_squared_error(y_test, y_pred)
-                elif self.metric in ['r2', 'r_squared']: s = Metrics.r_squared(y_test, y_pred)
-                elif self.metric in ['mae', 'mean_absolute_error']: s = Metrics.mean_absolute_error(y_test, y_pred)
-                elif self.metric in ['rmse', 'root_mean_squared_error']: s = Metrics.root_mean_squared_error(y_test, y_pred)
-                elif self.metric in ['mape', 'mean_absolute_percentage_error']: s = Metrics.mean_absolute_percentage_error(y_test, y_pred)
-                elif self.metric in ['mpe', 'mean_percentage_error']: s = Metrics.mean_percentage_error(y_test, y_pred)
-                
-                # Classification Metrics
-                elif self.metric == 'accuracy': s = Metrics.accuracy(y_test, y_pred)
-                elif self.metric == 'precision': s = Metrics.precision(y_test, y_pred)
-                elif self.metric == 'recall': s = Metrics.recall(y_test, y_pred)
-                elif self.metric == 'f1': s = Metrics.f1_score(y_test, y_pred)
-                elif self.metric == 'log_loss': s = Metrics.log_loss(y_test, y_pred)
-                
-                scores.append(s)
-                    
-                if verbose: print(f"\tCV Fold {i+1}: - {self.metric}: {s:.2f}")
+            
+            if verbose and curr_h_l is not None: print(f"\nParams {curr_h_l}:")
+            
+            scores, self.active_model = ModelSelectionUtility.cross_validate(self.model, X, y, 
+                                                                             params, cv=self.cv, 
+                                                                             metric=self.metric, 
+                                                                             direction=self.direction, 
+                                                                             verbose=verbose)
             
             mean_score = np.mean(scores)
             if verbose: print(f"\t-Mean Score: {mean_score:.2f}")
             
+            # Store param_high mean_score
+            if curr_h_l == 'high':
+                p_high = params.copy()
+                h_score = mean_score
+            if curr_h_l == 'low':
+                p_low = params.copy()
+                l_score = mean_score
+            
+            # Set best params and model
             if self.direction == 'minimize' and mean_score < self.best_score_:
                 self.best_score_ = mean_score
                 self.best_params_ = params.copy()
                 self.best_model = self.active_model
-            
-                # If the score improved, continue in the same direction
-                for key in params:
-                    step_size = directions[key][1] // 2
-                    if directions[key][0] == 1:
-                        params[key] = min(params[key] + step_size, self.param_lims[key][1])
-                    else:
-                        params[key] = max(params[key] - step_size, self.param_lims[key][0])
             elif self.direction == 'maximize' and mean_score > self.best_score_:
                 self.best_score_ = mean_score
                 self.best_params_ = params.copy()
                 self.best_model = self.active_model
-                
-                # If the score improved, continue in the same direction
-                for key in params:
-                    step_size = directions[key][1] // 2
-                    if directions[key][0] == 1:
-                        params[key] = min(params[key] + step_size, self.param_lims[key][1])
-                    else:
-                        params[key] = max(params[key] - step_size, self.param_lims[key][0])
-            else:
-                # If the score did not improve, change direction
-                for key in params:
-                    directions[key][0] *= -1
-                    step_size = directions[key][1] // 2
-                    if directions[key][0] == 1:
-                        params[key] = min(params[key] + step_size, self.param_lims[key][1])
-                    else:
-                        params[key] = max(params[key] - step_size, self.param_lims[key][0])
-        
+            
+            # If no high or low params, set them
+            if param_high == {} and param_low == {}:
+                if curr_h_l is None:
+                    for param in params:
+                        step_size = (params[param] - self.param_lims[param][0]) // 2 
+                        param_high[param] = min(params[param] + step_size, self.param_lims[param][1])
+                        param_low[param] = max(params[param] - step_size, self.param_lims[param][0])
+                elif h_score >= l_score:
+                    if verbose: print(f"\nParams High Better: {h_score:.2f} >= {l_score:.2f}")
+                    for param in p_high:
+                        # Step size is half distance between mid and high
+                        step_size = (p_high[param] - param_mid[param]) // 2
+                        param_high[param] = min(p_high[param] + step_size, self.param_lims[param][1])
+                        param_low[param] = max(p_high[param] - step_size, self.param_lims[param][0])
+                elif l_score > h_score:
+                    if verbose: print(f"\nParams Low Better: {l_score:.2f} > {h_score:.2f}")
+                    for param in p_low:
+                        # Step size is half distance between mid and low
+                        step_size = (param_mid[param] - p_low[param]) // 2
+                        param_high[param] = min(p_low[param] + step_size, self.param_lims[param][1])
+                        param_low[param] = max(p_low[param] - step_size, self.param_lims[param][0])                  
+    
+    
         return self.best_model
