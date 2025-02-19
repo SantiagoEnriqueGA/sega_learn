@@ -1,6 +1,6 @@
 # SEGA_LEARN
 
-SEGA_LEARN is a custom implementation of machine learning algorithms mainly from the Python standard library and NumPy. It includes implementations of various machine learning algorithms, including clustering, linear models, neural networks, and trees. The project also includes scripts for testing, documentation generation, and other tasks.
+SEGA_LEARN is a custom package implementating machine learning algorithms built from the Python standard library and NumPy. It includes scratch implementations of various machine learning algorithms, including clustering, linear models, neural networks, and trees. The project also includes scripts for testing, documentation generation, and other tasks.
 
 The project is organized into several directories, each with its own purpose. The `SEGA_LEARN/` directory contains the main library code, while the `tests/` directory contains unit and performance tests. The `examples/` directory contains example usages of the library, and the `docs/` directory contains the generated documentation. The `scripts/` directory contains PowerShell scripts to help with various tasks.
 
