@@ -14,12 +14,12 @@ OLS is a linear regression algorithm that minimizes the sum of squared residuals
 
 #### Formula
 The formula for OLS is:
-$$ y = Xw + \epsilon $$
+$` y = Xw + \epsilon `$
 where:
-- $ y $ is the dependent variable,
-- $ X $ is the matrix of independent variables,
-- $ w $ is the vector of coefficients,
-- $ \epsilon $ is the error term.
+- $` y `$ is the dependent variable,
+- $` X `$ is the matrix of independent variables,
+- $` w `$ is the vector of coefficients,
+- $` \epsilon `$ is the error term.
 
 #### Usage
 ```python
@@ -48,10 +48,10 @@ Ridge Regression is a linear regression algorithm that includes an L2 regulariza
 
 #### Formula
 The formula for Ridge Regression is:
-$$ w = (X^T X + \alpha I)^{-1} X^T y $$
+$` w = (X^T X + \alpha I)^{-1} X^T y `$
 where:
-- $ \alpha $ is the regularization parameter,
-- $ I $ is the identity matrix.
+- $` \alpha `$ is the regularization parameter,
+- $` I `$ is the identity matrix.
 
 #### Usage
 ```python
@@ -80,9 +80,9 @@ Lasso Regression is a linear regression algorithm that includes an L1 regulariza
 
 #### Formula
 The formula for Lasso Regression is:
-$$ \min_w \left( \frac{1}{2n} \sum_{i=1}^n (y_i - X_i w)^2 + \alpha \|w\|_1 \right) $$
+$` \min_w \left( \frac{1}{2n} \sum_{i=1}^n (y_i - X_i w)^2 + \alpha \|w\|_1 \right) `$
 where:
-- $ \|w\|_1 $ is the L1 norm of the coefficients.
+- $` \|w\|_1 `$ is the L1 norm of the coefficients.
 
 #### Usage
 ```python
@@ -111,12 +111,12 @@ Bayesian Regression is a linear regression algorithm that includes both L1 and L
 
 #### Formula
 The formula for Bayesian Regression is:
-$$ p(w|X,y) = \frac{p(y|X,w) p(w)}{p(y|X)} $$
+$` p(w|X,y) = \frac{p(y|X,w) p(w)}{p(y|X)} `$
 where:
-- $ p(w|X,y) $ is the posterior distribution of the coefficients,
-- $ p(y|X,w) $ is the likelihood,
-- $ p(w) $ is the prior distribution,
-- $ p(y|X) $ is the marginal likelihood.
+- $` p(w|X,y) $` is the posterior distribution of the coefficients,
+- $` p(y|X,w) $` is the likelihood,
+- $` p(w) $` is the prior distribution,
+- $` p(y|X) $` is the marginal likelihood.
 
 #### Usage
 ```python
@@ -179,10 +179,10 @@ Linear Discriminant Analysis (LDA) is a classification algorithm that finds a li
 
 #### Formula
 The formula for LDA is:
-$$ w = \Sigma^{-1} (\mu_1 - \mu_2) $$
+$` w = \Sigma^{-1} (\mu_1 - \mu_2) `$
 where:
-- $ \Sigma $ is the pooled covariance matrix,
-- $ \mu_1 $ and $ \mu_2 $ are the means of the two classes.
+- $` \Sigma `$ is the pooled covariance matrix,
+- $` \mu_1 $` and $` \mu_2 `$ are the means of the two classes.
 
 #### Usage
 ```python
@@ -208,11 +208,11 @@ Quadratic Discriminant Analysis (QDA) is a classification algorithm that finds a
 
 #### Formula
 The formula for QDA is:
-$$ \delta_k(x) = -\frac{1}{2} \log |\Sigma_k| - \frac{1}{2} (x - \mu_k)^T \Sigma_k^{-1} (x - \mu_k) + \log \pi_k $$
+$` \delta_k(x) = -\frac{1}{2} \log |\Sigma_k| - \frac{1}{2} (x - \mu_k)^T \Sigma_k^{-1} (x - \mu_k) + \log \pi_k `$
 where:
-- $ \Sigma_k $ is the covariance matrix of class $ k $,
-- $ \mu_k $ is the mean of class $ k $,
-- $ \pi_k $ is the prior probability of class $ k $.
+- $` \Sigma_k `$ is the covariance matrix of class $` k `$,
+- $` \mu_k `$ is the mean of class $` k `$,
+- $` \pi_k `$ is the prior probability of class $` k `$.
 
 #### Usage
 ```python
@@ -372,4 +372,3 @@ predictions = qda.predict(X)
 # Print predictions
 print(predictions)
 ```
-````

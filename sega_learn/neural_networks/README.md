@@ -23,9 +23,9 @@ Backpropagation is the process of calculating the gradient of the loss function 
 
 ### AdamOptimizer
 Adam (Adaptive Moment Estimation) is an optimization algorithm that computes adaptive learning rates for each parameter. It combines the advantages of two other extensions of stochastic gradient descent: AdaGrad and RMSProp.
-
+v
 #### Formula
-$ w = w - \alpha \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon} - \lambda w $
+$` w = w - \alpha \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon} - \lambda w `$
 
 #### Usage
 ```python
@@ -42,8 +42,8 @@ neural_network.train(X_train, y_train, optimizer=adam_optimizer)
 Stochastic Gradient Descent (SGD) is an optimization algorithm that updates the model parameters using the gradient of the loss function with respect to the parameters.
 
 #### Formula
-$ w = w - \text{learning rate} \cdot dW - \lambda \cdot w $  
-$ b = b - \text{learning rate} \cdot db $
+$` w = w - \text{learning rate} \cdot dW - \lambda \cdot w `$  
+$` b = b - \text{learning rate} \cdot db `$
 
 #### Usage
 ```python
@@ -60,9 +60,9 @@ neural_network.train(X_train, y_train, optimizer=sgd_optimizer)
 Adadelta is an optimization algorithm that adapts learning rates based on a moving window of gradient updates, instead of accumulating all past gradients.
 
 #### Formula
-$ E[g^2]_t = \rho E[g^2]_{t-1} + (1 - \rho) g^2 $  
-$ \Delta x = - \frac{\sqrt{E[\Delta x^2]_{t-1} + \epsilon}}{\sqrt{E[g^2]_t + \epsilon}} g $  
-$ E[\Delta x^2]_t = \rho E[\Delta x^2]_{t-1} + (1 - \rho) \Delta x^2 $
+$` E[g^2]_t = \rho E[g^2]_{t-1} + (1 - \rho) g^2 `$  
+$` \Delta x = - \frac{\sqrt{E[\Delta x^2]_{t-1} + \epsilon}}{\sqrt{E[g^2]_t + \epsilon}} g `$  
+$` E[\Delta x^2]_t = \rho E[\Delta x^2]_{t-1} + (1 - \rho) \Delta x^2 `$
 
 #### Usage
 ```python
@@ -81,7 +81,7 @@ neural_network.train(X_train, y_train, optimizer=adadelta_optimizer)
 Cross entropy loss is used for multi-class classification problems. It measures the performance of a classification model whose output is a probability value between 0 and 1.
 
 #### Formula
-$ \text{Loss} = -\sum(y \log(p) + (1 - y) \log(1 - p)) / m $
+$` \text{Loss} = -\sum(y \log(p) + (1 - y) \log(1 - p)) / m `$
 
 #### Usage
 ```python
@@ -98,7 +98,7 @@ loss = loss_fn(logits, targets)
 Binary Cross Entropy with Logits Loss is used for binary classification problems. It combines a sigmoid layer and the binary cross-entropy loss in one single class.
 
 #### Formula
-$ \text{Loss} = -\text{mean}(y \log(p) + (1 - y) \log(1 - p)) $
+$` \text{Loss} = -\text{mean}(y \log(p) + (1 - y) \log(1 - p)) `$
 
 #### Usage
 ```python
