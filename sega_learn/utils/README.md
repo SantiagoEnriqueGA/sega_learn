@@ -38,7 +38,7 @@ The polynomial transformation creates new features by raising existing features 
 ```
 
 Where:
-- $` x_1 $` and $` x_2 `$ are the original features
+- $` x_1 `$ and $` x_2 `$ are the original features
 - $` x_1^2 `$ is the square of feature $` x_1 `$
 - $` x_1 x_2 `$ is the interaction term between features $` x_1 `$ and $` x_2 `$
 
