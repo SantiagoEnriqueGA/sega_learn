@@ -2,8 +2,14 @@
 from .voting import VotingRegressor
 from .polynomialTransform import PolynomialTransform
 from .dataPrep import DataPrep
-from .model_selection import ModelSelectionUtility, GridSearchCV, RandomSearchCV
+from .modelSelection import ModelSelectionUtility, GridSearchCV, RandomSearchCV
 from .metrics import Metrics
+from .dataAugmentation import (
+    RandomOverSampler,
+    RandomUnderSampler,
+    SMOTE,
+    Augmenter,
+ )
 
 __all__ = [
     "PolynomialTransform",
@@ -13,4 +19,8 @@ __all__ = [
     "GridSearchCV",
     "RandomSearchCV",
     "Metrics",
+    "RandomOverSampler",
+    "RandomUnderSampler",
+    "SMOTE",
+    "Augmenter",
 ]

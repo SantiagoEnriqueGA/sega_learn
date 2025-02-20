@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.datasets import make_regression, make_classification
 from sklearn import metrics as sk_metrics
+from sklearn.model_selection import train_test_split
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -566,6 +567,157 @@ class TestMetrics(unittest.TestCase):
                 y_true, y_pred, _ = self.generate_classification_data()
                 with suppress_print():
                     self.metrics.show_classification_report(y_true, y_pred)
+
+
+class TestDataAugmentation(unittest.TestCase):
+    """
+    Unit test for the Data Augmentation class.
+    Methods:
+    - setUp: Initializes a new instance of the Data Augmentation class before each test method is run.
+    - test_random_over_sampler: Tests the Random Over Sampler method of the Data Augmentation class.
+    - test_smote: Tests the SMOTE method of the Data Augmentation class.
+    - test_random_under_sampler: Tests the Random Under Sampler method of the Data Augmentation class.
+    - test_smote_with_force_equal: Tests the SMOTE method with force_equal parameter.
+    - test_augment_with_empty_techniques: Tests the augment method with an empty list of techniques.
+    - test_augment_with_invalid_techniques: Tests the augment method with invalid techniques.
+    """
+    @classmethod
+    def setUpClass(cls):
+        print("Testing Data Augmentation")
+    
+    def setUp(self):
+        self.X, self.y = make_classification(n_samples=1000, n_features=20, n_classes=2, weights=[0.7, 0.3], random_state=42, class_sep=.5)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size=0.2, random_state=42)
+        self.ros = RandomOverSampler(random_state=42)
+        self.smote = SMOTE(random_state=42)
+        self.rus = RandomUnderSampler(random_state=42)
+        self.augmenter = Augmenter(techniques=[self.ros, self.smote, self.rus], verbose=False)
+        
+    def test_random_over_sampler(self):       
+        X_resampled, y_resampled = self.ros.fit_resample(self.X_train, self.y_train)
+        self.assertEqual(np.sum(y_resampled == 0), np.sum(y_resampled == 1))
+        self.assertEqual(X_resampled.shape[0], 2 * np.sum(y_resampled == 0))
+    
+    def test_random_over_sampler_invalid(self):
+        with self.subTest("Invalid input"):
+            with self.assertRaises(Exception):
+                self.ros.fit_resample(None, None)
+        with self.subTest("Invalid input type"):
+            with self.assertRaises(Exception):
+                self.ros.fit_resample("invalid_input", "invalid_input")
+        with self.subTest("Invalid input shape"):
+            with self.assertRaises(Exception):
+                self.ros.fit_resample(np.random.rand(101, 20), np.random.rand(100, 20))
+    
+    def test_random_over_sampler_invalid_params(self):
+        with self.assertRaises(Exception):
+            ros = RandomOverSampler(random_state=42, sampling_strategy='invalid_strategy')
+            ros.fit_resample(self.X_train, self.y_train)
+            
+    def test_fit_random_over_sampler_invalid(self):
+        with self.assertRaises(Exception):
+            ros = RandomOverSampler(random_state=42)
+            ros.fit(None, None)
+    
+    def test_fit_random_over_sampler_invalid_params(self):
+        with self.assertRaises(Exception):
+            ros = RandomOverSampler(random_state=42)
+            ros.fit(self.X_train, None)
+    
+    def test_smote(self):
+        X_resampled, y_resampled = self.smote.fit_resample(self.X_train, self.y_train)
+        self.assertGreaterEqual(np.sum(y_resampled == 0), np.sum(y_resampled == 1))
+        
+    def test_smote_equal(self):
+        X_resampled, y_resampled = self.smote.fit_resample(self.X_train, self.y_train, force_equal=True)
+        self.assertEqual(np.sum(y_resampled == 0), np.sum(y_resampled == 1))
+
+    def test_smote_invalid(self):
+        with self.subTest("Invalid input"):
+            with self.assertRaises(Exception):
+                self.smote.fit_resample(None, None)
+        with self.subTest("Invalid input type"):
+            with self.assertRaises(Exception):
+                self.smote.fit_resample("invalid_input", "invalid_input")
+        with self.subTest("Invalid input shape"):
+            with self.assertRaises(Exception):
+                self.smote.fit_resample(np.random.rand(101, 20), np.random.rand(100, 20))
+    
+    def test_random_under_sampler(self):
+        X_resampled, y_resampled = self.rus.fit_resample(self.X_train, self.y_train)
+        self.assertEqual(np.sum(y_resampled == 0), np.sum(y_resampled == 1))
+        self.assertEqual(X_resampled.shape[0], 2 * np.sum(y_resampled == 0))
+    
+    def test_random_under_sampler_invalid(self):
+        with self.subTest("Invalid input"):
+            with self.assertRaises(Exception):
+                self.rus.fit_resample(None, None)
+        with self.subTest("Invalid input type"):
+            with self.assertRaises(Exception):
+                self.rus.fit_resample("invalid_input", "invalid_input")
+        with self.subTest("Invalid input shape"):
+            with self.assertRaises(Exception):
+                self.rus.fit_resample(np.random.rand(101, 20), np.random.rand(100, 20))
+    
+    def test_random_under_sampler_invalid_params(self):
+        with self.assertRaises(Exception):
+            rus = RandomUnderSampler(random_state=42, sampling_strategy='invalid_strategy')
+            rus.fit_resample(self.X_train, self.y_train)
+            
+    def test_fit_random_under_sampler_invalid(self):
+        with self.assertRaises(Exception):
+            rus = RandomUnderSampler(random_state=42)
+            rus.fit(None, None)
+    
+    def test_fit_random_under_sampler_invalid_params(self):
+        with self.assertRaises(Exception):
+            rus = RandomUnderSampler(random_state=42)
+            rus.fit(self.X_train, None)
+       
+    def test_augment(self):
+        X_resampled, y_resampled = self.augmenter.augment(self.X, self.y)
+        self.assertEqual(np.sum(y_resampled == 0), np.sum(y_resampled == 1))
+        
+    def test_augment_with_multiple_techniques(self):
+        augmenter = Augmenter(techniques=[self.ros, self.smote], verbose=False)
+        X_resampled, y_resampled = augmenter.augment(self.X, self.y)
+        self.assertEqual(np.sum(y_resampled == 0), np.sum(y_resampled == 1))
+        
+    def test_augment_with_one_technique(self):
+        augmenter = Augmenter(techniques=[self.rus], verbose=False)
+        X_resampled, y_resampled = augmenter.augment(self.X, self.y)
+        self.assertEqual(np.sum(y_resampled == 0), np.sum(y_resampled == 1))
+    
+    def test_augment_with_invalid_technique(self):
+        invalid_technique = "invalid_technique"
+        with self.assertRaises(Exception):
+            augmenter = Augmenter(techniques=[invalid_technique], verbose=False)
+            augmenter.augment(self.X, self.y)
+    
+    def test_augment_with_invalid_input(self):
+        with self.assertRaises(Exception):
+            self.augmenter.augment(None, None)
+        
+    def test_augment_with_balanced_data(self):
+        X_balanced, y_balanced = self.ros.fit_resample(self.X, self.y)
+        X_resampled, y_resampled = self.augmenter.augment(X_balanced, y_balanced)
+        self.assertEqual(np.sum(y_resampled == 0), np.sum(y_resampled == 1))
+    
+    def test_smote_with_force_equal(self):
+        X_resampled, y_resampled = self.smote.fit_resample(self.X_train, self.y_train, force_equal=True)
+        self.assertEqual(np.sum(y_resampled == 0), np.sum(y_resampled == 1))
+
+    def test_augment_with_empty_techniques(self):
+        augmenter = Augmenter(techniques=[], verbose=False)
+        X_resampled, y_resampled = augmenter.augment(self.X, self.y)
+        self.assertEqual(X_resampled.shape, self.X.shape)
+        self.assertEqual(y_resampled.shape, self.y.shape)
+
+    def test_augment_with_invalid_techniques(self):
+        invalid_technique = "invalid_technique"
+        with self.assertRaises(ValueError):
+            augmenter = Augmenter(techniques=[self.rus, invalid_technique], verbose=False)
+            augmenter.augment(self.X, self.y)
 
 if __name__ == '__main__':
     unittest.main()
