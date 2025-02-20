@@ -60,9 +60,14 @@ neural_network.train(X_train, y_train, optimizer=sgd_optimizer)
 Adadelta is an optimization algorithm that adapts learning rates based on a moving window of gradient updates, instead of accumulating all past gradients.
 
 #### Formula
+**Gradient Accumulations:**
 $` E[g^2]_t = \rho E[g^2]_{t-1} + (1 - \rho) g^2 `$  
+
+**Parameter Updates:**
 $` \Delta x = - \frac{\sqrt{E[\Delta x^2]_{t-1} + \epsilon}}{\sqrt{E[g^2]_t + \epsilon}} g `$  
-$` E[\Delta x^2]_t = \rho E[\Delta x^2]_{t-1} + (1 - \rho) \Delta x^2 `$
+
+**Update Accumulations:**
+$` E[\Delta x^2]_t = \rho E[\Delta x^2]_{t-1} + (1 - \rho) \Delta x^2 `$  
 
 #### Usage
 ```python
