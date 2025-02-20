@@ -85,6 +85,67 @@ sega_search = segaSearchCV(model, param_space, iter=10, cv=5, metric='mse', dire
 best_model = sega_search.fit(X, y, verbose=True)
 ```
 
+### Data Augmentation
+The `dataAugmentation` module provides a class for imbalanced classification tasks using SMOTE (Synthetic Minority Over-sampling Technique), Under-sampling, Over-sampling, and/or a combination of each. 
+
+#### SMOTE
+SMOTE is a technique used to create synthetic samples for the minority class in imbalanced datasets. It works by selecting a minority class sample and creating new samples along the line segments connecting it to its nearest neighbors. In this way, it generates new samples that are similar to the existing minority class samples, helping to balance the dataset.
+
+#### Usage
+```python
+from sega_learn.utils.dataAugmentation import SMOTE
+
+# Create SMOTE object
+smote = SMOTE(k_neighbors=5, random_state=42)
+
+# Fit and resample the training data
+X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
+```
+
+#### Over-Sampling
+Over-sampling is a technique used to increase the number of samples in the minority class by duplicating existing samples or generating new samples. This can help to balance the dataset and improve the performance of machine learning models.
+#### Usage
+```python
+from sega_learn.utils.dataAugmentation import OverSampling
+
+# Create OverSampling object
+over_sampling = OverSampling(random_state=42)
+
+# Fit and resample the training data
+X_resampled, y_resampled = over_sampling.fit_resample(X_train, y_train)
+```
+
+#### Under-Sampling
+Under-sampling is a technique used to reduce the number of samples in the majority class by randomly removing samples. This can help to balance the dataset and improve the performance of machine learning models.
+#### Usage
+```python
+from sega_learn.utils.dataAugmentation import UnderSampling
+
+# Create UnderSampling object
+under_sampling = UnderSampling(random_state=42)
+
+# Fit and resample the training data
+X_resampled, y_resampled = under_sampling.fit_resample(X_train, y_train)
+```
+
+#### Augmentor for Combination of Techniques
+The `Augmentor` class allows you to combine different data augmentation techniques, such as SMOTE, Over-sampling, and Under-sampling, to create a balanced dataset. Simply initialize the `Augmentor` class with the desired techniques and their parameters, and then call the `fit_resample` method to apply the augmentation.
+```python
+from sega_learn.utils.dataAugmentation import Augmentor, SMOTE, OverSampling, UnderSampling
+
+# Create Augmentor object with desired techniques
+augmentor = Augmentor(
+    techniques=[
+        SMOTE(k_neighbors=5, random_state=42),
+        OverSampling(random_state=42),
+        UnderSampling(random_state=42)
+    ]
+)
+
+# Fit and resample the training data
+X_resampled, y_resampled = augmentor.augment(X_train, y_train)
+```
+
 ### Evaluation Metrics
 The `metrics` module provides various evaluation metrics for regression and classification tasks.
 

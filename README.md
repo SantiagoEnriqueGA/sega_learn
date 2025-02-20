@@ -72,6 +72,7 @@ The SEGA_LEARN library includes the following features:
 - **Polynomial Transformation**: Implements polynomial transformation of features to create higher-order polynomial features.
 - **Evaluation Metrics**: Implements evaluation metrics like mean squared error, mean absolute error, and R-squared.
 - **Model Selection Algorithms**: Implements model selection algorithms like Grid Search Cross Validation and Random Search Cross Validation.
+- **Data Augmentation**: Implements data augmentation for imbalanced classification tasks using SMOTE (Synthetic Minority Over-sampling Technique), Under-sampling, Over-sampling, and/or a combination of each.
 
 ### Planned Features - Future Work
 - Implement dimensionality reduction algorithms like Principal Component Analysis (PCA), truncated Singular Value Decomposition (t-SVD)
@@ -122,6 +123,10 @@ The SEGA_LEARN library includes the following features:
 - [`randomSearchCV_passiveAggressive.py`](examples/utils/randomSearchCV_passiveAggressive.py): Demonstrates Random Search Cross Validation with Passive Aggressive Regressor.
 - [`randomSearchCV_rfc.py`](examples/utils/randomSearchCV_rfc.py): Demonstrates Random Search Cross Validation with Random Forest Classifier.
 - [`randomSearchCV_rfr.py`](examples/utils/randomSearchCV_rfr.py): Demonstrates Random Search Cross Validation with Random Forest Regressor.
+- [`dataAugmentation_randOver.py`](examples/utils/dataAugmentation_randOver.py): Demonstrates Random Over Sampling for imbalanced classification tasks.
+- [`dataAugmentation_randUnder.py`](examples/utils/dataAugmentation_randUnder.py): Demonstrates Random Under Sampling for imbalanced classification tasks.
+- [`dataAugmentation_smote.py`](examples/utils/dataAugmentation_smote.py): Demonstrates SMOTE (Synthetic Minority Over-sampling Technique) for imbalanced classification tasks.
+- [`dataAugmentation_combined.py`](examples/utils/dataAugmentation_combined.py): Demonstrates a combination of Random Over Sampling and SMOTE for imbalanced classification tasks.
 
 ## Scripts
 The following PowerShell scripts are included in the `scripts/` folder to help with various tasks:
@@ -154,7 +159,7 @@ Or run the all tests file: `python run_all_tests.py`
 The following are the results of running the tests:
 ```sh
 (sega_learn) PS .../sega_learn/tests/run_all_tests.py
-Testing Imports - Clustering                                                                                   
+Testing Imports - Clustering                                                                                                                                               
 ..Testing Imports - Main Package
 ..Testing Imports - Linear Models
 ..Testing Imports - Neural Networks
@@ -182,7 +187,8 @@ Testing Imports - Clustering
 ............Testing Random Forest Regressor
 ..............Testing Regressor Tree
 .....Testing Regressor Tree Utility
-.................Testing Data Prep
+.................Testing Data Augmentation
+......................Testing Data Prep
 ......Testing GridSearchCV
 ...........Testing Metrics
 ...............Testing Model Selection Utils
@@ -205,11 +211,15 @@ Testing Imports - Clustering
 .Testing example file: ridge.py
 .Testing example file: neuralNetwork.py
 .Testing example file: neuralNetwork_hyper.py
-Tuning Hyperparameters: 100%|██████████| 4/4 [00:05<00:00,  1.40s/it]
-Tuning Hyperparameters: 100%|██████████| 4/4 [00:03<00:00,  1.01it/s]
+Tuning Hyperparameters: 100%|█████████████| 4/4 [00:05<00:00,  1.40s/it]
+Tuning Hyperparameters: 100%|█████████████| 4/4 [00:04<00:00,  1.07s/it]
 .Testing example file: gradientBoostedRegressor.py
 .Testing example file: randomForestClassifier.py
 .Testing example file: randomForestRegressor.py
+.Testing example file: dataAugmentation_combined.py
+.Testing example file: dataAugmentation_randOver.py
+.Testing example file: dataAugmentation_randUnder.py
+.Testing example file: dataAugmentation_smote.py
 .Testing example file: gridSearchCV_bayes.py
 .Testing example file: gridSearchCV_gbr.py
 .Testing example file: gridSearchCV_passiveAggReg.py
@@ -225,7 +235,7 @@ Tuning Hyperparameters: 100%|██████████| 4/4 [00:03<00:00,  
 .Testing example file: votingRegressor.py
 .
 ----------------------------------------------------------------------
-Ran 298 tests in 122.866s
+Ran 324 tests in 123.282s
 
 OK
 ```
@@ -271,6 +281,7 @@ The project directory structure is as follows:
     - [`metrics.py`](sega_learn/utils/metrics.py): Implements evaluation metrics.
     - [`model_selection.py`](sega_learn/utils/model_selection.py): Implements model selection algorithms.
     - [`polynomialTransform.py`](sega_learn/utils/polynomialTransform.py): Implements polynomial transformation.
+    - [`dataAugmentation.py`](sega_learn/utils/dataAugmentation.py): Implements data augmentation for imbalanced classification tasks.
 
 - **tests/**: Contains unit and performance tests for the database library.
   - **Core Tests**:
@@ -335,6 +346,10 @@ The project directory structure is as follows:
     - [`randomSearchCV_passiveAggressive.py`](examples/utils/randomSearchCV_passiveAggressive.py): Demonstrates Random Search Cross Validation with Passive Aggressive Regressor.
     - [`randomSearchCV_rfc.py`](examples/utils/randomSearchCV_rfc.py): Demonstrates Random Search Cross Validation with Random Forest Classifier.
     - [`randomSearchCV_rfr.py`](examples/utils/randomSearchCV_rfr.py): Demonstrates Random Search Cross Validation with Random Forest Regressor.
+    - [`dataAugmentation_randOver.py`](examples/utils/dataAugmentation_randOver.py): Demonstrates Random Over Sampling for imbalanced classification tasks.
+    - [`dataAugmentation_randUnder.py`](examples/utils/dataAugmentation_randUnder.py): Demonstrates Random Under Sampling for imbalanced classification tasks.
+    - [`dataAugmentation_smote.py`](examples/utils/dataAugmentation_smote.py): Demonstrates SMOTE (Synthetic Minority Over-Sampling Technique) for imbalanced classification tasks.
+    - [`dataAugmentation_combined.py`](examples/utils/dataAugmentation_combined.py): Demonstrates a combination of Random Over Sampling and SMOTE for imbalanced classification tasks.
   
 - **docs/**: Contains the generated documentation for the SEGA_LEARN library.
   - [`documentation.md`](docs/documentation.md): Contains the generated documentation for the SEGA_LEARN library.
