@@ -47,17 +47,45 @@ td.singlecolumn { width: 100%; }
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
 </dt><dd>
 <dl>
-<dt class="heading-text"><a href="sega_learn.utils.dataPrep.html#DataPrep">sega_learn.utils.dataPrep.DataPrep</a>
+<dt class="heading-text"><a href="sega_learn.utils.dataAugmentation.html#Augmenter">sega_learn.utils.dataAugmentation.Augmenter</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.dataAugmentation.html#RandomOverSampler">sega_learn.utils.dataAugmentation.RandomOverSampler</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.dataAugmentation.html#RandomUnderSampler">sega_learn.utils.dataAugmentation.RandomUnderSampler</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.dataAugmentation.html#SMOTE">sega_learn.utils.dataAugmentation.SMOTE</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.dataPrep.html#DataPrep">sega_learn.utils.dataPrep.DataPrep</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.metrics.html#Metrics">sega_learn.utils.metrics.Metrics</a>
-</dt><dt class="heading-text"><a href="sega_learn.utils.model_selection.html#GridSearchCV">sega_learn.utils.model_selection.GridSearchCV</a>
-</dt><dt class="heading-text"><a href="sega_learn.utils.model_selection.html#ModelSelectionUtility">sega_learn.utils.model_selection.ModelSelectionUtility</a>
-</dt><dt class="heading-text"><a href="sega_learn.utils.model_selection.html#RandomSearchCV">sega_learn.utils.model_selection.RandomSearchCV</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.modelSelection.html#GridSearchCV">sega_learn.utils.modelSelection.GridSearchCV</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.modelSelection.html#ModelSelectionUtility">sega_learn.utils.modelSelection.ModelSelectionUtility</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.modelSelection.html#RandomSearchCV">sega_learn.utils.modelSelection.RandomSearchCV</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.polynomialTransform.html#PolynomialTransform">sega_learn.utils.polynomialTransform.PolynomialTransform</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.voting.html#VotingRegressor">sega_learn.utils.voting.VotingRegressor</a>
 </dt></dl>
 </dd>
 </dl>
  <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Augmenter">class <strong>Augmenter</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Augmenter">Augmenter</a>(techniques,&nbsp;verbose=False)<br>
+&nbsp;<br>
+General&nbsp;class&nbsp;for&nbsp;data&nbsp;augmentation&nbsp;techniques.<br>
+This&nbsp;class&nbsp;allows&nbsp;for&nbsp;the&nbsp;application&nbsp;of&nbsp;multiple&nbsp;augmentation&nbsp;techniques&nbsp;in&nbsp;sequence.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Augmenter-__init__"><strong>__init__</strong></a>(self, techniques, verbose=False)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="Augmenter-augment"><strong>augment</strong></a>(self, X, y)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="DataPrep">class <strong>DataPrep</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
@@ -399,6 +427,44 @@ Data descriptors defined here:<br>
 </td></tr></table> <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="RandomOverSampler">class <strong>RandomOverSampler</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomOverSampler">RandomOverSampler</a>(random_state=None)<br>
+&nbsp;<br>
+Randomly&nbsp;over-sample&nbsp;the&nbsp;minority&nbsp;class&nbsp;by&nbsp;duplicating&nbsp;examples.<br>
+&nbsp;<br>
+This&nbsp;technique&nbsp;helps&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution&nbsp;by&nbsp;randomly&nbsp;duplicating&nbsp;samples&nbsp;from&nbsp;the&nbsp;minority&nbsp;class.<br>
+It&nbsp;is&nbsp;a&nbsp;simple&nbsp;yet&nbsp;effective&nbsp;method&nbsp;to&nbsp;address&nbsp;class&nbsp;imbalance&nbsp;in&nbsp;datasets.<br>
+&nbsp;<br>
+Algorithm&nbsp;Steps:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;1:&nbsp;Identify&nbsp;the&nbsp;minority&nbsp;class&nbsp;and&nbsp;its&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;2:&nbsp;Calculate&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;needed&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;3:&nbsp;Randomly&nbsp;select&nbsp;samples&nbsp;from&nbsp;the&nbsp;minority&nbsp;class&nbsp;with&nbsp;replacement.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;4:&nbsp;Duplicate&nbsp;the&nbsp;selected&nbsp;samples&nbsp;to&nbsp;create&nbsp;a&nbsp;balanced&nbsp;dataset.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="RandomOverSampler-__init__"><strong>__init__</strong></a>(self, random_state=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="RandomOverSampler-fit_resample"><strong>fit_resample</strong></a>(self, X, y)</dt><dd><span class="code">Resample&nbsp;the&nbsp;dataset&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution&nbsp;by&nbsp;duplicating&nbsp;minority&nbsp;class&nbsp;samples.<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like):&nbsp;Feature&nbsp;matrix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(array-like):&nbsp;Target&nbsp;vector.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_resampled&nbsp;(array-like):&nbsp;Resampled&nbsp;feature&nbsp;matrix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_resampled&nbsp;(array-like):&nbsp;Resampled&nbsp;target&nbsp;vector.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomSearchCV">class <strong>RandomSearchCV</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
@@ -428,6 +494,83 @@ Parameters:<br>
 &nbsp;<br>
 Returns:<br>
 -&nbsp;model:&nbsp;The&nbsp;best&nbsp;model&nbsp;with&nbsp;the&nbsp;optimal&nbsp;hyperparameters.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="RandomUnderSampler">class <strong>RandomUnderSampler</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomUnderSampler">RandomUnderSampler</a>(random_state=None)<br>
+&nbsp;<br>
+Randomly&nbsp;under-sample&nbsp;the&nbsp;majority&nbsp;class&nbsp;by&nbsp;removing&nbsp;examples.<br>
+&nbsp;<br>
+This&nbsp;technique&nbsp;helps&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution&nbsp;by&nbsp;randomly&nbsp;removing&nbsp;samples&nbsp;from&nbsp;the&nbsp;majority&nbsp;class.<br>
+It&nbsp;is&nbsp;a&nbsp;simple&nbsp;yet&nbsp;effective&nbsp;method&nbsp;to&nbsp;address&nbsp;class&nbsp;imbalance&nbsp;in&nbsp;datasets.<br>
+&nbsp;<br>
+Algorithm&nbsp;Steps:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;1:&nbsp;Identify&nbsp;the&nbsp;majority&nbsp;class&nbsp;and&nbsp;its&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;2:&nbsp;Calculate&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;to&nbsp;remove&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;3:&nbsp;Randomly&nbsp;select&nbsp;samples&nbsp;from&nbsp;the&nbsp;majority&nbsp;class&nbsp;without&nbsp;replacement.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;4:&nbsp;Remove&nbsp;the&nbsp;selected&nbsp;samples&nbsp;to&nbsp;create&nbsp;a&nbsp;balanced&nbsp;dataset.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="RandomUnderSampler-__init__"><strong>__init__</strong></a>(self, random_state=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="RandomUnderSampler-fit_resample"><strong>fit_resample</strong></a>(self, X, y)</dt><dd><span class="code">Resample&nbsp;the&nbsp;dataset&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution&nbsp;by&nbsp;removing&nbsp;majority&nbsp;class&nbsp;samples.<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like):&nbsp;Feature&nbsp;matrix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(array-like):&nbsp;Target&nbsp;vector.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_resampled&nbsp;(array-like):&nbsp;Resampled&nbsp;feature&nbsp;matrix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_resampled&nbsp;(array-like):&nbsp;Resampled&nbsp;target&nbsp;vector.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="SMOTE">class <strong>SMOTE</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#SMOTE">SMOTE</a>(random_state=None,&nbsp;k_neighbors=5)<br>
+&nbsp;<br>
+Synthetic&nbsp;Minority&nbsp;Over-sampling&nbsp;Technique&nbsp;(<a href="#SMOTE">SMOTE</a>)&nbsp;for&nbsp;balancing&nbsp;class&nbsp;distribution.<br>
+&nbsp;<br>
+<a href="#SMOTE">SMOTE</a>&nbsp;generates&nbsp;synthetic&nbsp;samples&nbsp;for&nbsp;the&nbsp;minority&nbsp;class&nbsp;by&nbsp;interpolating&nbsp;between&nbsp;existing&nbsp;samples.<br>
+This&nbsp;helps&nbsp;to&nbsp;create&nbsp;a&nbsp;more&nbsp;balanced&nbsp;dataset,&nbsp;which&nbsp;can&nbsp;improve&nbsp;the&nbsp;performance&nbsp;of&nbsp;machine&nbsp;learning&nbsp;models.<br>
+&nbsp;<br>
+Algorithm&nbsp;Steps:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;1:&nbsp;Identify&nbsp;the&nbsp;minority&nbsp;class&nbsp;and&nbsp;its&nbsp;samples.&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;2:&nbsp;For&nbsp;each&nbsp;sample&nbsp;in&nbsp;the&nbsp;minority&nbsp;class,&nbsp;find&nbsp;its&nbsp;k&nbsp;nearest&nbsp;neighbors&nbsp;(using&nbsp;Euclidean&nbsp;distance.)&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;3:&nbsp;Randomly&nbsp;select&nbsp;one&nbsp;or&nbsp;more&nbsp;of&nbsp;these&nbsp;neighbors.&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;4:&nbsp;Create&nbsp;synthetic&nbsp;samples&nbsp;by&nbsp;interpolating&nbsp;between&nbsp;the&nbsp;original&nbsp;sample&nbsp;and&nbsp;the&nbsp;selected&nbsp;neighbors.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="SMOTE-__init__"><strong>__init__</strong></a>(self, random_state=None, k_neighbors=5)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="SMOTE-fit_resample"><strong>fit_resample</strong></a>(self, X, y, force_equal=False)</dt><dd><span class="code">Resample&nbsp;the&nbsp;dataset&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution&nbsp;by&nbsp;generating&nbsp;synthetic&nbsp;samples.<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like):&nbsp;Feature&nbsp;matrix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(array-like):&nbsp;Target&nbsp;vector.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;force_equal&nbsp;(bool):&nbsp;If&nbsp;True,&nbsp;resample&nbsp;until&nbsp;classes&nbsp;are&nbsp;equal.&nbsp;Default&nbsp;is&nbsp;False.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_resampled&nbsp;(array-like):&nbsp;Resampled&nbsp;feature&nbsp;matrix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_resampled&nbsp;(array-like):&nbsp;Resampled&nbsp;target&nbsp;vector.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -484,5 +627,5 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
     
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'ModelSelectionUtility', 'GridSearchCV', 'RandomSearchCV', 'Metrics']</td></tr></table>
+<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'ModelSelectionUtility', 'GridSearchCV', 'RandomSearchCV', 'Metrics', 'RandomOverSampler', 'RandomUnderSampler', 'SMOTE', 'Augmenter']</td></tr></table>
 </body></html>

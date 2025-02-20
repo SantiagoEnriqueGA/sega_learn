@@ -87,9 +87,9 @@ td.singlecolumn { width: 100%; }
 </dt><dt class="heading-text"><a href="sega_learn.trees.treeRegressor.html#RegressorTreeUtility">sega_learn.trees.treeRegressor.RegressorTreeUtility</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.dataPrep.html#DataPrep">sega_learn.utils.dataPrep.DataPrep</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.metrics.html#Metrics">sega_learn.utils.metrics.Metrics</a>
-</dt><dt class="heading-text"><a href="sega_learn.utils.model_selection.html#GridSearchCV">sega_learn.utils.model_selection.GridSearchCV</a>
-</dt><dt class="heading-text"><a href="sega_learn.utils.model_selection.html#ModelSelectionUtility">sega_learn.utils.model_selection.ModelSelectionUtility</a>
-</dt><dt class="heading-text"><a href="sega_learn.utils.model_selection.html#RandomSearchCV">sega_learn.utils.model_selection.RandomSearchCV</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.modelSelection.html#GridSearchCV">sega_learn.utils.modelSelection.GridSearchCV</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.modelSelection.html#ModelSelectionUtility">sega_learn.utils.modelSelection.ModelSelectionUtility</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.modelSelection.html#RandomSearchCV">sega_learn.utils.modelSelection.RandomSearchCV</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.polynomialTransform.html#PolynomialTransform">sega_learn.utils.polynomialTransform.PolynomialTransform</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.voting.html#VotingRegressor">sega_learn.utils.voting.VotingRegressor</a>
 </dt></dl>
@@ -1246,7 +1246,7 @@ Returns:<br>
 Args:&nbsp;X&nbsp;(ndarray):&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;input_size).<br>
 Returns:&nbsp;ndarray:&nbsp;Output&nbsp;predictions&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;output_size).</span></dd></dl>
 
-<dl><dt><a name="NeuralNetwork-train"><strong>train</strong></a>(self, X_train, y_train, X_test=None, y_test=None, optimizer=&lt;sega_learn.neural_networks.optimizers.AdamOptimizer object at 0x000002564C824D50&gt;, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
+<dl><dt><a name="NeuralNetwork-train"><strong>train</strong></a>(self, X_train, y_train, X_test=None, y_test=None, optimizer=&lt;sega_learn.neural_networks.optimizers.AdamOptimizer object at 0x0000018D0C860950&gt;, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
 Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;features.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;labels.<br>
