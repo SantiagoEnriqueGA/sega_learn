@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 import sega_learn.trees.randomForestClassifier as rfc
 import sega_learn.utils.dataPrep as dp
-import sega_learn.utils.model_selection as ms
+import sega_learn.utils.modelSelection as ms
 import sega_learn.utils.metrics as mt
 
 from sklearn.datasets import make_classification

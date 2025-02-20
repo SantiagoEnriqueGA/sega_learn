@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.linear_models import Bayesian
-import sega_learn.utils.model_selection as ms
+import sega_learn.utils.modelSelection as ms
 from sklearn.datasets import make_regression
 from sklearn.metrics import r2_score
 

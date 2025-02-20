@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 import sega_learn.trees.gradientBoostedRegressor as gbr
 import sega_learn.utils.dataPrep as dp
-import sega_learn.utils.model_selection as ms
+import sega_learn.utils.modelSelection as ms
 
 from sklearn.datasets import make_regression
 X, y = make_regression(n_samples=100, n_features=3, noise=5, random_state=42)
