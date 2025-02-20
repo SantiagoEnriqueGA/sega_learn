@@ -34,8 +34,8 @@ ch_optimal_k, db_optimal_k, silhouette_optimal_k = kmeans.find_optimal_clusters(
 DBSCAN (Density-Based Spatial Clustering of Applications with Noise) is a clustering algorithm that groups together points that are closely packed, marking as outliers points that lie alone in low-density regions.
 
 #### Algorithm
-1. For each point in the dataset, find the points within a distance $ \epsilon $ (eps).
-2. If the number of points within $ \epsilon $ is greater than or equal to min_samples, mark the point as a core point.
+1. For each point in the dataset, find the points within a distance $` \epsilon `$ (eps).
+2. If the number of points within $` \epsilon `$ is greater than or equal to min_samples, mark the point as a core point
 3. Form clusters by connecting core points and their neighbors.
 4. Mark points that are not reachable from any core point as outliers.
 
@@ -101,7 +101,7 @@ The Calinski-Harabasz Index evaluates the clustering performance by measuring th
 ```math
 \text{CH Index} = \frac{\sum_{i=1}^{k} n_i \|m_i - m\|^2}{\sum_{i=1}^{k} \sum_{j=1}^{n_i} \|x_{ij} - m_i\|^2} \times \frac{N - k}{k - 1}
 ```
-where $ k $ is the number of clusters, $ n_i $ is the number of data points in cluster $ i $, $ m_i $ is the centroid of cluster $ i $, $ m $ is the overall centroid of all data points, $ x_{ij} $ is the $ j $-th data point in cluster $ i $, $ N $ is the total number of data points.
+where $` k `$ is the number of clusters, $` n_i `$ is the number of data points in cluster $` i `$, $` m_i `$ is the centroid of cluster $` i `$, $` m `$ is the overall centroid of all data points, $` x_{ij} $` is the $` j `$-th data point in cluster $` i `$, $` N `$ is the total number of data points.
 
 ### Davies-Bouldin Index
 The Davies-Bouldin Index evaluates the clustering performance by measuring the average similarity ratio of each cluster with its most similar cluster. A lower DB Index indicates better clustering performance. It is based on the intuition that clusters should be well-separated and compact. The DB Index is sensitive to the number of clusters and the distance metric used.
@@ -110,17 +110,17 @@ The Davies-Bouldin Index evaluates the clustering performance by measuring the a
 ```math
 \text{DB Index} = \frac{1}{k} \sum_{i=1}^{k} \max_{j \neq i} \left( \frac{s_i + s_j}{d(\mu_i, \mu_j)} \right)
 ```
-where $ s_i $ is the average distance between each point in cluster $ i $ and the centroid $ \mu_i $, and $ d(\mu_i, \mu_j) $ is the distance between centroids $ \mu_i $ and $ \mu_j $.
+where $` s_i `$ is the average distance between each point in cluster $` i `$ and the centroid $` \mu_i `$, and $` d(\mu_i, \mu_j) `$ is the distance between centroids $` \mu_i `$ and $` \mu_j `$.
 
 ### Silhouette Score
 The Silhouette Score evaluates the clustering performance by measuring how similar a data point is to its own cluster compared to other clusters. It ranges from -1 to 1, where a higher score indicates better clustering performance. It is based on the intuition that clusters should be well-separated and compact. The Silhouette Score is sensitive to the number of clusters and the distance metric used.
 
 #### Formula
-For each data point $ i $:
+For each data point $` i `$:
 ```math
 s(i) = \frac{b(i) - a(i)}{\max(a(i), b(i))}
 ```
-where $ a(i) $ is the average distance between $ i $ and all other points in the same cluster, and $ b(i) $ is the average distance between $ i $ and all points in the nearest cluster.
+where $` a(i) `$ is the average distance between $` i `$ and all other points in the same cluster, and $` b(i) `$ is the average distance between $` i `$ and all points in the nearest cluster.
 
 ## Examples
 
