@@ -1,4 +1,3 @@
-
 from .loss import CrossEntropyLoss, BCEWithLogitsLoss
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
 from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
@@ -128,6 +127,7 @@ class NeuralNetwork:
             - epochs (int): Number of training epochs (default: 100).
             - batch_size (int): Batch size for mini-batch gradient descent (default: 32).
             - early_stopping_threshold (int): Number of epochs to wait for improvement in training loss before early stopping (default: 5).
+            - lr_scheduler (Scheduler): Learning rate scheduler (default: None).
             - p (bool): Whether to print training progress (default: True).
         Returns: None
         """
@@ -224,30 +224,29 @@ class NeuralNetwork:
         
         if self.layers[-1].weights.shape[1] > 1:            # Multi-class classification
             predicted = np.argmax(y_hat, axis=1)            # Get the class with the highest probability
-            accuracy = np.mean(predicted == np.argmax(y))   # Calculate accuracy
+            accuracy = np.mean(predicted == y)              # Calculate accuracy
         
         else:                                               # Binary classification
             predicted = (y_hat > 0.5).astype(int)           # Convert probabilities to binary predictions
-            accuracy = np.mean(predicted == y)              # Calculate accuracy
+            accuracy = np.mean(predicted == y.reshape(-1, 1))  # Calculate accuracy correctly for binary classification                   
         
         return accuracy, predicted                          # Return accuracy and predicted labels
     
-    def tune_hyperparameters(self, param_grid, num_layers_range, layer_size_range, output_size,
+    def tune_hyperparameters(self, param_grid, layers, output_size,
                              X_train, y_train, X_val, y_val, 
-                             optimizer_type, lr_range, epochs=100, batch_size=32):
+                             optimizers, lr_range, epochs=100, batch_size=32):
         """
         Performs hyperparameter tuning using grid search.
         
         Parameters:
             - param_grid (dict): A dictionary where keys are parameter names and values are lists of values to try.
-            - num_layers_range (tuple): A tuple (min_layers, max_layers, step) for the number of layers.
-            - layer_size_range (tuple): A tuple (min_size, max_size, step) for the layer sizes.
+            - layers (list): List of layer sizes.
             - output_size (int): The size of the output layer.
             - X_train (numpy.ndarray): Training data features.
             - y_train (numpy.ndarray): Training data labels.
             - X_val (numpy.ndarray): Validation data features.
             - y_val (numpy.ndarray): Validation data labels.
-            - optimizer_type (str): The type of optimizer (e.g., 'SGD', 'Adam').
+            - optimizers (list): List of optimizer types to try (e.g., ['Adam', 'SGD', 'Adadelta']).
             - lr_range (tuple): A tuple (min_lr, max_lr, num_steps) for learning rates.
             - epochs (int): Number of training epochs (default: 100).
             - batch_size (int): Batch size for mini-batch gradient descent (default: 32).
@@ -266,41 +265,34 @@ class NeuralNetwork:
 
         keys, values = zip(*param_grid.items()) # Unzip the parameter grid
         
-        # Generate layer configurations
-        num_layers_options = range(num_layers_range[0], num_layers_range[1] + 1, num_layers_range[2])
-        layer_size_options = range(layer_size_range[0], layer_size_range[1] + 1, layer_size_range[2])
-
         # Generate learning rate options
         min_lr, max_lr, num_steps = lr_range
         lr_options = np.linspace(min_lr, max_lr, num_steps).tolist()
         
         # Calculate total iterations
-        total_iterations = (len(num_layers_options) *
-                            len(layer_size_options) *
+        total_iterations = (len(layers) *
                             len(lr_options) *
-                            np.prod([len(value) for value in values]))
+                            len(optimizers) *
+                            np.prod([len(value) for value in values])
+                            )
         
         with tqdm(total=total_iterations, desc="Tuning Hyperparameters") as pbar:
-            for num_layers in num_layers_options:           # For each number of layers
-                for layer_size in layer_size_options:       # For each layer size
+            for optimizer_type in optimizers:                   # For each optimizer type
+                for layer_structure in layers:                  # For each layer structure
+                    layer_structure = [X_train.shape[1]] + layer_structure + [output_size]
                     
-                    layer_structure = [X_train.shape[1]] + [layer_size] * num_layers + [output_size]
                     for combination in product(*values):
                         params = dict(zip(keys, combination))
                         
                         for lr in lr_options:
-                            # print(f"\nTesting combination: {params} with {num_layers} layers of size {layer_size} and learning rate {lr}")
+                            # print(f"\nTesting combination: {params} with layers {layer_structure} and learning rate {lr}")
 
                             # Initialize the neural network with the current combination of hyperparameters
                             nn = NeuralNetwork(layer_structure, dropout_rate=params['dropout_rate'], reg_lambda=params['reg_lambda'])
 
                             # Define the optimizer
                             optimizer = self.create_optimizer(optimizer_type, lr)
-
-                            # for i in range(len(nn.weights)):
-                            #     print(f"Weights shape for layer {i}: {nn.weights[i].shape}")
-                            #     print(f"Biases shape for layer {i}: {nn.biases[i].shape}")
-
+                            
                             # Train the neural network
                             nn.train(X_train, y_train, X_val, y_val, optimizer, epochs=epochs, batch_size=batch_size, p=False)
 
@@ -312,14 +304,14 @@ class NeuralNetwork:
                             # Check if this is the best accuracy
                             if accuracy > best_accuracy:
                                 best_accuracy = accuracy
-                                print(f"\nNew best accuracy: {best_accuracy:.4f} with combination: {params}, {num_layers} layers of size {layer_size}, learning rate {lr}")
-                                print(f"New best accuracy: {best_accuracy:.4f} with combination: {params}, {num_layers} layers of size {layer_size}, learning rate {lr}")
+                                print(f"\n--New best accuracy: {best_accuracy:.4f} with combination: {optimizer_type}, {params} with layers {layer_structure} and learning rate {lr}")
                                 
-                                best_params = {**params, 'num_layers': num_layers, 'layer_size': layer_size, 'learning_rate': lr}
+                                best_params = {**params, 'layers': layer_structure, 'learning_rate': lr, 'optimizer': optimizer}
+                                best_optimizer = optimizer_type
                             
                             pbar.update(1)  # Update the progress bar after each combination
 
-        print(f"Best parameters: {best_params} with accuracy: {best_accuracy:.4f}")
+        print(f"\nBest parameters: Optimizer: {best_optimizer}, {best_params} with accuracy: {best_accuracy:.4f}")
         return best_params, best_accuracy
 
 
@@ -336,8 +328,33 @@ class NeuralNetwork:
         """
         if optimizer_type == 'Adam':
             return AdamOptimizer(learning_rate)
+        elif optimizer_type == 'SGD':
+            return SGDOptimizer(learning_rate)
+        elif optimizer_type == 'Adadelta':
+            return AdadeltaOptimizer(learning_rate)
         else:
             raise ValueError(f"Unknown optimizer type: {optimizer_type}")
+        
+    def create_scheduler(self, scheduler_type, optimizer, **kwargs):
+        """
+        Creates a learning rate scheduler instance based on the specified type and parameters.
+        
+        Parameters:
+            scheduler_type (str): The type of scheduler (e.g., 'step', 'plateau', 'exp').
+            optimizer: The optimizer instance to be used with the scheduler.
+            **kwargs: Additional parameters for the scheduler.
+        
+        Returns:
+            scheduler: An instance of the specified learning rate scheduler.
+        """
+        if scheduler_type == 'step':
+            return lr_scheduler_step(optimizer, **kwargs)
+        elif scheduler_type == 'plateau':
+            return lr_scheduler_plateau(optimizer, **kwargs)
+        elif scheduler_type == 'exp':
+            return lr_scheduler_exp(optimizer, **kwargs)
+        else:
+            raise ValueError(f"Unknown scheduler type: {scheduler_type}")
 
 class Layer:
     """
@@ -477,64 +494,3 @@ class Activation:
         return exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
 
 
-def test_model(load_data_func, nn_layers, dropout_rate, reg_lambda, test_size=0.2):
-    """Generic function to test the neural network model on a given dataset."""
-    import random
-    np.random.seed(42)
-    random.seed(42)
-    
-    from sklearn.model_selection import train_test_split
-    from sklearn.preprocessing import StandardScaler
-    from sklearn.metrics import classification_report
-
-    # Load the dataset
-    data = load_data_func()
-    X = data.data
-    y = data.target
-
-    print(f"\nTesting on {data.DESCR.splitlines()[0]} dataset:")
-    print(f"--------------------------------------------------------------------------")
-    print(f"X shape: {X.shape}, Y shape: {y.shape}")
-
-    # Split the dataset
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-
-    # Standardize the dataset
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
-    
-    activations = ['relu'] * len(nn_layers) + ['sigmoid']
-
-    # Initialize the neural network and optimizer
-    nn = NeuralNetwork(nn_layers, dropout_rate=dropout_rate, reg_lambda=reg_lambda, activations=activations)
-    optimizer = AdamOptimizer(learning_rate=0.001)
-    sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=5)  # Learning rate scheduler
-    scheduler = lr_scheduler_plateau(sub_scheduler, patience=5, threshold=0.001)  # Learning rate scheduler
-    
-    # Train the neural network
-    nn.train(X_train, y_train, X_test, y_test, optimizer, epochs=100, batch_size=32, early_stopping_threshold=10)
-
-    # Evaluate the neural network
-    accuracy, predicted = nn.evaluate(X_test, y_test)
-    print(f"Final Accuracy: {accuracy}")
-
-    # Print classification report
-    print("Classification Report:")
-    print(classification_report(y_test, predicted, zero_division=0))
-    
-    print(f"End Neural Network State: \n{str(nn)}")
-
-def test_iris():
-    """Test the neural network model on the Iris dataset."""
-    from sklearn.datasets import load_iris
-    test_model(load_iris, [4, 100, 25, 3], dropout_rate=0.1, reg_lambda=0.0, test_size=0.1)
-
-def test_breast_cancer():
-    """Test the neural network model on the Breast Cancer dataset."""
-    from sklearn.datasets import load_breast_cancer
-    test_model(load_breast_cancer, [30, 100, 25, 1], dropout_rate=0.2, reg_lambda=0.0, test_size=0.2)
-
-if __name__ == "__main__":
-    test_breast_cancer()
-    test_iris()

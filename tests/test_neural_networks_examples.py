@@ -19,17 +19,17 @@ class TestExampleExceptions(unittest.TestCase):
     Test cases to check for exceptions in example files.
     """
     def test_main(self, example_file):
-        if 'neuralNetwork.py' in example_file:
-            from examples.neural_networks.neuralNetwork import main
-            print(f"Testing example file: {strip_file_path(example_file)}")
-            with suppress_print():
-                main(diabetes=True, cancer=True)
-        
-        elif 'neuralNetwork_hyper.py' in example_file:
+        if 'neuralNetwork_hyper.py' in example_file:
             from examples.neural_networks.neuralNetwork_hyper import main
             print(f"Testing example file: {strip_file_path(example_file)}")
             with suppress_print():
                 main(diabetes=True, cancer=True, test_case=True)
+                
+        if 'neuralNetwork_classifier_hyper.py' in example_file:
+            from examples.neural_networks.neuralNetwork_classifier_hyper import main
+            print(f"Testing example file: {strip_file_path(example_file)}")
+            with suppress_print():
+                main(test_case=True)
 
 class TestExamplesNeuralNetworks(unittest.TestCase):
     """
@@ -71,7 +71,7 @@ def load_tests(loader, tests, pattern):
         
         # Dynamically add the test function to the TestExamples class.
         # If example file runs in __main__, use a lambda function to call the test function.
-        test_exeptions = ['neuralNetwork.py', 'neuralNetwork_hyper.py']
+        test_exeptions = ['neuralNetwork_hyper.py', 'neuralNetwork_classifier_hyper.py']
         test_exeptions = [f'test_{name}' for name in test_exeptions]
         if test_name in test_exeptions:
             setattr(TestExamplesNeuralNetworks, test_name, lambda self, example_file=example_file: TestExampleExceptions().test_main(example_file))

@@ -159,7 +159,7 @@ Or run the all tests file: `python run_all_tests.py`
 The following are the results of running the tests:
 ```sh
 (sega_learn) PS .../sega_learn/tests/run_all_tests.py
-Testing Imports - Clustering                                                                                                                                               
+Testing Imports - Clustering
 ..Testing Imports - Main Package
 ..Testing Imports - Linear Models
 ..Testing Imports - Neural Networks
@@ -209,10 +209,15 @@ Testing Imports - Clustering
 .Testing example file: ransac.py
 .Testing example file: ransac_vis.py
 .Testing example file: ridge.py
-.Testing example file: neuralNetwork.py
+.Testing example file: neuralNetwork_cancer.py
+.Testing example file: neuralNetwork_classifier.py
+.Testing example file: neuralNetwork_classifier_hyper.py
+Tuning Hyperparameters: 100%|███████████████| 2/2 [00:04<00:00,  2.15s/it]
+.Testing example file: neuralNetwork_diabetes.py
 .Testing example file: neuralNetwork_hyper.py
-Tuning Hyperparameters: 100%|█████████████| 4/4 [00:05<00:00,  1.40s/it]
-Tuning Hyperparameters: 100%|█████████████| 4/4 [00:04<00:00,  1.07s/it]
+Tuning Hyperparameters: 100%|███████████████| 1/1 [00:00<00:00,  1.11it/s]
+Tuning Hyperparameters: 100%|███████████████| 1/1 [00:00<00:00,  1.39it/s]
+.Testing example file: neuralNetwork_iris.py
 .Testing example file: gradientBoostedRegressor.py
 .Testing example file: randomForestClassifier.py
 .Testing example file: randomForestRegressor.py
@@ -235,9 +240,7 @@ Tuning Hyperparameters: 100%|█████████████| 4/4 [00:04
 .Testing example file: votingRegressor.py
 .
 ----------------------------------------------------------------------
-Ran 324 tests in 123.282s
-
-OK
+Ran 328 tests in 123.922s
 ```
 
 ## Installation

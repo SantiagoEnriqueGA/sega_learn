@@ -13,22 +13,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from sega_learn.neural_networks import NeuralNetwork, AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 from sega_learn.neural_networks import lr_scheduler_exp, lr_scheduler_step, lr_scheduler_plateau
 
-def load_pima_diabetes_data(file_path):
-    """Function to load and preprocess Pima Indians Diabetes dataset"""
-    df = pd.read_csv(file_path)
-    X = df.drop('y', axis=1).to_numpy()
-    y = df['y'].to_numpy().reshape(-1, 1)
-    
-    # Split into train and test
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=1)
-    
-    # Standardize the features
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
-    
-    return X, y, X_train, X_test, y_train, y_test
-
 def load_breast_prognostic_data(file_path):
     """Function to load and preprocess Wisconsin Breast Prognostic dataset"""
     df = pd.read_csv(file_path)
@@ -80,7 +64,7 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test,
     print(classification_report(y_test, y_pred, zero_division=0))
 
 
-def main(diabetes=True, cancer=True):
+def run_cancer():
     import random
     np.random.seed(41)
     random.seed(41)
@@ -92,28 +76,14 @@ def main(diabetes=True, cancer=True):
     layers = [100, 50, 25] 
     output_size = 1
 
-    if diabetes:
-        # Train and evaluate on Pima Indians Diabetes dataset
-        print("\n--- Training on Pima Indians Diabetes Dataset ---")
+    # Train and evaluate on Wisconsin Breast Prognostic dataset
+    print("\n--- Training on Wisconsin Breast Prognostic Dataset ---")
+    
+    X, y, X_train, X_test, y_train, y_test = load_breast_prognostic_data("example_datasets/Wisconsin_breast_prognostic.csv")
+    train_and_evaluate_model(X_train, X_test, y_train, y_test, 
+                                layers, output_size, lr, dropout, reg_lambda, 
+                                hidden_activation='relu', output_activation='softmax',
+                                epochs=1000, batch_size=32)
         
-        X, y, X_train, X_test, y_train, y_test = load_pima_diabetes_data("example_datasets/pima-indians-diabetes_prepared.csv")
-        train_and_evaluate_model(X_train, X_test, y_train, y_test, 
-                                 layers, output_size, lr, dropout, reg_lambda, 
-                                 hidden_activation='tanh', output_activation='softmax',
-                                 epochs=1000, batch_size=32)
-
-    if cancer:
-        # Train and evaluate on Wisconsin Breast Prognostic dataset
-        print("\n--- Training on Wisconsin Breast Prognostic Dataset ---")
-        
-        X, y, X_train, X_test, y_train, y_test = load_breast_prognostic_data("example_datasets/Wisconsin_breast_prognostic.csv")
-        train_and_evaluate_model(X_train, X_test, y_train, y_test, 
-                                 layers, output_size, lr, dropout, reg_lambda, 
-                                 hidden_activation='relu', output_activation='softmax',
-                                 epochs=1000, batch_size=32)
-        
-    if not diabetes and not cancer:
-        print("Please set diabetes=True and/or cancer=True to run the example.")
-
 if __name__ == "__main__":
-    main(diabetes=True, cancer=True)
+    run_cancer()

@@ -43,8 +43,9 @@ def load_breast_prognostic_data(file_path):
     return X, y, X_train, X_test, y_train, y_test
 
 def hyper_train_and_evaluate_model(X, y ,X_train, X_test, y_train, y_test, 
-                                   param_grid, num_layers_range, layer_size_range, 
-                                   lr_range, epochs=100, batch_size=32):
+                                   param_grid, layers, 
+                                   lr_range, optimizers,
+                                   epochs=100, batch_size=32):
     """Function to train and evaluate the Neural Network with hyperparameter tuning"""
     
     input_size = X_train.shape[1]
@@ -57,14 +58,13 @@ def hyper_train_and_evaluate_model(X, y ,X_train, X_test, y_train, y_test,
     # Hyperparameter tuning with Adam optimizer
     best_params, best_accuracy = nn.tune_hyperparameters(
         param_grid,
-        num_layers_range,
-        layer_size_range,
+        layers,
         output_size,
         X_train,
         y_train,
         X_test,
         y_test,
-        optimizer_type='Adam',
+        optimizers=optimizers,
         lr_range=lr_range,
         epochs=epochs,
         batch_size=batch_size
@@ -73,7 +73,7 @@ def hyper_train_and_evaluate_model(X, y ,X_train, X_test, y_train, y_test,
     print(f"Best parameters: {best_params} with accuracy: {best_accuracy:.4f}")
 
     # Train the final model with best parameters
-    nn = NeuralNetwork([input_size] + [best_params['layer_size']] * best_params['num_layers'] + [output_size], 
+    nn = NeuralNetwork([input_size] + best_params['layers'][1:-1] + [output_size], 
                        dropout_rate=best_params['dropout_rate'], 
                        reg_lambda=best_params['reg_lambda'])
     nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, epochs=epochs, batch_size=batch_size)
@@ -91,18 +91,22 @@ def main(diabetes=True, cancer=True, test_case=False):
         'dropout_rate': [0.1, 0.2, 0.3],
         'reg_lambda': [0.0, 0.01]
     }
-    num_layers_range = (3, 5, 1)        # min, max, step
-    layer_size_range = (25, 100, 25)    # min, max, step
+    layers = [
+        [100, 50, 25],
+        [50, 25, 10],
+        [100, 100, 50, 25]
+    ]
     lr_range = (1e-5, 0.01, 3)          # (min_lr, max_lr, num_steps)
+    optimizers = ['Adam', 'SGD', 'Adadelta']
 
     if test_case:
         param_grid = {
             'dropout_rate': [0.1],
             'reg_lambda': [0.0]
         }
-        num_layers_range = (3, 4, 1)
-        layer_size_range = (25, 50, 25)
+        layers = [[25, 25, 25]]
         lr_range = (1e-5, 1e-5, 1)
+        optimizers = ['Adam']
 
     if diabetes:
         # Train and evaluate on Pima Indians Diabetes dataset
@@ -110,8 +114,8 @@ def main(diabetes=True, cancer=True, test_case=False):
         
         X, y, X_train, X_test, y_train, y_test = load_pima_diabetes_data("example_datasets/pima-indians-diabetes_prepared.csv")
         hyper_train_and_evaluate_model(X, y, X_train, X_test, y_train, y_test, 
-                                       param_grid, num_layers_range, 
-                                       layer_size_range, lr_range)
+                                       param_grid, layers, 
+                                       lr_range, optimizers)
 
     if cancer:
         # Train and evaluate on Wisconsin Breast Prognostic dataset
@@ -119,8 +123,8 @@ def main(diabetes=True, cancer=True, test_case=False):
         
         X, y, X_train, X_test, y_train, y_test = load_breast_prognostic_data("example_datasets/Wisconsin_breast_prognostic.csv")
         hyper_train_and_evaluate_model(X, y, X_train, X_test, y_train, y_test, 
-                                       param_grid, num_layers_range, 
-                                       layer_size_range, lr_range)
+                                       param_grid, layers, 
+                                       lr_range, optimizers)
 
     if not diabetes and not cancer:
         print("Please select at least one dataset to train and evaluate.")
