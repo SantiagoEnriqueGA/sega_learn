@@ -9,7 +9,7 @@ OLS is a linear regression algorithm that minimizes the sum of squared residuals
 
 #### Algorithm
 1. Add a column of ones to the input data if `fit_intercept` is True.
-2. Compute the coefficients using the normal equation: $ w = (X^T X)^{-1} X^T y $.
+2. Compute the coefficients using the normal equation: $` w = (X^T X)^{-1} X^T y `$.
 3. If `fit_intercept` is True, separate the intercept from the coefficients.
 
 #### Formula
