@@ -113,10 +113,10 @@ Bayesian Regression is a linear regression algorithm that includes both L1 and L
 The formula for Bayesian Regression is:
 $` p(w|X,y) = \frac{p(y|X,w) p(w)}{p(y|X)} `$
 where:
-- $` p(w|X,y) $` is the posterior distribution of the coefficients,
-- $` p(y|X,w) $` is the likelihood,
-- $` p(w) $` is the prior distribution,
-- $` p(y|X) $` is the marginal likelihood.
+- $` p(w|X,y) `$ is the posterior distribution of the coefficients,
+- $` p(y|X,w) `$ is the likelihood,
+- $` p(w) `$ is the prior distribution,
+- $` p(y|X) `$ is the marginal likelihood.
 
 #### Usage
 ```python
@@ -182,7 +182,7 @@ The formula for LDA is:
 $` w = \Sigma^{-1} (\mu_1 - \mu_2) `$
 where:
 - $` \Sigma `$ is the pooled covariance matrix,
-- $` \mu_1 $` and $` \mu_2 `$ are the means of the two classes.
+- $` \mu_1 `$ and $` \mu_2 `$ are the means of the two classes.
 
 #### Usage
 ```python
