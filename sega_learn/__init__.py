@@ -48,6 +48,11 @@ from .neural_networks import (
     Layer,
     Activation,
 )
+
+from .nearest_neighbors import (
+    KNeighborsClassifier,
+    KNeighborsRegressor,
+)
     
 __all__ = [
     # Utils
@@ -95,4 +100,8 @@ __all__ = [
     'NeuralNetwork',
     'Layer',
     'Activation',
+    
+    # Nearest Neighbors
+    "KNeighborsClassifier",
+    "KNeighborsRegressor",
 ]
