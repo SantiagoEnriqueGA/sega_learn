@@ -1,3 +1,4 @@
+import random
 import unittest
 import sys
 import os
@@ -76,6 +77,60 @@ class TestDataPrep(unittest.TestCase):
         df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': ['a', 'b', 'a', 'b'], 'C': ['x', 'y', 'x', 'y']})
         df_encoded = DataPrep.one_hot_encode(df, [1, 2])
         self.assertEqual(df_encoded.shape[1], 5)
+        
+    def test_one_hot_encode_invalid(self):
+        # DF with no categorical columns
+        df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': [5, 6, 7, 8]})
+        df_encoded = DataPrep.one_hot_encode(df, [])
+        self.assertEqual(df_encoded.shape[1], 2)
+        
+    def test_one_hot_encode_empty(self):
+        # Empty DataFrame
+        df = pd.DataFrame()
+        df_encoded = DataPrep.one_hot_encode(df, [])
+        self.assertEqual(df_encoded.shape[1], 0)
+        
+    def test_one_hot_encode_invalid_col(self):
+        # DF with invalid column index
+        df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': [5, 6, 7, 8]})
+        with self.assertRaises(Exception):
+            DataPrep.one_hot_encode(df, [2])
+            
+    def test_one_hot_encode_dtype_pd(self):
+        # DF with non-numeric column
+        df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': ['a', 'b', 'a', 'b']})
+        df_encoded = DataPrep.one_hot_encode(df, [1])
+        self.assertIsInstance(df_encoded, pd.DataFrame)
+    
+    def test_one_hot_encode_dtype_np(self):
+        # Numpy array with one categorical column (col 1)
+        data = np.array([[1, 'a'], [2, 'b'], [3, 'a'], [4, 'b']])
+        data_encoded = DataPrep.one_hot_encode(data, [1])
+        self.assertIsInstance(data_encoded, np.ndarray)
+                    
+    def test_find_categorical_columns(self):
+        # DF with one categorical column (col 2)
+        df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': ['a', 'b', 'a', 'b'], 'C': [5, 6, 7, 8]})
+        categorical_cols = DataPrep.find_categorical_columns(df)
+        self.assertEqual(categorical_cols, [1])
+        
+    def test_find_categorical_columns_multiple(self):
+        # DF with two categorical columns (col 1 and 2)
+        df = pd.DataFrame({'A': ['a', 'b', 'a', 'b'], 'B': ['x', 'y', 'x', 'y'], 'C': [5, 6, 7, 8]})
+        categorical_cols = DataPrep.find_categorical_columns(df)
+        self.assertEqual(categorical_cols, [0, 1])
+        
+    def test_find_categorical_columns_empty(self):
+        # Empty DataFrame
+        df = pd.DataFrame()
+        categorical_cols = DataPrep.find_categorical_columns(df)
+        self.assertEqual(categorical_cols, [])
+        
+    def test_find_categorical_columns_invalid(self):
+        # DF with no categorical columns
+        df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': [5, 6, 7, 8]})
+        categorical_cols = DataPrep.find_categorical_columns(df)
+        self.assertEqual(categorical_cols, [])
         
     def test_write_data(self):
         df = pd.DataFrame({'A': [1, 2, 3, 4], 'B': [5, 6, 7, 8]})

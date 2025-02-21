@@ -1,31 +1,61 @@
 import pandas as pd
+import numpy as np
 
 class DataPrep(object):
     """
     A class for preparing data for machine learning models.
     """
 
-    def one_hot_encode(df, cols):
+    def one_hot_encode(data, cols):
         """
-        One-hot encodes non-numerical columns in a DataFrame.
+        One-hot encodes non-numerical columns in a DataFrame or numpy array.
         Drops the original columns after encoding.
 
         Parameters:
-        - df (pandas.DataFrame): The DataFrame to be encoded.
+        - data (pandas.DataFrame or numpy.ndarray): The data to be encoded.
         - cols (list): The list of column indices to be encoded.
 
         Returns:
-        - df (pandas.DataFrame): The DataFrame with one-hot encoded columns.
+        - data (pandas.DataFrame or numpy.ndarray): The data with one-hot encoded columns.
         """
-        for col in cols:                                # For each column index
-            unique_values = df.iloc[:, col].unique()    # Get the unique values in the column
+        is_dataframe = isinstance(data, pd.DataFrame)
+        if not is_dataframe:
+            data = pd.DataFrame(data)  # Convert to DataFrame if not already
 
-            for value in unique_values:                                 # For each unique value, create a new binary column
-                df[str(value)] = (df.iloc[:, col] == value).astype(int) # Set the value to 1 if the original column is equal to the unique value
+        new_columns = []
+        for col in cols:  # For each column index
+            unique_values = data.iloc[:, col].unique()  # Get the unique values in the column
+            for value in unique_values:  # For each unique value, create a new binary column
+                new_columns.append((data.iloc[:, col] == value).astype(int).rename(str(value)))
 
-        df = df.drop(df.columns[cols], axis=1)          # Drop the original column
+        data = pd.concat([data.drop(data.columns[cols], axis=1)] + new_columns, axis=1)  # Drop the original columns and add new columns
 
-        return df
+        if not is_dataframe:
+            return data.values  # Convert back to numpy array if it was originally a numpy array
+        return data  # Else, return the DataFrame
+    
+    def find_categorical_columns(data):
+        """
+        Finds the indices of non-numerical columns in a DataFrame or numpy array.
+
+        Parameters:
+        - data (pandas.DataFrame or numpy.ndarray): The data to be checked.
+
+        Returns:
+        - categorical_cols (list): The list of indices of non-numerical columns.
+        """
+        if isinstance(data, np.ndarray):
+            data = pd.DataFrame(data)  # Convert to DataFrame if not already
+
+        # For each column, try to convert it to numeric
+        # If it fails, it is a categorical column
+        categorical_cols = []
+        for i in range(data.shape[1]):
+            try:
+                pd.to_numeric(data.iloc[:, i])
+            except ValueError:
+                categorical_cols.append(i)
+        return categorical_cols  # Return the list of indices of non-numerical columns        
 
     def write_data(df, csv_file, print_path=False):
         """
