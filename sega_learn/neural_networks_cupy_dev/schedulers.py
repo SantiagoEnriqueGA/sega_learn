@@ -1,5 +1,4 @@
-# import numpy as np
-import cupy as np
+import cupy as cp
 
 class lr_scheduler_step:
     """
@@ -54,12 +53,18 @@ class lr_scheduler_exp:
         Returns: None
         """
         if epoch % self.lr_decay_epoch == 0 and epoch > 0:
-            print(f"  --Decaying learning rate exponentially at epoch {epoch} from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * np.exp(-self.lr_decay * epoch)}")
-            self.optimizer.learning_rate *= np.exp(-self.lr_decay * epoch)
+            print(f"  --Decaying learning rate exponentially at epoch {epoch} from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * cp.exp(-self.lr_decay * epoch)}")
+            # Convert to CuPy scalar if needed
+            decay_factor = cp.exp(-self.lr_decay * epoch)
+            decay_factor = float(decay_factor.get()) if hasattr(decay_factor, 'get') else decay_factor
+            self.optimizer.learning_rate *= decay_factor
     
     def reduce(self):
-        print(f"  --Decaying learning rate exponentially from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * np.exp(-self.lr_decay)}")
-        self.optimizer.learning_rate *= np.exp(-self.lr_decay)
+        # Convert to CuPy scalar if needed
+        decay_factor = cp.exp(-self.lr_decay)
+        decay_factor = float(decay_factor.get()) if hasattr(decay_factor, 'get') else decay_factor
+        print(f"  --Decaying learning rate exponentially from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * decay_factor}")
+        self.optimizer.learning_rate *= decay_factor
 
 class lr_scheduler_plateau:
     """
@@ -87,6 +92,10 @@ class lr_scheduler_plateau:
         Args:
             loss (float): The current loss value.
         """
+        # Convert loss to Python float if it's a CuPy array or scalar
+        if hasattr(loss, 'get'):
+            loss = float(loss.get())
+            
         if loss < self.best_loss - self.threshold:
             self.best_loss = loss
             self.wait = 0

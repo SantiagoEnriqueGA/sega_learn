@@ -1,4 +1,5 @@
-import cupy as cp
+# import numpy as np
+import cupy as np
 
 class AdamOptimizer:
     """
@@ -30,8 +31,8 @@ class AdamOptimizer:
         Returns: None
         """
         for layer in layers:                                # For each layer in the neural network..
-            self.m.append(cp.zeros_like(layer.weights))     # Initialize first moment estimates
-            self.v.append(cp.zeros_like(layer.weights))     # Initialize second moment estimates
+            self.m.append(np.zeros_like(layer.weights))     # Initialize first moment estimates
+            self.v.append(np.zeros_like(layer.weights))     # Initialize second moment estimates
 
     def update(self, layer, dW, db, index):
         """
@@ -43,32 +44,15 @@ class AdamOptimizer:
             index (int): The index of the layer.
         Returns: None
         """
-        # Convert numpy arrays to cupy if needed
-        if hasattr(dW, 'get'):  # Check if it's a cupy array already
-            dW_gpu = dW
-        else:
-            dW_gpu = cp.asarray(dW)  # Convert numpy array to cupy
-            
-        if hasattr(db, 'get'):
-            db_gpu = db
-        else:
-            db_gpu = cp.asarray(db)
-            
-        self.t += 1                                                                         # Increment time step
-        self.m[index] = self.beta1 * self.m[index] + (1 - self.beta1) * dW_gpu              # Update first moment estimate, beta1 * m + (1 - beta1) * dW
-        self.v[index] = self.beta2 * self.v[index] + (1 - self.beta2) * cp.square(dW_gpu)   # Update second moment estimate, beta2 * v + (1 - beta2) * dW^2
+        self.t += 1                                                                     # Increment time step
+        self.m[index] = self.beta1 * self.m[index] + (1 - self.beta1) * dW              # Update first moment estimate, beta1 * m + (1 - beta1) * dW
+        self.v[index] = self.beta2 * self.v[index] + (1 - self.beta2) * np.square(dW)   # Update second moment estimate, beta2 * v + (1 - beta2) * dW^2
 
-        m_hat = self.m[index] / (1 - self.beta1 ** self.t)                                  # Bias-corrected first moment estimate, m / (1 - beta1^t)
-        v_hat = self.v[index] / (1 - self.beta2 ** self.t)                                  # Bias-corrected second moment estimate, v / (1 - beta2^t)
+        m_hat = self.m[index] / (1 - self.beta1 ** self.t)                              # Bias-corrected first moment estimate, m / (1 - beta1^t)
+        v_hat = self.v[index] / (1 - self.beta2 ** self.t)                              # Bias-corrected second moment estimate, v / (1 - beta2^t)
 
-        # Ensure layer weights and biases are also CuPy arrays
-        if not hasattr(layer.weights, 'get'):
-            layer.weights = cp.asarray(layer.weights)
-        if not hasattr(layer.biases, 'get'):
-            layer.biases = cp.asarray(layer.biases)
-
-        layer.weights -= self.learning_rate * (m_hat / (cp.sqrt(v_hat) + self.epsilon) + self.reg_lambda * layer.weights)   # Update weights
-        layer.biases -= self.learning_rate * db_gpu                                                                         # Update biases
+        layer.weights -= self.learning_rate * (m_hat / (np.sqrt(v_hat) + self.epsilon) + self.reg_lambda * layer.weights)   # Update weights, alpha * m_hat / (sqrt(v_hat) + epsilon) + lambda * weights
+        layer.biases -= self.learning_rate * db                                                                             # Update biases, alpha * db
 
 class SGDOptimizer:
     """
@@ -92,7 +76,7 @@ class SGDOptimizer:
         Returns: None
         """
         for layer in layers:                                    # For each layer in the neural network..
-            self.velocity.append(cp.zeros_like(layer.weights))  # Initialize velocity
+            self.velocity.append(np.zeros_like(layer.weights))  # Initialize velocity
 
     def update(self, layer, dW, db, index):
         """
@@ -104,26 +88,9 @@ class SGDOptimizer:
             index (int): The index of the layer.
         Returns: None
         """
-        # Convert numpy arrays to cupy if needed
-        if hasattr(dW, 'get'):
-            dW_gpu = dW
-        else:
-            dW_gpu = cp.asarray(dW)
-            
-        if hasattr(db, 'get'):
-            db_gpu = db
-        else:
-            db_gpu = cp.asarray(db)
-            
-        # Ensure layer weights and biases are also CuPy arrays
-        if not hasattr(layer.weights, 'get'):
-            layer.weights = cp.asarray(layer.weights)
-        if not hasattr(layer.biases, 'get'):
-            layer.biases = cp.asarray(layer.biases)
-            
-        self.velocity[index] = self.momentum * self.velocity[index] - self.learning_rate * dW_gpu           # Update velocity
+        self.velocity[index] = self.momentum * self.velocity[index] - self.learning_rate * dW           # Update velocity
         layer.weights += self.velocity[index] - self.learning_rate * self.reg_lambda * layer.weights    # Update weights
-        layer.biases -= self.learning_rate * db_gpu                                                     # Update biases
+        layer.biases -= self.learning_rate * db                                                         # Update biases
 
 class AdadeltaOptimizer:
     """
@@ -155,8 +122,8 @@ class AdadeltaOptimizer:
         Returns: None
         """
         for layer in layers:                                    # For each layer in the neural network..
-            self.E_g2.append(cp.zeros_like(layer.weights))      # Initialize running average of squared gradients
-            self.E_delta_x2.append(cp.zeros_like(layer.weights))# Initialize running average of squared parameter updates
+            self.E_g2.append(np.zeros_like(layer.weights))      # Initialize running average of squared gradients
+            self.E_delta_x2.append(np.zeros_like(layer.weights))# Initialize running average of squared parameter updates
 
     def update(self, layer, dW, db, index):
         """
@@ -168,27 +135,10 @@ class AdadeltaOptimizer:
             index (int): The index of the layer.
         Returns: None
         """
-        # Convert numpy arrays to cupy if needed
-        if hasattr(dW, 'get'):
-            dW_gpu = dW
-        else:
-            dW_gpu = cp.asarray(dW)
-            
-        if hasattr(db, 'get'):
-            db_gpu = db
-        else:
-            db_gpu = cp.asarray(db)
-            
-        # Ensure layer weights and biases are also CuPy arrays
-        if not hasattr(layer.weights, 'get'):
-            layer.weights = cp.asarray(layer.weights)
-        if not hasattr(layer.biases, 'get'):
-            layer.biases = cp.asarray(layer.biases)
-            
-        self.E_g2[index] = self.rho * self.E_g2[index] + (1 - self.rho) * cp.square(dW_gpu)  # Update running average of squared gradients
-        delta_x = - (cp.sqrt(self.E_delta_x2[index] + self.epsilon) / 
-                     cp.sqrt(self.E_g2[index] + self.epsilon)) * dW_gpu                     # Compute parameter update
-        self.E_delta_x2[index] = self.rho * self.E_delta_x2[index] + (1 - self.rho) * cp.square(delta_x)  # Update running average of squared parameter updates
+        self.E_g2[index] = self.rho * self.E_g2[index] + (1 - self.rho) * np.square(dW)  # Update running average of squared gradients
+        delta_x = - (np.sqrt(self.E_delta_x2[index] + self.epsilon) / 
+                     np.sqrt(self.E_g2[index] + self.epsilon)) * dW                     # Compute parameter update
+        self.E_delta_x2[index] = self.rho * self.E_delta_x2[index] + (1 - self.rho) * np.square(delta_x)  # Update running average of squared parameter updates
 
         layer.weights += delta_x - self.learning_rate * self.reg_lambda * layer.weights  # Update weights
-        layer.biases -= self.learning_rate * db_gpu                                     # Update biases
+        layer.biases -= self.learning_rate * db                                         # Update biases
