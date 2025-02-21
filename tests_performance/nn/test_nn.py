@@ -2,13 +2,13 @@ import os
 import sys
 import time
 import numpy as np
-import cupy as cp
+
 from utils import suppress_print
 
 # Change the working directory to the parent directory to allow importing the segadb package.
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-from sega_learn.neural_networks_cupy_dev import *
+from sega_learn.neural_networks import *
 
 def time_function(func, num_repeats, *args, **kwargs):
     times = []
@@ -195,7 +195,7 @@ def main():
         print(f"\nTiming results saved to {filename}")
 
     # Combine all results and save to CSV
-    output_filename = "tests_performance/nn_timing_results_cupy.csv"
+    output_filename = "tests_performance/nn/nn_timing_results.csv"
     save_timing_results(output_filename, nn_times, optimizer_times, loss_times)
 
 
@@ -217,8 +217,8 @@ def main():
     for dataset_size in DATASET_SIZES:
         print(f"Training on dataset size {dataset_size:,} samples")
 
-        X_small = cp.random.randn(dataset_size, layer_sizes[0])
-        y_small = cp.random.randint(0, layer_sizes[-1], size=(dataset_size,))
+        X_small = np.random.randn(dataset_size, layer_sizes[0])
+        y_small = np.random.randint(0, layer_sizes[-1], size=(dataset_size,))
         
         optimizer = AdamOptimizer(learning_rate=0.01)
         sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)  
@@ -232,11 +232,11 @@ def main():
         times.append((dataset_size, train_avg, train_stddev))
     
     # Save timing results to CSV
-    with open("tests_performance/nn_timing_results_cupy_train.csv", mode='w', newline='') as file:
+    with open("tests_performance/nn/nn_timing_results_train.csv", mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Dataset Size", "Average Time (s)", "Std Dev (s)"])
         writer.writerows(times)
-    print(f"\nTiming results saved to tests_performance/nn_timing_results_train.csv")
+    print(f"\nTiming results saved to tests_performance/nn/nn_timing_results_train.csv")
 
 
 if __name__ == "__main__":
