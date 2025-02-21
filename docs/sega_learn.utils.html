@@ -116,6 +116,14 @@ Returns:<br>
 -&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.<br>
 -&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.</span></dd></dl>
 
+<dl><dt><a name="DataPrep-find_categorical_columns"><strong>find_categorical_columns</strong></a>(data)</dt><dd><span class="code">Finds&nbsp;the&nbsp;indices&nbsp;of&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame&nbsp;or&nbsp;numpy&nbsp;array.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;data&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;checked.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;categorical_cols&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;indices&nbsp;of&nbsp;non-numerical&nbsp;columns.</span></dd></dl>
+
 <dl><dt><a name="DataPrep-k_split"><strong>k_split</strong></a>(X, y, k=5)</dt><dd><span class="code">Splits&nbsp;the&nbsp;data&nbsp;into&nbsp;k&nbsp;folds&nbsp;for&nbsp;cross-validation.<br>
 &nbsp;<br>
 Parameters:<br>
@@ -127,15 +135,15 @@ Returns:<br>
 -&nbsp;X_folds&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;feature&nbsp;columns.<br>
 -&nbsp;y_folds&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;label&nbsp;columns.</span></dd></dl>
 
-<dl><dt><a name="DataPrep-one_hot_encode"><strong>one_hot_encode</strong></a>(df, cols)</dt><dd><span class="code">One-hot&nbsp;encodes&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame.<br>
+<dl><dt><a name="DataPrep-one_hot_encode"><strong>one_hot_encode</strong></a>(data, cols)</dt><dd><span class="code">One-hot&nbsp;encodes&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame&nbsp;or&nbsp;numpy&nbsp;array.<br>
 Drops&nbsp;the&nbsp;original&nbsp;columns&nbsp;after&nbsp;encoding.<br>
 &nbsp;<br>
 Parameters:<br>
--&nbsp;df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;DataFrame&nbsp;to&nbsp;be&nbsp;encoded.<br>
+-&nbsp;data&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;encoded.<br>
 -&nbsp;cols&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;column&nbsp;indices&nbsp;to&nbsp;be&nbsp;encoded.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;DataFrame&nbsp;with&nbsp;one-hot&nbsp;encoded&nbsp;columns.</span></dd></dl>
+-&nbsp;data&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;with&nbsp;one-hot&nbsp;encoded&nbsp;columns.</span></dd></dl>
 
 <dl><dt><a name="DataPrep-prepare_data"><strong>prepare_data</strong></a>(csv_file, label_col_index, cols_to_encode=[], write_to_csv=True)</dt><dd><span class="code">Prepares&nbsp;the&nbsp;data&nbsp;by&nbsp;loading&nbsp;a&nbsp;CSV&nbsp;file,&nbsp;one-hot&nbsp;encoding&nbsp;non-numerical&nbsp;columns,<br>
 and&nbsp;optionally&nbsp;writing&nbsp;the&nbsp;prepared&nbsp;data&nbsp;to&nbsp;a&nbsp;new&nbsp;CSV&nbsp;file.<br>

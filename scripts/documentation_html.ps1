@@ -21,6 +21,10 @@ $neuralNetworksFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/neu
     "sega_learn.neural_networks.$($_.BaseName)"
 }
 
+# Get all Python files in the sega_learn/nearest_neighbors folder
+$nearestNeighborsFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/nearest_neighbors" | ForEach-Object {
+    "sega_learn.nearest_neighbors.$($_.BaseName)"
+}
 
 # Get all Python files in the sega_learn/utils folder
 $utilsFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/utils" | ForEach-Object {
@@ -28,7 +32,7 @@ $utilsFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/utils" | For
 }
 
 # Combine the lists of files
-$files = $clusteringFiles + $linearModelsFiles + $utilsFiles + $treesFiles + $neuralNetworksFiles
+$files = $clusteringFiles + $linearModelsFiles + $utilsFiles + $treesFiles + $neuralNetworksFiles + $nearestNeighborsFiles
 
 # Add the main sega_learn modules to the list of files to document
 $files += "sega_learn"

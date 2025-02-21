@@ -326,6 +326,16 @@ Parameters:<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;optimizer:&nbsp;An&nbsp;instance&nbsp;of&nbsp;the&nbsp;specified&nbsp;optimizer.</span></dd></dl>
 
+<dl><dt><a name="NeuralNetwork-create_scheduler"><strong>create_scheduler</strong></a>(self, scheduler_type, optimizer, **kwargs)</dt><dd><span class="code">Creates&nbsp;a&nbsp;learning&nbsp;rate&nbsp;scheduler&nbsp;instance&nbsp;based&nbsp;on&nbsp;the&nbsp;specified&nbsp;type&nbsp;and&nbsp;parameters.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;scheduler_type&nbsp;(str):&nbsp;The&nbsp;type&nbsp;of&nbsp;scheduler&nbsp;(e.g.,&nbsp;'step',&nbsp;'plateau',&nbsp;'exp').<br>
+&nbsp;&nbsp;&nbsp;&nbsp;optimizer:&nbsp;The&nbsp;optimizer&nbsp;instance&nbsp;to&nbsp;be&nbsp;used&nbsp;with&nbsp;the&nbsp;scheduler.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;**kwargs:&nbsp;Additional&nbsp;parameters&nbsp;for&nbsp;the&nbsp;scheduler.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;scheduler:&nbsp;An&nbsp;instance&nbsp;of&nbsp;the&nbsp;specified&nbsp;learning&nbsp;rate&nbsp;scheduler.</span></dd></dl>
+
 <dl><dt><a name="NeuralNetwork-evaluate"><strong>evaluate</strong></a>(self, X, y)</dt><dd><span class="code">Evaluates&nbsp;the&nbsp;performance&nbsp;of&nbsp;the&nbsp;neural&nbsp;network&nbsp;model&nbsp;on&nbsp;the&nbsp;given&nbsp;input&nbsp;data.<br>
 Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;input&nbsp;data&nbsp;for&nbsp;evaluation.<br>
@@ -338,7 +348,7 @@ Returns:<br>
 Args:&nbsp;X&nbsp;(ndarray):&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;input_size).<br>
 Returns:&nbsp;ndarray:&nbsp;Output&nbsp;predictions&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;output_size).</span></dd></dl>
 
-<dl><dt><a name="NeuralNetwork-train"><strong>train</strong></a>(self, X_train, y_train, X_test=None, y_test=None, optimizer=&lt;sega_learn.neural_networks.optimizers.AdamOptimizer object at 0x0000022C71260ED0&gt;, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
+<dl><dt><a name="NeuralNetwork-train"><strong>train</strong></a>(self, X_train, y_train, X_test=None, y_test=None, optimizer=&lt;sega_learn.neural_networks.optimizers.AdamOptimizer object at 0x000002DD91050090&gt;, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
 Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;features.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;labels.<br>
@@ -348,21 +358,21 @@ Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;epochs&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;training&nbsp;epochs&nbsp;(default:&nbsp;100).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;batch_size&nbsp;(int):&nbsp;Batch&nbsp;size&nbsp;for&nbsp;mini-batch&nbsp;gradient&nbsp;descent&nbsp;(default:&nbsp;32).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;early_stopping_threshold&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;epochs&nbsp;to&nbsp;wait&nbsp;for&nbsp;improvement&nbsp;in&nbsp;training&nbsp;loss&nbsp;before&nbsp;early&nbsp;stopping&nbsp;(default:&nbsp;5).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;lr_scheduler&nbsp;(Scheduler):&nbsp;Learning&nbsp;rate&nbsp;scheduler&nbsp;(default:&nbsp;None).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;p&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;print&nbsp;training&nbsp;progress&nbsp;(default:&nbsp;True).<br>
 Returns:&nbsp;None</span></dd></dl>
 
-<dl><dt><a name="NeuralNetwork-tune_hyperparameters"><strong>tune_hyperparameters</strong></a>(self, param_grid, num_layers_range, layer_size_range, output_size, X_train, y_train, X_val, y_val, optimizer_type, lr_range, epochs=100, batch_size=32)</dt><dd><span class="code">Performs&nbsp;hyperparameter&nbsp;tuning&nbsp;using&nbsp;grid&nbsp;search.<br>
+<dl><dt><a name="NeuralNetwork-tune_hyperparameters"><strong>tune_hyperparameters</strong></a>(self, param_grid, layers, output_size, X_train, y_train, X_val, y_val, optimizers, lr_range, epochs=100, batch_size=32)</dt><dd><span class="code">Performs&nbsp;hyperparameter&nbsp;tuning&nbsp;using&nbsp;grid&nbsp;search.<br>
 &nbsp;<br>
 Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;param_grid&nbsp;(dict):&nbsp;A&nbsp;dictionary&nbsp;where&nbsp;keys&nbsp;are&nbsp;parameter&nbsp;names&nbsp;and&nbsp;values&nbsp;are&nbsp;lists&nbsp;of&nbsp;values&nbsp;to&nbsp;try.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;num_layers_range&nbsp;(tuple):&nbsp;A&nbsp;tuple&nbsp;(min_layers,&nbsp;max_layers,&nbsp;step)&nbsp;for&nbsp;the&nbsp;number&nbsp;of&nbsp;layers.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;layer_size_range&nbsp;(tuple):&nbsp;A&nbsp;tuple&nbsp;(min_size,&nbsp;max_size,&nbsp;step)&nbsp;for&nbsp;the&nbsp;layer&nbsp;sizes.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layer&nbsp;sizes.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;output_size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;output&nbsp;layer.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;features.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;labels.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_val&nbsp;(numpy.ndarray):&nbsp;Validation&nbsp;data&nbsp;features.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_val&nbsp;(numpy.ndarray):&nbsp;Validation&nbsp;data&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;optimizer_type&nbsp;(str):&nbsp;The&nbsp;type&nbsp;of&nbsp;optimizer&nbsp;(e.g.,&nbsp;'SGD',&nbsp;'Adam').<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;optimizers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;optimizer&nbsp;types&nbsp;to&nbsp;try&nbsp;(e.g.,&nbsp;['Adam',&nbsp;'SGD',&nbsp;'Adadelta']).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;lr_range&nbsp;(tuple):&nbsp;A&nbsp;tuple&nbsp;(min_lr,&nbsp;max_lr,&nbsp;num_steps)&nbsp;for&nbsp;learning&nbsp;rates.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;epochs&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;training&nbsp;epochs&nbsp;(default:&nbsp;100).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;batch_size&nbsp;(int):&nbsp;Batch&nbsp;size&nbsp;for&nbsp;mini-batch&nbsp;gradient&nbsp;descent&nbsp;(default:&nbsp;32).<br>

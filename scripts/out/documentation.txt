@@ -21,6 +21,10 @@ wrote sega_learn.neural_networks.neuralNetwork.html
 wrote sega_learn.neural_networks.optimizers.html
 wrote sega_learn.neural_networks.schedulers.html
 wrote sega_learn.neural_networks.__init__.html
+wrote sega_learn.nearest_neighbors.base.html
+wrote sega_learn.nearest_neighbors.knn_classifier.html
+wrote sega_learn.nearest_neighbors.knn_regressor.html
+wrote sega_learn.nearest_neighbors.__init__.html
 wrote sega_learn.html
 wrote sega_learn.clustering.html
 wrote sega_learn.linear_models.html

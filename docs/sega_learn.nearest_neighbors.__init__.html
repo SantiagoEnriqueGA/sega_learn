@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.nearest_neighbors.__init__</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.nearest_neighbors.html" class="white">nearest_neighbors</a>.__init__</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="sega_learn.nearest_neighbors.base.html#KNeighborsBase">sega_learn.nearest_neighbors.base.KNeighborsBase</a>(<a href="abc.html#ABC">abc.ABC</a>)
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.nearest_neighbors.knn_classifier.html#KNeighborsClassifier">sega_learn.nearest_neighbors.knn_classifier.KNeighborsClassifier</a>
+</dt><dt class="heading-text"><a href="sega_learn.nearest_neighbors.knn_regressor.html#KNeighborsRegressor">sega_learn.nearest_neighbors.knn_regressor.KNeighborsRegressor</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="KNeighborsClassifier">class <strong>KNeighborsClassifier</strong></a>(<a href="sega_learn.nearest_neighbors.base.html#KNeighborsBase">sega_learn.nearest_neighbors.base.KNeighborsBase</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#KNeighborsClassifier">KNeighborsClassifier</a>(n_neighbors=5,&nbsp;distance_metric='euclidean',&nbsp;one_hot_encode=False,&nbsp;fp_precision=&amp;lt;class&nbsp;'numpy.float64'&amp;gt;)<br>
+&nbsp;<br>
+K-Nearest&nbsp;Neighbors&nbsp;classifier.<br>
+This&nbsp;class&nbsp;implements&nbsp;the&nbsp;k-nearest&nbsp;neighbors&nbsp;algorithm&nbsp;for&nbsp;classification.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.nearest_neighbors.knn_classifier.html#KNeighborsClassifier">KNeighborsClassifier</a></dd>
+<dd><a href="sega_learn.nearest_neighbors.base.html#KNeighborsBase">sega_learn.nearest_neighbors.base.KNeighborsBase</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="KNeighborsClassifier-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;the&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;provided&nbsp;data.<br>
+Parameters:&nbsp;<br>
+-&nbsp;X:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).&nbsp;The&nbsp;input&nbsp;data&nbsp;for&nbsp;which&nbsp;to&nbsp;predict&nbsp;the&nbsp;class&nbsp;labels.<br>
+Returns:<br>
+-&nbsp;predictions:&nbsp;array,&nbsp;shape&nbsp;(n_samples,).&nbsp;The&nbsp;predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Methods inherited from <a href="sega_learn.nearest_neighbors.base.html#KNeighborsBase">sega_learn.nearest_neighbors.base.KNeighborsBase</a>:<br>
+<dl><dt><a name="KNeighborsClassifier-__init__"><strong>__init__</strong></a>(self, n_neighbors=5, distance_metric='euclidean', one_hot_encode=False, fp_precision=&lt;class 'numpy.float64'&gt;)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="sega_learn.nearest_neighbors.base.html#KNeighborsBase">KNeighborsBase</a>&nbsp;class.<br>
+Parameters:<br>
+-&nbsp;n_neighbors:&nbsp;int,&nbsp;default=5.&nbsp;The&nbsp;number&nbsp;of&nbsp;neighbors&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;KNN&nbsp;algorithm.<br>
+-&nbsp;distance_metric:&nbsp;str,&nbsp;default='euclidean'.&nbsp;The&nbsp;distance&nbsp;metric&nbsp;to&nbsp;use&nbsp;for&nbsp;calculating&nbsp;distances.<br>
+-&nbsp;one_hot_encode:&nbsp;bool,&nbsp;default=False.&nbsp;Whether&nbsp;to&nbsp;apply&nbsp;one-hot&nbsp;encoding&nbsp;to&nbsp;the&nbsp;categorical&nbsp;columns.<br>
+-&nbsp;fp_precision:&nbsp;data&nbsp;type,&nbsp;default=np.float64.&nbsp;The&nbsp;floating&nbsp;point&nbsp;precision&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;calculations.</span></dd></dl>
+
+<dl><dt><a name="KNeighborsClassifier-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;using&nbsp;the&nbsp;training&nbsp;data.<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).&nbsp;The&nbsp;training&nbsp;data.<br>
+-&nbsp;y:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,).&nbsp;The&nbsp;target&nbsp;values.</span></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sega_learn.nearest_neighbors.base.html#KNeighborsBase">sega_learn.nearest_neighbors.base.KNeighborsBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="KNeighborsRegressor">class <strong>KNeighborsRegressor</strong></a>(<a href="sega_learn.nearest_neighbors.base.html#KNeighborsBase">sega_learn.nearest_neighbors.base.KNeighborsBase</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#KNeighborsRegressor">KNeighborsRegressor</a>(n_neighbors=5,&nbsp;distance_metric='euclidean',&nbsp;one_hot_encode=False,&nbsp;fp_precision=&amp;lt;class&nbsp;'numpy.float64'&amp;gt;)<br>
+&nbsp;<br>
+K-Nearest&nbsp;Neighbors&nbsp;classifier.<br>
+This&nbsp;class&nbsp;implements&nbsp;the&nbsp;k-nearest&nbsp;neighbors&nbsp;algorithm&nbsp;for&nbsp;regression.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.nearest_neighbors.knn_regressor.html#KNeighborsRegressor">KNeighborsRegressor</a></dd>
+<dd><a href="sega_learn.nearest_neighbors.base.html#KNeighborsBase">sega_learn.nearest_neighbors.base.KNeighborsBase</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="KNeighborsRegressor-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;the&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;provided&nbsp;data.<br>
+Parameters:&nbsp;<br>
+-&nbsp;X:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).&nbsp;The&nbsp;input&nbsp;data&nbsp;for&nbsp;which&nbsp;to&nbsp;predict&nbsp;the&nbsp;class&nbsp;labels.<br>
+Returns:<br>
+-&nbsp;predictions:&nbsp;array,&nbsp;shape&nbsp;(n_samples,).&nbsp;The&nbsp;predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Methods inherited from <a href="sega_learn.nearest_neighbors.base.html#KNeighborsBase">sega_learn.nearest_neighbors.base.KNeighborsBase</a>:<br>
+<dl><dt><a name="KNeighborsRegressor-__init__"><strong>__init__</strong></a>(self, n_neighbors=5, distance_metric='euclidean', one_hot_encode=False, fp_precision=&lt;class 'numpy.float64'&gt;)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="sega_learn.nearest_neighbors.base.html#KNeighborsBase">KNeighborsBase</a>&nbsp;class.<br>
+Parameters:<br>
+-&nbsp;n_neighbors:&nbsp;int,&nbsp;default=5.&nbsp;The&nbsp;number&nbsp;of&nbsp;neighbors&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;KNN&nbsp;algorithm.<br>
+-&nbsp;distance_metric:&nbsp;str,&nbsp;default='euclidean'.&nbsp;The&nbsp;distance&nbsp;metric&nbsp;to&nbsp;use&nbsp;for&nbsp;calculating&nbsp;distances.<br>
+-&nbsp;one_hot_encode:&nbsp;bool,&nbsp;default=False.&nbsp;Whether&nbsp;to&nbsp;apply&nbsp;one-hot&nbsp;encoding&nbsp;to&nbsp;the&nbsp;categorical&nbsp;columns.<br>
+-&nbsp;fp_precision:&nbsp;data&nbsp;type,&nbsp;default=np.float64.&nbsp;The&nbsp;floating&nbsp;point&nbsp;precision&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;calculations.</span></dd></dl>
+
+<dl><dt><a name="KNeighborsRegressor-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;using&nbsp;the&nbsp;training&nbsp;data.<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).&nbsp;The&nbsp;training&nbsp;data.<br>
+-&nbsp;y:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,).&nbsp;The&nbsp;target&nbsp;values.</span></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sega_learn.nearest_neighbors.base.html#KNeighborsBase">sega_learn.nearest_neighbors.base.KNeighborsBase</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>__all__</strong> = ['KNeighborsClassifier', 'KNeighborsRegressor']</td></tr></table>
+</body></html>

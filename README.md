@@ -30,6 +30,7 @@ For more detailed information on each module, see the following READMEs:
 - [Linear Models Module](sega_learn/linear_models/README.md)
 - [Clustering Module](sega_learn/clustering/README.md)
 - [Trees Module](sega_learn/trees/README.md)
+- [Nearest Neighbors Module](sega_learn/nearest_neighbors/README.md)
 - [Neural Networks Module](sega_learn/neural_networks/README.md)
 - [Utilities Module](sega_learn/utils/README.md)
 
@@ -65,6 +66,9 @@ The SEGA_LEARN library includes the following features:
 - **Random Forest Regressor**: Implements an ensemble regressor that fits multiple decision trees on random subsets of the data and averages their predictions.
 - **Gradient Boosted Regressor**: Implements a gradient boosted regressor that fits multiple decision trees sequentially, each one correcting the errors of the previous trees.
 
+### Nearest Neighbors
+- **KNeighborsClassifier**: Implements the K-Nearest Neighbors algorithm for classification tasks.
+- **KNeighborsRegressor**: Implements the K-Nearest Neighbors algorithm for regression tasks.
 
 ### Utilities
 - **Data Preparation**: Implements utility functions for data preparation like train-test split, normalization, and standardization.
@@ -109,6 +113,10 @@ The SEGA_LEARN library includes the following features:
 - [`randomForestClassifier.py`](examples/trees/randomForestClassifier.py): Demonstrates Random Forest Classifier.
 - [`randomForestRegressor.py`](examples/trees/randomForestRegressor.py): Demonstrates Random Forest Regressor.
 - [`regressorTree.py`](examples/trees/regressorTree.py): Demonstrates Regressor Tree.
+
+### Nearest Neighbors
+- [`nearestNeighborsClassifier.py`](examples/nearest_neighbors/nearestNeighborsClassifier.py): Demonstrates KNeighborsClassifier.
+- [`nearestNeighborsRegressor.py`](examples/nearest_neighbors/nearestNeighborsRegressor.py): Demonstrates KNeighborsRegressor.
 
 ### Utils
 - [`votingRegressor.py`](examples/utils/votingRegressor.py): Demonstrates Voting Regressor.
@@ -162,6 +170,7 @@ The following are the results of running the tests:
 Testing Imports - Clustering
 ..Testing Imports - Main Package
 ..Testing Imports - Linear Models
+..Testing Imports - Nearest Neighbors
 ..Testing Imports - Neural Networks
 ..Testing Imports - Trees
 ..Testing DBSCAN
@@ -174,7 +183,9 @@ Testing Imports - Clustering
 ..........Testing Quadratic Discriminant Analysis
 .......Testing RANSAC Regression Model
 ...........Testing Ridge Regression Model
-.........Testing the AdadeltaOptimizer class
+.........Testing KNeighborsClassifierKNeighborsBase Class
+............Testing KNeighborsRegressor Class
+............Testing the AdadeltaOptimizer class
 ..Testing the AdamOptimizer class
 ..Testing the BCEWithLogitsLoss class
 ..Testing the CrossEntropyLoss class
@@ -189,7 +200,7 @@ Testing Imports - Clustering
 .....Testing Regressor Tree Utility
 .................Testing Data Augmentation
 ......................Testing Data Prep
-......Testing GridSearchCV
+...............Testing GridSearchCV
 ...........Testing Metrics
 ...............Testing Model Selection Utils
 ..........Testing Polynomial Transform
@@ -209,14 +220,16 @@ Testing Imports - Clustering
 .Testing example file: ransac.py
 .Testing example file: ransac_vis.py
 .Testing example file: ridge.py
+.Testing example file: nearestNeighborsClassifier.py
+.Testing example file: nearestNeighborsRegressor.py
 .Testing example file: neuralNetwork_cancer.py
 .Testing example file: neuralNetwork_classifier.py
 .Testing example file: neuralNetwork_classifier_hyper.py
-Tuning Hyperparameters: 100%|███████████████| 2/2 [00:04<00:00,  2.15s/it]
+Tuning Hyperparameters: 100%|██████████████████| 2/2 [00:04<00:00,  2.30s/it]
 .Testing example file: neuralNetwork_diabetes.py
 .Testing example file: neuralNetwork_hyper.py
-Tuning Hyperparameters: 100%|███████████████| 1/1 [00:00<00:00,  1.11it/s]
-Tuning Hyperparameters: 100%|███████████████| 1/1 [00:00<00:00,  1.39it/s]
+Tuning Hyperparameters: 100%|██████████████████| 1/1 [00:01<00:00,  1.11s/it]
+Tuning Hyperparameters: 100%|██████████████████| 1/1 [00:00<00:00,  1.11it/s]
 .Testing example file: neuralNetwork_iris.py
 .Testing example file: gradientBoostedRegressor.py
 .Testing example file: randomForestClassifier.py
@@ -240,7 +253,9 @@ Tuning Hyperparameters: 100%|███████████████| 1/1 
 .Testing example file: votingRegressor.py
 .
 ----------------------------------------------------------------------
-Ran 328 tests in 123.922s
+Ran 365 tests in 129.307s
+
+OK
 ```
 
 ## Installation
