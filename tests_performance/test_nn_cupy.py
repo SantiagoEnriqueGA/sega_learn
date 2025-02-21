@@ -201,42 +201,42 @@ def main():
 
     # Time train (single epoch) for increasing dataset size
     # ---------------------------------------------------------------------------------------------
-    # times = []
-    # NUM_REPEATS = 5
-    # DATASET_SIZES = [1_000, 10_000, 100_000, 1_000_000]
-    # LAYER_SIZES_MULTIPLIER = 1
+    times = []
+    NUM_REPEATS = 5
+    DATASET_SIZES = [1_000, 5_000, 10_000, 50_000, 100_000]
+    LAYER_SIZES_MULTIPLIER = 1
 
-    # layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
-    # nn = NeuralNetwork(
-    #     layer_sizes=layer_sizes,
-    #     dropout_rate=0.5,
-    #     reg_lambda=0.01,
-    #     activations=['relu', 'relu', 'softmax'],
-    # )
+    layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
+    nn = NeuralNetwork(
+        layer_sizes=layer_sizes,
+        dropout_rate=0.5,
+        reg_lambda=0.01,
+        activations=['relu', 'relu', 'softmax'],
+    )
 
-    # for dataset_size in DATASET_SIZES:
-    #     print(f"Training on dataset size {dataset_size:,} samples")
+    for dataset_size in DATASET_SIZES:
+        print(f"Training on dataset size {dataset_size:,} samples")
 
-    #     X_small = cp.random.randn(dataset_size, layer_sizes[0])
-    #     y_small = cp.random.randint(0, layer_sizes[-1], size=(dataset_size,))
+        X_small = cp.random.randn(dataset_size, layer_sizes[0])
+        y_small = cp.random.randint(0, layer_sizes[-1], size=(dataset_size,))
         
-    #     optimizer = AdamOptimizer(learning_rate=0.01)
-    #     sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)  
-    #     scheduler = lr_scheduler_plateau(sub_scheduler, patience=5, threshold=0.001)  
-    #     train_avg, train_stddev, _ = time_function(nn.train, 
-    #                                                NUM_REPEATS, 
-    #                                                X_small, y_small,
-    #                                                epochs=1, batch_size=32, 
-    #                                                optimizer=optimizer, lr_scheduler=scheduler, 
-    #                                                p=False)
-    #     times.append((dataset_size, train_avg, train_stddev))
+        optimizer = AdamOptimizer(learning_rate=0.01)
+        sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)  
+        scheduler = lr_scheduler_plateau(sub_scheduler, patience=5, threshold=0.001)  
+        train_avg, train_stddev, _ = time_function(nn.train, 
+                                                   NUM_REPEATS, 
+                                                   X_small, y_small,
+                                                   epochs=1, batch_size=32, 
+                                                   optimizer=optimizer, lr_scheduler=scheduler, 
+                                                   p=False)
+        times.append((dataset_size, train_avg, train_stddev))
     
-    # # Save timing results to CSV
-    # with open("tests_performance/nn_timing_results_cupy_train.csv", mode='w', newline='') as file:
-    #     writer = csv.writer(file)
-    #     writer.writerow(["Dataset Size", "Average Time (s)", "Std Dev (s)"])
-    #     writer.writerows(times)
-    # print(f"\nTiming results saved to tests_performance/nn_timing_results_train.csv")
+    # Save timing results to CSV
+    with open("tests_performance/nn_timing_results_cupy_train.csv", mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Dataset Size", "Average Time (s)", "Std Dev (s)"])
+        writer.writerows(times)
+    print(f"\nTiming results saved to tests_performance/nn_timing_results_train.csv")
 
 
 if __name__ == "__main__":
