@@ -14,10 +14,6 @@ from utils import suppress_print
 
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from sega_learn.linear_models import *
-from sega_learn.linear_models import make_data
-from utils import synthetic_data_regression, suppress_print
-
 from sega_learn.clustering import *
 from utils import suppress_print
 
@@ -142,7 +138,7 @@ def main():
     NUM_RUNS = 10
 
     models_to_test = [
-        # (cluster.KMeans, KMeans, 6),
+        (cluster.KMeans, KMeans, 6),
         (cluster.DBSCAN, DBSCAN, 5)
     ]
 
