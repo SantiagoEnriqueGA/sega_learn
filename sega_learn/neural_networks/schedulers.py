@@ -25,12 +25,12 @@ class lr_scheduler_step:
         Returns: None
         """
         if epoch % self.lr_decay_epoch == 0 and epoch > 0:
-            print(f"  --Decaying learning rate stepped at epoch {epoch} from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * self.lr_decay}")
             self.optimizer.learning_rate *= self.lr_decay
+            return f"  --Decaying learning rate stepped at epoch {epoch} from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * self.lr_decay}"
             
     def reduce(self):
-        print(f"  --Decaying learning rate from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * self.lr_decay}")
         self.optimizer.learning_rate *= self.lr_decay
+        return f"  --Decaying learning rate from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * self.lr_decay}"
 
 class lr_scheduler_exp:
     """
@@ -53,12 +53,12 @@ class lr_scheduler_exp:
         Returns: None
         """
         if epoch % self.lr_decay_epoch == 0 and epoch > 0:
-            print(f"  --Decaying learning rate exponentially at epoch {epoch} from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * np.exp(-self.lr_decay * epoch)}")
             self.optimizer.learning_rate *= np.exp(-self.lr_decay * epoch)
+            return f"  --Decaying learning rate exponentially at epoch {epoch} from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * np.exp(-self.lr_decay * epoch)}"
     
     def reduce(self):
-        print(f"  --Decaying learning rate exponentially from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * np.exp(-self.lr_decay)}")
         self.optimizer.learning_rate *= np.exp(-self.lr_decay)
+        return f"  --Decaying learning rate exponentially from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * np.exp(-self.lr_decay)}"
 
 class lr_scheduler_plateau:
     """
@@ -92,6 +92,6 @@ class lr_scheduler_plateau:
         else:
             self.wait += 1
             if self.wait >= self.patience:
-                print(f"  --Plateau learning rate scheduler triggered, reducing learning rate")
                 self.lr_scheduler.reduce()
                 self.wait = 0
+                return f"  --Plateau learning rate scheduler triggered, reducing learning rate"

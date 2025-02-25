@@ -33,7 +33,7 @@ class TestNeuralNetwork(unittest.TestCase):
         self.X = np.random.randn(100, 2)                                                        # Example data
         self.y = np.random.randint(0, 2, (100, 1))                                              # Example labels
         with suppress_print():
-            self.nn.train(self.X, self.y, self.X, self.y, self.optimizer, epochs=1, batch_size=32)  # Train the model
+            self.nn.train(self.X, self.y, self.X, self.y, self.optimizer, epochs=1, batch_size=32, use_tqdm=False)  
      
     def test_apply_dropout(self):
         A = np.ones((10, 10))
@@ -58,7 +58,7 @@ class TestNeuralNetwork(unittest.TestCase):
 
     def test_train(self):
         with suppress_print():
-            self.nn.train(self.X, self.y, self.X, self.y, self.optimizer, epochs=1, batch_size=32)
+            self.nn.train(self.X, self.y, self.X, self.y, self.optimizer, epochs=1, batch_size=32, use_tqdm=False)
         accuracy, predicted = self.nn.evaluate(self.X, self.y)      # Evaluate the model
         loss = self.nn.calculate_loss(self.X, self.y)               # Calculate loss
         self.assertTrue(0 <= accuracy <= 1)                         # Check accuracy, range

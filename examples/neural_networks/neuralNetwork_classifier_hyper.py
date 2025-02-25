@@ -27,18 +27,17 @@ def hyper_train_and_evaluate_model(X, y,
 
     # Hyperparameter tuning with Adam optimizer
     best_params, best_accuracy = nn.tune_hyperparameters(
+        X_train, y_train, X_test, y_test,
         param_grid,
-        layers,
-        output_size,
-        X_train,
-        y_train,
-        X_test,
-        y_test,
-        optimizers=optimizers,
+        layer_configs=layers,
+        optimizer_types=optimizers,
         lr_range=lr_range,
         epochs=epochs,
         batch_size=batch_size
     )
+
+    # Create the optimizer with the best parameters
+    best_optimizer = nn._create_optimizer(best_params['optimizer'], best_params['learning_rate'])
 
     # Train the final model with best parameters
     nn = NeuralNetwork([input_size] + best_params['layers'][1:-1] + [output_size], 
@@ -46,7 +45,7 @@ def hyper_train_and_evaluate_model(X, y,
                        reg_lambda=best_params['reg_lambda'],
                        activations=['tanh'] * (len(best_params['layers']) - 1) + ['softmax'])
                        
-    nn.train(X_train, y_train, X_test, y_test, epochs=epochs, batch_size=batch_size, optimizer=best_params['optimizer'])
+    nn.train(X_train, y_train, X_test, y_test, epochs=epochs, batch_size=batch_size, optimizer=best_optimizer)
 
     # Evaluate the Model
     test_accuracy, y_pred = nn.evaluate(X_test, y_test)

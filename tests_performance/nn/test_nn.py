@@ -90,7 +90,7 @@ def time_nn_base(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
                                                X_small, y_small,
                                                epochs=1, batch_size=32, 
                                                optimizer=optimizer, lr_scheduler=scheduler, 
-                                               p=False)
+                                               p=False, use_tqdm=False)
     nn_times['train'] = (train_avg, train_stddev)
     print(f"{'train (X,y Reduced)':<19} : {train_avg:.6f} seconds ± {train_stddev:.6f} seconds")
 
@@ -243,31 +243,10 @@ def time_nn_epoch(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[1_000,
                                                    X_small, y_small,
                                                    epochs=1, batch_size=32, 
                                                    optimizer=optimizer, lr_scheduler=scheduler, 
-                                                   p=False)
+                                                   p=False, use_tqdm=False)
         times.append((dataset_size, train_avg, train_stddev))
         
-        print(f"{dataset_size:<20,}: {train_avg:.6f} seconds ± {train_stddev:.6f} seconds")
-    
-    
-    # # Sleep to ensure not affecting the next timing
-    # time.sleep(30)
-    # print("-" * 70)
-    # for dataset_size in DATASET_SIZES:
-    #     X_small = np.random.randn(dataset_size, layer_sizes[0])
-    #     y_small = np.random.randint(0, layer_sizes[-1], size=(dataset_size,))
-        
-    #     optimizer = AdamOptimizer(learning_rate=0.01)
-    #     sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)  
-    #     scheduler = lr_scheduler_plateau(sub_scheduler, patience=5, threshold=0.001)  
-    #     train_avg, train_stddev, _ = time_function(nn.train, 
-    #                                                NUM_REPEATS, 
-    #                                                X_small, y_small,
-    #                                                epochs=1, batch_size=32, 
-    #                                                optimizer=optimizer, lr_scheduler=scheduler, 
-    #                                                p=False, n_jobs=-1)
-    #     times.append((dataset_size, train_avg, train_stddev))
-        
-    #     print(f"{dataset_size:<20,}: {train_avg:.6f} seconds ± {train_stddev:.6f} seconds")
+        print(f"{dataset_size:<20,}: {train_avg:.6f} seconds ± {train_stddev:.6f} seconds")  
     
     if save_csv:
         # Save timing results to CSV
@@ -285,5 +264,3 @@ if __name__ == "__main__":
     time_nn_optimizer(num_repeats=5)
     time_nn_loss(num_repeats=5)
     time_nn_epoch(num_repeats=5, save_csv=False)
-    
-    # time_nn_epoch(num_repeats=1, save_csv=False, dataset_sizes=[1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000], layer_sizes_multiplier=2)

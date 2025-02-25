@@ -12,10 +12,14 @@ class CrossEntropyLoss:
         Calculate the cross entropy loss.
         Args:
             logits (np.ndarray): The logits (predicted values) of shape (num_samples, num_classes).
-            targets (np.ndarray): The target labels of shape (num_samples, num_classes).
+            targets (np.ndarray): The target labels of shape (num_samples,).
         Returns:
             float: The cross entropy loss.
-        """      
+        """
+        # One-hot encode targets if they are not already
+        if targets.ndim == 1:
+            targets = np.eye(logits.shape[1])[targets]
+        
         exp_logits = np.exp(logits - np.max(logits, axis=1, keepdims=True)) # Exponential of logits, subtract max to prevent overflow
         probs = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)      # Probabilities from logits
         loss = -np.sum(targets * np.log(probs + 1e-15)) / logits.shape[0]   # Cross-entropy loss

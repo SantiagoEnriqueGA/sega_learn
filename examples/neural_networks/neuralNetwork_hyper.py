@@ -57,26 +57,23 @@ def hyper_train_and_evaluate_model(X, y ,X_train, X_test, y_train, y_test,
 
     # Hyperparameter tuning with Adam optimizer
     best_params, best_accuracy = nn.tune_hyperparameters(
+        X_train, y_train, X_test, y_test,
         param_grid,
-        layers,
-        output_size,
-        X_train,
-        y_train,
-        X_test,
-        y_test,
-        optimizers=optimizers,
+        layer_configs=layers,
+        optimizer_types=optimizers,
         lr_range=lr_range,
         epochs=epochs,
         batch_size=batch_size
     )
 
-    print(f"Best parameters: {best_params} with accuracy: {best_accuracy:.4f}")
+    # Create the optimizer with the best parameters
+    best_optimizer = nn._create_optimizer(best_params['optimizer'], best_params['learning_rate'])
 
     # Train the final model with best parameters
     nn = NeuralNetwork([input_size] + best_params['layers'][1:-1] + [output_size], 
                        dropout_rate=best_params['dropout_rate'], 
                        reg_lambda=best_params['reg_lambda'])
-    nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, epochs=epochs, batch_size=batch_size)
+    nn.train(X_train, y_train, X_test, y_test, optimizer=best_optimizer, epochs=epochs, batch_size=batch_size)
 
     # Evaluate the Model
     test_accuracy, y_pred = nn.evaluate(X_test, y_test)
@@ -85,7 +82,7 @@ def hyper_train_and_evaluate_model(X, y ,X_train, X_test, y_train, y_test,
     print("Classification Report:")
     print(classification_report(y_test, y_pred, zero_division=0))
 
-def main(diabetes=True, cancer=True, test_case=False):
+def main(diabetes=True, cancer=True, test_case=True):
     # Define parameter grid and tuning ranges
     param_grid = {
         'dropout_rate': [0.1, 0.2, 0.3],
