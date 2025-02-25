@@ -85,10 +85,6 @@ class NeuralNetwork:
         Parameters: A: CuPy.ndarray: Input array to apply dropout regularization to.
         Returns: CuPy.ndarray: Array with dropout regularization applied.
         """
-        # Convert numpy array to CuPy if needed
-        if isinstance(A, np.ndarray):
-            A = cp.asarray(A)
-
         if self.dropout_rate > 0:                           # If dropout rate is greater than 0
             keep_prob = 1 - self.dropout_rate               # Calculate keep probability
             mask = cp.random.rand(*A.shape) < keep_prob     # Create a mask for the dropout
@@ -237,9 +233,7 @@ class NeuralNetwork:
             loss_fn = BCEWithLogitsLoss()
             loss = loss_fn(outputs, y)
         
-        # loss += self.reg_lambda * cp.sum([cp.sum(layer.weights**2) for layer in self.layers])   # Loss with L2 regularization
-        loss += self.reg_lambda * cp.sum(cp.array([cp.sum(layer.weights**2) for layer in self.layers]))
-
+        loss += self.reg_lambda * cp.sum([cp.sum(layer.weights**2) for layer in self.layers])   # Loss with L2 regularization
         
         return float(loss.get()) if hasattr(loss, 'get') else float(loss)  # Convert CuPy scalar to regular Python float
 

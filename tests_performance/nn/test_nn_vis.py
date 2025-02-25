@@ -4,8 +4,8 @@ import seaborn as sns
 import numpy as np
 
 # Load the CSV files
-cpu_results = pd.read_csv("tests_performance/nn_timing_results.csv")
-cupy_results = pd.read_csv("tests_performance/nn_timing_results_cupy.csv")
+cpu_results = pd.read_csv("tests_performance/nn/nn_timing_results.csv")
+cupy_results = pd.read_csv("tests_performance/nn/nn_timing_results_cupy.csv")
 
 # Add a column to distinguish CPU and CuPy results
 cpu_results["Implementation"] = "CPU"

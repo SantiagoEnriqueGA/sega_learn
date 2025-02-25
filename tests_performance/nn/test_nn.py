@@ -1,9 +1,8 @@
 import os
 import sys
 import time
+import csv
 import numpy as np
-
-from utils import suppress_print
 
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -21,13 +20,13 @@ def time_function(func, num_repeats, *args, **kwargs):
     stddev_time = np.std(times)
     return avg_time, stddev_time, result
 
-def main():
-    NUM_REPEATS = 5
+def time_nn_base(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
+    NUM_REPEATS = num_repeats
     
     # Neural Network Timing
     # ---------------------------------------------------------------------------------------------
-    LAYER_SIZES_MULTIPLIER = 5
-    DATASET_SIZE = 100_000
+    LAYER_SIZES_MULTIPLIER = layer_sizes_multiplier
+    DATASET_SIZE = dataset_size
     
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
     nn = NeuralNetwork(
@@ -91,10 +90,14 @@ def main():
             
         print(f"{func_name:<20}: {avg_time:.6f} seconds ± {stddev_time:.6f} seconds")
 
-    
+    return nn_times
+
+
+def time_nn_optimizer(num_repeats=5, layer_sizes_multiplier=25):
     # Optimizer Timing
     # ---------------------------------------------------------------------------------------------
-    LAYER_SIZES_MULTIPLIER = 25
+    NUM_REPEATS = num_repeats
+    LAYER_SIZES_MULTIPLIER = layer_sizes_multiplier
     
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 75, 50, 25]]
     nn = NeuralNetwork(
@@ -125,7 +128,7 @@ def main():
         optimizer_times[f'{name}_update'] = (update_avg, update_stddev)
 
     # Print the optimizer timing results
-    print(f"\n\nTiming results for Optimizer methods (averaged over {NUM_REPEATS} runs):")
+    print(f"\nTiming results for Optimizer methods (averaged over {NUM_REPEATS} runs):")
     print(f"Performance for Layer sizes: {layer_sizes}")
     print("-" * 100)    
     print(f"{'Optimizer Function':<25}: {'Average Time (s)':<16} {'±  Std Dev (s)'}")
@@ -140,12 +143,16 @@ def main():
     for func_name, (avg_time, stddev_time) in optimizer_times.items():
         if 'update' in func_name:
             print(f"{func_name:<25}: {avg_time:.6f} seconds ± {stddev_time:.6f} seconds")
+
+    return optimizer_times
+
     
-    
+def time_nn_loss(num_repeats=5, layer_sizes_multiplier=10, dataset_size=1_000_000):
     # Loss Function Timing
     # ---------------------------------------------------------------------------------------------
-    LAYER_SIZES_MULTIPLIER = 10
-    DATASET_SIZE = 1_000_000
+    NUM_REPEATS = num_repeats
+    LAYER_SIZES_MULTIPLIER = layer_sizes_multiplier
+    DATASET_SIZE = dataset_size
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
 
     loss_functions = {
@@ -166,7 +173,7 @@ def main():
         loss_times[name] = (loss_avg, loss_stddev)
 
     # Print the loss function timing results
-    print(f"\n\nTiming results for Loss functions (averaged over {NUM_REPEATS} runs):")
+    print(f"\nTiming results for Loss functions (averaged over {NUM_REPEATS} runs):")
     print(f"Performance for Layer sizes: {layer_sizes}, Dataset size: {DATASET_SIZE:,} samples")
     print("-" * 100)    
     print(f"{'Loss Function':<25}: {'Average Time (s)':<16} {'±  Std Dev (s)'}")
@@ -174,11 +181,11 @@ def main():
     for func_name, (avg_time, stddev_time) in loss_times.items():
         print(f"{func_name:<25}: {avg_time:.6f} seconds ± {stddev_time:.6f} seconds")
 
+    return loss_times
 
+def combine_timing_results(nn_times, optimizer_times, loss_times):
     # Combine all timing results into a single dictionary and save to a csv file
     # ---------------------------------------------------------------------------------------------
-    import csv
-
     def save_timing_results(filename, *timing_dicts):
         """Combines multiple timing dictionaries and saves them to a CSV file."""
         combined_results = []
@@ -199,13 +206,14 @@ def main():
     save_timing_results(output_filename, nn_times, optimizer_times, loss_times)
 
 
+def time_nn_epoch(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[1_000, 5_000, 10_000, 50_000, 100_000], save_csv=True):
     # Time train (single epoch) for increasing dataset size
     # ---------------------------------------------------------------------------------------------
-    times = []
-    NUM_REPEATS = 5
-    DATASET_SIZES = [1_000, 5_000, 10_000, 50_000, 100_000]
-    LAYER_SIZES_MULTIPLIER = 1
+    NUM_REPEATS = num_repeats
+    DATASET_SIZES = dataset_sizes
+    LAYER_SIZES_MULTIPLIER = layer_sizes_multiplier
 
+    times = []
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
     nn = NeuralNetwork(
         layer_sizes=layer_sizes,
@@ -231,14 +239,18 @@ def main():
                                                    p=False)
         times.append((dataset_size, train_avg, train_stddev))
     
-    # Save timing results to CSV
-    with open("tests_performance/nn/nn_timing_results_train.csv", mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["Dataset Size", "Average Time (s)", "Std Dev (s)"])
-        writer.writerows(times)
-    print(f"\nTiming results saved to tests_performance/nn/nn_timing_results_train.csv")
+    if save_csv:
+        # Save timing results to CSV
+        with open("tests_performance/nn/nn_timing_results_train.csv", mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Dataset Size", "Average Time (s)", "Std Dev (s)"])
+            writer.writerows(times)
+        print(f"\nTiming results saved to tests_performance/nn/nn_timing_results_train.csv")
+    
+    return times
 
 
 if __name__ == "__main__":
-    main()
+    combine_timing_results(time_nn_base(), time_nn_optimizer(), time_nn_loss())
+    time_nn_epoch()
 
