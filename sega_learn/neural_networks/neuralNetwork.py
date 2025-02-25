@@ -2,8 +2,8 @@ from .loss import CrossEntropyLoss, BCEWithLogitsLoss
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
 from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 
-
 import numpy as np
+from joblib import Parallel, delayed
 
 class NeuralNetwork:
     """
@@ -115,7 +115,7 @@ class NeuralNetwork:
 
             self.layers[i].gradients = (dW, db)                                                     # Store the gradients
 
-    def train(self, X_train, y_train, X_test=None, y_test=None, optimizer=AdamOptimizer(learning_rate=0.0001), epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True):
+    def train(self, X_train, y_train, X_test=None, y_test=None, optimizer=AdamOptimizer(learning_rate=0.0001), epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True, n_jobs=1):
         """
         Trains the neural network model.
         Parameters:
@@ -129,6 +129,7 @@ class NeuralNetwork:
             - early_stopping_threshold (int): Number of epochs to wait for improvement in training loss before early stopping (default: 5).
             - lr_scheduler (Scheduler): Learning rate scheduler (default: None).
             - p (bool): Whether to print training progress (default: True).
+            - n_jobs (int): The number of jobs to run in parallel (default: -1, using all processors).
         Returns: None
         """
         optimizer.initialize(self.layers)   # Initialize the optimizer
@@ -142,16 +143,18 @@ class NeuralNetwork:
             np.random.shuffle(indices)                              # Shuffle indices
             X_train, y_train = X_train[indices], y_train[indices]   # Shuffle the training data
 
-            for i in range(0, X_train.shape[0], batch_size):        # Loop through the training data in batches
+            def process_batch(i):
                 X_batch = X_train[i:i+batch_size]                   # X of the current batch
                 y_batch = y_train[i:i+batch_size]                   # y of the current batch
 
-                outputs = self.forward(X_batch)                     # Perform forward pass, get predictions
+                outputs = self.forward(X_batch)                     # Perform forward pass, get predictions       
                 self.backward(y_batch)                              # Perform backward pass, calculate gradients
 
                 for idx, layer in enumerate(self.layers):   # For each layer in the neural network..
                     dW, db = layer.gradients                # Get the gradients, weights and biases
                     optimizer.update(layer, dW, db, idx)    # Update the weights and biases using the optimizer
+
+            Parallel(n_jobs=n_jobs)(delayed(process_batch)(i) for i in range(0, X_train.shape[0], batch_size))
 
             # Calculate training loss and accuracy
             train_loss = self.calculate_loss(X_train, y_train)

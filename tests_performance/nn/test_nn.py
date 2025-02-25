@@ -4,6 +4,10 @@ import time
 import csv
 import numpy as np
 
+
+# Set seed for reproducibility
+np.random.seed(2)
+
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
@@ -27,7 +31,7 @@ def time_nn_base(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
     # ---------------------------------------------------------------------------------------------
     LAYER_SIZES_MULTIPLIER = layer_sizes_multiplier
     DATASET_SIZE = dataset_size
-    
+
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
     nn = NeuralNetwork(
         layer_sizes=layer_sizes,
@@ -39,28 +43,39 @@ def time_nn_base(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
     X = np.random.randn(DATASET_SIZE, layer_sizes[0])
     y = np.random.randint(0, layer_sizes[-1], size=(DATASET_SIZE,))
 
+    print(f"\nTiming results for NeuralNetwork methods (averaged over {NUM_REPEATS} runs):")
+    print(f"Performance for Layer sizes: {layer_sizes}, Dataset size: {DATASET_SIZE:,} samples")
+    print("-" * 100)    
+    print(f"{'Function':<19} : {'Average Time (s)':<16} {'±  Std Dev (s)'}")
+    print("=" * 70)
+
     nn_times = {}
     
     # Time forward pass
     forward_avg, forward_stddev, _ = time_function(nn.forward, NUM_REPEATS, X)
     nn_times['forward'] = (forward_avg, forward_stddev)
+    print(f"{'forward':<19} : {forward_avg:.6f} seconds ± {forward_stddev:.6f} seconds")
 
     # Time apply_dropout
     apply_dropout_avg, apply_dropout_stddev, _ = time_function(nn.apply_dropout, NUM_REPEATS, X)
     nn_times['apply_dropout'] = (apply_dropout_avg, apply_dropout_stddev)
+    print(f"{'apply_dropout':<19} : {apply_dropout_avg:.6f} seconds ± {apply_dropout_stddev:.6f} seconds")
 
     # Time backward pass
     nn.forward(X)  # Ensure forward pass is done before backward pass
     backward_avg, backward_stddev, _ = time_function(nn.backward, NUM_REPEATS, y)
     nn_times['backward'] = (backward_avg, backward_stddev)
+    print(f"{'backward':<19} : {backward_avg:.6f} seconds ± {backward_stddev:.6f} seconds")
 
     # Time calculate_loss
     calculate_loss_avg, calculate_loss_stddev, _ = time_function(nn.calculate_loss, NUM_REPEATS, X, y)
     nn_times['calculate_loss'] = (calculate_loss_avg, calculate_loss_stddev)
+    print(f"{'calculate_loss':<19} : {calculate_loss_avg:.6f} seconds ± {calculate_loss_stddev:.6f} seconds")
 
     # Time evaluate
     evaluate_avg, evaluate_stddev, _ = time_function(nn.evaluate, NUM_REPEATS, X, y)
     nn_times['evaluate'] = (evaluate_avg, evaluate_stddev)
+    print(f"{'evaluate':<19} : {evaluate_avg:.6f} seconds ± {evaluate_stddev:.6f} seconds")
 
     # Time train (single epoch)
     # Use a smaller dataset for training to avoid long training times DATASET_SIZE/10
@@ -68,8 +83,8 @@ def time_nn_base(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
     y_small = np.random.randint(0, layer_sizes[-1], size=(DATASET_SIZE // 10,))
     
     optimizer = AdamOptimizer(learning_rate=0.01)
-    sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)  
-    scheduler = lr_scheduler_plateau(sub_scheduler, patience=5, threshold=0.001)  
+    sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=100)  
+    scheduler = lr_scheduler_plateau(sub_scheduler, patience=100, threshold=0.001)  
     train_avg, train_stddev, _ = time_function(nn.train, 
                                                NUM_REPEATS, 
                                                X_small, y_small,
@@ -77,18 +92,7 @@ def time_nn_base(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
                                                optimizer=optimizer, lr_scheduler=scheduler, 
                                                p=False)
     nn_times['train'] = (train_avg, train_stddev)
-
-    # Print the timing results
-    print(f"\nTiming results for NeuralNetwork methods (averaged over {NUM_REPEATS} runs):")
-    print(f"Performance for Layer sizes: {layer_sizes}, Dataset size: {DATASET_SIZE:,} samples")
-    print("-" * 100)    
-    print(f"{'Function':<19} : {'Average Time (s)':<16} {'±  Std Dev (s)'}")
-    print("=" * 70)
-    for func_name, (avg_time, stddev_time) in nn_times.items():
-        if func_name == 'train':
-            func_name = 'train (X,y Reduced)'
-            
-        print(f"{func_name:<20}: {avg_time:.6f} seconds ± {stddev_time:.6f} seconds")
+    print(f"{'train (X,y Reduced)':<19} : {train_avg:.6f} seconds ± {train_stddev:.6f} seconds")
 
     return nn_times
 
@@ -222,9 +226,12 @@ def time_nn_epoch(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[1_000,
         activations=['relu', 'relu', 'softmax'],
     )
 
+    print(f"\nTiming results for NeuralNetwork train method (averaged over {NUM_REPEATS} runs):")
+    print(f"Performance for Layer sizes: {layer_sizes}")
+    print("-" * 100)
+    print(f"{'Dataset Size':<19} : {'Average Time (s)':<16} {'±  Std Dev (s)'}")
+    print("=" * 70)
     for dataset_size in DATASET_SIZES:
-        print(f"Training on dataset size {dataset_size:,} samples")
-
         X_small = np.random.randn(dataset_size, layer_sizes[0])
         y_small = np.random.randint(0, layer_sizes[-1], size=(dataset_size,))
         
@@ -238,6 +245,29 @@ def time_nn_epoch(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[1_000,
                                                    optimizer=optimizer, lr_scheduler=scheduler, 
                                                    p=False)
         times.append((dataset_size, train_avg, train_stddev))
+        
+        print(f"{dataset_size:<20,}: {train_avg:.6f} seconds ± {train_stddev:.6f} seconds")
+    
+    
+    # # Sleep to ensure not affecting the next timing
+    # time.sleep(30)
+    # print("-" * 70)
+    # for dataset_size in DATASET_SIZES:
+    #     X_small = np.random.randn(dataset_size, layer_sizes[0])
+    #     y_small = np.random.randint(0, layer_sizes[-1], size=(dataset_size,))
+        
+    #     optimizer = AdamOptimizer(learning_rate=0.01)
+    #     sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)  
+    #     scheduler = lr_scheduler_plateau(sub_scheduler, patience=5, threshold=0.001)  
+    #     train_avg, train_stddev, _ = time_function(nn.train, 
+    #                                                NUM_REPEATS, 
+    #                                                X_small, y_small,
+    #                                                epochs=1, batch_size=32, 
+    #                                                optimizer=optimizer, lr_scheduler=scheduler, 
+    #                                                p=False, n_jobs=-1)
+    #     times.append((dataset_size, train_avg, train_stddev))
+        
+    #     print(f"{dataset_size:<20,}: {train_avg:.6f} seconds ± {train_stddev:.6f} seconds")
     
     if save_csv:
         # Save timing results to CSV
@@ -246,11 +276,14 @@ def time_nn_epoch(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[1_000,
             writer.writerow(["Dataset Size", "Average Time (s)", "Std Dev (s)"])
             writer.writerows(times)
         print(f"\nTiming results saved to tests_performance/nn/nn_timing_results_train.csv")
-    
     return times
 
 
 if __name__ == "__main__":
-    combine_timing_results(time_nn_base(), time_nn_optimizer(), time_nn_loss())
-    time_nn_epoch()
-
+    # combine_timing_results(time_nn_base(), time_nn_optimizer(), time_nn_loss())
+    time_nn_base(num_repeats=5)
+    time_nn_optimizer(num_repeats=5)
+    time_nn_loss(num_repeats=5)
+    time_nn_epoch(num_repeats=5, save_csv=False)
+    
+    # time_nn_epoch(num_repeats=1, save_csv=False, dataset_sizes=[1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000], layer_sizes_multiplier=2)
