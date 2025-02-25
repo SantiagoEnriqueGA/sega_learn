@@ -1,50 +1,10 @@
-# Optimization Opportunities
-
-# Matrix Operations Efficiency: There are opportunities to optimize the forward and backward passes.
-# Memory Management: Some operations create unnecessary intermediate arrays.
-# Code Organization: The Layer and NeuralNetwork classes could benefit from better structure.
-# Hyperparameter Tuning: The tuning process could be optimized.
-# GPU Memory Utilization: CuPy operations could be managed more efficiently.
-
-# Let's implement these optimizations:
-# Optimized Neural Network ImplementationClick to open codeTap to open
-# Key Optimizations
-# I've made several significant improvements to the neural network implementation:
-# 1. Performance Improvements
-
-# Improved Matrix Operations: Reduced redundant calculations in the forward and backward passes
-# Efficient Memory Usage: Minimized temporary array creation for better GPU memory utilization
-# Numerical Stability: Added clipping and max-subtraction for numerical stability in softmax and sigmoid functions
-# He Weight Initialization: Used He initialization for ReLU/LeakyReLU layers for faster convergence
-
-# 2. Code Quality Improvements
-
-# Cleaner Architecture: Restructured the Layer and NeuralNetwork classes for better organization
-# Better Type Handling: More consistent handling of CuPy/NumPy arrays
-# Simpler API: Added a predict() method for more intuitive inference
-# Progress Tracking: Used tqdm for better training progress visualization
-
-# 3. Training Enhancements
-
-# Improved Early Stopping: Added best model tracking to restore optimal weights
-# Better Hyperparameter Tuning: Simplified process with logarithmic learning rate search
-# Training/Inference Modes: Added a training flag to conditionally apply dropout
-
-# 4. GPU-Specific Optimizations
-
-# Float32 Usage: Used float32 for derivatives to reduce memory usage
-# Memory Management: Avoided unnecessary GPU memory allocations
-
-# These changes should significantly improve both the performance and usability of your neural network implementation. Would you like me to explain any specific part of the optimization in more detail?
-
-
 from .loss import CrossEntropyLoss, BCEWithLogitsLoss
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
 from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 
 import cupy as cp
 import numpy as np
-from tqdm import tqdm
+import tqdm
 
 class NeuralNetwork:
     """
@@ -57,13 +17,13 @@ class NeuralNetwork:
     """
     
     def __init__(self, layer_sizes, dropout_rate=0.2, reg_lambda=0.01, activations=None):
-        self.layer_sizes = layer_sizes
-        self.dropout_rate = dropout_rate
-        self.reg_lambda = reg_lambda
+        self.layer_sizes = layer_sizes                                          # List of layer sizes
+        self.dropout_rate = dropout_rate                                        # Dropout rate
+        self.reg_lambda = reg_lambda                                            # Regularization lambda
         
-        # Set default activations if not provided
+        # Set default activation functions if not provided
         if activations is None:
-            self.activations = ['relu'] * (len(layer_sizes) - 2) + ['softmax']
+            activations = ['relu'] * (len(layer_sizes) - 2) + ['softmax']       # Default to ReLU for hidden layers and Softmax for the output layer
         else:
             self.activations = activations
             
@@ -75,22 +35,33 @@ class NeuralNetwork:
                 layer_sizes[i+1], 
                 self.activations[i]
             ))
-        
+            
+        # Initialize weights
+        self.weights = []
+        self.biases = []
+        for i in range(len(layer_sizes) - 1):
+            weight = cp.random.randn(layer_sizes[i], layer_sizes[i + 1]) * 0.01  # Small random weights
+            bias = cp.zeros((1, layer_sizes[i + 1]))  # Initialize biases to zeros
+            self.weights.append(weight)
+            self.biases.append(bias)
+            
         # Cache for forward/backward pass
         self.layer_outputs = None
         self.is_binary = layer_sizes[-1] == 1
+        
 
     def __repr__(self):
-        layers_info = []
-        for i, layer in enumerate(self.layers):
-            layers_info.append(f"Layer {i}: {layer.weights.shape[0]} → {layer.weights.shape[1]}, activation: {layer.activation}")
+        layers = ""
+        for i in range(len(self.layers)):
+            layers += f"\n\tLayer {i}: {self.layers[i].weights.shape[0]} neurons with {self.layers[i].weights.shape[1]} weights"
         
-        return f"NeuralNetwork(\n  layer_sizes={self.layer_sizes},\n  layers=[\n    " + \
-               "\n    ".join(layers_info) + "\n  ],\n  " + \
-               f"dropout_rate={self.dropout_rate},\n  reg_lambda={self.reg_lambda}\n)"
+        return f"NeuralNetwork(\nlayer_sizes={self.layer_sizes}, \nlayers={layers}, \ndropout_rate={self.dropout_rate}, \nreg_lambda={self.reg_lambda}, \nweights={self.weights}, \nbiases={self.biases}, \nactivations={self.activations})"
 
     def __str__(self):
-        return self.__repr__()
+        layers = ""
+        for i in range(len(self.layers)):
+            layers += f"\n\tLayer {i}: {self.layers[i].weights.shape[0]} neurons with {self.layers[i].weights.shape[1]} weights"
+        return f"Neural Network with layer sizes {self.layer_sizes}, \nlayer details: {layers}, \ndropout rate: {self.dropout_rate}, \nregularization lambda: {self.reg_lambda}"
 
     def forward(self, X, training=True):
         """
@@ -132,7 +103,7 @@ class NeuralNetwork:
             
         self.layer_outputs.append(output)
         return output
-
+ 
     def backward(self, y):
         """
         Performs backward propagation to calculate the gradients.
@@ -303,7 +274,7 @@ class NeuralNetwork:
         for i, layer in enumerate(self.layers):
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
-
+            
     def calculate_loss(self, X, y, class_weights=None):
         """
         Calculates the loss with L2 regularization.
@@ -342,6 +313,7 @@ class NeuralNetwork:
         # Convert to Python float
         return float(loss.get()) if hasattr(loss, 'get') else float(loss)
 
+
     def evaluate(self, X, y):
         """
         Evaluates the model performance.
@@ -371,7 +343,7 @@ class NeuralNetwork:
         predicted_np = cp.asnumpy(predicted)
         
         return accuracy, predicted_np
-
+    
     def predict(self, X):
         """
         Generate predictions for input data.
@@ -392,7 +364,7 @@ class NeuralNetwork:
         # For multiclass, return class labels
         else:
             return cp.asnumpy(cp.argmax(outputs, axis=1))
-
+            
     def tune_hyperparameters(self, X_train, y_train, X_val, y_val, param_grid,
                              layer_configs=None, optimizer_types=None, 
                              lr_range=(0.0001, 0.01, 5), epochs=30, batch_size=32):
@@ -530,14 +502,13 @@ class NeuralNetwork:
         else:
             raise ValueError(f"Unknown scheduler type: {scheduler_type}")
 
-
 class Layer:
     """
-    Neural network layer implementation.
+    Initializes a Layer object.
     Args:
-        input_size (int): Input size
-        output_size (int): Output size
-        activation (str): Activation function name
+        input_size (int): The size of the input to the layer.
+        output_size (int): The size of the output from the layer.
+        activation (str): The activation function to be used in the layer.
     """
     def __init__(self, input_size, output_size, activation="relu"):
         # He initialization for weights
@@ -552,7 +523,7 @@ class Layer:
         self.gradients = None
         
     def zero_grad(self):
-        """Reset gradients."""
+        """Reset the gradients of the weights and biases to zero."""
         self.gradients = None
 
     def activate(self, Z):
@@ -586,58 +557,89 @@ class Layer:
         else:
             raise ValueError(f"Unsupported activation: {self.activation}")
 
-
 class Activation:
     """
-    Neural network activation functions and their derivatives.
+    This class contains various activation functions and their corresponding derivatives for use in neural networks.
+    relu: Rectified Linear Unit activation function. Returns the input directly if it's positive, otherwise returns 0.
+    leaky_relu: Leaky ReLU activation function. A variant of ReLU that allows a small gradient when the input is negative. 
+    tanh: Hyperbolic tangent activation function. Maps input to range [-1, 1]. Commonly used for normalized input.
+    sigmoid: Sigmoid activation function. Maps input to range [0, 1]. Commonly used for binary classification.
+    softmax: Softmax activation function. Maps input into a probability distribution over multiple classes.
     """
     
     @staticmethod
     def relu(z):
-        """ReLU activation function."""
+        """
+        ReLU (Rectified Linear Unit) activation function: f(z) = max(0, z)
+        Returns the input directly if it's positive, otherwise returns 0.
+        """
         return cp.maximum(0, z)
 
     @staticmethod
     def relu_derivative(z):
-        """ReLU derivative."""
+        """
+        Derivative of the ReLU function: f'(z) = 1 if z > 0, else 0
+        Returns 1 for positive input, and 0 for negative input.
+        """
         return (z > 0).astype(cp.float32)
 
     @staticmethod
     def leaky_relu(z, alpha=0.01):
-        """Leaky ReLU activation."""
-        return cp.maximum(alpha * z, z)
+        """
+        Leaky ReLU activation function: f(z) = z if z > 0, else alpha * z
+        Allows a small, non-zero gradient when the input is negative to address the dying ReLU problem.
+        """
+        return cp.where(z > 0, z, alpha * z)
 
     @staticmethod
     def leaky_relu_derivative(z, alpha=0.01):
-        """Leaky ReLU derivative."""
+        """
+        Derivative of the Leaky ReLU function: f'(z) = 1 if z > 0, else alpha
+        Returns 1 for positive input, and alpha for negative input.
+        """
         return cp.where(z > 0, 1, alpha)
 
     @staticmethod
     def tanh(z):
-        """Hyperbolic tangent activation."""
+        """
+        Hyperbolic tangent (tanh) activation function: f(z) = (exp(z) - exp(-z)) / (exp(z) + exp(-z))
+        Maps input to the range [-1, 1], typically used for normalized input.
+        """
         return cp.tanh(z)
 
     @staticmethod
     def tanh_derivative(z):
-        """Tanh derivative."""
+        """
+        Derivative of the tanh function: f'(z) = 1 - tanh(z)^2
+        Used for backpropagation through the tanh activation.
+        """
         return 1 - cp.tanh(z) ** 2
 
     @staticmethod
     def sigmoid(z):
-        """Sigmoid activation."""
+        """
+        Sigmoid activation function: f(z) = 1 / (1 + exp(-z))
+        Maps input to the range [0, 1], commonly used for binary classification.
+        """
         # Clip for numerical stability
         z = cp.clip(z, -88, 88)  # Prevent overflow
         return 1 / (1 + cp.exp(-z))
 
     @staticmethod
     def sigmoid_derivative(z):
-        """Sigmoid derivative."""
+        """
+        Derivative of the sigmoid function: f'(z) = sigmoid(z) * (1 - sigmoid(z))
+        Used for backpropagation through the sigmoid activation.
+        """
         sig = Activation.sigmoid(z)
         return sig * (1 - sig)
 
     @staticmethod
     def softmax(z):
-        """Softmax activation with numerical stability."""
-        # Subtract max for numerical stability
+        """
+        Softmax activation function: f(z)_i = exp(z_i) / sum(exp(z_j)) for all j
+        Maps input into a probability distribution over multiple classes. Used for multiclass classification.
+        """
+        # Subtract the max value from each row to prevent overflow (numerical stability)
         exp_z = cp.exp(z - cp.max(z, axis=1, keepdims=True))
         return exp_z / cp.sum(exp_z, axis=1, keepdims=True)
