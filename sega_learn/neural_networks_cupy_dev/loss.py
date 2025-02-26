@@ -17,11 +17,13 @@ class CrossEntropyLoss:
             float: The cross entropy loss.
         """
         # Convert numpy arrays to cupy if needed
-        if not hasattr(logits, 'get'):
-            logits = cp.asarray(logits)
-        if not hasattr(targets, 'get'):
-            targets = cp.asarray(targets)
-            
+        if not hasattr(logits, 'get'):  logits = cp.asarray(logits)
+        if not hasattr(targets, 'get'): targets = cp.asarray(targets)
+        
+        # One-hot encode targets if they are not already
+        if targets.ndim == 1:
+            targets = cp.eye(logits.shape[1])[targets]
+
         exp_logits = cp.exp(logits - cp.max(logits, axis=1, keepdims=True)) # Exponential of logits, subtract max to prevent overflow
         probs = exp_logits / cp.sum(exp_logits, axis=1, keepdims=True)      # Probabilities from logits
         loss = -cp.sum(targets * cp.log(probs + 1e-15)) / logits.shape[0]   # Cross-entropy loss

@@ -2,8 +2,10 @@ from .loss import CrossEntropyLoss, BCEWithLogitsLoss
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
 from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 
-import cupy as cp
 import numpy as np
+import cupy as cp
+from joblib import Parallel, delayed
+from tqdm.auto import tqdm
 
 class NeuralNetwork:
     """
@@ -17,10 +19,24 @@ class NeuralNetwork:
     
     def __init__(self, layer_sizes, dropout_rate=0.2, reg_lambda=0.01, activations=None):
         self.layer_sizes = layer_sizes                                          # List of layer sizes
-        self.layers = []                                                        # List to store the layers of the neural network
         self.dropout_rate = dropout_rate                                        # Dropout rate
         self.reg_lambda = reg_lambda                                            # Regularization lambda
         
+        # Set default activation functions if not provided
+        if activations is None:
+            self.activations = ['relu'] * (len(layer_sizes) - 2) + ['softmax']       # Default to ReLU for hidden layers and Softmax for the output layer
+        else:
+            self.activations = activations
+            
+        # Initialize layers
+        self.layers = []
+        for i in range(len(layer_sizes) - 1):
+            self.layers.append(Layer(
+                layer_sizes[i], 
+                layer_sizes[i+1], 
+                self.activations[i]
+            ))
+            
         # Initialize weights
         self.weights = []
         self.biases = []
@@ -29,12 +45,11 @@ class NeuralNetwork:
             bias = cp.zeros((1, layer_sizes[i + 1]))  # Initialize biases to zeros
             self.weights.append(weight)
             self.biases.append(bias)
+            
+        # Cache for forward/backward pass
+        self.layer_outputs = None
+        self.is_binary = layer_sizes[-1] == 1
         
-        if activations is None:
-            activations = ['relu'] * (len(layer_sizes) - 2) + ['softmax']       # Default to ReLU for hidden layers and Softmax for the output layer
-        for i in range(1, len(layer_sizes)):
-            self.layers.append(Layer(layer_sizes[i-1], layer_sizes[i], activations[i-1]))  # Create layers with input and output sizes
-
     def __repr__(self):
         layers = ""
         for i in range(len(self.layers)):
@@ -48,330 +63,430 @@ class NeuralNetwork:
             layers += f"\n\tLayer {i}: {self.layers[i].weights.shape[0]} neurons with {self.layers[i].weights.shape[1]} weights"
         return f"Neural Network with layer sizes {self.layer_sizes}, \nlayer details: {layers}, \ndropout rate: {self.dropout_rate}, \nregularization lambda: {self.reg_lambda}"
 
-    def forward(self, X):
+    def apply_dropout(self, X):
+        """
+        Applies dropout to the activation X.
+        Args:
+            X (ndarray): Activation values.
+        Returns:
+            ndarray: Activation values after applying dropout.
+        """
+        mask = cp.random.rand(*X.shape) < (1 - self.dropout_rate)
+        return cp.multiply(X, mask) / (1 - self.dropout_rate)
+
+    def forward(self, X, training=True):
         """
         Performs forward propagation through the neural network.
-        Args: X (ndarray): Input data of shape (batch_size, input_size).
-        Returns: ndarray: Output predictions of shape (batch_size, output_size).
+        Args: 
+            X (ndarray): Input data of shape (batch_size, input_size).
+            training (bool): Whether the network is in training mode (applies dropout).
+        Returns: 
+            ndarray: Output predictions of shape (batch_size, output_size).
         """
         # Convert numpy array to CuPy if needed
-        if isinstance(X, np.ndarray):
-            X = cp.asarray(X)
-            
-        A = X                                                               # Input layer
-        self.activations = [X]                                              # Store activations for backpropagation
-        for layer in self.layers[:-1]:                                      # Loop through all layers except the last one
-            Z = cp.dot(A, layer.weights) + layer.biases                     # Linear transformation
-            A = layer.activate(Z)                                           # Activation function
-            if self.dropout_rate > 0:
-                A = self.apply_dropout(A)                                   # Apply dropout regularization, if applicable
-            self.activations.append(A)                                      # Store activations for backpropagation
-            
-        Z = cp.dot(A, self.layers[-1].weights) + self.layers[-1].biases     # Output layer linear transformation
-        
-        # Determine the activation for the output layer based on the number of output classes
-        if self.layers[-1].weights.shape[1] == 1:                            # Binary classification
-            outputs = Activation.sigmoid(Z)                                  # Use sigmoid for binary classification
-        else:                                                                # Multiclass classification
-            outputs = Activation.softmax(Z)                                  # Use softmax for multiclass classification
+        if isinstance(X, np.ndarray): X = cp.asarray(X)
 
-        self.activations.append(outputs)                                    # Store activations for backpropagation
+        # Store all layer activations for backprop
+        self.layer_outputs = [X]
         
-        return outputs
-
-    def apply_dropout(self, A):
-        """
-        Applies dropout regularization to the input array.
-        Parameters: A: CuPy.ndarray: Input array to apply dropout regularization to.
-        Returns: CuPy.ndarray: Array with dropout regularization applied.
-        """
-        if self.dropout_rate > 0:                           # If dropout rate is greater than 0
-            keep_prob = 1 - self.dropout_rate               # Calculate keep probability
-            mask = cp.random.rand(*A.shape) < keep_prob     # Create a mask for the dropout
-            A = cp.multiply(A, mask)                        # Apply the mask to the input array
-            A /= keep_prob                                  # Scale the output of the dropout layer
-        return A
+        # Forward pass through all layers except the last
+        A = X
+        for i, layer in enumerate(self.layers[:-1]):
+            Z = cp.dot(A, layer.weights) + layer.biases
+            A = layer.activate(Z)
+            
+            # Apply dropout only during training
+            if training and self.dropout_rate > 0:
+                A = self.apply_dropout(A)
+                
+            self.layer_outputs.append(A)
+        
+        # Last layer (output layer)
+        Z = cp.dot(A, self.layers[-1].weights) + self.layers[-1].biases
+        
+        # Apply appropriate activation for output layer
+        if self.is_binary:
+            output = Activation.sigmoid(Z)
+        else:
+            output = Activation.softmax(Z)
+            
+        self.layer_outputs.append(output)
+        return output
  
     def backward(self, y):
         """
-        Performs backward propagation to calculate the gradients of the weights and biases in the neural network.
-        Parameters: y (numpy.ndarray or cupy.ndarray): Target labels of shape (m, 1), where m is the number of samples.
-        Returns: None
+        Performs backward propagation to calculate the gradients.
+        Parameters: 
+            y (ndarray): Target labels of shape (m, output_size).
         """
         # Convert numpy array to CuPy if needed
-        if isinstance(y, np.ndarray):
-            y = cp.asarray(y)
-            
-        m = y.shape[0]          # Number of samples
-        y = y.reshape(-1, 1)    # Reshape y to ensure it is a column vector
+        if isinstance(y, np.ndarray): y = cp.asarray(y)
 
-        outputs = self.activations[-1]                                      # Output predictions
+        m = y.shape[0]  # Number of samples
         
-        # For binary classification
-        if self.layers[-1].weights.shape[1] == 1: 
-            dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))  # Gradient for binary cross-entropy
-        else:  # For multi-class classification
-            dA = outputs - y  # Gradient for cross-entropy loss with softmax
+        # Reshape y for binary classification
+        if self.is_binary:
+            y = y.reshape(-1, 1)
+        else:
+            # One-hot encode y for multi-class classification
+            y = cp.eye(self.layer_sizes[-1])[y]
+            
+        # Calculate initial gradient based on loss function
+        outputs = self.layer_outputs[-1]
+        if self.is_binary:
+            # Gradient for binary cross-entropy
+            dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
+        else:
+            # Gradient for categorical cross-entropy with softmax
+            dA = outputs - y
         
+        # Backpropagate through layers in reverse
         for i in reversed(range(len(self.layers))):
-            dZ = dA * self.layers[i].activation_derivative(self.activations[i + 1]) if i < len(self.layers) - 1 else dA
+            # Get activation from previous layer
+            prev_activation = self.layer_outputs[i]
             
-            dW = cp.dot(self.activations[i].T, dZ) / m + self.reg_lambda * self.layers[i].weights   # Gradient of the loss function
-            db = cp.sum(dZ, axis=0, keepdims=True) / m                                              # Bias of the loss function 
+            # For all except the last layer, apply activation derivative
+            if i < len(self.layers) - 1:
+                dZ = dA * self.layers[i].activation_derivative(self.layer_outputs[i+1])
+            else:
+                dZ = dA
+                
+            # Calculate gradients
+            dW = cp.dot(prev_activation.T, dZ) / m
+            # Add L2 regularization
+            dW += self.reg_lambda * self.layers[i].weights
+            db = cp.sum(dZ, axis=0, keepdims=True) / m
             
-            dA = cp.dot(dZ, self.layers[i].weights.T)                                               # dA for the next iteration
+            # Store gradients in layer
+            self.layers[i].gradients = (dW, db)
+            
+            # Calculate dA for next iteration (previous layer)
+            if i > 0:  # No need to calculate for input layer
+                dA = cp.dot(dZ, self.layers[i].weights.T)
 
-            self.layers[i].gradients = (dW, db)                                                     # Store the gradients
-
-    def train(self, X_train, y_train, X_test=None, y_test=None, optimizer=AdamOptimizer(learning_rate=0.0001), epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True):
+    def train(self, X_train, y_train, X_val=None, y_val=None, 
+              optimizer=None, epochs=100, batch_size=32, 
+              early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1):
         """
         Trains the neural network model.
         Parameters:
-            - X_train (numpy.ndarray): Training data features.
-            - y_train (numpy.ndarray): Training data labels.
-            - X_test (numpy.ndarray): Test data features, optional (default: None).
-            - y_test (numpy.ndarray): Test data labels, optional (default: None).
-            - optimizer (Optimizer): The optimizer used for updating the model parameters (default: Adam, lr=0.0001).
+            - X_train (ndarray): Training data features.
+            - y_train (ndarray): Training data labels.
+            - X_val (ndarray): Validation data features, optional.
+            - y_val (ndarray): Validation data labels, optional.
+            - optimizer (Optimizer): Optimizer for updating parameters (default: Adam, lr=0.0001).
             - epochs (int): Number of training epochs (default: 100).
             - batch_size (int): Batch size for mini-batch gradient descent (default: 32).
-            - early_stopping_threshold (int): Number of epochs to wait for improvement in training loss before early stopping (default: 5).
+            - early_stopping_patience (int): Patience for early stopping (default: 10).
             - lr_scheduler (Scheduler): Learning rate scheduler (default: None).
-            - p (bool): Whether to print training progress (default: True).
-        Returns: None
+            - verbose (bool): Whether to print training progress (default: True).
+            - use_tqdm (bool): Whether to use tqdm for progress bar (default: True).
+            - n_jobs (int): Number of jobs for parallel processing (default: 1).
         """
         # Convert numpy arrays to CuPy arrays
-        if isinstance(X_train, np.ndarray):
-            X_train = cp.asarray(X_train)
-        if isinstance(y_train, np.ndarray):
-            y_train = cp.asarray(y_train)
-        if X_test is not None and isinstance(X_test, np.ndarray):
-            X_test = cp.asarray(X_test)
-        if y_test is not None and isinstance(y_test, np.ndarray):
-            y_test = cp.asarray(y_test)
+        if isinstance(X_train, np.ndarray): X_train = cp.asarray(X_train)
+        if isinstance(y_train, np.ndarray): y_train = cp.asarray(y_train)
+        if X_val is not None and isinstance(X_val, np.ndarray): X_val = cp.asarray(X_val)
+        if y_val is not None and isinstance(y_val, np.ndarray): y_val = cp.asarray(y_val)
+
+        # Default optimizer if not provided
+        if optimizer is None:
+            optimizer = AdamOptimizer(learning_rate=0.0001)
             
-        optimizer.initialize(self.layers)   # Initialize the optimizer
-        best_loss = float('inf')            # Initialize best loss to infinity
-        patience = 0                        # Initialize patience for early stopping
+        # Initialize optimizer
+        optimizer.initialize(self.layers)
         
-        for epoch in range(epochs):
-            for layer in self.layers: layer.zero_grad()             # Reset gradients to zero for each layer
+        # Track best model for early stopping
+        best_loss = float('inf')
+        patience_counter = 0
+        best_weights = [layer.weights.copy() for layer in self.layers]
+        best_biases = [layer.biases.copy() for layer in self.layers]
+        
+        def process_batch(start_idx):
+            X_batch = X_shuffled[start_idx:start_idx+batch_size]
+            y_batch = y_shuffled[start_idx:start_idx+batch_size]
             
-            indices = cp.arange(X_train.shape[0])                   # Create indices for shuffling
-            cp.random.shuffle(indices)                              # Shuffle indices
-            X_train = X_train[indices]                              # Shuffle the training data
-            y_train = y_train[indices]
-
-            for i in range(0, X_train.shape[0], batch_size):        # Loop through the training data in batches
-                X_batch = X_train[i:i+batch_size]                   # X of the current batch
-                y_batch = y_train[i:i+batch_size]                   # y of the current batch
-
-                outputs = self.forward(X_batch)                     # Perform forward pass, get predictions
-                self.backward(y_batch)                              # Perform backward pass, calculate gradients
-
-                for idx, layer in enumerate(self.layers):   # For each layer in the neural network..
-                    dW, db = layer.gradients                # Get the gradients, weights and biases
-                    optimizer.update(layer, dW, db, idx)    # Update the weights and biases using the optimizer
-
-            # Calculate training loss and accuracy
+            # Forward and backward passes
+            self.forward(X_batch, training=True)
+            self.backward(y_batch)
+            
+            # Update weights and biases
+            for idx, layer in enumerate(self.layers):
+                dW, db = layer.gradients
+                optimizer.update(layer, dW, db, idx)
+        
+        # Training loop with progress bar
+        progress_bar = tqdm(range(epochs)) if use_tqdm else range(epochs)
+        for epoch in progress_bar:
+            # Reset gradients
+            for layer in self.layers:
+                layer.zero_grad()
+            
+            # Shuffle training data
+            indices = cp.arange(X_train.shape[0])
+            cp.random.shuffle(indices)
+            X_shuffled = X_train[indices]
+            y_shuffled = y_train[indices]
+            
+            # Mini-batch training with parallel processing
+            Parallel(n_jobs=n_jobs)(delayed(process_batch)(i) for i in range(0, X_train.shape[0], batch_size))
+            
+            # Calculate metrics
             train_loss = self.calculate_loss(X_train, y_train)
-            train_accuracy, train_pred = self.evaluate(X_train, y_train)
+            train_accuracy, _ = self.evaluate(X_train, y_train)
             
-            # Calculate test loss and accuracy
-            if X_test is not None and y_test is not None:
-                test_loss = self.calculate_loss(X_test, y_test)
-                test_accuracy, test_pred = self.evaluate(X_test, y_test)
-            
-            # Print the training progress
-            if p: 
-                if X_test is not None and y_test is not None:
-                    print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {train_loss:.4f}, Train Accuracy: {train_accuracy:.4f}, Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}")
+            # Validation metrics
+            val_metrics = ""
+            if X_val is not None:
+                val_loss = self.calculate_loss(X_val, y_val)
+                val_accuracy, _ = self.evaluate(X_val, y_val)
+                val_metrics = f", Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.4f}"
+                
+                # Early stopping check
+                if val_loss < best_loss:
+                    best_loss = val_loss
+                    patience_counter = 0
+                    # Save best weights
+                    best_weights = [layer.weights.copy() for layer in self.layers]
+                    best_biases = [layer.biases.copy() for layer in self.layers]
                 else:
-                    print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {train_loss:.4f}, Train Accuracy: {train_accuracy:.4f}")
-
-            # Implement early stopping
-            if train_loss < best_loss:      # If training loss improves
-                best_loss = train_loss      # Update best loss
-                patience = 0                # Reset patience
-            else:                           # If training loss does not improve
-                patience += 1               # Increment patience
-            if patience >= early_stopping_threshold:    # If patience exceeds the threshold, stop training
-                if p: print("Early stopping triggered")       
+                    patience_counter += 1
+            else:
+                # Use training loss for early stopping if no validation set
+                if train_loss < best_loss:
+                    best_loss = train_loss
+                    patience_counter = 0
+                    best_weights = [layer.weights.copy() for layer in self.layers]
+                    best_biases = [layer.biases.copy() for layer in self.layers]
+                else:
+                    patience_counter += 1
+            
+            # Update progress bar or print metrics
+            if p:
+                if use_tqdm and isinstance(progress_bar, tqdm):
+                    progress_bar.set_description(
+                        f"Epoch {epoch+1}/{epochs} - Loss: {train_loss:.4f}, Acc: {train_accuracy:.4f}{val_metrics}"
+                    )
+                else:
+                    print(f"Epoch {epoch+1}/{epochs} - Loss: {train_loss:.4f}, Acc: {train_accuracy:.4f}{val_metrics}")
+            
+            # Learning rate scheduler step
+            if lr_scheduler:
+                if isinstance(lr_scheduler, lr_scheduler_plateau):
+                    msg = lr_scheduler.step(epoch, train_loss if X_val is None else val_loss)
+                    if p and msg:
+                        tqdm.write(msg)
+                else:
+                    msg = lr_scheduler.step(epoch)
+                    if p and msg:
+                        tqdm.write(msg)
+                    
+            
+            # Early stopping
+            if patience_counter >= early_stopping_threshold:
+                if p and use_tqdm:
+                    tqdm.write(f"Early stopping at epoch {epoch+1}")
                 break
+        
+        # Restore best weights
+        for i, layer in enumerate(self.layers):
+            layer.weights = best_weights[i]
+            layer.biases = best_biases[i]
             
-            if lr_scheduler:                                        # If learning rate scheduler is provided
-                if isinstance(lr_scheduler, lr_scheduler_plateau):  # If plateau learning rate scheduler
-                    lr_scheduler.step(epoch, train_loss)
-                else:
-                    lr_scheduler.step(epoch)
-
     def calculate_loss(self, X, y, class_weights=None):
         """
-        Calculates the loss of the neural network model.
-        Formula: loss = loss_fn(outputs, y) + reg_lambda * sum([sum(layer.weights**2) for layer in self.layers])
+        Calculates the loss with L2 regularization.
         Parameters:
-            - X (numpy.ndarray or cupy.ndarray): Input data of shape (num_samples, num_features).
-            - y (numpy.ndarray or cupy.ndarray): Target labels of shape (num_samples,).
-            - class_weights (numpy.ndarray or cupy.ndarray, optional): Weights for each class. Default is None.
-        Returns: loss (float): The calculated loss value.
+            - X (ndarray): Input data
+            - y (ndarray): Target labels
+            - class_weights (ndarray, optional): Weights for each class
+        Returns: 
+            float: The calculated loss value
         """
-        # Convert to CuPy arrays if needed
-        if isinstance(X, np.ndarray):
-            X = cp.asarray(X)
-        if isinstance(y, np.ndarray):
-            y = cp.asarray(y)
-            
-        outputs = self.forward(X)               # Perform forward pass to get predictions
+        # Convert numpy array to CuPy if needed
+        if isinstance(X, np.ndarray): X = cp.asarray(X)
+        if isinstance(y, np.ndarray): y = cp.asarray(y)
+
+        # Get predictions
+        outputs = self.forward(X, training=False)
+        
+        # Apply class weights if provided
         if class_weights is None:
-            class_weights = cp.ones_like(y)     # If class weights are not provided, set them to 1
-        elif isinstance(class_weights, np.ndarray):
+            class_weights = cp.ones_like(y)
+        elif isinstance(class_weights, cp.array):
             class_weights = cp.asarray(class_weights)
         
-        if self.layers[-1].weights.shape[1] > 1:        # Multi-class classification, cross-entropy loss
-            loss_fn = CrossEntropyLoss()
-            loss = loss_fn(outputs, y.reshape(-1, 1)) 
-        else:                                           # Binary classification, binary cross-entropy loss
+        # Select appropriate loss function
+        if self.is_binary:
             loss_fn = BCEWithLogitsLoss()
+            loss = loss_fn(outputs, y.reshape(-1, 1))
+        else:
+            loss_fn = CrossEntropyLoss()
             loss = loss_fn(outputs, y)
         
-        loss += self.reg_lambda * cp.sum([cp.sum(layer.weights**2) for layer in self.layers])   # Loss with L2 regularization
+        # Add L2 regularization
+        l2_reg = self.reg_lambda * sum(cp.sum(layer.weights**2) for layer in self.layers)
+        loss += l2_reg
         
+        # Convert to Python float
         return float(loss.get()) if hasattr(loss, 'get') else float(loss)  # Convert CuPy scalar to regular Python float
+
 
     def evaluate(self, X, y):
         """
-        Evaluates the performance of the neural network model on the given input data.
+        Evaluates the model performance.
         Parameters:
-            - X (numpy.ndarray or cupy.ndarray): The input data for evaluation.
-            - y (numpy.ndarray or cupy.ndarray): The target labels for evaluation.
+            - X (ndarray): Input data
+            - y (ndarray): Target labels
         Returns:
-            - accuracy (float): The accuracy of the model's predictions.
-            - predicted (numpy.ndarray): The labels predicted by the model.
+            - accuracy (float): Model accuracy
+            - predicted (ndarray): Predicted labels
         """
-        # Convert to CuPy arrays if needed
-        if isinstance(X, np.ndarray):
-            X = cp.asarray(X)
-        if isinstance(y, np.ndarray):
-            y = cp.asarray(y)
-            
-        y_hat = self.forward(X)                             # Perform forward pass to get predictions
+        # Get predictions
+        y_hat = self.forward(X, training=False)
         
-        if self.layers[-1].weights.shape[1] > 1:            # Multi-class classification
-            predicted = cp.argmax(y_hat, axis=1)            # Get the class with the highest probability
-            accuracy = float(cp.mean(predicted == y).get())              # Calculate accuracy
-        
-        else:                                               # Binary classification
-            predicted = (y_hat > 0.5).astype(int)           # Convert probabilities to binary predictions
-            accuracy = float(cp.mean(predicted == y.reshape(-1, 1)).get())  # Calculate accuracy for binary classification                   
-        
-        # Convert predicted back to numpy for easier handling outside GPU
-        predicted_np = cp.asnumpy(predicted)
-        
-        return accuracy, predicted_np                          # Return accuracy and predicted labels
+        # Calculate accuracy based on problem type
+        if self.is_binary:
+            predicted = (y_hat > 0.5).astype(int)
+            accuracy = float(cp.mean(predicted.flatten() == y.reshape(-1, 1).flatten()).get()) if hasattr(predicted, 'get') else float(accuracy)  # Convert CuPy scalar to regular Python float
+        else:
+            predicted = cp.argmax(y_hat, axis=1)
+            accuracy = float(cp.mean(predicted == y).get()) if hasattr(predicted, 'get') else float(accuracy)  # Convert CuPy scalar to regular Python float
+              
+        return accuracy, predicted
     
-    def tune_hyperparameters(self, param_grid, layers, output_size,
-                             X_train, y_train, X_val, y_val, 
-                             optimizers, lr_range, epochs=100, batch_size=32):
+    def predict(self, X):
+        """
+        Generate predictions for input data.
+        Parameters:
+            - X (ndarray): Input data
+        Returns:
+            - predictions: Model predictions (class probabilities or labels)
+        """
+        # Get raw predictions
+        outputs = self.forward(X, training=False)
+        
+        # For binary classification, return class probabilities
+        if self.is_binary:
+            return outputs
+        # For multiclass, return class labels
+        else:
+            return cp.argmax(outputs, axis=1)
+            
+    def tune_hyperparameters(self, X_train, y_train, X_val, y_val, param_grid,
+                             layer_configs=None, optimizer_types=None, 
+                             lr_range=(0.0001, 0.01, 5), epochs=30, batch_size=32):
         """
         Performs hyperparameter tuning using grid search.
-        
         Parameters:
-            - param_grid (dict): A dictionary where keys are parameter names and values are lists of values to try.
-            - layers (list): List of layer sizes.
-            - output_size (int): The size of the output layer.
-            - X_train (numpy.ndarray): Training data features.
-            - y_train (numpy.ndarray): Training data labels.
-            - X_val (numpy.ndarray): Validation data features.
-            - y_val (numpy.ndarray): Validation data labels.
-            - optimizers (list): List of optimizer types to try (e.g., ['Adam', 'SGD', 'Adadelta']).
-            - lr_range (tuple): A tuple (min_lr, max_lr, num_steps) for learning rates.
-            - epochs (int): Number of training epochs (default: 100).
-            - batch_size (int): Batch size for mini-batch gradient descent (default: 32).
-        
+            - X_train, y_train: Training data
+            - X_val, y_val: Validation data
+            - param_grid: Dict of parameters to try
+            - layer_configs: List of layer configurations
+            - optimizer_types: List of optimizer types
+            - lr_range: (min_lr, max_lr, num_steps) for learning rates
+            - epochs: Max epochs for each trial
+            - batch_size: Batch size for training
         Returns:
-            best_params (dict): The best hyperparameters found during tuning.
-            best_accuracy (float): The best validation accuracy achieved.
+            - best_params: Best hyperparameters found
+            - best_accuracy: Best validation accuracy
         """
         from itertools import product
-        from tqdm import tqdm
         import warnings
-        warnings.filterwarnings('ignore')       # Suppress warnings, large logits will trigger overflow warnings
-
-        # Convert to CuPy arrays if needed
-        if isinstance(X_train, np.ndarray):
-            X_train = cp.asarray(X_train)
-        if isinstance(y_train, np.ndarray):
-            y_train = cp.asarray(y_train)
-        if isinstance(X_val, np.ndarray):
-            X_val = cp.asarray(X_val)
-        if isinstance(y_val, np.ndarray):
-            y_val = cp.asarray(y_val)
-
+        warnings.filterwarnings('ignore')
+        
+        # Default values if not provided
+        if layer_configs is None:
+            layer_configs = [[64], [128], [64, 32]]
+            
+        if optimizer_types is None:
+            optimizer_types = ['Adam', 'SGD']
+            
+        # Output size based on target data
+        output_size = 1 if len(y_train.shape) == 1 or y_train.shape[1] == 1 else y_train.max() + 1
+        
+        # Generate learning rates
+        min_lr, max_lr, num_steps = lr_range
+        lr_options = cp.logspace(cp.log10(min_lr), cp.log10(max_lr), num_steps).tolist()
+        
+        # Extract parameter combinations
+        keys, values = zip(*param_grid.items())
+        
+        # Calculate total iterations for progress tracking
+        total_iterations = (
+            len(layer_configs) *
+            len(lr_options) *
+            len(optimizer_types) *
+            cp.prod([len(value) for value in values])
+        )
+        
+        # Track best results
         best_accuracy = 0
         best_params = {}
-
-        keys, values = zip(*param_grid.items()) # Unzip the parameter grid
+        best_optimizer_type = None
         
-        # Generate learning rate options
-        min_lr, max_lr, num_steps = lr_range
-        lr_options = np.linspace(min_lr, max_lr, num_steps).tolist()
-        
-        # Calculate total iterations
-        total_iterations = (len(layers) *
-                            len(lr_options) *
-                            len(optimizers) *
-                            np.prod([len(value) for value in values])
-                            )
-        
+        # Grid search with progress bar
         with tqdm(total=total_iterations, desc="Tuning Hyperparameters") as pbar:
-            for optimizer_type in optimizers:                   # For each optimizer type
-                for layer_structure in layers:                  # For each layer structure
-                    layer_structure = [X_train.shape[1]] + layer_structure + [output_size]
+            # Iterate through all combinations
+            for optimizer_type in optimizer_types:
+                for layer_structure in layer_configs:
+                    full_layer_structure = [X_train.shape[1]] + layer_structure + [int(output_size)]
                     
                     for combination in product(*values):
                         params = dict(zip(keys, combination))
                         
                         for lr in lr_options:
-                            # print(f"\nTesting combination: {params} with layers {layer_structure} and learning rate {lr}")
-
-                            # Initialize the neural network with the current combination of hyperparameters
-                            nn = NeuralNetwork(layer_structure, dropout_rate=params['dropout_rate'], reg_lambda=params['reg_lambda'])
-
-                            # Define the optimizer
-                            optimizer = self.create_optimizer(optimizer_type, lr)
+                            # Create model with current hyperparameters
+                            nn = NeuralNetwork(
+                                full_layer_structure, 
+                                dropout_rate=params['dropout_rate'], 
+                                reg_lambda=params['reg_lambda']
+                            )
                             
-                            # Train the neural network
-                            nn.train(X_train, y_train, X_val, y_val, optimizer, epochs=epochs, batch_size=batch_size, p=False)
-
+                            # Create optimizer
+                            optimizer = self._create_optimizer(optimizer_type, lr)
+                            
+                            # Train model (with early stopping for efficiency)
+                            nn.train(
+                                X_train, y_train, X_val, y_val,
+                                optimizer=optimizer,
+                                epochs=epochs,
+                                batch_size=batch_size,
+                                early_stopping_threshold=5,
+                                p=False
+                            )
+                            
                             # Evaluate on validation set
                             accuracy, _ = nn.evaluate(X_val, y_val)
-
-                            # print(f"\t accuracy: {accuracy}")
-
-                            # Check if this is the best accuracy
+                            
+                            # Update best if improved
                             if accuracy > best_accuracy:
                                 best_accuracy = accuracy
-                                print(f"\n--New best accuracy: {best_accuracy:.4f} with combination: {optimizer_type}, {params} with layers {layer_structure} and learning rate {lr}")
+                                best_params = {
+                                    **params,
+                                    'layers': full_layer_structure,
+                                    'learning_rate': lr
+                                }
+                                best_optimizer_type = optimizer_type
                                 
-                                best_params = {**params, 'layers': layer_structure, 'learning_rate': lr, 'optimizer': optimizer}
-                                best_optimizer = optimizer_type
+                                tqdm.write(f"New best: {best_accuracy:.4f} with {optimizer_type}, "
+                                      f"lr={lr}, layers={full_layer_structure}, params={params}")
                             
-                            pbar.update(1)  # Update the progress bar after each combination
-
-        print(f"\nBest parameters: Optimizer: {best_optimizer}, {best_params} with accuracy: {best_accuracy:.4f}")
+                            # Update progress
+                            pbar.update(1)
+        
+        print(f"\nBest configuration: {best_optimizer_type} optimizer with lr={best_params['learning_rate']}")
+        print(f"Layers: {best_params['layers']}")
+        print(f"Parameters: dropout={best_params['dropout_rate']}, reg_lambda={best_params['reg_lambda']}")
+        print(f"Validation accuracy: {best_accuracy:.4f}")
+        
+        # Add best optimizer type to best_params
+        best_params['optimizer'] = best_optimizer_type
+        
         return best_params, best_accuracy
 
-
-    def create_optimizer(self, optimizer_type, learning_rate):
-        """
-        Creates an optimizer instance based on the specified type and learning rate.
-        
-        Parameters:
-            optimizer_type (str): The type of optimizer (e.g., 'SGD', 'Adam').
-            learning_rate (float): The learning rate for the optimizer.
-        
-        Returns:
-            optimizer: An instance of the specified optimizer.
-        """
+    def _create_optimizer(self, optimizer_type, learning_rate):
+        """Helper method to create optimizer instances."""
         if optimizer_type == 'Adam':
             return AdamOptimizer(learning_rate)
         elif optimizer_type == 'SGD':
@@ -382,17 +497,7 @@ class NeuralNetwork:
             raise ValueError(f"Unknown optimizer type: {optimizer_type}")
         
     def create_scheduler(self, scheduler_type, optimizer, **kwargs):
-        """
-        Creates a learning rate scheduler instance based on the specified type and parameters.
-        
-        Parameters:
-            scheduler_type (str): The type of scheduler (e.g., 'step', 'plateau', 'exp').
-            optimizer: The optimizer instance to be used with the scheduler.
-            **kwargs: Additional parameters for the scheduler.
-        
-        Returns:
-            scheduler: An instance of the specified learning rate scheduler.
-        """
+        """Creates a learning rate scheduler."""
         if scheduler_type == 'step':
             return lr_scheduler_step(optimizer, **kwargs)
         elif scheduler_type == 'plateau':
@@ -411,34 +516,38 @@ class Layer:
         activation (str): The activation function to be used in the layer.
     """
     def __init__(self, input_size, output_size, activation="relu"):
-        self.weights = cp.random.randn(input_size, output_size) * 0.01  # Initialize weights with small random values
-        self.biases = cp.zeros((1, output_size))                        # Initialize biases with zeros
-        self.activation = activation                                    # Activation function name
-        self.gradients = None                                           # Initialize gradients to None
+        # He initialization for weights
+        if activation in ["relu", "leaky_relu"]:
+            scale = cp.sqrt(2.0 / input_size)
+        else:
+            scale = cp.sqrt(1.0 / input_size)
+            
+        self.weights = cp.random.randn(input_size, output_size) * scale
+        self.biases = cp.zeros((1, output_size))
+        self.activation = activation
+        self.gradients = None
         
     def zero_grad(self):
         """Reset the gradients of the weights and biases to zero."""
         self.gradients = None
 
     def activate(self, Z):
-        """Apply the activation function based on the layer's configuration."""
+        """Apply activation function."""
+        activation_functions = {
+            "relu": Activation.relu,
+            "leaky_relu": Activation.leaky_relu,
+            "tanh": Activation.tanh,
+            "sigmoid": Activation.sigmoid,
+            "softmax": Activation.softmax
+        }
         
-        if self.activation == "relu":
-            return Activation.relu(Z)
-        elif self.activation == "leaky_relu":
-            return Activation.leaky_relu(Z)
-        elif self.activation == "tanh":
-            return Activation.tanh(Z)
-        elif self.activation == "sigmoid":
-            return Activation.sigmoid(Z)
-        elif self.activation == "softmax":
-            return Activation.softmax(Z)
+        if self.activation in activation_functions:
+            return activation_functions[self.activation](Z)
         else:
-            raise ValueError(f"Unsupported activation function: {self.activation}")
+            raise ValueError(f"Unsupported activation: {self.activation}")
 
     def activation_derivative(self, Z):
-        """Apply the derivative of the activation function for backpropagation."""
-        
+        """Apply activation derivative."""
         if self.activation == "relu":
             return Activation.relu_derivative(Z)
         elif self.activation == "leaky_relu":
@@ -448,12 +557,11 @@ class Layer:
         elif self.activation == "sigmoid":
             return Activation.sigmoid_derivative(Z)
         elif self.activation == "softmax":
-            # Special case: softmax derivative is typically used in combination with cross-entropy loss.
-            # Cross-entropy takes care of derivative, so no need to implement softmax derivative here.
-            raise ValueError("Softmax derivative is not typically used directly")
+            # Softmax derivative handled in loss function
+            return cp.ones_like(Z)  # Identity for compatibility
         else:
-            raise ValueError(f"Unsupported activation function: {self.activation}")
-
+            raise ValueError(f"Unsupported activation: {self.activation}")
+        
 class Activation:
     """
     This class contains various activation functions and their corresponding derivatives for use in neural networks.
@@ -478,7 +586,7 @@ class Activation:
         Derivative of the ReLU function: f'(z) = 1 if z > 0, else 0
         Returns 1 for positive input, and 0 for negative input.
         """
-        return (z > 0).astype(float)
+        return (z > 0).astype(cp.float32)  
 
     @staticmethod
     def leaky_relu(z, alpha=0.01):
@@ -536,5 +644,6 @@ class Activation:
         Maps input into a probability distribution over multiple classes. Used for multiclass classification.
         """
         # Subtract the max value from each row to prevent overflow (numerical stability)
-        exp_logits = cp.exp(z - cp.max(z, axis=1, keepdims=True))  
-        return exp_logits / cp.sum(exp_logits, axis=1, keepdims=True)
+        exp_z = cp.exp(z - cp.max(z, axis=1, keepdims=True))
+        return exp_z / cp.sum(exp_z, axis=1, keepdims=True)
+

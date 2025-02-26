@@ -40,8 +40,8 @@ def time_nn_cupy(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
         activations=['relu', 'relu', 'softmax'],
     )
     
-    X = np.random.randn(DATASET_SIZE, layer_sizes[0])
-    y = np.random.randint(0, layer_sizes[-1], size=(DATASET_SIZE,))
+    X = cp.random.randn(DATASET_SIZE, layer_sizes[0])
+    y = cp.random.randint(0, layer_sizes[-1], size=(DATASET_SIZE,))
 
     print(f"\nTiming results for NeuralNetwork methods (averaged over {NUM_REPEATS} runs):")
     print(f"Performance for Layer sizes: {layer_sizes}, Dataset size: {DATASET_SIZE:,} samples")
@@ -90,7 +90,7 @@ def time_nn_cupy(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
                                                X_small, y_small,
                                                epochs=1, batch_size=32, 
                                                optimizer=optimizer, lr_scheduler=scheduler, 
-                                               p=False)
+                                               p=False, use_tqdm=False)
     nn_times['train'] = (train_avg, train_stddev)
     print(f"{'train (X,y Reduced)':<19} : {train_avg:.6f} seconds ± {train_stddev:.6f} seconds")
 
@@ -244,7 +244,7 @@ def time_nn_epoch_cupy(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[1
                                                    X_small, y_small,
                                                    epochs=1, batch_size=32, 
                                                    optimizer=optimizer, lr_scheduler=scheduler, 
-                                                   p=False)
+                                                   p=False, use_tqdm=False)
         times.append((dataset_size, train_avg, train_stddev))
         
         print(f"{dataset_size:<20,}: {train_avg:.6f} seconds ± {train_stddev:.6f} seconds")
