@@ -241,7 +241,7 @@ def time_nn_epoch(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[1_000,
         train_avg, train_stddev, _ = time_function(nn.train, 
                                                    NUM_REPEATS, 
                                                    X_small, y_small,
-                                                   epochs=1, batch_size=32, 
+                                                   epochs=1, batch_size=256, 
                                                    optimizer=optimizer, lr_scheduler=scheduler, 
                                                    p=False, use_tqdm=False)
         times.append((dataset_size, train_avg, train_stddev))

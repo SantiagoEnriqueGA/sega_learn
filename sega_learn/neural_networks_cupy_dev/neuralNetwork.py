@@ -4,6 +4,7 @@ from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 
 import numpy as np
 import cupy as cp
+from cupy import fuse
 from joblib import Parallel, delayed
 from tqdm.auto import tqdm
 
@@ -37,7 +38,7 @@ class NeuralNetwork:
                 self.activations[i]
             ))
             
-        # Initialize weights
+        # Initialize weights and biases (for reference, not used in layer updates)
         self.weights = []
         self.biases = []
         for i in range(len(layer_sizes) - 1):
@@ -49,6 +50,9 @@ class NeuralNetwork:
         # Cache for forward/backward pass
         self.layer_outputs = None
         self.is_binary = layer_sizes[-1] == 1
+
+        # Initialize CUDA stream for asynchronous operations
+        self.stream = cp.cuda.Stream()
         
     def __repr__(self):
         layers = ""
@@ -63,16 +67,17 @@ class NeuralNetwork:
             layers += f"\n\tLayer {i}: {self.layers[i].weights.shape[0]} neurons with {self.layers[i].weights.shape[1]} weights"
         return f"Neural Network with layer sizes {self.layer_sizes}, \nlayer details: {layers}, \ndropout rate: {self.dropout_rate}, \nregularization lambda: {self.reg_lambda}"
 
+    @staticmethod
+    @fuse()  # Fused kernel for dropout
+    def fused_dropout(x, dropout_rate, random_vals):
+        # For each element, if the random value is less than (1 - dropout_rate),
+        # return the scaled activation; otherwise return 0.
+        return cp.where(random_vals < (1 - dropout_rate), x / (1 - dropout_rate), 0)
+    
     def apply_dropout(self, X):
-        """
-        Applies dropout to the activation X.
-        Args:
-            X (ndarray): Activation values.
-        Returns:
-            ndarray: Activation values after applying dropout.
-        """
-        mask = cp.random.rand(*X.shape) < (1 - self.dropout_rate)
-        return cp.multiply(X, mask) / (1 - self.dropout_rate)
+        # Pre-generate random values and apply fused dropout
+        random_vals = cp.random.rand(*X.shape)
+        return self.fused_dropout(X, self.dropout_rate, random_vals)
 
     def forward(self, X, training=True):
         """
@@ -83,35 +88,36 @@ class NeuralNetwork:
         Returns: 
             ndarray: Output predictions of shape (batch_size, output_size).
         """
-        # Convert numpy array to CuPy if needed
-        if isinstance(X, np.ndarray): X = cp.asarray(X)
+        # # Convert numpy array to CuPy if needed
+        # if isinstance(X, np.ndarray): X = cp.asarray(X)
 
-        # Store all layer activations for backprop
-        self.layer_outputs = [X]
-        
-        # Forward pass through all layers except the last
-        A = X
-        for i, layer in enumerate(self.layers[:-1]):
-            Z = cp.dot(A, layer.weights) + layer.biases
-            A = layer.activate(Z)
+        with self.stream:
+            # Store all layer activations for backprop
+            self.layer_outputs = [X]
             
-            # Apply dropout only during training
-            if training and self.dropout_rate > 0:
-                A = self.apply_dropout(A)
+            # Forward pass through all layers except the last
+            A = X
+            for i, layer in enumerate(self.layers[:-1]):
+                Z = cp.dot(A, layer.weights) + layer.biases
+                A = layer.activate(Z)
                 
-            self.layer_outputs.append(A)
-        
-        # Last layer (output layer)
-        Z = cp.dot(A, self.layers[-1].weights) + self.layers[-1].biases
-        
-        # Apply appropriate activation for output layer
-        if self.is_binary:
-            output = Activation.sigmoid(Z)
-        else:
-            output = Activation.softmax(Z)
+                # Apply dropout only during training
+                if training and self.dropout_rate > 0:
+                    A = self.apply_dropout(A)
+                    
+                self.layer_outputs.append(A)
             
-        self.layer_outputs.append(output)
-        return output
+            # Last layer (output layer)
+            Z = cp.dot(A, self.layers[-1].weights) + self.layers[-1].biases
+            
+            # Apply appropriate activation for output layer
+            if self.is_binary:
+                output = Activation.sigmoid(Z)
+            else:
+                output = Activation.softmax(Z)
+                
+            self.layer_outputs.append(output)
+            return output
  
     def backward(self, y):
         """
@@ -119,50 +125,52 @@ class NeuralNetwork:
         Parameters: 
             y (ndarray): Target labels of shape (m, output_size).
         """
-        # Convert numpy array to CuPy if needed
-        if isinstance(y, np.ndarray): y = cp.asarray(y)
+        # # Convert numpy array to CuPy if needed
+        # if isinstance(y, np.ndarray): y = cp.asarray(y)
 
-        m = y.shape[0]  # Number of samples
-        
-        # Reshape y for binary classification
-        if self.is_binary:
-            y = y.reshape(-1, 1)
-        else:
-            # One-hot encode y for multi-class classification
-            y = cp.eye(self.layer_sizes[-1])[y]
+        with self.stream:
+            m = y.shape[0]  # Number of samples
             
-        # Calculate initial gradient based on loss function
-        outputs = self.layer_outputs[-1]
-        if self.is_binary:
-            # Gradient for binary cross-entropy
-            dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
-        else:
-            # Gradient for categorical cross-entropy with softmax
-            dA = outputs - y
-        
-        # Backpropagate through layers in reverse
-        for i in reversed(range(len(self.layers))):
-            # Get activation from previous layer
-            prev_activation = self.layer_outputs[i]
-            
-            # For all except the last layer, apply activation derivative
-            if i < len(self.layers) - 1:
-                dZ = dA * self.layers[i].activation_derivative(self.layer_outputs[i+1])
+            # Reshape y for binary classification
+            if self.is_binary:
+                y = y.reshape(-1, 1)
             else:
-                dZ = dA
+                # One-hot encode y for multi-class classification
+                y = cp.eye(self.layer_sizes[-1])[y]
                 
-            # Calculate gradients
-            dW = cp.dot(prev_activation.T, dZ) / m
-            # Add L2 regularization
-            dW += self.reg_lambda * self.layers[i].weights
-            db = cp.sum(dZ, axis=0, keepdims=True) / m
+            # Calculate initial gradient based on loss function
+            outputs = self.layer_outputs[-1]
+            if self.is_binary:
+                # Gradient for binary cross-entropy
+                dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
+            else:
+                # Gradient for categorical cross-entropy with softmax
+                dA = outputs - y
             
-            # Store gradients in layer
-            self.layers[i].gradients = (dW, db)
-            
-            # Calculate dA for next iteration (previous layer)
-            if i > 0:  # No need to calculate for input layer
-                dA = cp.dot(dZ, self.layers[i].weights.T)
+            # Backpropagate through layers in reverse
+            for i in reversed(range(len(self.layers))):
+                # Get activation from previous layer
+                prev_activation = self.layer_outputs[i]
+                
+                # For all except the last layer, apply activation derivative
+                if i < len(self.layers) - 1:
+                    dZ = dA * self.layers[i].activation_derivative(self.layer_outputs[i+1])
+                else:
+                    dZ = dA
+                    
+                # Calculate gradients
+                dW = cp.dot(prev_activation.T, dZ) / m
+                # Add L2 regularization
+                dW += self.reg_lambda * self.layers[i].weights
+                db = cp.sum(dZ, axis=0, keepdims=True) / m
+                
+                # Update preallocated gradient buffers in the layer
+                self.layers[i].grad_dW[:] = dW
+                self.layers[i].grad_db[:] = db
+                
+                # Calculate dA for next iteration (previous layer)
+                if i > 0:  # No need to calculate for input layer
+                    dA = cp.dot(dZ, self.layers[i].weights.T)
 
     def train(self, X_train, y_train, X_val=None, y_val=None, 
               optimizer=None, epochs=100, batch_size=32, 
@@ -202,36 +210,35 @@ class NeuralNetwork:
         best_weights = [layer.weights.copy() for layer in self.layers]
         best_biases = [layer.biases.copy() for layer in self.layers]
         
-        def process_batch(start_idx):
-            X_batch = X_shuffled[start_idx:start_idx+batch_size]
-            y_batch = y_shuffled[start_idx:start_idx+batch_size]
-            
-            # Forward and backward passes
-            self.forward(X_batch, training=True)
-            self.backward(y_batch)
-            
-            # Update weights and biases
-            for idx, layer in enumerate(self.layers):
-                dW, db = layer.gradients
-                optimizer.update(layer, dW, db, idx)
-        
         # Training loop with progress bar
         progress_bar = tqdm(range(epochs)) if use_tqdm else range(epochs)
         for epoch in progress_bar:
-            # Reset gradients
+            # Reset preallocated gradients on each layer
             for layer in self.layers:
                 layer.zero_grad()
             
-            # Shuffle training data
+            # Shuffle training data (using CuPy for GPU-based shuffling)
             indices = cp.arange(X_train.shape[0])
             cp.random.shuffle(indices)
             X_shuffled = X_train[indices]
             y_shuffled = y_train[indices]
             
-            # Mini-batch training with parallel processing
-            Parallel(n_jobs=n_jobs)(delayed(process_batch)(i) for i in range(0, X_train.shape[0], batch_size))
+            # Process batches entirely on the GPU without intermediate synchronizations
+            for start_idx in range(0, X_train.shape[0], batch_size):
+                end_idx = min(start_idx + batch_size, X_train.shape[0])
+                X_batch = X_shuffled[start_idx:end_idx]
+                y_batch = y_shuffled[start_idx:end_idx]
+                self.forward(X_batch, training=True)
+                self.backward(y_batch)
+                
+                # Use the preallocated gradients for the update step.
+                for layer in self.layers:
+                    optimizer.update(layer, layer.grad_dW, layer.grad_db)
             
-            # Calculate metrics
+            # Synchronize GPU stream to ensure all operations are complete
+            self.stream.synchronize()
+            
+            # Calculate metrics (avoid CPU transfers except for final values)
             train_loss = self.calculate_loss(X_train, y_train)
             train_accuracy, _ = self.evaluate(X_train, y_train)
             
@@ -280,7 +287,6 @@ class NeuralNetwork:
                     msg = lr_scheduler.step(epoch)
                     if p and msg:
                         tqdm.write(msg)
-                    
             
             # Early stopping
             if patience_counter >= early_stopping_threshold:
@@ -292,7 +298,7 @@ class NeuralNetwork:
         for i, layer in enumerate(self.layers):
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
-            
+
     def calculate_loss(self, X, y, class_weights=None):
         """
         Calculates the loss with L2 regularization.
@@ -303,33 +309,37 @@ class NeuralNetwork:
         Returns: 
             float: The calculated loss value
         """
-        # Convert numpy array to CuPy if needed
-        if isinstance(X, np.ndarray): X = cp.asarray(X)
-        if isinstance(y, np.ndarray): y = cp.asarray(y)
+        # # Convert numpy array to CuPy if needed
+        # if isinstance(X, np.ndarray): X = cp.asarray(X)
+        # if isinstance(y, np.ndarray): y = cp.asarray(y)
 
-        # Get predictions
-        outputs = self.forward(X, training=False)
-        
-        # Apply class weights if provided
-        if class_weights is None:
-            class_weights = cp.ones_like(y)
-        elif isinstance(class_weights, cp.array):
-            class_weights = cp.asarray(class_weights)
-        
-        # Select appropriate loss function
-        if self.is_binary:
-            loss_fn = BCEWithLogitsLoss()
-            loss = loss_fn(outputs, y.reshape(-1, 1))
-        else:
-            loss_fn = CrossEntropyLoss()
-            loss = loss_fn(outputs, y)
-        
-        # Add L2 regularization
-        l2_reg = self.reg_lambda * sum(cp.sum(layer.weights**2) for layer in self.layers)
-        loss += l2_reg
-        
-        # Convert to Python float
-        return float(loss.get()) if hasattr(loss, 'get') else float(loss)  # Convert CuPy scalar to regular Python float
+        with self.stream:
+            # Get predictions
+            outputs = self.forward(X, training=False)
+            
+            # Apply class weights if provided
+            if class_weights is None:
+                class_weights = cp.ones_like(y)
+            elif isinstance(class_weights, np.ndarray):
+                class_weights = cp.asarray(class_weights)
+            
+            # Select appropriate loss function
+            if self.is_binary:
+                loss_fn = BCEWithLogitsLoss()
+                loss = loss_fn(outputs, y.reshape(-1, 1))
+            else:
+                loss_fn = CrossEntropyLoss()
+                loss = loss_fn(outputs, y)
+            
+            # Add L2 regularization
+            l2_reg = self.reg_lambda * sum(cp.sum(layer.weights**2) for layer in self.layers)
+            loss += l2_reg
+            
+            # Synchronize before getting the value
+            self.stream.synchronize()
+            
+            # Convert to Python float (only at the final step)
+            return float(loss.get()) if hasattr(loss, 'get') else float(loss)
 
 
     def evaluate(self, X, y):
@@ -342,19 +352,28 @@ class NeuralNetwork:
             - accuracy (float): Model accuracy
             - predicted (ndarray): Predicted labels
         """
-        # Get predictions
-        y_hat = self.forward(X, training=False)
-        
-        # Calculate accuracy based on problem type
-        if self.is_binary:
-            predicted = (y_hat > 0.5).astype(int)
-            accuracy = float(cp.mean(predicted.flatten() == y.reshape(-1, 1).flatten()).get()) if hasattr(predicted, 'get') else float(accuracy)  # Convert CuPy scalar to regular Python float
-        else:
-            predicted = cp.argmax(y_hat, axis=1)
-            accuracy = float(cp.mean(predicted == y).get()) if hasattr(predicted, 'get') else float(accuracy)  # Convert CuPy scalar to regular Python float
+        # # Convert numpy array to CuPy if needed
+        # if isinstance(X, np.ndarray): X = cp.asarray(X)
+        # if isinstance(y, np.ndarray): y = cp.asarray(y)
+
+        with self.stream:
+            # Get predictions
+            y_hat = self.forward(X, training=False)
+            
+            # Calculate accuracy based on problem type
+            if self.is_binary:
+                predicted = (y_hat > 0.5).astype(int)
+                accuracy = cp.mean(predicted.flatten() == y.reshape(-1, 1).flatten())
+            else:
+                predicted = cp.argmax(y_hat, axis=1)
+                accuracy = cp.mean(predicted == y)
+            
+            # Synchronize before getting the value
+            self.stream.synchronize()
+            
+            # Convert to Python float (only at the final step)
+            return float(accuracy.get()) if hasattr(accuracy, 'get') else float(accuracy), predicted
               
-        return accuracy, predicted
-    
     def predict(self, X):
         """
         Generate predictions for input data.
@@ -363,15 +382,16 @@ class NeuralNetwork:
         Returns:
             - predictions: Model predictions (class probabilities or labels)
         """
-        # Get raw predictions
-        outputs = self.forward(X, training=False)
-        
-        # For binary classification, return class probabilities
-        if self.is_binary:
-            return outputs
-        # For multiclass, return class labels
-        else:
-            return cp.argmax(outputs, axis=1)
+        with self.stream:
+            # Get raw predictions
+            outputs = self.forward(X, training=False)
+            
+            # For binary classification, return class probabilities
+            if self.is_binary:
+                return outputs
+            # For multiclass, return class labels
+            else:
+                return cp.argmax(outputs, axis=1)
             
     def tune_hyperparameters(self, X_train, y_train, X_val, y_val, param_grid,
                              layer_configs=None, optimizer_types=None, 
@@ -525,11 +545,14 @@ class Layer:
         self.weights = cp.random.randn(input_size, output_size) * scale
         self.biases = cp.zeros((1, output_size))
         self.activation = activation
-        self.gradients = None
+        # Preallocate gradient buffers to avoid repeated allocations.
+        self.grad_dW = cp.zeros_like(self.weights)
+        self.grad_db = cp.zeros_like(self.biases)
         
     def zero_grad(self):
         """Reset the gradients of the weights and biases to zero."""
-        self.gradients = None
+        cp.zeros_like(self.grad_dW)
+        cp.zeros_like(self.grad_db)
 
     def activate(self, Z):
         """Apply activation function."""

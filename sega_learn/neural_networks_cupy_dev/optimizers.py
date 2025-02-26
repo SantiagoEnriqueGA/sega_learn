@@ -5,125 +5,87 @@ class AdamOptimizer:
     Adam optimizer class for training neural networks.
     Formula: w = w - alpha * m_hat / (sqrt(v_hat) + epsilon) - lambda * w 
     Derived from: https://arxiv.org/abs/1412.6980
-    Args:
-        learning_rate (float, optional): The learning rate for the optimizer. Defaults to 0.001.
-        beta1 (float, optional): The exponential decay rate for the first moment estimates. Defaults to 0.9.
-        beta2 (float, optional): The exponential decay rate for the second moment estimates. Defaults to 0.999.
-        epsilon (float, optional): A small value to prevent division by zero. Defaults to 1e-8.
-        reg_lambda (float, optional): The regularization parameter. Defaults to 0.01.
     """
     def __init__(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8, reg_lambda=0.01):
-        self.learning_rate = learning_rate      # Learning rate, alpha 
-        self.beta1 = beta1                      # Exponential decay rate for the first moment estimates
-        self.beta2 = beta2                      # Exponential decay rate for the second moment estimates
-        self.epsilon = epsilon                  # Small value to prevent division by zero
-        self.reg_lambda = reg_lambda            # Regularization parameter, large lambda means more regularization
-        
-        self.m = []                             # First moment estimates
-        self.v = []                             # Second moment estimates
-        self.t = 0                              # Time step
+        self.learning_rate = learning_rate
+        self.beta1 = beta1
+        self.beta2 = beta2
+        self.epsilon = epsilon
+        self.reg_lambda = reg_lambda
+        self.state = {}  # Dictionary to hold state per layer: {'m': ..., 'v': ...}
+        self.t = 0       # Global time step
 
     def initialize(self, layers):
-        """
-        Initializes the first and second moment estimates for each layer's weights.
-        Args: layers (list): List of layers in the neural network.
-        Returns: None
-        """
-        for layer in layers:                                # For each layer in the neural network..
-            self.m.append(cp.zeros_like(layer.weights))     # Initialize first moment estimates
-            self.v.append(cp.zeros_like(layer.weights))     # Initialize second moment estimates
+        for layer in layers:
+            self.state[id(layer)] = {
+                'm': cp.zeros_like(layer.weights),
+                'v': cp.zeros_like(layer.weights)
+            }
 
-    def update(self, layer, dW, db, index):
-        """
-        Updates the weights and biases of a layer using the Adam optimization algorithm.
-        Args:
-            layer (Layer): The layer to update.
-            dW (ndarray): The gradient of the weights.
-            db (ndarray): The gradient of the biases.
-            index (int): The index of the layer.
-        Returns: None
-        """
-        # Convert numpy arrays to cupy if needed
-        if hasattr(dW, 'get'):  # Check if it's a cupy array already
+    def update(self, layer, dW, db):
+        # Ensure gradients are CuPy arrays
+        if not hasattr(dW, 'get'):
+            dW_gpu = cp.asarray(dW)
+        else:
             dW_gpu = dW
-        else:
-            dW_gpu = cp.asarray(dW)  # Convert numpy array to cupy
-            
-        if hasattr(db, 'get'):
-            db_gpu = db
-        else:
+        if not hasattr(db, 'get'):
             db_gpu = cp.asarray(db)
-            
-        self.t += 1                                                                         # Increment time step
-        self.m[index] = self.beta1 * self.m[index] + (1 - self.beta1) * dW_gpu              # Update first moment estimate, beta1 * m + (1 - beta1) * dW
-        self.v[index] = self.beta2 * self.v[index] + (1 - self.beta2) * cp.square(dW_gpu)   # Update second moment estimate, beta2 * v + (1 - beta2) * dW^2
+        else:
+            db_gpu = db
 
-        m_hat = self.m[index] / (1 - self.beta1 ** self.t)                                  # Bias-corrected first moment estimate, m / (1 - beta1^t)
-        v_hat = self.v[index] / (1 - self.beta2 ** self.t)                                  # Bias-corrected second moment estimate, v / (1 - beta2^t)
+        self.t += 1
+        state = self.state[id(layer)]
+        state['m'] = self.beta1 * state['m'] + (1 - self.beta1) * dW_gpu
+        state['v'] = self.beta2 * state['v'] + (1 - self.beta2) * cp.square(dW_gpu)
 
-        # Ensure layer weights and biases are also CuPy arrays
+        m_hat = state['m'] / (1 - self.beta1 ** self.t)
+        v_hat = state['v'] / (1 - self.beta2 ** self.t)
+
+        # Ensure weights and biases are CuPy arrays
         if not hasattr(layer.weights, 'get'):
             layer.weights = cp.asarray(layer.weights)
         if not hasattr(layer.biases, 'get'):
             layer.biases = cp.asarray(layer.biases)
 
-        layer.weights -= self.learning_rate * (m_hat / (cp.sqrt(v_hat) + self.epsilon) + self.reg_lambda * layer.weights)   # Update weights
-        layer.biases -= self.learning_rate * db_gpu                                                                         # Update biases
+        layer.weights -= self.learning_rate * (m_hat / (cp.sqrt(v_hat) + self.epsilon) + self.reg_lambda * layer.weights)
+        layer.biases -= self.learning_rate * db_gpu
 
 class SGDOptimizer:
     """
     Stochastic Gradient Descent (SGD) optimizer class for training neural networks.
     Formula: w = w - learning_rate * dW, b = b - learning_rate * db
-    Args:
-        learning_rate (float, optional): The learning rate for the optimizer. Defaults to 0.001.
-        momentum (float, optional): The momentum factor. Defaults to 0.0.
-        reg_lambda (float, optional): The regularization parameter. Defaults to 0.0.
     """
     def __init__(self, learning_rate=0.001, momentum=0.0, reg_lambda=0.0):
-        self.learning_rate = learning_rate      # Learning rate
-        self.momentum = momentum                # Momentum factor
-        self.reg_lambda = reg_lambda            # Regularization parameter
-        self.velocity = []                      # Velocity for momentum
+        self.learning_rate = learning_rate
+        self.momentum = momentum
+        self.reg_lambda = reg_lambda
+        self.state = {}  # Dictionary to hold state per layer: {'velocity': ...}
 
     def initialize(self, layers):
-        """
-        Initializes the velocity for each layer's weights.
-        Args: layers (list): List of layers in the neural network.
-        Returns: None
-        """
-        for layer in layers:                                    # For each layer in the neural network..
-            self.velocity.append(cp.zeros_like(layer.weights))  # Initialize velocity
+        for layer in layers:
+            self.state[id(layer)] = {
+                'velocity': cp.zeros_like(layer.weights)
+            }
 
-    def update(self, layer, dW, db, index):
-        """
-        Updates the weights and biases of a layer using the SGD optimization algorithm.
-        Args:
-            layer (Layer): The layer to update.
-            dW (ndarray): The gradient of the weights.
-            db (ndarray): The gradient of the biases.
-            index (int): The index of the layer.
-        Returns: None
-        """
-        # Convert numpy arrays to cupy if needed
-        if hasattr(dW, 'get'):
-            dW_gpu = dW
-        else:
+    def update(self, layer, dW, db):
+        if not hasattr(dW, 'get'):
             dW_gpu = cp.asarray(dW)
-            
-        if hasattr(db, 'get'):
-            db_gpu = db
         else:
+            dW_gpu = dW
+        if not hasattr(db, 'get'):
             db_gpu = cp.asarray(db)
-            
-        # Ensure layer weights and biases are also CuPy arrays
+        else:
+            db_gpu = db
+
         if not hasattr(layer.weights, 'get'):
             layer.weights = cp.asarray(layer.weights)
         if not hasattr(layer.biases, 'get'):
             layer.biases = cp.asarray(layer.biases)
-            
-        self.velocity[index] = self.momentum * self.velocity[index] - self.learning_rate * dW_gpu           # Update velocity
-        layer.weights += self.velocity[index] - self.learning_rate * self.reg_lambda * layer.weights    # Update weights
-        layer.biases -= self.learning_rate * db_gpu                                                     # Update biases
+
+        state = self.state[id(layer)]
+        state['velocity'] = self.momentum * state['velocity'] - self.learning_rate * dW_gpu
+        layer.weights += state['velocity'] - self.learning_rate * self.reg_lambda * layer.weights
+        layer.biases -= self.learning_rate * db_gpu
 
 class AdadeltaOptimizer:
     """
@@ -133,62 +95,39 @@ class AdadeltaOptimizer:
         Delta_x = - (sqrt(E[delta_x^2]_{t-1} + epsilon) / sqrt(E[g^2]_t + epsilon)) * g
         E[delta_x^2]_t = rho * E[delta_x^2]_{t-1} + (1 - rho) * Delta_x^2
     Derived from: https://arxiv.org/abs/1212.5701
-    Args:
-        learning_rate (float, optional): The learning rate for the optimizer. Defaults to 1.0.
-        rho (float, optional): The decay rate. Defaults to 0.95.
-        epsilon (float, optional): A small value to prevent division by zero. Defaults to 1e-6.
-        reg_lambda (float, optional): The regularization parameter. Defaults to 0.0.
     """
     def __init__(self, learning_rate=1.0, rho=0.95, epsilon=1e-6, reg_lambda=0.0):
-        self.learning_rate = learning_rate      # Learning rate
-        self.rho = rho                          # Decay rate
-        self.epsilon = epsilon                  # Small value to prevent division by zero
-        self.reg_lambda = reg_lambda            # Regularization parameter
-        
-        self.E_g2 = []                          # Running average of squared gradients
-        self.E_delta_x2 = []                    # Running average of squared parameter updates
+        self.learning_rate = learning_rate
+        self.rho = rho
+        self.epsilon = epsilon
+        self.reg_lambda = reg_lambda
+        self.state = {}  # Dictionary to hold state per layer: {'E_g2': ..., 'E_delta_x2': ...}
 
     def initialize(self, layers):
-        """
-        Initializes the running averages for each layer's weights.
-        Args: layers (list): List of layers in the neural network.
-        Returns: None
-        """
-        for layer in layers:                                    # For each layer in the neural network..
-            self.E_g2.append(cp.zeros_like(layer.weights))      # Initialize running average of squared gradients
-            self.E_delta_x2.append(cp.zeros_like(layer.weights))# Initialize running average of squared parameter updates
+        for layer in layers:
+            self.state[id(layer)] = {
+                'E_g2': cp.zeros_like(layer.weights),
+                'E_delta_x2': cp.zeros_like(layer.weights)
+            }
 
-    def update(self, layer, dW, db, index):
-        """
-        Updates the weights and biases of a layer using the Adadelta optimization algorithm.
-        Args:
-            layer (Layer): The layer to update.
-            dW (ndarray): The gradient of the weights.
-            db (ndarray): The gradient of the biases.
-            index (int): The index of the layer.
-        Returns: None
-        """
-        # Convert numpy arrays to cupy if needed
-        if hasattr(dW, 'get'):
-            dW_gpu = dW
-        else:
+    def update(self, layer, dW, db):
+        if not hasattr(dW, 'get'):
             dW_gpu = cp.asarray(dW)
-            
-        if hasattr(db, 'get'):
-            db_gpu = db
         else:
+            dW_gpu = dW
+        if not hasattr(db, 'get'):
             db_gpu = cp.asarray(db)
-            
-        # Ensure layer weights and biases are also CuPy arrays
+        else:
+            db_gpu = db
+
         if not hasattr(layer.weights, 'get'):
             layer.weights = cp.asarray(layer.weights)
         if not hasattr(layer.biases, 'get'):
             layer.biases = cp.asarray(layer.biases)
-            
-        self.E_g2[index] = self.rho * self.E_g2[index] + (1 - self.rho) * cp.square(dW_gpu)  # Update running average of squared gradients
-        delta_x = - (cp.sqrt(self.E_delta_x2[index] + self.epsilon) / 
-                     cp.sqrt(self.E_g2[index] + self.epsilon)) * dW_gpu                     # Compute parameter update
-        self.E_delta_x2[index] = self.rho * self.E_delta_x2[index] + (1 - self.rho) * cp.square(delta_x)  # Update running average of squared parameter updates
 
-        layer.weights += delta_x - self.learning_rate * self.reg_lambda * layer.weights  # Update weights
-        layer.biases -= self.learning_rate * db_gpu                                     # Update biases
+        state = self.state[id(layer)]
+        state['E_g2'] = self.rho * state['E_g2'] + (1 - self.rho) * cp.square(dW_gpu)
+        delta_x = - (cp.sqrt(state['E_delta_x2'] + self.epsilon) / cp.sqrt(state['E_g2'] + self.epsilon)) * dW_gpu
+        state['E_delta_x2'] = self.rho * state['E_delta_x2'] + (1 - self.rho) * cp.square(delta_x)
+        layer.weights += delta_x - self.learning_rate * self.reg_lambda * layer.weights
+        layer.biases -= self.learning_rate * db_gpu

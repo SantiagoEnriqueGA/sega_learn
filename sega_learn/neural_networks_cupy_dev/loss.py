@@ -2,8 +2,8 @@ import cupy as cp
 
 class CrossEntropyLoss:
     """
-    Custom cross entropy loss implementation using cupy for multi-class classification.
-    Formula: -sum(y * log(p) + (1 - y) * log(1 - p)) / m
+    Optimized cross entropy loss implementation using cupy for multi-class classification.
+    Formula: -sum(y * log(p)) / m
     Methods:
         __call__(self, logits, targets): Calculate the cross entropy loss.
     """
@@ -12,29 +12,38 @@ class CrossEntropyLoss:
         Calculate the cross entropy loss.
         Args:
             logits (cp.ndarray): The logits (predicted values) of shape (num_samples, num_classes).
-            targets (cp.ndarray): The target labels of shape (num_samples, num_classes).
+            targets (cp.ndarray): The target labels of shape (num_samples, num_classes) or (num_samples,).
         Returns:
             float: The cross entropy loss.
         """
-        # Convert numpy arrays to cupy if needed
-        if not hasattr(logits, 'get'):  logits = cp.asarray(logits)
-        if not hasattr(targets, 'get'): targets = cp.asarray(targets)
-        
-        # One-hot encode targets if they are not already
+        # Convert numpy arrays to cupy if needed - using asarray which avoids copying if already on GPU
+        logits = cp.asarray(logits)
+        targets = cp.asarray(targets)
+       
+        # One-hot encode targets if they are not already (using more efficient method)
         if targets.ndim == 1:
-            targets = cp.eye(logits.shape[1])[targets]
-
-        exp_logits = cp.exp(logits - cp.max(logits, axis=1, keepdims=True)) # Exponential of logits, subtract max to prevent overflow
-        probs = exp_logits / cp.sum(exp_logits, axis=1, keepdims=True)      # Probabilities from logits
-        loss = -cp.sum(targets * cp.log(probs + 1e-15)) / logits.shape[0]   # Cross-entropy loss
+            num_classes = logits.shape[1]
+            targets = cp.eye(num_classes, dtype=logits.dtype)[targets]
         
-        # Convert result to scalar
-        return float(loss.get()) if hasattr(loss, 'get') else float(loss)
+        # Apply log-softmax more efficiently (numerically stable)
+        # Subtract max for numerical stability
+        logits_max = cp.max(logits, axis=1, keepdims=True)
+        logits_stable = logits - logits_max
+        
+        # Compute log softmax
+        log_probs = logits_stable - cp.log(cp.sum(cp.exp(logits_stable), axis=1, keepdims=True))
+        
+        # Compute loss directly without intermediate probability calculation
+        batch_loss = -cp.sum(targets * log_probs) / logits.shape[0]
+        
+        # No need to check for .get() - just use .item() which works for both CuPy and NumPy
+        return float(batch_loss.item())
+
 
 class BCEWithLogitsLoss:
     """
-    Custom binary cross entropy loss with logits implementation using cupy.
-    Formula: -mean(y * log(p) + (1 - y) * log(1 - p))
+    Optimized binary cross entropy loss with logits implementation using cupy.
+    Formula: -mean(y * log(sigmoid(x)) + (1 - y) * log(1 - sigmoid(x)))
     Methods:
         __call__(self, logits, targets): Calculate the binary cross entropy loss.
     """
@@ -47,14 +56,16 @@ class BCEWithLogitsLoss:
         Returns:
             float: The binary cross entropy loss.
         """
-        # Convert numpy arrays to cupy if needed
-        if not hasattr(logits, 'get'):
-            logits = cp.asarray(logits)
-        if not hasattr(targets, 'get'):
-            targets = cp.asarray(targets)
-            
-        probs = 1 / (1 + cp.exp(-logits))                                                               # Apply sigmoid to logits to get probabilities
-        loss = -cp.mean(targets * cp.log(probs + 1e-15) + (1 - targets) * cp.log(1 - probs + 1e-15))    # Binary cross-entropy loss
+        # Convert arrays if needed
+        logits = cp.asarray(logits)
+        targets = cp.asarray(targets)
         
-        # Convert result to scalar
-        return float(loss.get()) if hasattr(loss, 'get') else float(loss)
+        # Use a more numerically stable implementation
+        # max(x,0) - x * z + log(1 + exp(-abs(x)))
+        loss = cp.maximum(logits, 0) - logits * targets + cp.log1p(cp.exp(-cp.abs(logits)))
+        
+        # Calculate mean loss
+        mean_loss = cp.mean(loss)
+        
+        # Return as scalar
+        return float(mean_loss.item())
