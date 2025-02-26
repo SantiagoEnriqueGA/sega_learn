@@ -3,6 +3,8 @@ from .loss import CrossEntropyLoss, BCEWithLogitsLoss, sum_reduce
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
 from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 
+from .numba_utils import _forward_jit_impl, _backward_jit_impl
+
 import numpy as np
 from numba import jit, njit, vectorize, float64, int32, prange
 from numba import types
@@ -80,7 +82,7 @@ class NeuralNetwork:
         return self._apply_dropout_jit(X, self.dropout_rate)
     
     @staticmethod
-    @njit
+    @njit(fastmath=True, nogil=True, cache=True)
     def _apply_dropout_jit(X, dropout_rate):
         """
         Numba JIT-compiled function to apply dropout.
@@ -136,7 +138,7 @@ class NeuralNetwork:
         return self.layer_outputs[-1]
             
     @staticmethod
-    @njit
+    @njit(fastmath=True, nogil=True, cache=True)
     def _forward_jit(X, weights, biases, activations, dropout_rate, training, is_binary):
         # Store all layer activations for backprop
         layer_outputs = [X]
@@ -238,7 +240,7 @@ class NeuralNetwork:
 
             
     @staticmethod
-    @njit
+    @njit(fastmath=True, nogil=True, cache=True)
     def _backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary):
         m = y.shape[0]  # Number of samples
         dWs = []
@@ -289,7 +291,7 @@ class NeuralNetwork:
 
         return dWs, dbs
     
-    @njit
+    @njit(fastmath=True, nogil=True, cache=True)
     def sum_reduce(arr):
         """
         Numba-compatible function to compute the sum along axis 1 with keepdims=True.
@@ -350,7 +352,7 @@ class NeuralNetwork:
             y_shuffled = y_train[indices]
             
             # Mini-batch training
-            for i in range(0, X_train.shape[0], batch_size):
+            for i in prange(0, X_train.shape[0], batch_size):
                 self.process_batch(i, X_shuffled, y_shuffled, batch_size, optimizer)
             
             # Calculate metrics
@@ -403,7 +405,6 @@ class NeuralNetwork:
                     if p and msg:
                         tqdm.write(msg)
                     
-            
             # Early stopping
             if patience_counter >= early_stopping_threshold:
                 if p and use_tqdm:
@@ -415,18 +416,29 @@ class NeuralNetwork:
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
             
-    def process_batch(self, start_idx, X_shuffled, y_shuffled, batch_size, optimizer):
+    @staticmethod
+    @njit(fastmath=True, nogil=True, cache=True)
+    def _process_batch_jit(start_idx, X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, is_binary, reg_lambda):
         X_batch = X_shuffled[start_idx:start_idx+batch_size]
         y_batch = y_shuffled[start_idx:start_idx+batch_size]
         
-        # Forward and backward passes
-        self.forward(X_batch, training=True)
-        self.backward(y_batch)
+        # Forward pass
+        layer_outputs = _forward_jit_impl(X_batch, weights, biases, activations, dropout_rate, True, is_binary)
         
+        # Backward pass
+        dWs, dbs = _backward_jit_impl(layer_outputs, y_batch, weights, activations, reg_lambda, is_binary)    
+        return dWs, dbs
+    
+    def process_batch(self, start_idx, X_shuffled, y_shuffled, batch_size, optimizer):
+        weights = [layer.weights for layer in self.layers]
+        biases = [layer.biases for layer in self.layers]
+        activations = [layer.activation for layer in self.layers]        
+        dWs, dbs = self._process_batch_jit(start_idx, X_shuffled, y_shuffled, batch_size, weights, biases, activations, self.dropout_rate, self.is_binary, self.reg_lambda)
+    
         # Update weights and biases
         for idx, layer in enumerate(self.layers):
-            dW = layer.weight_gradients
-            db = layer.bias_gradients
+            dW = dWs[idx]
+            db = dbs[idx]
             # Apply optimizer update
             optimizer.update(layer, dW, db, idx)
 
@@ -494,7 +506,7 @@ class NeuralNetwork:
         return accuracy, predicted
         
     @staticmethod
-    @njit
+    @njit(fastmath=True, nogil=True, cache=True)
     def _evaluate_jit(y_hat, is_binary):
         """
         Numba JIT-compiled function to evaluate model performance.
@@ -734,40 +746,40 @@ class Layer:
 
 # Activation functions and their derivatives
 # Using Numba for JIT compilation to speed up the activation functions
-@njit
+@njit(fastmath=True, cache=True)
 def relu(z):
     return np.maximum(0, z)
 
-@njit
+@njit(fastmath=True, cache=True)
 def relu_derivative(z):
     return (z > 0).astype(np.float64)  # Ensure return type is float64
 
-@njit
+@njit(fastmath=True, cache=True)
 def leaky_relu(z, alpha=0.01):
     return np.where(z > 0, z, alpha * z)
 
-@njit
+@njit(fastmath=True, cache=True)
 def leaky_relu_derivative(z, alpha=0.01):
     return np.where(z > 0, 1, alpha).astype(np.float64)  # Ensure return type is float64
 
-@njit
+@njit(fastmath=True, cache=True)
 def tanh(z):
     return np.tanh(z)
 
-@njit
+@njit(fastmath=True, cache=True)
 def tanh_derivative(z):
     return 1 - np.tanh(z) ** 2
 
-@njit
+@njit(fastmath=True, cache=True)
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
-@njit
+@njit(fastmath=True, cache=True)
 def sigmoid_derivative(z):
     sig = sigmoid(z)
     return sig * (1 - sig)
 
-@njit
+@njit(fastmath=True, cache=True)
 def softmax(z):
     max_z = np.empty(z.shape[0])
     for i in range(z.shape[0]):

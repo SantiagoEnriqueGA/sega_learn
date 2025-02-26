@@ -83,10 +83,14 @@ def init_compile():
     loss_fn.calculate_loss(logits, targets.reshape(-1, 1))
     print(f": Time: {time.time() - compile_time:.2f} seconds")
     
+    
+    
     # Run a dummy training step to compile the JIT code
     print(f"   ...Compiling training step", end="", flush=True)
     optimizer = AdamOptimizer(learning_rate=0.01)
     scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)
+    nn.forward(X, training=True)
+    nn.backward(y)
     nn.train(X, y, epochs=1, batch_size=32, optimizer=optimizer, lr_scheduler=scheduler, p=False, use_tqdm=False)
     print(f": Time: {time.time() - compile_time:.2f} seconds")
     
