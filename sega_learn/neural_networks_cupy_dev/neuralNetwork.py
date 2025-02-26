@@ -5,7 +5,6 @@ from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 import numpy as np
 import cupy as cp
 from cupy import fuse
-from joblib import Parallel, delayed
 from tqdm.auto import tqdm
 
 class NeuralNetwork:

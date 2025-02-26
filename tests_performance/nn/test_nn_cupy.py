@@ -79,8 +79,8 @@ def time_nn_cupy(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
 
     # Time train (single epoch)
     # Use a smaller dataset for training to avoid long training times DATASET_SIZE/10
-    X_small = np.random.randn(DATASET_SIZE // 10, layer_sizes[0])
-    y_small = np.random.randint(0, layer_sizes[-1], size=(DATASET_SIZE // 10,))
+    X_small = cp.random.randn(DATASET_SIZE // 10, layer_sizes[0])
+    y_small = cp.random.randint(0, layer_sizes[-1], size=(DATASET_SIZE // 10,))
     
     optimizer = AdamOptimizer(learning_rate=0.01)
     sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=100)  
@@ -125,10 +125,10 @@ def time_nn_optimizer_cupy(num_repeats=5, layer_sizes_multiplier=25):
 
         # Time update
         # Simulate gradients for weights and biases
-        dW = [np.random.randn(*layer.weights.shape) for layer in nn.layers]
-        db = [np.random.randn(*layer.biases.shape) for layer in nn.layers]
+        dW = [cp.random.randn(*layer.weights.shape) for layer in nn.layers]
+        db = [cp.random.randn(*layer.biases.shape) for layer in nn.layers]
         # Time the update method for each layer
-        update_avg, update_stddev, _ = time_function(lambda: [optimizer.update(layer, dW[i], db[i], i) for i, layer in enumerate(nn.layers)], NUM_REPEATS)
+        update_avg, update_stddev, _ = time_function(lambda: [optimizer.update(layer, dW[i], db[i]) for i, layer in enumerate(nn.layers)],NUM_REPEATS)
         optimizer_times[f'{name}_update'] = (update_avg, update_stddev)
 
     # Print the optimizer timing results
@@ -167,11 +167,11 @@ def time_nn_loss_cupy(num_repeats=5, layer_sizes_multiplier=10, dataset_size=1_0
     loss_times = {}
     for name, loss_fn in loss_functions.items():
         if name == 'CrossEntropyLoss':
-            logits = np.random.randn(DATASET_SIZE, layer_sizes[-1])
-            targets = np.eye(layer_sizes[-1])[np.random.choice(layer_sizes[-1], DATASET_SIZE)]
+            logits = cp.random.randn(DATASET_SIZE, layer_sizes[-1])
+            targets = cp.eye(layer_sizes[-1])[cp.random.choice(layer_sizes[-1], DATASET_SIZE)]
         else:  # BCEWithLogitsLoss
-            logits = np.random.randn(DATASET_SIZE)
-            targets = np.random.randint(0, 2, size=(DATASET_SIZE,))
+            logits = cp.random.randn(DATASET_SIZE)
+            targets = cp.random.randint(0, 2, size=(DATASET_SIZE,))
 
         loss_avg, loss_stddev, _ = time_function(loss_fn, NUM_REPEATS, logits, targets)
         loss_times[name] = (loss_avg, loss_stddev)
