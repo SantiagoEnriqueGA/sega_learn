@@ -1,10 +1,9 @@
 from re import L
-from .loss import CrossEntropyLoss, BCEWithLogitsLoss
+from .loss import CrossEntropyLoss, BCEWithLogitsLoss, sum_reduce
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
 from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 
 import numpy as np
-from joblib import Parallel, delayed
 from numba import jit, njit, vectorize, float64, int32, prange
 from numba import types
 from numba.experimental import jitclass
@@ -176,7 +175,6 @@ class NeuralNetwork:
             
         layer_outputs.append(output)
         return layer_outputs
-
  
     def backward(self, y):
         """
@@ -184,49 +182,127 @@ class NeuralNetwork:
         Parameters: 
             y (ndarray): Target labels of shape (m, output_size).
         """
-        m = y.shape[0]  # Number of samples
+        # m = y.shape[0]  # Number of samples
         
-        # Reshape y for binary classification
-        if self.is_binary:
-            y = y.reshape(-1, 1)
-        else:
-            # One-hot encode y for multi-class classification
-            y = np.eye(self.layer_sizes[-1])[y]
+        # # Reshape y for binary classification
+        # if self.is_binary:
+        #     y = y.reshape(-1, 1)
+        # else:
+        #     # One-hot encode y for multi-class classification
+        #     y = np.eye(self.layer_sizes[-1])[y]
             
+        # # Calculate initial gradient based on loss function
+        # outputs = self.layer_outputs[-1]
+        # if self.is_binary:
+        #     # Gradient for binary cross-entropy
+        #     dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
+        # else:
+        #     # Gradient for categorical cross-entropy with softmax
+        #     dA = outputs - y
+        
+        # # Backpropagate through layers in reverse
+        # for i in reversed(range(len(self.layers))):
+        #     # Get activation from previous layer
+        #     prev_activation = self.layer_outputs[i]
+            
+        #     # For all except the last layer, apply activation derivative
+        #     if i < len(self.layers) - 1:
+        #         dZ = dA * self.layers[i].activation_derivative(self.layer_outputs[i+1])
+        #     else:
+        #         dZ = dA
+                
+        #     # Calculate gradients
+        #     dW = np.dot(prev_activation.T, dZ) / m
+            
+        #     # Add L2 regularization
+        #     dW += self.reg_lambda * self.layers[i].weights
+        #     db = np.sum(dZ, axis=0, keepdims=True) / m
+            
+        #     # Store gradients in layer
+        #     self.layers[i].weight_gradients = dW
+        #     self.layers[i].bias_gradients = db
+            
+        #     # Calculate dA for next iteration (previous layer)
+        #     if i > 0:  # No need to calculate for input layer
+        #         dA = np.dot(dZ, self.layers[i].weights.T)
+            
+        # JIT-compiled function for backward pass
+        # TODO
+        weights = [layer.weights for layer in self.layers]
+        activations = [layer.activation for layer in self.layers]
+        dWs, dbs = self._backward_jit(self.layer_outputs, y, weights, activations, self.reg_lambda, self.is_binary)
+
+        for i, layer in enumerate(self.layers):
+            layer.weight_gradients = dWs[i]
+            layer.bias_gradients = dbs[i]
+
+            
+    @staticmethod
+    @njit
+    def _backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary):
+        m = y.shape[0]  # Number of samples
+        dWs = []
+        dbs = []
+
+        # Reshape y for binary classification
+        if is_binary:
+            y = y.reshape(-1, 1).astype(np.float64)
+        else:
+            y = np.eye(layer_outputs[-1].shape[1])[y].astype(np.float64)
+
         # Calculate initial gradient based on loss function
-        outputs = self.layer_outputs[-1]
-        if self.is_binary:
-            # Gradient for binary cross-entropy
+        outputs = layer_outputs[-1]
+        if is_binary:
             dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
         else:
-            # Gradient for categorical cross-entropy with softmax
             dA = outputs - y
-        
+
         # Backpropagate through layers in reverse
-        for i in reversed(range(len(self.layers))):
-            # Get activation from previous layer
-            prev_activation = self.layer_outputs[i]
-            
-            # For all except the last layer, apply activation derivative
-            if i < len(self.layers) - 1:
-                dZ = dA * self.layers[i].activation_derivative(self.layer_outputs[i+1])
+        for i in range(len(weights) - 1, -1, -1):
+            prev_activation = layer_outputs[i]
+
+            if i < len(weights) - 1:
+                if activations[i] == "relu":
+                    dZ = dA * relu_derivative(layer_outputs[i + 1])
+                elif activations[i] == "leaky_relu":
+                    dZ = dA * leaky_relu_derivative(layer_outputs[i + 1])
+                elif activations[i] == "tanh":
+                    dZ = dA * tanh_derivative(layer_outputs[i + 1])
+                elif activations[i] == "sigmoid":
+                    dZ = dA * sigmoid_derivative(layer_outputs[i + 1])
+                elif activations[i] == "softmax":
+                    dZ = dA  # Softmax derivative is handled in the loss gradient
+                else:
+                    raise ValueError(f"Unsupported activation: {activations[i]}")
             else:
                 dZ = dA
-                
-            # Calculate gradients
+
             dW = np.dot(prev_activation.T, dZ) / m
-            
-            # Add L2 regularization
-            dW += self.reg_lambda * self.layers[i].weights
-            db = np.sum(dZ, axis=0, keepdims=True) / m
-            
-            # Store gradients in layer
-            self.layers[i].weight_gradients = dW
-            self.layers[i].bias_gradients = db
-            
-            # Calculate dA for next iteration (previous layer)
-            if i > 0:  # No need to calculate for input layer
-                dA = np.dot(dZ, self.layers[i].weights.T)
+            dW += reg_lambda * weights[i]  # Add L2 regularization
+            db = sum_reduce(dZ) / m
+
+            dWs.insert(0, dW)
+            dbs.insert(0, db)
+
+            if i > 0:
+                dA = np.dot(dZ, weights[i].T)
+
+        return dWs, dbs
+    
+    @njit
+    def sum_reduce(arr):
+        """
+        Numba-compatible function to compute the sum along axis 1 with keepdims=True.
+        Args:
+            arr (np.ndarray): Input array of shape (num_samples, num_classes).
+        Returns:
+            np.ndarray: Sum values along axis 1 with keepdims=True.
+        """
+        sum_vals = np.empty((arr.shape[0], 1), dtype=arr.dtype)
+        for i in range(arr.shape[0]):
+            sum_vals[i, 0] = np.sum(arr[i])
+        return sum_vals
+
 
     def train(self, X_train, y_train, X_val=None, y_val=None, 
               optimizer=None, epochs=100, batch_size=32, 
@@ -260,21 +336,6 @@ class NeuralNetwork:
         best_weights = [layer.weights.copy() for layer in self.layers]
         best_biases = [layer.biases.copy() for layer in self.layers]
         
-        def process_batch(start_idx):
-            X_batch = X_shuffled[start_idx:start_idx+batch_size]
-            y_batch = y_shuffled[start_idx:start_idx+batch_size]
-            
-            # Forward and backward passes
-            self.forward(X_batch, training=True)
-            self.backward(y_batch)
-            
-            # Update weights and biases
-            for idx, layer in enumerate(self.layers):
-                dW = layer.weight_gradients
-                db = layer.bias_gradients
-                # Apply optimizer update
-                optimizer.update(layer, dW, db, idx)
-        
         # Training loop with progress bar
         progress_bar = tqdm(range(epochs)) if use_tqdm else range(epochs)
         for epoch in progress_bar:
@@ -288,8 +349,9 @@ class NeuralNetwork:
             X_shuffled = X_train[indices]
             y_shuffled = y_train[indices]
             
-            # Mini-batch training with parallel processing
-            Parallel(n_jobs=n_jobs)(delayed(process_batch)(i) for i in range(0, X_train.shape[0], batch_size))
+            # Mini-batch training
+            for i in range(0, X_train.shape[0], batch_size):
+                self.process_batch(i, X_shuffled, y_shuffled, batch_size, optimizer)
             
             # Calculate metrics
             train_loss = self.calculate_loss(X_train, y_train)
@@ -353,6 +415,21 @@ class NeuralNetwork:
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
             
+    def process_batch(self, start_idx, X_shuffled, y_shuffled, batch_size, optimizer):
+        X_batch = X_shuffled[start_idx:start_idx+batch_size]
+        y_batch = y_shuffled[start_idx:start_idx+batch_size]
+        
+        # Forward and backward passes
+        self.forward(X_batch, training=True)
+        self.backward(y_batch)
+        
+        # Update weights and biases
+        for idx, layer in enumerate(self.layers):
+            dW = layer.weight_gradients
+            db = layer.bias_gradients
+            # Apply optimizer update
+            optimizer.update(layer, dW, db, idx)
+
     def calculate_loss(self, X, y, class_weights=None):
         """
         Calculates the loss with L2 regularization.
@@ -404,16 +481,38 @@ class NeuralNetwork:
         # Get predictions
         y_hat = self.forward(X, training=False)
         
-        # Calculate accuracy based on problem type
-        if self.is_binary:
-            predicted = (y_hat > 0.5).astype(int)
-            accuracy = float(np.mean(predicted.flatten() == y.reshape(-1, 1).flatten()))
-        else:
-            predicted = np.argmax(y_hat, axis=1)
-            accuracy = float(np.mean(predicted == y))
+        # # Calculate accuracy based on problem type
+        # if self.is_binary:
+        #     predicted = (y_hat > 0.5).astype(int)
+        #     accuracy = float(np.mean(predicted.flatten() == y.reshape(-1, 1).flatten()))
+        # else:
+        #     predicted = np.argmax(y_hat, axis=1)
+        #     accuracy = float(np.mean(predicted == y))
               
+        # JIT-compiled function for evaluation
+        accuracy, predicted = self._evaluate_jit(y_hat, self.is_binary)
         return accuracy, predicted
-    
+        
+    @staticmethod
+    @njit
+    def _evaluate_jit(y_hat, is_binary):
+        """
+        Numba JIT-compiled function to evaluate model performance.
+        Args:
+            y_hat (ndarray): Model predictions.
+            is_binary (bool): Whether the model is binary or multi-class.
+        Returns:
+            tuple: Accuracy and predicted labels.
+        """
+        if is_binary:
+            predicted = (y_hat > 0.5).astype(np.int32).flatten()
+            accuracy = np.mean(predicted == y_hat.flatten())
+        else:
+            predicted = np.argmax(y_hat, axis=1).astype(np.int32)
+            accuracy = np.mean(predicted == y_hat.argmax(axis=1))
+            
+        return accuracy, predicted
+        
     def predict(self, X):
         """
         Generate predictions for input data.

@@ -1,5 +1,4 @@
 import os
-import sched
 import sys
 import time
 import csv
