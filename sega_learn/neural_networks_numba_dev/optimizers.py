@@ -1,0 +1,215 @@
+import numpy as np
+from numba import jit, njit, vectorize, float64, int32, prange
+from numba import types
+from numba.experimental import jitclass
+
+spec_adam = [
+    ('learning_rate', float64),
+    ('beta1', float64),
+    ('beta2', float64),
+    ('epsilon', float64),
+    ('reg_lambda', float64),
+    ('m', float64[:, :, ::1]),  # 3D array of shape (num_layers, max_rows, max_cols)
+    ('v', float64[:, :, ::1]),
+    ('t', int32),
+    ('dW', float64[:, :]),
+    ('db', float64[:, :]),
+    ('index', int32),
+]
+@jitclass(spec_adam)
+class AdamOptimizer:
+    """
+    Adam optimizer class for training neural networks.
+    Formula: w = w - alpha * m_hat / (sqrt(v_hat) + epsilon) - lambda * w 
+    Derived from: https://arxiv.org/abs/1412.6980
+    Args:
+        learning_rate (float, optional): The learning rate for the optimizer. Defaults to 0.001.
+        beta1 (float, optional): The exponential decay rate for the first moment estimates. Defaults to 0.9.
+        beta2 (float, optional): The exponential decay rate for the second moment estimates. Defaults to 0.999.
+        epsilon (float, optional): A small value to prevent division by zero. Defaults to 1e-8.
+        reg_lambda (float, optional): The regularization parameter. Defaults to 0.01.
+    """
+    def __init__(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8, reg_lambda=0.01):
+        self.learning_rate = learning_rate      # Learning rate, alpha 
+        self.beta1 = beta1                      # Exponential decay rate for the first moment estimates
+        self.beta2 = beta2                      # Exponential decay rate for the second moment estimates
+        self.epsilon = epsilon                  # Small value to prevent division by zero
+        self.reg_lambda = reg_lambda            # Regularization parameter, large lambda means more regularization
+        
+        self.m = np.zeros((1, 1, 1))           # First moment estimates
+        self.v = np.zeros((1, 1, 1))           # Second moment estimates
+        self.t = 0                              # Time step
+
+    def initialize(self, layers):
+        """
+        Initializes the first and second moment estimates for each layer's weights.
+        Args: layers (list): List of layers in the neural network.
+        Returns: None
+        """
+        num_layers = len(layers)
+        max_rows = 0
+        max_cols = 0
+        for layer in layers:
+            max_rows = max(max_rows, layer.weights.shape[0])
+            max_cols = max(max_cols, layer.weights.shape[1])
+        
+        self.m = np.zeros((num_layers, max_rows, max_cols))  # Initialize first moment estimates
+        self.v = np.zeros((num_layers, max_rows, max_cols))  # Initialize second moment estimates
+        
+        for i in range(num_layers):
+            layer = layers[i]
+            for row in range(layer.weights.shape[0]):
+                for col in range(layer.weights.shape[1]):
+                    self.m[i, row, col] = 0.0
+                    self.v[i, row, col] = 0.0
+
+    def update(self, layer, dW, db, index):
+        """
+        Updates the weights and biases of a layer using the Adam optimization algorithm.
+        Args:
+            layer (Layer): The layer to update.
+            dW (ndarray): The gradient of the weights.
+            db (ndarray): The gradient of the biases.
+            index (int): The index of the layer.
+        Returns: None
+        """
+        self.t += 1  # Increment time step
+        self.m[index][:dW.shape[0], :dW.shape[1]] = self.beta1 * self.m[index][:dW.shape[0], :dW.shape[1]] + (1 - self.beta1) * dW  # Update first moment estimate
+        self.v[index][:dW.shape[0], :dW.shape[1]] = self.beta2 * self.v[index][:dW.shape[0], :dW.shape[1]] + (1 - self.beta2) * np.square(dW)  # Update second moment estimate
+
+        m_hat = self.m[index][:dW.shape[0], :dW.shape[1]] / (1 - self.beta1 ** self.t)  # Bias-corrected first moment estimate
+        v_hat = self.v[index][:dW.shape[0], :dW.shape[1]] / (1 - self.beta2 ** self.t)  # Bias-corrected second moment estimate
+
+        layer.weights -= self.learning_rate * (m_hat / (np.sqrt(v_hat) + self.epsilon) + self.reg_lambda * layer.weights[:dW.shape[0], :dW.shape[1]])  # Update weights
+        layer.biases -= self.learning_rate * db  # Update biases
+
+spec_sgd = [
+    ('learning_rate', float64),
+    ('momentum', float64),
+    ('reg_lambda', float64),
+    ('velocity', float64[:, :, ::1]),
+]
+@jitclass(spec_sgd)
+class SGDOptimizer:
+    """
+    Stochastic Gradient Descent (SGD) optimizer class for training neural networks.
+    Formula: w = w - learning_rate * dW, b = b - learning_rate * db
+    Args:
+        learning_rate (float, optional): The learning rate for the optimizer. Defaults to 0.001.
+        momentum (float, optional): The momentum factor. Defaults to 0.0.
+        reg_lambda (float, optional): The regularization parameter. Defaults to 0.0.
+    """
+    def __init__(self, learning_rate=0.001, momentum=0.0, reg_lambda=0.0):
+        self.learning_rate = learning_rate      # Learning rate
+        self.momentum = momentum                # Momentum factor
+        self.reg_lambda = reg_lambda            # Regularization parameter
+        self.velocity = np.zeros((1, 1, 1))           # Velocity for momentum
+
+    def initialize(self, layers):
+        """
+        Initializes the velocity for each layer's weights.
+        Args: layers (list): List of layers in the neural network.
+        Returns: None
+        """
+        num_layers = len(layers)
+        max_rows = 0
+        max_cols = 0
+        for layer in layers:
+            max_rows = max(max_rows, layer.weights.shape[0])
+            max_cols = max(max_cols, layer.weights.shape[1])
+        
+        self.velocity = np.zeros((num_layers, max_rows, max_cols))  # Initialize velocity as a NumPy array
+        
+        for i in range(num_layers):
+            layer = layers[i]
+            for row in range(layer.weights.shape[0]):
+                for col in range(layer.weights.shape[1]):
+                    self.velocity[i, row, col] = 0.0
+
+    def update(self, layer, dW, db, index):
+        """
+        Updates the weights and biases of a layer using the SGD optimization algorithm.
+        Args:
+            layer (Layer): The layer to update.
+            dW (ndarray): The gradient of the weights.
+            db (ndarray): The gradient of the biases.
+            index (int): The index of the layer.
+        Returns: None
+        """
+        self.velocity[index][:dW.shape[0], :dW.shape[1]] = self.momentum * self.velocity[index][:dW.shape[0], :dW.shape[1]] - self.learning_rate * dW  # Update velocity
+        layer.weights[:dW.shape[0], :dW.shape[1]] += self.velocity[index][:dW.shape[0], :dW.shape[1]] - self.learning_rate * self.reg_lambda * layer.weights[:dW.shape[0], :dW.shape[1]]  # Update weights
+        layer.biases[:db.shape[0], :db.shape[1]] -= self.learning_rate * db  # Update biases
+
+spec_adadelta = [
+    ('learning_rate', float64),
+    ('rho', float64),
+    ('epsilon', float64),
+    ('reg_lambda', float64),
+    ('E_g2', float64[:, :, ::1]),
+    ('E_delta_x2', float64[:, :, ::1]),
+]
+
+@jitclass(spec_adadelta)
+class AdadeltaOptimizer:
+    """
+    Adadelta optimizer class for training neural networks.
+    Formula: 
+        E[g^2]_t = rho * E[g^2]_{t-1} + (1 - rho) * g^2
+        Delta_x = - (sqrt(E[delta_x^2]_{t-1} + epsilon) / sqrt(E[g^2]_t + epsilon)) * g
+        E[delta_x^2]_t = rho * E[delta_x^2]_{t-1} + (1 - rho) * Delta_x^2
+    Derived from: https://arxiv.org/abs/1212.5701
+    Args:
+        learning_rate (float, optional): The learning rate for the optimizer. Defaults to 1.0.
+        rho (float, optional): The decay rate. Defaults to 0.95.
+        epsilon (float, optional): A small value to prevent division by zero. Defaults to 1e-6.
+        reg_lambda (float, optional): The regularization parameter. Defaults to 0.0.
+    """
+    def __init__(self, learning_rate=1.0, rho=0.95, epsilon=1e-6, reg_lambda=0.0):
+        self.learning_rate = learning_rate      # Learning rate
+        self.rho = rho                          # Decay rate
+        self.epsilon = epsilon                  # Small value to prevent division by zero
+        self.reg_lambda = reg_lambda            # Regularization parameter
+        
+        self.E_g2 = np.zeros((1, 1, 1))         # Running average of squared gradients
+        self.E_delta_x2 = np.zeros((1, 1, 1))   # Running average of squared parameter updates
+
+    def initialize(self, layers):
+        """
+        Initializes the running averages for each layer's weights.
+        Args: layers (list): List of layers in the neural network.
+        Returns: None
+        """
+        num_layers = len(layers)
+        max_rows = 0
+        max_cols = 0
+        for layer in layers:
+            max_rows = max(max_rows, layer.weights.shape[0])
+            max_cols = max(max_cols, layer.weights.shape[1])
+        
+        self.E_g2 = np.zeros((num_layers, max_rows, max_cols))  # Initialize running average of squared gradients
+        self.E_delta_x2 = np.zeros((num_layers, max_rows, max_cols))  # Initialize running average of squared parameter updates
+        
+        for i in range(num_layers):
+            layer = layers[i]
+            for row in range(layer.weights.shape[0]):
+                for col in range(layer.weights.shape[1]):
+                    self.E_g2[i, row, col] = 0.0
+                    self.E_delta_x2[i, row, col] = 0.0
+
+    def update(self, layer, dW, db, index):
+        """
+        Updates the weights and biases of a layer using the Adadelta optimization algorithm.
+        Args:
+            layer (Layer): The layer to update.
+            dW (ndarray): The gradient of the weights.
+            db (ndarray): The gradient of the biases.
+            index (int): The index of the layer.
+        Returns: None
+        """
+        self.E_g2[index][:dW.shape[0], :dW.shape[1]] = self.rho * self.E_g2[index][:dW.shape[0], :dW.shape[1]] + (1 - self.rho) * np.square(dW)  # Update running average of squared gradients
+        delta_x = - (np.sqrt(self.E_delta_x2[index][:dW.shape[0], :dW.shape[1]] + self.epsilon) / 
+                     np.sqrt(self.E_g2[index][:dW.shape[0], :dW.shape[1]] + self.epsilon)) * dW                     # Compute parameter update
+        self.E_delta_x2[index][:dW.shape[0], :dW.shape[1]] = self.rho * self.E_delta_x2[index][:dW.shape[0], :dW.shape[1]] + (1 - self.rho) * np.square(delta_x)  # Update running average of squared parameter updates
+
+        layer.weights[:dW.shape[0], :dW.shape[1]] += delta_x - self.learning_rate * self.reg_lambda * layer.weights[:dW.shape[0], :dW.shape[1]]  # Update weights
+        layer.biases[:db.shape[0], :db.shape[1]] -= self.learning_rate * db                                         # Update biases
