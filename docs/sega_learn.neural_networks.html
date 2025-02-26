@@ -246,7 +246,7 @@ Methods:<br>
 <dl><dt><a name="CrossEntropyLoss-__call__"><strong>__call__</strong></a>(self, logits, targets)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;cross&nbsp;entropy&nbsp;loss.<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;logits&nbsp;(np.ndarray):&nbsp;The&nbsp;logits&nbsp;(predicted&nbsp;values)&nbsp;of&nbsp;shape&nbsp;(num_samples,&nbsp;num_classes).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;targets&nbsp;(np.ndarray):&nbsp;The&nbsp;target&nbsp;labels&nbsp;of&nbsp;shape&nbsp;(num_samples,&nbsp;num_classes).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;targets&nbsp;(np.ndarray):&nbsp;The&nbsp;target&nbsp;labels&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;cross&nbsp;entropy&nbsp;loss.</span></dd></dl>
 
@@ -275,9 +275,9 @@ Args:<br>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="Layer-__init__"><strong>__init__</strong></a>(self, input_size, output_size, activation='relu')</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
 
-<dl><dt><a name="Layer-activate"><strong>activate</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;the&nbsp;activation&nbsp;function&nbsp;based&nbsp;on&nbsp;the&nbsp;layer's&nbsp;configuration.</span></dd></dl>
+<dl><dt><a name="Layer-activate"><strong>activate</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;function.</span></dd></dl>
 
-<dl><dt><a name="Layer-activation_derivative"><strong>activation_derivative</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;activation&nbsp;function&nbsp;for&nbsp;backpropagation.</span></dd></dl>
+<dl><dt><a name="Layer-activation_derivative"><strong>activation_derivative</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;derivative.</span></dd></dl>
 
 <dl><dt><a name="Layer-zero_grad"><strong>zero_grad</strong></a>(self)</dt><dd><span class="code">Reset&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.</span></dd></dl>
 
@@ -311,85 +311,75 @@ Parameters:<br>
 
 <dl><dt><a name="NeuralNetwork-__str__"><strong>__str__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;str(self).</span></dd></dl>
 
-<dl><dt><a name="NeuralNetwork-apply_dropout"><strong>apply_dropout</strong></a>(self, A)</dt><dd><span class="code">Applies&nbsp;dropout&nbsp;regularization&nbsp;to&nbsp;the&nbsp;input&nbsp;array.<br>
-Parameters:&nbsp;A:&nbsp;numpy.ndarray:&nbsp;Input&nbsp;array&nbsp;to&nbsp;apply&nbsp;dropout&nbsp;regularization&nbsp;to.<br>
-Returns:&nbsp;numpy.ndarray:&nbsp;Array&nbsp;with&nbsp;dropout&nbsp;regularization&nbsp;applied.</span></dd></dl>
-
-<dl><dt><a name="NeuralNetwork-backward"><strong>backward</strong></a>(self, y)</dt><dd><span class="code">Performs&nbsp;backward&nbsp;propagation&nbsp;to&nbsp;calculate&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;in&nbsp;the&nbsp;neural&nbsp;network.<br>
-Parameters:&nbsp;y&nbsp;(numpy.ndarray):&nbsp;Target&nbsp;labels&nbsp;of&nbsp;shape&nbsp;(m,&nbsp;1),&nbsp;where&nbsp;m&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples.<br>
-Returns:&nbsp;None</span></dd></dl>
-
-<dl><dt><a name="NeuralNetwork-calculate_loss"><strong>calculate_loss</strong></a>(self, X, y, class_weights=None)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;loss&nbsp;of&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
-Formula:&nbsp;loss&nbsp;=&nbsp;loss_fn(outputs,&nbsp;y)&nbsp;+&nbsp;reg_lambda&nbsp;*&nbsp;sum([sum(layer.weights**2)&nbsp;for&nbsp;layer&nbsp;in&nbsp;self.<strong>layers</strong>])<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(num_samples,&nbsp;num_features).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y&nbsp;(numpy.ndarray):&nbsp;Target&nbsp;labels&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;class_weights&nbsp;(numpy.ndarray,&nbsp;optional):&nbsp;Weights&nbsp;for&nbsp;each&nbsp;class.&nbsp;Default&nbsp;is&nbsp;None.<br>
-Returns:&nbsp;loss&nbsp;(float):&nbsp;The&nbsp;calculated&nbsp;loss&nbsp;value.</span></dd></dl>
-
-<dl><dt><a name="NeuralNetwork-create_optimizer"><strong>create_optimizer</strong></a>(self, optimizer_type, learning_rate)</dt><dd><span class="code">Creates&nbsp;an&nbsp;optimizer&nbsp;instance&nbsp;based&nbsp;on&nbsp;the&nbsp;specified&nbsp;type&nbsp;and&nbsp;learning&nbsp;rate.<br>
-&nbsp;<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;optimizer_type&nbsp;(str):&nbsp;The&nbsp;type&nbsp;of&nbsp;optimizer&nbsp;(e.g.,&nbsp;'SGD',&nbsp;'Adam').<br>
-&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer.<br>
-&nbsp;<br>
+<dl><dt><a name="NeuralNetwork-apply_dropout"><strong>apply_dropout</strong></a>(self, X)</dt><dd><span class="code">Applies&nbsp;dropout&nbsp;to&nbsp;the&nbsp;activation&nbsp;X.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(ndarray):&nbsp;<a href="#Activation">Activation</a>&nbsp;values.<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;optimizer:&nbsp;An&nbsp;instance&nbsp;of&nbsp;the&nbsp;specified&nbsp;optimizer.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;ndarray:&nbsp;<a href="#Activation">Activation</a>&nbsp;values&nbsp;after&nbsp;applying&nbsp;dropout.</span></dd></dl>
 
-<dl><dt><a name="NeuralNetwork-create_scheduler"><strong>create_scheduler</strong></a>(self, scheduler_type, optimizer, **kwargs)</dt><dd><span class="code">Creates&nbsp;a&nbsp;learning&nbsp;rate&nbsp;scheduler&nbsp;instance&nbsp;based&nbsp;on&nbsp;the&nbsp;specified&nbsp;type&nbsp;and&nbsp;parameters.<br>
-&nbsp;<br>
+<dl><dt><a name="NeuralNetwork-backward"><strong>backward</strong></a>(self, y)</dt><dd><span class="code">Performs&nbsp;backward&nbsp;propagation&nbsp;to&nbsp;calculate&nbsp;the&nbsp;gradients.<br>
+Parameters:&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(ndarray):&nbsp;Target&nbsp;labels&nbsp;of&nbsp;shape&nbsp;(m,&nbsp;output_size).</span></dd></dl>
+
+<dl><dt><a name="NeuralNetwork-calculate_loss"><strong>calculate_loss</strong></a>(self, X, y, class_weights=None)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;loss&nbsp;with&nbsp;L2&nbsp;regularization.<br>
 Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;scheduler_type&nbsp;(str):&nbsp;The&nbsp;type&nbsp;of&nbsp;scheduler&nbsp;(e.g.,&nbsp;'step',&nbsp;'plateau',&nbsp;'exp').<br>
-&nbsp;&nbsp;&nbsp;&nbsp;optimizer:&nbsp;The&nbsp;optimizer&nbsp;instance&nbsp;to&nbsp;be&nbsp;used&nbsp;with&nbsp;the&nbsp;scheduler.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;**kwargs:&nbsp;Additional&nbsp;parameters&nbsp;for&nbsp;the&nbsp;scheduler.<br>
-&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(ndarray):&nbsp;Input&nbsp;data<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y&nbsp;(ndarray):&nbsp;Target&nbsp;labels<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;class_weights&nbsp;(ndarray,&nbsp;optional):&nbsp;Weights&nbsp;for&nbsp;each&nbsp;class<br>
+Returns:&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;calculated&nbsp;loss&nbsp;value</span></dd></dl>
+
+<dl><dt><a name="NeuralNetwork-create_scheduler"><strong>create_scheduler</strong></a>(self, scheduler_type, optimizer, **kwargs)</dt><dd><span class="code">Creates&nbsp;a&nbsp;learning&nbsp;rate&nbsp;scheduler.</span></dd></dl>
+
+<dl><dt><a name="NeuralNetwork-evaluate"><strong>evaluate</strong></a>(self, X, y)</dt><dd><span class="code">Evaluates&nbsp;the&nbsp;model&nbsp;performance.<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(ndarray):&nbsp;Input&nbsp;data<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y&nbsp;(ndarray):&nbsp;Target&nbsp;labels<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;scheduler:&nbsp;An&nbsp;instance&nbsp;of&nbsp;the&nbsp;specified&nbsp;learning&nbsp;rate&nbsp;scheduler.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;accuracy&nbsp;(float):&nbsp;Model&nbsp;accuracy<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;predicted&nbsp;(ndarray):&nbsp;Predicted&nbsp;labels</span></dd></dl>
 
-<dl><dt><a name="NeuralNetwork-evaluate"><strong>evaluate</strong></a>(self, X, y)</dt><dd><span class="code">Evaluates&nbsp;the&nbsp;performance&nbsp;of&nbsp;the&nbsp;neural&nbsp;network&nbsp;model&nbsp;on&nbsp;the&nbsp;given&nbsp;input&nbsp;data.<br>
+<dl><dt><a name="NeuralNetwork-forward"><strong>forward</strong></a>(self, X, training=True)</dt><dd><span class="code">Performs&nbsp;forward&nbsp;propagation&nbsp;through&nbsp;the&nbsp;neural&nbsp;network.<br>
+Args:&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(ndarray):&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;input_size).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;training&nbsp;(bool):&nbsp;Whether&nbsp;the&nbsp;network&nbsp;is&nbsp;in&nbsp;training&nbsp;mode&nbsp;(applies&nbsp;dropout).<br>
+Returns:&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ndarray:&nbsp;Output&nbsp;predictions&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;output_size).</span></dd></dl>
+
+<dl><dt><a name="NeuralNetwork-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Generate&nbsp;predictions&nbsp;for&nbsp;input&nbsp;data.<br>
 Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;input&nbsp;data&nbsp;for&nbsp;evaluation.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;target&nbsp;labels&nbsp;for&nbsp;evaluation.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(ndarray):&nbsp;Input&nbsp;data<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;model's&nbsp;predictions.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;predicted&nbsp;(numpy.ndarray):&nbsp;The&nbsp;labels&nbsp;predicted&nbsp;by&nbsp;the&nbsp;model.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;predictions:&nbsp;Model&nbsp;predictions&nbsp;(class&nbsp;probabilities&nbsp;or&nbsp;labels)</span></dd></dl>
 
-<dl><dt><a name="NeuralNetwork-forward"><strong>forward</strong></a>(self, X)</dt><dd><span class="code">Performs&nbsp;forward&nbsp;propagation&nbsp;through&nbsp;the&nbsp;neural&nbsp;network.<br>
-Args:&nbsp;X&nbsp;(ndarray):&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;input_size).<br>
-Returns:&nbsp;ndarray:&nbsp;Output&nbsp;predictions&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;output_size).</span></dd></dl>
-
-<dl><dt><a name="NeuralNetwork-train"><strong>train</strong></a>(self, X_train, y_train, X_test=None, y_test=None, optimizer=&lt;sega_learn.neural_networks.optimizers.AdamOptimizer object at 0x0000021F2A19D7D0&gt;, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
+<dl><dt><a name="NeuralNetwork-train"><strong>train</strong></a>(self, X_train, y_train, X_val=None, y_val=None, optimizer=None, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
 Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_test&nbsp;(numpy.ndarray):&nbsp;Test&nbsp;data&nbsp;features,&nbsp;optional&nbsp;(default:&nbsp;None).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_test&nbsp;(numpy.ndarray):&nbsp;Test&nbsp;data&nbsp;labels,&nbsp;optional&nbsp;(default:&nbsp;None).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;optimizer&nbsp;(Optimizer):&nbsp;The&nbsp;optimizer&nbsp;used&nbsp;for&nbsp;updating&nbsp;the&nbsp;model&nbsp;parameters&nbsp;(default:&nbsp;Adam,&nbsp;lr=0.0001).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_train&nbsp;(ndarray):&nbsp;Training&nbsp;data&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_train&nbsp;(ndarray):&nbsp;Training&nbsp;data&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_val&nbsp;(ndarray):&nbsp;Validation&nbsp;data&nbsp;features,&nbsp;optional.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_val&nbsp;(ndarray):&nbsp;Validation&nbsp;data&nbsp;labels,&nbsp;optional.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;optimizer&nbsp;(Optimizer):&nbsp;Optimizer&nbsp;for&nbsp;updating&nbsp;parameters&nbsp;(default:&nbsp;Adam,&nbsp;lr=0.0001).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;epochs&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;training&nbsp;epochs&nbsp;(default:&nbsp;100).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;batch_size&nbsp;(int):&nbsp;Batch&nbsp;size&nbsp;for&nbsp;mini-batch&nbsp;gradient&nbsp;descent&nbsp;(default:&nbsp;32).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;early_stopping_threshold&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;epochs&nbsp;to&nbsp;wait&nbsp;for&nbsp;improvement&nbsp;in&nbsp;training&nbsp;loss&nbsp;before&nbsp;early&nbsp;stopping&nbsp;(default:&nbsp;5).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;early_stopping_patience&nbsp;(int):&nbsp;Patience&nbsp;for&nbsp;early&nbsp;stopping&nbsp;(default:&nbsp;10).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;lr_scheduler&nbsp;(Scheduler):&nbsp;Learning&nbsp;rate&nbsp;scheduler&nbsp;(default:&nbsp;None).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;p&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;print&nbsp;training&nbsp;progress&nbsp;(default:&nbsp;True).<br>
-Returns:&nbsp;None</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;verbose&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;print&nbsp;training&nbsp;progress&nbsp;(default:&nbsp;True).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;use_tqdm&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;use&nbsp;tqdm&nbsp;for&nbsp;progress&nbsp;bar&nbsp;(default:&nbsp;True).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;n_jobs&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;jobs&nbsp;for&nbsp;parallel&nbsp;processing&nbsp;(default:&nbsp;1).</span></dd></dl>
 
-<dl><dt><a name="NeuralNetwork-tune_hyperparameters"><strong>tune_hyperparameters</strong></a>(self, param_grid, layers, output_size, X_train, y_train, X_val, y_val, optimizers, lr_range, epochs=100, batch_size=32)</dt><dd><span class="code">Performs&nbsp;hyperparameter&nbsp;tuning&nbsp;using&nbsp;grid&nbsp;search.<br>
-&nbsp;<br>
+<dl><dt><a name="NeuralNetwork-tune_hyperparameters"><strong>tune_hyperparameters</strong></a>(self, X_train, y_train, X_val, y_val, param_grid, layer_configs=None, optimizer_types=None, lr_range=(0.0001, 0.01, 5), epochs=30, batch_size=32)</dt><dd><span class="code">Performs&nbsp;hyperparameter&nbsp;tuning&nbsp;using&nbsp;grid&nbsp;search.<br>
 Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;param_grid&nbsp;(dict):&nbsp;A&nbsp;dictionary&nbsp;where&nbsp;keys&nbsp;are&nbsp;parameter&nbsp;names&nbsp;and&nbsp;values&nbsp;are&nbsp;lists&nbsp;of&nbsp;values&nbsp;to&nbsp;try.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layer&nbsp;sizes.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;output_size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;output&nbsp;layer.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_train&nbsp;(numpy.ndarray):&nbsp;Training&nbsp;data&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_val&nbsp;(numpy.ndarray):&nbsp;Validation&nbsp;data&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_val&nbsp;(numpy.ndarray):&nbsp;Validation&nbsp;data&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;optimizers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;optimizer&nbsp;types&nbsp;to&nbsp;try&nbsp;(e.g.,&nbsp;['Adam',&nbsp;'SGD',&nbsp;'Adadelta']).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;lr_range&nbsp;(tuple):&nbsp;A&nbsp;tuple&nbsp;(min_lr,&nbsp;max_lr,&nbsp;num_steps)&nbsp;for&nbsp;learning&nbsp;rates.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;epochs&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;training&nbsp;epochs&nbsp;(default:&nbsp;100).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;batch_size&nbsp;(int):&nbsp;Batch&nbsp;size&nbsp;for&nbsp;mini-batch&nbsp;gradient&nbsp;descent&nbsp;(default:&nbsp;32).<br>
-&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_train,&nbsp;y_train:&nbsp;Training&nbsp;data<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_val,&nbsp;y_val:&nbsp;Validation&nbsp;data<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;param_grid:&nbsp;Dict&nbsp;of&nbsp;parameters&nbsp;to&nbsp;try<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;layer_configs:&nbsp;List&nbsp;of&nbsp;layer&nbsp;configurations<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;optimizer_types:&nbsp;List&nbsp;of&nbsp;optimizer&nbsp;types<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;lr_range:&nbsp;(min_lr,&nbsp;max_lr,&nbsp;num_steps)&nbsp;for&nbsp;learning&nbsp;rates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;epochs:&nbsp;Max&nbsp;epochs&nbsp;for&nbsp;each&nbsp;trial<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;batch_size:&nbsp;Batch&nbsp;size&nbsp;for&nbsp;training<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;best_params&nbsp;(dict):&nbsp;The&nbsp;best&nbsp;hyperparameters&nbsp;found&nbsp;during&nbsp;tuning.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;best_accuracy&nbsp;(float):&nbsp;The&nbsp;best&nbsp;validation&nbsp;accuracy&nbsp;achieved.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;best_params:&nbsp;Best&nbsp;hyperparameters&nbsp;found<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;best_accuracy:&nbsp;Best&nbsp;validation&nbsp;accuracy</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
