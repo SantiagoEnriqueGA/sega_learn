@@ -232,6 +232,84 @@ class NeuralNetwork:
             sum_vals[i, 0] = np.sum(arr[i])
         return sum_vals
 
+    # @staticmethod
+    # @njit(fastmath=True, nogil=True, cache=CACHE)
+    # def _process_batch_jit(start_idx, X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, is_binary, reg_lambda):
+    #     X_batch = X_shuffled[start_idx:start_idx+batch_size]
+    #     y_batch = y_shuffled[start_idx:start_idx+batch_size]
+        
+    #     # Forward pass
+    #     layer_outputs = _forward_jit_impl(X_batch, weights, biases, activations, dropout_rate, True, is_binary)
+        
+    #     # Backward pass
+    #     dWs, dbs = _backward_jit_impl(layer_outputs, y_batch, weights, activations, reg_lambda, is_binary)    
+    #     return dWs, dbs
+    
+    # def process_batch(self, start_idx, X_shuffled, y_shuffled, batch_size, optimizer):
+    #     weights = [layer.weights for layer in self.layers]
+    #     biases = [layer.biases for layer in self.layers]
+    #     activations = [layer.activation for layer in self.layers]        
+    #     dWs, dbs = self._process_batch_jit(start_idx, X_shuffled, y_shuffled, batch_size, weights, biases, activations, self.dropout_rate, self.is_binary, self.reg_lambda)
+    
+    #     # Update weights and biases
+    #     for idx, layer in enumerate(self.layers):
+    #         dW = dWs[idx]
+    #         db = dbs[idx]
+    #         # Apply optimizer update
+    #         optimizer.update(layer, dW, db, idx)
+
+    @staticmethod
+    @njit(fastmath=True, nogil=True, cache=CACHE)
+    def _process_batches(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, is_binary, reg_lambda):
+        """
+        Process multiple batches in parallel using Numba.
+        
+        Args:
+            X_shuffled (ndarray): Shuffled input features
+            y_shuffled (ndarray): Shuffled target labels
+            batch_size (int): Size of each mini-batch
+            weights (list): List of weight matrices
+            biases (list): List of bias vectors
+            activations (list): List of activation functions
+            dropout_rate (float): Dropout rate
+            is_binary (bool): Whether the task is binary classification
+            reg_lambda (float): Regularization parameter
+            
+        Returns:
+            tuple: Lists of weight and bias gradients for each batch
+        """
+        num_samples = X_shuffled.shape[0]
+        num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
+        
+        # Initialize accumulated gradients with zeros
+        dWs_acc = [np.zeros_like(w) for w in weights]
+        dbs_acc = [np.zeros_like(b) for b in biases]
+        
+        for i in prange(num_batches):
+            start_idx = i * batch_size
+            end_idx = min(start_idx + batch_size, num_samples)
+            
+            X_batch = X_shuffled[start_idx:end_idx]
+            y_batch = y_shuffled[start_idx:end_idx]
+            
+            # Forward pass
+            layer_outputs = _forward_jit_impl(X_batch, weights, biases, activations, dropout_rate, True, is_binary)
+            
+            # Backward pass
+            dWs, dbs = _backward_jit_impl(layer_outputs, y_batch, weights, activations, reg_lambda, is_binary)
+            
+            # Accumulate gradients directly
+            for j in range(len(dWs)):
+                dWs_acc[j] += dWs[j]
+                dbs_acc[j] += dbs[j]
+        
+        # Average the accumulated gradients
+        for j in range(len(dWs_acc)):
+            dWs_acc[j] /= num_batches
+            dbs_acc[j] /= num_batches
+            
+        return dWs_acc, dbs_acc
+    
     def train(self, X_train, y_train, X_val=None, y_val=None, 
               optimizer=None, epochs=100, batch_size=32, 
               early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1):
@@ -264,6 +342,12 @@ class NeuralNetwork:
         best_weights = [layer.weights.copy() for layer in self.layers]
         best_biases = [layer.biases.copy() for layer in self.layers]
         
+        # Number of threads for parallel processing
+        # If n_jobs > 1, use that many threads, otherwise let Numba decide
+        if n_jobs > 1:
+            import os
+            os.environ['NUMBA_NUM_THREADS'] = str(n_jobs)
+
         # Training loop with progress bar
         progress_bar = tqdm(range(epochs)) if use_tqdm else range(epochs)
         for epoch in progress_bar:
@@ -277,9 +361,20 @@ class NeuralNetwork:
             X_shuffled = X_train[indices]
             y_shuffled = y_train[indices]
             
-            # Mini-batch training
-            for i in prange(0, X_train.shape[0], batch_size):
-                self.process_batch(i, X_shuffled, y_shuffled, batch_size, optimizer)
+            # Prepare layer parameters for JIT function
+            weights = [layer.weights for layer in self.layers]
+            biases = [layer.biases for layer in self.layers]
+            activations = [layer.activation for layer in self.layers]
+
+            # Process all batches in parallel and get averaged gradients
+            dWs_acc, dbs_acc = self._process_batches(
+                X_shuffled, y_shuffled, batch_size, weights, biases, 
+                activations, self.dropout_rate, self.is_binary, self.reg_lambda
+            )
+            
+            # Apply the averaged gradients to update parameters
+            for idx, layer in enumerate(self.layers):
+                optimizer.update(layer, dWs_acc[idx], dbs_acc[idx], idx)
             
             # Calculate metrics
             train_loss = self.calculate_loss(X_train, y_train)
@@ -342,31 +437,6 @@ class NeuralNetwork:
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
             
-    @staticmethod
-    @njit(fastmath=True, nogil=True, cache=CACHE)
-    def _process_batch_jit(start_idx, X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, is_binary, reg_lambda):
-        X_batch = X_shuffled[start_idx:start_idx+batch_size]
-        y_batch = y_shuffled[start_idx:start_idx+batch_size]
-        
-        # Forward pass
-        layer_outputs = _forward_jit_impl(X_batch, weights, biases, activations, dropout_rate, True, is_binary)
-        
-        # Backward pass
-        dWs, dbs = _backward_jit_impl(layer_outputs, y_batch, weights, activations, reg_lambda, is_binary)    
-        return dWs, dbs
-    
-    def process_batch(self, start_idx, X_shuffled, y_shuffled, batch_size, optimizer):
-        weights = [layer.weights for layer in self.layers]
-        biases = [layer.biases for layer in self.layers]
-        activations = [layer.activation for layer in self.layers]        
-        dWs, dbs = self._process_batch_jit(start_idx, X_shuffled, y_shuffled, batch_size, weights, biases, activations, self.dropout_rate, self.is_binary, self.reg_lambda)
-    
-        # Update weights and biases
-        for idx, layer in enumerate(self.layers):
-            dW = dWs[idx]
-            db = dbs[idx]
-            # Apply optimizer update
-            optimizer.update(layer, dW, db, idx)
 
     @staticmethod
     @njit(fastmath=True, nogil=True, cache=CACHE)
