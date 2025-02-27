@@ -392,117 +392,6 @@ class NeuralNetwork:
             else:
                 return cp.argmax(outputs, axis=1)
             
-    def tune_hyperparameters(self, X_train, y_train, X_val, y_val, param_grid,
-                             layer_configs=None, optimizer_types=None, 
-                             lr_range=(0.0001, 0.01, 5), epochs=30, batch_size=32):
-        """
-        Performs hyperparameter tuning using grid search.
-        Parameters:
-            - X_train, y_train: Training data
-            - X_val, y_val: Validation data
-            - param_grid: Dict of parameters to try
-            - layer_configs: List of layer configurations
-            - optimizer_types: List of optimizer types
-            - lr_range: (min_lr, max_lr, num_steps) for learning rates
-            - epochs: Max epochs for each trial
-            - batch_size: Batch size for training
-        Returns:
-            - best_params: Best hyperparameters found
-            - best_accuracy: Best validation accuracy
-        """
-        from itertools import product
-        import warnings
-        warnings.filterwarnings('ignore')
-        
-        # Default values if not provided
-        if layer_configs is None:
-            layer_configs = [[64], [128], [64, 32]]
-            
-        if optimizer_types is None:
-            optimizer_types = ['Adam', 'SGD']
-            
-        # Output size based on target data
-        output_size = 1 if len(y_train.shape) == 1 or y_train.shape[1] == 1 else y_train.max() + 1
-        
-        # Generate learning rates
-        min_lr, max_lr, num_steps = lr_range
-        lr_options = cp.logspace(cp.log10(min_lr), cp.log10(max_lr), num_steps).tolist()
-        
-        # Extract parameter combinations
-        keys, values = zip(*param_grid.items())
-        
-        # Calculate total iterations for progress tracking
-        total_iterations = (
-            len(layer_configs) *
-            len(lr_options) *
-            len(optimizer_types) *
-            cp.prod([len(value) for value in values])
-        )
-        
-        # Track best results
-        best_accuracy = 0
-        best_params = {}
-        best_optimizer_type = None
-        
-        # Grid search with progress bar
-        with tqdm(total=total_iterations, desc="Tuning Hyperparameters") as pbar:
-            # Iterate through all combinations
-            for optimizer_type in optimizer_types:
-                for layer_structure in layer_configs:
-                    full_layer_structure = [X_train.shape[1]] + layer_structure + [int(output_size)]
-                    
-                    for combination in product(*values):
-                        params = dict(zip(keys, combination))
-                        
-                        for lr in lr_options:
-                            # Create model with current hyperparameters
-                            nn = NeuralNetwork(
-                                full_layer_structure, 
-                                dropout_rate=params['dropout_rate'], 
-                                reg_lambda=params['reg_lambda']
-                            )
-                            
-                            # Create optimizer
-                            optimizer = self._create_optimizer(optimizer_type, lr)
-                            
-                            # Train model (with early stopping for efficiency)
-                            nn.train(
-                                X_train, y_train, X_val, y_val,
-                                optimizer=optimizer,
-                                epochs=epochs,
-                                batch_size=batch_size,
-                                early_stopping_threshold=5,
-                                p=False
-                            )
-                            
-                            # Evaluate on validation set
-                            accuracy, _ = nn.evaluate(X_val, y_val)
-                            
-                            # Update best if improved
-                            if accuracy > best_accuracy:
-                                best_accuracy = accuracy
-                                best_params = {
-                                    **params,
-                                    'layers': full_layer_structure,
-                                    'learning_rate': lr
-                                }
-                                best_optimizer_type = optimizer_type
-                                
-                                tqdm.write(f"New best: {best_accuracy:.4f} with {optimizer_type}, "
-                                      f"lr={lr}, layers={full_layer_structure}, params={params}")
-                            
-                            # Update progress
-                            pbar.update(1)
-        
-        print(f"\nBest configuration: {best_optimizer_type} optimizer with lr={best_params['learning_rate']}")
-        print(f"Layers: {best_params['layers']}")
-        print(f"Parameters: dropout={best_params['dropout_rate']}, reg_lambda={best_params['reg_lambda']}")
-        print(f"Validation accuracy: {best_accuracy:.4f}")
-        
-        # Add best optimizer type to best_params
-        best_params['optimizer'] = best_optimizer_type
-        
-        return best_params, best_accuracy
 
     def _create_optimizer(self, optimizer_type, learning_rate):
         """Helper method to create optimizer instances."""
@@ -550,8 +439,8 @@ class Layer:
         
     def zero_grad(self):
         """Reset the gradients of the weights and biases to zero."""
-        cp.zeros_like(self.grad_dW)
-        cp.zeros_like(self.grad_db)
+        self.grad_dW[...] = 0
+        self.grad_db[...] = 0
 
     def activate(self, Z):
         """Apply activation function."""
