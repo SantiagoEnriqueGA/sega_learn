@@ -1,4 +1,3 @@
-from re import L
 from .loss import CrossEntropyLoss, BCEWithLogitsLoss, sum_reduce
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
 from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
@@ -10,6 +9,8 @@ from numba import jit, njit, vectorize, float64, int32, prange
 from numba import types
 from numba.experimental import jitclass
 from tqdm.auto import tqdm
+
+CACHE = False
 
 class NeuralNetwork:
     """
@@ -82,7 +83,7 @@ class NeuralNetwork:
         return self._apply_dropout_jit(X, self.dropout_rate)
     
     @staticmethod
-    @njit(fastmath=True, nogil=True, cache=True)
+    @njit(fastmath=True, nogil=True, cache=CACHE)
     def _apply_dropout_jit(X, dropout_rate):
         """
         Numba JIT-compiled function to apply dropout.
@@ -102,33 +103,7 @@ class NeuralNetwork:
             training (bool): Whether the network is in training mode (applies dropout).
         Returns: 
             ndarray: Output predictions of shape (batch_size, output_size).
-        """
-        # # Store all layer activations for backprop
-        # self.layer_outputs = [X]
-        
-        # # Forward pass through all layers except the last
-        # A = X
-        # for i, layer in enumerate(self.layers[:-1]):
-        #     Z = np.dot(A, layer.weights) + layer.biases
-        #     A = layer.activate(Z)
-            
-        #     # Apply dropout only during training
-        #     if training and self.dropout_rate > 0:
-        #         A = self.apply_dropout(A)
-                
-        #     self.layer_outputs.append(A)
-        
-        # # Last layer (output layer)
-        # Z = np.dot(A, self.layers[-1].weights) + self.layers[-1].biases
-        
-        # # Apply appropriate activation for output layer
-        # if self.is_binary:
-        #     output = sigmoid(Z)
-        # else:
-        #     output = softmax(Z)
-            
-        # self.layer_outputs.append(output)
-               
+        """              
         self.layer_outputs = [X]
         weights = [layer.weights for layer in self.layers]
         biases = [layer.biases for layer in self.layers]
@@ -138,7 +113,7 @@ class NeuralNetwork:
         return self.layer_outputs[-1]
             
     @staticmethod
-    @njit(fastmath=True, nogil=True, cache=True)
+    @njit(fastmath=True, nogil=True, cache=CACHE)
     def _forward_jit(X, weights, biases, activations, dropout_rate, training, is_binary):
         # Store all layer activations for backprop
         layer_outputs = [X]
@@ -183,53 +158,8 @@ class NeuralNetwork:
         Performs backward propagation to calculate the gradients.
         Parameters: 
             y (ndarray): Target labels of shape (m, output_size).
-        """
-        # m = y.shape[0]  # Number of samples
-        
-        # # Reshape y for binary classification
-        # if self.is_binary:
-        #     y = y.reshape(-1, 1)
-        # else:
-        #     # One-hot encode y for multi-class classification
-        #     y = np.eye(self.layer_sizes[-1])[y]
-            
-        # # Calculate initial gradient based on loss function
-        # outputs = self.layer_outputs[-1]
-        # if self.is_binary:
-        #     # Gradient for binary cross-entropy
-        #     dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
-        # else:
-        #     # Gradient for categorical cross-entropy with softmax
-        #     dA = outputs - y
-        
-        # # Backpropagate through layers in reverse
-        # for i in reversed(range(len(self.layers))):
-        #     # Get activation from previous layer
-        #     prev_activation = self.layer_outputs[i]
-            
-        #     # For all except the last layer, apply activation derivative
-        #     if i < len(self.layers) - 1:
-        #         dZ = dA * self.layers[i].activation_derivative(self.layer_outputs[i+1])
-        #     else:
-        #         dZ = dA
-                
-        #     # Calculate gradients
-        #     dW = np.dot(prev_activation.T, dZ) / m
-            
-        #     # Add L2 regularization
-        #     dW += self.reg_lambda * self.layers[i].weights
-        #     db = np.sum(dZ, axis=0, keepdims=True) / m
-            
-        #     # Store gradients in layer
-        #     self.layers[i].weight_gradients = dW
-        #     self.layers[i].bias_gradients = db
-            
-        #     # Calculate dA for next iteration (previous layer)
-        #     if i > 0:  # No need to calculate for input layer
-        #         dA = np.dot(dZ, self.layers[i].weights.T)
-            
+        """            
         # JIT-compiled function for backward pass
-        # TODO
         weights = [layer.weights for layer in self.layers]
         activations = [layer.activation for layer in self.layers]
         dWs, dbs = self._backward_jit(self.layer_outputs, y, weights, activations, self.reg_lambda, self.is_binary)
@@ -240,7 +170,7 @@ class NeuralNetwork:
 
             
     @staticmethod
-    @njit(fastmath=True, nogil=True, cache=True)
+    @njit(fastmath=True, nogil=True, cache=CACHE)
     def _backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary):
         m = y.shape[0]  # Number of samples
         dWs = []
@@ -291,7 +221,7 @@ class NeuralNetwork:
 
         return dWs, dbs
     
-    @njit(fastmath=True, nogil=True, cache=True)
+    @njit(fastmath=True, nogil=True, cache=CACHE)
     def sum_reduce(arr):
         """
         Numba-compatible function to compute the sum along axis 1 with keepdims=True.
@@ -417,7 +347,7 @@ class NeuralNetwork:
             layer.biases = best_biases[i]
             
     @staticmethod
-    @njit(fastmath=True, nogil=True, cache=True)
+    @njit(fastmath=True, nogil=True, cache=CACHE)
     def _process_batch_jit(start_idx, X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, is_binary, reg_lambda):
         X_batch = X_shuffled[start_idx:start_idx+batch_size]
         y_batch = y_shuffled[start_idx:start_idx+batch_size]
@@ -492,22 +422,13 @@ class NeuralNetwork:
         """
         # Get predictions
         y_hat = self.forward(X, training=False)
-        
-        # # Calculate accuracy based on problem type
-        # if self.is_binary:
-        #     predicted = (y_hat > 0.5).astype(int)
-        #     accuracy = float(np.mean(predicted.flatten() == y.reshape(-1, 1).flatten()))
-        # else:
-        #     predicted = np.argmax(y_hat, axis=1)
-        #     accuracy = float(np.mean(predicted == y))
-              
         # JIT-compiled function for evaluation
-        accuracy, predicted = self._evaluate_jit(y_hat, self.is_binary)
+        accuracy, predicted = self._evaluate_jit(y_hat, y, self.is_binary)
         return accuracy, predicted
         
     @staticmethod
-    @njit(fastmath=True, nogil=True, cache=True)
-    def _evaluate_jit(y_hat, is_binary):
+    @njit(fastmath=True, nogil=True, cache=CACHE)
+    def _evaluate_jit(y_hat, y_true, is_binary):
         """
         Numba JIT-compiled function to evaluate model performance.
         Args:
@@ -518,11 +439,10 @@ class NeuralNetwork:
         """
         if is_binary:
             predicted = (y_hat > 0.5).astype(np.int32).flatten()
-            accuracy = np.mean(predicted == y_hat.flatten())
+            accuracy = np.mean(predicted == y_true.flatten())
         else:
             predicted = np.argmax(y_hat, axis=1).astype(np.int32)
-            accuracy = np.mean(predicted == y_hat.argmax(axis=1))
-            
+            accuracy = np.mean(predicted == y_true)
         return accuracy, predicted
         
     def predict(self, X):
@@ -746,40 +666,40 @@ class Layer:
 
 # Activation functions and their derivatives
 # Using Numba for JIT compilation to speed up the activation functions
-@njit(fastmath=True, cache=True)
+@njit(fastmath=True, cache=CACHE)
 def relu(z):
     return np.maximum(0, z)
 
-@njit(fastmath=True, cache=True)
+@njit(fastmath=True, cache=CACHE)
 def relu_derivative(z):
     return (z > 0).astype(np.float64)  # Ensure return type is float64
 
-@njit(fastmath=True, cache=True)
+@njit(fastmath=True, cache=CACHE)
 def leaky_relu(z, alpha=0.01):
     return np.where(z > 0, z, alpha * z)
 
-@njit(fastmath=True, cache=True)
+@njit(fastmath=True, cache=CACHE)
 def leaky_relu_derivative(z, alpha=0.01):
     return np.where(z > 0, 1, alpha).astype(np.float64)  # Ensure return type is float64
 
-@njit(fastmath=True, cache=True)
+@njit(fastmath=True, cache=CACHE)
 def tanh(z):
     return np.tanh(z)
 
-@njit(fastmath=True, cache=True)
+@njit(fastmath=True, cache=CACHE)
 def tanh_derivative(z):
     return 1 - np.tanh(z) ** 2
 
-@njit(fastmath=True, cache=True)
+@njit(fastmath=True, cache=CACHE)
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
-@njit(fastmath=True, cache=True)
+@njit(fastmath=True, cache=CACHE)
 def sigmoid_derivative(z):
     sig = sigmoid(z)
     return sig * (1 - sig)
 
-@njit(fastmath=True, cache=True)
+@njit(fastmath=True, cache=CACHE)
 def softmax(z):
     max_z = np.empty(z.shape[0])
     for i in range(z.shape[0]):
