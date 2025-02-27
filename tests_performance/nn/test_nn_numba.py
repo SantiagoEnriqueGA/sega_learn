@@ -97,7 +97,7 @@ def init_compile():
     end_time = time.time()
     print(f"\nNumba JIT code compilation completed in {end_time - compile_time:.2f} seconds.")
 
-def time_nn_base(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
+def time_nn_numba(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
     NUM_REPEATS = num_repeats
     
     # Neural Network Timing
@@ -170,7 +170,7 @@ def time_nn_base(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
     return nn_times
 
 
-def time_nn_optimizer(num_repeats=5, layer_sizes_multiplier=25):
+def time_nn_optimizer_numba(num_repeats=5, layer_sizes_multiplier=25):
     # Optimizer Timing
     # ---------------------------------------------------------------------------------------------
     NUM_REPEATS = num_repeats
@@ -226,7 +226,7 @@ def time_nn_optimizer(num_repeats=5, layer_sizes_multiplier=25):
     return optimizer_times
 
     
-def time_nn_loss(num_repeats=5, layer_sizes_multiplier=10, dataset_size=1_000_000):
+def time_nn_loss_numba(num_repeats=5, layer_sizes_multiplier=10, dataset_size=1_000_000):
     # Loss Function Timing
     # ---------------------------------------------------------------------------------------------
     NUM_REPEATS = num_repeats
@@ -285,7 +285,7 @@ def combine_timing_results(nn_times, optimizer_times, loss_times):
     save_timing_results(output_filename, nn_times, optimizer_times, loss_times)
 
 
-def time_nn_epoch(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[1_000, 5_000, 10_000, 50_000, 100_000], save_csv=True):
+def time_nn_epoch_numba(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[1_000, 5_000, 10_000, 50_000, 100_000], save_csv=True):
     # Time train (single epoch) for increasing dataset size
     # ---------------------------------------------------------------------------------------------
     NUM_REPEATS = num_repeats
@@ -336,8 +336,8 @@ def time_nn_epoch(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[1_000,
 if __name__ == "__main__":
     init_compile()
     
-    # combine_timing_results(time_nn_base(), time_nn_optimizer(), time_nn_loss())
-    time_nn_base(num_repeats=5)
-    time_nn_optimizer(num_repeats=5)
-    time_nn_loss(num_repeats=5)
-    time_nn_epoch(num_repeats=5, save_csv=False)
+    # combine_timing_results(time_nn_numba(), time_nn_optimizer(), time_nn_loss())
+    time_nn_numba(num_repeats=5)
+    time_nn_optimizer_numba(num_repeats=5)
+    time_nn_loss_numba(num_repeats=5)
+    time_nn_epoch_numba(num_repeats=5, save_csv=False)
