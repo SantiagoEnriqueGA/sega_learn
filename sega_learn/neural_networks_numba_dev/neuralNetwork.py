@@ -172,9 +172,10 @@ class NeuralNetwork:
     @staticmethod
     @njit(fastmath=True, nogil=True, cache=CACHE)
     def _backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary):
-        m = y.shape[0]  # Number of samples
-        dWs = []
-        dbs = []
+        m = y.shape[0]
+        num_layers = len(weights)
+        dWs = [np.zeros_like(weights[i]) for i in range(num_layers)]
+        dbs = [np.zeros((1, weights[i].shape[1])) for i in range(num_layers)]
 
         # Reshape y for binary classification
         if is_binary:
@@ -190,7 +191,7 @@ class NeuralNetwork:
             dA = outputs - y
 
         # Backpropagate through layers in reverse
-        for i in range(len(weights) - 1, -1, -1):
+        for i in range(num_layers - 1, -1, -1):
             prev_activation = layer_outputs[i]
 
             if i < len(weights) - 1:
@@ -209,12 +210,8 @@ class NeuralNetwork:
             else:
                 dZ = dA
 
-            dW = np.dot(prev_activation.T, dZ) / m
-            dW += reg_lambda * weights[i]  # Add L2 regularization
-            db = sum_reduce(dZ) / m
-
-            dWs.insert(0, dW)
-            dbs.insert(0, db)
+            dWs[i] = np.dot(prev_activation.T, dZ) / m + reg_lambda * weights[i]
+            dbs[i] = sum_reduce(dZ) / m
 
             if i > 0:
                 dA = np.dot(dZ, weights[i].T)
@@ -234,7 +231,6 @@ class NeuralNetwork:
         for i in range(arr.shape[0]):
             sum_vals[i, 0] = np.sum(arr[i])
         return sum_vals
-
 
     def train(self, X_train, y_train, X_val=None, y_val=None, 
               optimizer=None, epochs=100, batch_size=32, 
@@ -372,6 +368,14 @@ class NeuralNetwork:
             # Apply optimizer update
             optimizer.update(layer, dW, db, idx)
 
+    @staticmethod
+    @njit(fastmath=True, nogil=True, cache=CACHE)
+    def compute_l2_reg(weights):
+        total = 0.0
+        for i in range(len(weights)):
+            total += np.sum(weights[i] ** 2)
+        return total
+
     def calculate_loss(self, X, y, class_weights=None):
         """
         Calculates the loss with L2 regularization.
@@ -404,7 +408,8 @@ class NeuralNetwork:
             loss = loss_fn.calculate_loss(outputs, y)
         
         # Add L2 regularization
-        l2_reg = self.reg_lambda * sum(np.sum(layer.weights**2) for layer in self.layers)
+        weights = [layer.weights for layer in self.layers]
+        l2_reg = self.reg_lambda * self.compute_l2_reg(weights)
         loss += l2_reg
         
         # Convert to Python float
