@@ -5,7 +5,7 @@ from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 from .numba_utils import _forward_jit_impl, _backward_jit_impl
 
 import numpy as np
-from numba import jit, njit, vectorize, float64, int32, prange
+from numba import jit, njit, vectorize, float64, float32, int32, prange
 from numba import types
 from numba.experimental import jitclass
 from tqdm.auto import tqdm
@@ -80,9 +80,6 @@ class NeuralNetwork:
         Returns:
             ndarray: Activation values after applying dropout.
         """
-        # mask = np.random.rand(*X.shape) < (1 - self.dropout_rate)
-        # return np.multiply(X, mask) / (1 - self.dropout_rate)
-        
         # Use JIT-compiled function for performance
         return self._apply_dropout_jit(X, self.dropout_rate)
         
@@ -100,11 +97,6 @@ class NeuralNetwork:
         # Generate the entire mask at once - more vectorized approach
         mask = (np.random.random(X.shape) < (1 - dropout_rate)).astype(np.float64)
         return (X * mask) / (1 - dropout_rate)
-        # mask = np.empty(X.shape, dtype=np.float64)
-        # for i in prange(X.shape[0]):
-        #     for j in prange(X.shape[1]):
-        #         mask[i, j] = 1.0 if np.random.rand() < (1 - dropout_rate) else 0.0
-        # return (X * mask) / (1 - dropout_rate)
 
     def forward(self, X, training=True):
         """
@@ -118,66 +110,24 @@ class NeuralNetwork:
         self.layer_outputs = [X]
         weights = [layer.weights for layer in self.layers]
         biases = [layer.biases for layer in self.layers]
-        layer_outputs = self._forward_jit(X, weights, biases, self.activations, self.dropout_rate, training, self.is_binary)
+        layer_outputs = _forward_jit_impl(X, weights, biases, self.activations, self.dropout_rate, training, self.is_binary)
         self.layer_outputs = layer_outputs  # Update layer_outputs with the correct shapes
         
         return self.layer_outputs[-1]
-            
-    @staticmethod
-    @njit(fastmath=True, nogil=True, cache=CACHE)
-    def _forward_jit(X, weights, biases, activations, dropout_rate, training, is_binary):
-        # Store all layer activations for backprop
-        layer_outputs = [X]
-        
-        # Forward pass through all layers except the last
-        for i in range(len(weights) - 1):
-            # Calculate linear transformation
-            Z = np.dot(X, weights[i]) + biases[i]
-            
-            # Apply activation function
-            if activations[i] == "relu":
-                X = relu(Z)
-            elif activations[i] == "leaky_relu":
-                X = leaky_relu(Z)
-            elif activations[i] == "tanh":
-                X = tanh(Z)
-            elif activations[i] == "sigmoid":
-                X = sigmoid(Z)
-            elif activations[i] == "softmax":
-                X = softmax(Z)
-            else:
-                raise ValueError(f"Unsupported activation: {activations[i]}")
-            
-            # Apply dropout only during training
-            if training and dropout_rate > 0:
-                mask = (np.random.random(X.shape) < (1 - dropout_rate)).astype(np.float64)
-                X = X * mask / (1 - dropout_rate)
-            
-            layer_outputs.append(X)
-        
-        # Last layer (output layer)
-        Z = np.dot(X, weights[-1]) + biases[-1]
-        if is_binary:
-            output = sigmoid(Z)
-        else:
-            output = softmax(Z)
-            
-        layer_outputs.append(output)
-        return layer_outputs
- 
+             
     def backward(self, y):
         """
         Performs backward propagation to calculate the gradients.
         Parameters: 
             y (ndarray): Target labels of shape (m, output_size).
         """            
-       # Reset gradients to zero
+        # Reset gradients to zero
         for i in range(len(self.dWs_cache)):
             self.dWs_cache[i].fill(0)
             self.dbs_cache[i].fill(0)
             
         # Use cached arrays in JIT function
-        dWs, dbs = self._backward_jit(self.layer_outputs, y, self.weights, 
+        dWs, dbs = _backward_jit_impl(self.layer_outputs, y, self.weights, 
                                       self.activations, self.reg_lambda, 
                                       self.is_binary, self.dWs_cache, self.dbs_cache)
         
@@ -185,78 +135,9 @@ class NeuralNetwork:
             layer.weight_gradients = dWs[i]
             layer.bias_gradients = dbs[i]
 
-            
     @staticmethod
     @njit(fastmath=True, nogil=True, cache=CACHE)
-    def _backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs):
-        m = y.shape[0]
-        num_layers = len(weights)
-        # dWs = [np.zeros_like(weights[i]) for i in range(num_layers)]
-        # dbs = [np.zeros((1, weights[i].shape[1])) for i in range(num_layers)]
-
-        # Reshape y for binary classification
-        if is_binary:
-            y = y.reshape(-1, 1).astype(np.float64)
-        else:
-            y = np.eye(layer_outputs[-1].shape[1])[y].astype(np.float64)
-
-        # Calculate initial gradient based on loss function
-        outputs = layer_outputs[-1]
-        if is_binary:
-            dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
-        else:
-            dA = outputs - y
-
-        # Backpropagate through layers in reverse
-        for i in range(num_layers - 1, -1, -1):
-            prev_activation = layer_outputs[i]
-
-            if i < len(weights) - 1:
-                if activations[i] == "relu":
-                    dZ = dA * relu_derivative(layer_outputs[i + 1])
-                elif activations[i] == "leaky_relu":
-                    dZ = dA * leaky_relu_derivative(layer_outputs[i + 1])
-                elif activations[i] == "tanh":
-                    dZ = dA * tanh_derivative(layer_outputs[i + 1])
-                elif activations[i] == "sigmoid":
-                    dZ = dA * sigmoid_derivative(layer_outputs[i + 1])
-                elif activations[i] == "softmax":
-                    dZ = dA  # Softmax derivative is handled in the loss gradient
-                else:
-                    raise ValueError(f"Unsupported activation: {activations[i]}")
-            else:
-                dZ = dA
-
-            dWs[i] = np.dot(prev_activation.T, dZ) / m + reg_lambda * weights[i]
-            dbs[i] = sum_reduce(dZ) / m
-
-            if i > 0:
-                dA = np.dot(dZ, weights[i].T)
-
-        return dWs, dbs
-    
-    @njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
-    def sum_reduce(arr):
-        """
-        Numba-compatible function to compute the sum along axis 1 with keepdims=True.
-        Args:
-            arr (np.ndarray): Input array of shape (num_samples, num_classes).
-        Returns:
-            np.ndarray: Sum values along axis 1 with keepdims=True.
-        """
-        m = arr.shape[0]
-        n = arr.shape[1]
-        sum_vals = np.empty((m, 1), dtype=arr.dtype)
-        for i in prange(m):
-            total = 0.0
-            for j in range(n):
-                total += arr[i, j]
-            sum_vals[i, 0] = total
-        return sum_vals
-
-    @staticmethod
-    @njit(fastmath=True, nogil=True, cache=CACHE)
-    def _process_batches(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, is_binary, reg_lambda):
+    def _process_batches(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, is_binary, reg_lambda, dWs_acc, dbs_acc):
         """
         Process multiple batches in parallel using Numba.
         
@@ -270,16 +151,14 @@ class NeuralNetwork:
             dropout_rate (float): Dropout rate
             is_binary (bool): Whether the task is binary classification
             reg_lambda (float): Regularization parameter
+            dWs_acc (list): Accumulated weight gradients as zeros
+            dbs_acc (list): Accumulated bias gradients as zeros
             
         Returns:
             tuple: Lists of weight and bias gradients for each batch
         """
         num_samples = X_shuffled.shape[0]
         num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
-        
-        # Initialize accumulated gradients with zeros
-        dWs_acc = [np.zeros_like(w) for w in weights]
-        dbs_acc = [np.zeros_like(b) for b in biases]
         
         for i in prange(num_batches):
             start_idx = i * batch_size
@@ -292,7 +171,7 @@ class NeuralNetwork:
             layer_outputs = _forward_jit_impl(X_batch, weights, biases, activations, dropout_rate, True, is_binary)
             
             # Backward pass
-            dWs, dbs = _backward_jit_impl(layer_outputs, y_batch, weights, activations, reg_lambda, is_binary)
+            dWs, dbs = _backward_jit_impl(layer_outputs, y_batch, weights, activations, reg_lambda, is_binary, dWs_acc, dbs_acc)
             
             # Accumulate gradients directly
             for j in range(len(dWs)):
@@ -361,19 +240,19 @@ class NeuralNetwork:
             weights = [layer.weights for layer in self.layers]
             biases = [layer.biases for layer in self.layers]
             activations = [layer.activation for layer in self.layers]
-
+           
+            # Initialize accumulated gradients with zeros 
+            dWs_zeros = [np.zeros_like(w) for w in weights]
+            dbs_zeros = [np.zeros_like(b) for b in biases]
+           
             # Process all batches in parallel and get averaged gradients
             dWs_acc, dbs_acc = self._process_batches(
                 X_shuffled, y_shuffled, batch_size, weights, biases, 
-                activations, self.dropout_rate, self.is_binary, self.reg_lambda
+                activations, self.dropout_rate, self.is_binary, self.reg_lambda,
+                dWs_zeros, dbs_zeros
             )
-            
-            # # Apply the averaged gradients to update parameters
-            # # Old sequential update
-            # for idx, layer in enumerate(self.layers):
-            #     optimizer.update(layer, dWs_acc[idx], dbs_acc[idx], idx)
-            
-            # New parallel update
+                       
+            # Update weights and biases using the optimizer
             optimizer.update_layers(self.layers, dWs_acc, dbs_acc)
             
             # Calculate metrics
@@ -564,118 +443,6 @@ class NeuralNetwork:
         else:
             return np.argmax(outputs, axis=1)
             
-    def tune_hyperparameters(self, X_train, y_train, X_val, y_val, param_grid,
-                             layer_configs=None, optimizer_types=None, 
-                             lr_range=(0.0001, 0.01, 5), epochs=30, batch_size=32):
-        """
-        Performs hyperparameter tuning using grid search.
-        Parameters:
-            - X_train, y_train: Training data
-            - X_val, y_val: Validation data
-            - param_grid: Dict of parameters to try
-            - layer_configs: List of layer configurations
-            - optimizer_types: List of optimizer types
-            - lr_range: (min_lr, max_lr, num_steps) for learning rates
-            - epochs: Max epochs for each trial
-            - batch_size: Batch size for training
-        Returns:
-            - best_params: Best hyperparameters found
-            - best_accuracy: Best validation accuracy
-        """
-        from itertools import product
-        import warnings
-        warnings.filterwarnings('ignore')
-        
-        # Default values if not provided
-        if layer_configs is None:
-            layer_configs = [[64], [128], [64, 32]]
-            
-        if optimizer_types is None:
-            optimizer_types = ['Adam', 'SGD']
-            
-        # Output size based on target data
-        output_size = 1 if len(y_train.shape) == 1 or y_train.shape[1] == 1 else y_train.max() + 1
-        
-        # Generate learning rates
-        min_lr, max_lr, num_steps = lr_range
-        lr_options = np.logspace(np.log10(min_lr), np.log10(max_lr), num_steps).tolist()
-        
-        # Extract parameter combinations
-        keys, values = zip(*param_grid.items())
-        
-        # Calculate total iterations for progress tracking
-        total_iterations = (
-            len(layer_configs) *
-            len(lr_options) *
-            len(optimizer_types) *
-            np.prod([len(value) for value in values])
-        )
-        
-        # Track best results
-        best_accuracy = 0
-        best_params = {}
-        best_optimizer_type = None
-        
-        # Grid search with progress bar
-        with tqdm(total=total_iterations, desc="Tuning Hyperparameters") as pbar:
-            # Iterate through all combinations
-            for optimizer_type in optimizer_types:
-                for layer_structure in layer_configs:
-                    full_layer_structure = [X_train.shape[1]] + layer_structure + [int(output_size)]
-                    
-                    for combination in product(*values):
-                        params = dict(zip(keys, combination))
-                        
-                        for lr in lr_options:
-                            # Create model with current hyperparameters
-                            nn = NeuralNetwork(
-                                full_layer_structure, 
-                                dropout_rate=params['dropout_rate'], 
-                                reg_lambda=params['reg_lambda']
-                            )
-                            
-                            # Create optimizer
-                            optimizer = self._create_optimizer(optimizer_type, lr)
-                            
-                            # Train model (with early stopping for efficiency)
-                            nn.train(
-                                X_train, y_train, X_val, y_val,
-                                optimizer=optimizer,
-                                epochs=epochs,
-                                batch_size=batch_size,
-                                early_stopping_threshold=5,
-                                p=False
-                            )
-                            
-                            # Evaluate on validation set
-                            accuracy, _ = nn.evaluate(X_val, y_val)
-                            
-                            # Update best if improved
-                            if accuracy > best_accuracy:
-                                best_accuracy = accuracy
-                                best_params = {
-                                    **params,
-                                    'layers': full_layer_structure,
-                                    'learning_rate': lr
-                                }
-                                best_optimizer_type = optimizer_type
-                                
-                                tqdm.write(f"New best: {best_accuracy:.4f} with {optimizer_type}, "
-                                      f"lr={lr}, layers={full_layer_structure}, params={params}")
-                            
-                            # Update progress
-                            pbar.update(1)
-        
-        print(f"\nBest configuration: {best_optimizer_type} optimizer with lr={best_params['learning_rate']}")
-        print(f"Layers: {best_params['layers']}")
-        print(f"Parameters: dropout={best_params['dropout_rate']}, reg_lambda={best_params['reg_lambda']}")
-        print(f"Validation accuracy: {best_accuracy:.4f}")
-        
-        # Add best optimizer type to best_params
-        best_params['optimizer'] = best_optimizer_type
-        
-        return best_params, best_accuracy
-
     def _create_optimizer(self, optimizer_type, learning_rate):
         """Helper method to create optimizer instances."""
         if optimizer_type == 'Adam':

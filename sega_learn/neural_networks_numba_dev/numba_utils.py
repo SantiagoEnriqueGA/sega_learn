@@ -3,7 +3,7 @@ from numba import njit
 
 CACHE = False
 
-@njit(fastmath=True, cache=CACHE)
+@njit(fastmath=True, nogil=True, cache=CACHE)
 def _forward_jit_impl(X, weights, biases, activations, dropout_rate, training, is_binary):
     num_layers = len(weights)
     # Initialize layer_outputs with empty 2D float64 arrays to set the correct type
@@ -41,17 +41,14 @@ def _forward_jit_impl(X, weights, biases, activations, dropout_rate, training, i
     
     return layer_outputs
 
-@njit(fastmath=True, cache=CACHE)
-def _backward_jit_impl(layer_outputs, y, weights, activations, reg_lambda, is_binary):
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def _backward_jit_impl(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs):
     m = y.shape[0]
     num_layers = len(weights)
-    # Initialize dWs and dbs with empty 2D float64 arrays to set the correct type
-    dWs = [np.empty((0, 0), dtype=np.float64) for _ in range(num_layers)]
-    dbs = [np.empty((0, 0), dtype=np.float64) for _ in range(num_layers)]
-    outputs = layer_outputs[-1]
 
     # Reshape y for binary classification
     # Calculate initial gradient based on loss function
+    outputs = layer_outputs[-1]
     if is_binary:
         y = y.reshape(-1, 1).astype(np.float64)
         dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
