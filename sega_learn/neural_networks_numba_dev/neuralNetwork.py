@@ -54,6 +54,10 @@ class NeuralNetwork:
         # Cache for forward/backward pass
         self.layer_outputs = None
         self.is_binary = layer_sizes[-1] == 1
+
+        # Cache for optimizer update
+        self.dWs_cache = [np.zeros_like(w) for w in self.weights]
+        self.dbs_cache = [np.zeros_like(b) for b in self.biases]
         
     def __repr__(self):
         layers = ""
@@ -81,9 +85,9 @@ class NeuralNetwork:
         
         # Use JIT-compiled function for performance
         return self._apply_dropout_jit(X, self.dropout_rate)
-    
+        
     @staticmethod
-    @njit(fastmath=True, nogil=True, cache=CACHE)
+    @njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
     def _apply_dropout_jit(X, dropout_rate):
         """
         Numba JIT-compiled function to apply dropout.
@@ -93,7 +97,14 @@ class NeuralNetwork:
         Returns:
             ndarray: Activation values after applying dropout.
         """
-        return np.multiply(X, np.random.rand(*X.shape) < (1 - dropout_rate)) / (1 - dropout_rate)
+        # Generate the entire mask at once - more vectorized approach
+        mask = (np.random.random(X.shape) < (1 - dropout_rate)).astype(np.float64)
+        return (X * mask) / (1 - dropout_rate)
+        # mask = np.empty(X.shape, dtype=np.float64)
+        # for i in prange(X.shape[0]):
+        #     for j in prange(X.shape[1]):
+        #         mask[i, j] = 1.0 if np.random.rand() < (1 - dropout_rate) else 0.0
+        # return (X * mask) / (1 - dropout_rate)
 
     def forward(self, X, training=True):
         """
@@ -139,7 +150,8 @@ class NeuralNetwork:
             
             # Apply dropout only during training
             if training and dropout_rate > 0:
-                X = np.multiply(X, np.random.rand(*X.shape) < (1 - dropout_rate)) / (1 - dropout_rate)
+                mask = (np.random.random(X.shape) < (1 - dropout_rate)).astype(np.float64)
+                X = X * mask / (1 - dropout_rate)
             
             layer_outputs.append(X)
         
@@ -159,11 +171,16 @@ class NeuralNetwork:
         Parameters: 
             y (ndarray): Target labels of shape (m, output_size).
         """            
-        # JIT-compiled function for backward pass
-        weights = [layer.weights for layer in self.layers]
-        activations = [layer.activation for layer in self.layers]
-        dWs, dbs = self._backward_jit(self.layer_outputs, y, weights, activations, self.reg_lambda, self.is_binary)
-
+       # Reset gradients to zero
+        for i in range(len(self.dWs_cache)):
+            self.dWs_cache[i].fill(0)
+            self.dbs_cache[i].fill(0)
+            
+        # Use cached arrays in JIT function
+        dWs, dbs = self._backward_jit(self.layer_outputs, y, self.weights, 
+                                      self.activations, self.reg_lambda, 
+                                      self.is_binary, self.dWs_cache, self.dbs_cache)
+        
         for i, layer in enumerate(self.layers):
             layer.weight_gradients = dWs[i]
             layer.bias_gradients = dbs[i]
@@ -171,11 +188,11 @@ class NeuralNetwork:
             
     @staticmethod
     @njit(fastmath=True, nogil=True, cache=CACHE)
-    def _backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary):
+    def _backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs):
         m = y.shape[0]
         num_layers = len(weights)
-        dWs = [np.zeros_like(weights[i]) for i in range(num_layers)]
-        dbs = [np.zeros((1, weights[i].shape[1])) for i in range(num_layers)]
+        # dWs = [np.zeros_like(weights[i]) for i in range(num_layers)]
+        # dbs = [np.zeros((1, weights[i].shape[1])) for i in range(num_layers)]
 
         # Reshape y for binary classification
         if is_binary:
@@ -218,7 +235,7 @@ class NeuralNetwork:
 
         return dWs, dbs
     
-    @njit(fastmath=True, nogil=True, cache=CACHE)
+    @njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
     def sum_reduce(arr):
         """
         Numba-compatible function to compute the sum along axis 1 with keepdims=True.
@@ -227,36 +244,15 @@ class NeuralNetwork:
         Returns:
             np.ndarray: Sum values along axis 1 with keepdims=True.
         """
-        sum_vals = np.empty((arr.shape[0], 1), dtype=arr.dtype)
-        for i in range(arr.shape[0]):
-            sum_vals[i, 0] = np.sum(arr[i])
+        m = arr.shape[0]
+        n = arr.shape[1]
+        sum_vals = np.empty((m, 1), dtype=arr.dtype)
+        for i in prange(m):
+            total = 0.0
+            for j in range(n):
+                total += arr[i, j]
+            sum_vals[i, 0] = total
         return sum_vals
-
-    # @staticmethod
-    # @njit(fastmath=True, nogil=True, cache=CACHE)
-    # def _process_batch_jit(start_idx, X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, is_binary, reg_lambda):
-    #     X_batch = X_shuffled[start_idx:start_idx+batch_size]
-    #     y_batch = y_shuffled[start_idx:start_idx+batch_size]
-        
-    #     # Forward pass
-    #     layer_outputs = _forward_jit_impl(X_batch, weights, biases, activations, dropout_rate, True, is_binary)
-        
-    #     # Backward pass
-    #     dWs, dbs = _backward_jit_impl(layer_outputs, y_batch, weights, activations, reg_lambda, is_binary)    
-    #     return dWs, dbs
-    
-    # def process_batch(self, start_idx, X_shuffled, y_shuffled, batch_size, optimizer):
-    #     weights = [layer.weights for layer in self.layers]
-    #     biases = [layer.biases for layer in self.layers]
-    #     activations = [layer.activation for layer in self.layers]        
-    #     dWs, dbs = self._process_batch_jit(start_idx, X_shuffled, y_shuffled, batch_size, weights, biases, activations, self.dropout_rate, self.is_binary, self.reg_lambda)
-    
-    #     # Update weights and biases
-    #     for idx, layer in enumerate(self.layers):
-    #         dW = dWs[idx]
-    #         db = dbs[idx]
-    #         # Apply optimizer update
-    #         optimizer.update(layer, dW, db, idx)
 
     @staticmethod
     @njit(fastmath=True, nogil=True, cache=CACHE)
@@ -372,13 +368,43 @@ class NeuralNetwork:
                 activations, self.dropout_rate, self.is_binary, self.reg_lambda
             )
             
-            # Apply the averaged gradients to update parameters
-            for idx, layer in enumerate(self.layers):
-                optimizer.update(layer, dWs_acc[idx], dbs_acc[idx], idx)
+            # # Apply the averaged gradients to update parameters
+            # # Old sequential update
+            # for idx, layer in enumerate(self.layers):
+            #     optimizer.update(layer, dWs_acc[idx], dbs_acc[idx], idx)
+            
+            # New parallel update
+            optimizer.update_layers(self.layers, dWs_acc, dbs_acc)
             
             # Calculate metrics
             train_loss = self.calculate_loss(X_train, y_train)
             train_accuracy, _ = self.evaluate(X_train, y_train)
+
+            # TODO: get losses and accuracies from each mini-batch and average
+            # # Estimate metrics from mini-batches
+            # batch_losses = []
+            # batch_accuracies = []
+            # num_batches = (X_train.shape[0] + batch_size - 1) // batch_size
+
+            # for i in range(num_batches):
+            #     start_idx = i * batch_size
+            #     end_idx = min(start_idx + batch_size, X_train.shape[0])
+            #     X_batch = X_train[start_idx:end_idx]
+            #     y_batch = y_train[start_idx:end_idx]
+                
+            #     # Forward pass
+            #     y_pred = self.forward(X_batch)
+                
+            #     # Calculate loss
+            #     batch_loss = self.calculate_loss(X_batch, y_batch)
+            #     batch_losses.append(batch_loss)
+                
+            #     # Calculate accuracy
+            #     batch_acc, _ = self.evaluate(X_batch, y_batch)
+            #     batch_accuracies.append(batch_acc)
+
+            # train_loss = np.mean(batch_losses)
+            # train_accuracy = np.mean(batch_accuracies)
             
             # Validation metrics
             val_metrics = ""
@@ -439,10 +465,10 @@ class NeuralNetwork:
             
 
     @staticmethod
-    @njit(fastmath=True, nogil=True, cache=CACHE)
+    @njit(fastmath=True, nogil=True, parallel=True, cache=CACHE)
     def compute_l2_reg(weights):
         total = 0.0
-        for i in range(len(weights)):
+        for i in prange(len(weights)):
             total += np.sum(weights[i] ** 2)
         return total
 
@@ -774,17 +800,17 @@ def sigmoid_derivative(z):
     sig = sigmoid(z)
     return sig * (1 - sig)
 
-@njit(fastmath=True, cache=CACHE)
+@njit(parallel=True, fastmath=True, cache=CACHE)
 def softmax(z):
-    max_z = np.empty(z.shape[0])
-    for i in range(z.shape[0]):
-        max_z[i] = np.max(z[i])
-    exp_z = np.empty_like(z)
-    for i in range(z.shape[0]):
-        exp_z[i] = np.exp(z[i] - max_z[i])
-    sum_exp_z = np.empty(z.shape[0])
-    for i in range(z.shape[0]):
-        sum_exp_z[i] = np.sum(exp_z[i])
-    for i in range(z.shape[0]):
-        exp_z[i] /= sum_exp_z[i]
-    return exp_z
+    out = np.empty_like(z)
+    for i in prange(z.shape[0]):
+        row = z[i]
+        # Shift for numerical stability
+        max_val = np.max(row)
+        shifted = row - max_val
+        # Single pass exponential calculation
+        exp_vals = np.exp(shifted)
+        sum_exp = np.sum(exp_vals)
+        # Single vectorized division
+        out[i] = exp_vals / sum_exp
+    return out

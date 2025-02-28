@@ -62,7 +62,7 @@ def _backward_jit_impl(layer_outputs, y, weights, activations, reg_lambda, is_bi
             dA[i, y[i]] -= 1  # Subtract 1 from the correct class index for each sample
 
     # Backpropagate through layers in reverse
-    for i in range(num_layers - 1, -1, -1):
+    for i in range(num_layers - 1, -1, -1): 
         prev_activation = layer_outputs[i]
 
         if i < num_layers - 1:
@@ -84,7 +84,8 @@ def _backward_jit_impl(layer_outputs, y, weights, activations, reg_lambda, is_bi
             dZ = dA
 
         dW = np.dot(prev_activation.T, dZ) / m + reg_lambda * weights[i]
-        db = sum_reduce(dZ) / m
+        # db = sum_reduce(dZ) / m
+        db = sum_axis0(dZ) / m
 
         dWs[i] = dW
         dbs[i] = db
@@ -156,3 +157,13 @@ def sum_reduce(arr):
     for i in range(arr.shape[0]):
         sum_vals[i, 0] = np.sum(arr[i])
     return sum_vals
+
+
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def sum_axis0(arr):
+    sum_vals = np.zeros((1, arr.shape[1]), dtype=arr.dtype)
+    for j in range(arr.shape[1]):
+        for i in range(arr.shape[0]):
+            sum_vals[0, j] += arr[i, j]
+    return sum_vals
+    

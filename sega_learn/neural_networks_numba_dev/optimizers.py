@@ -3,6 +3,8 @@ from numba import jit, njit, vectorize, float64, int32, prange
 from numba import types
 from numba.experimental import jitclass
 
+CACHE = False
+
 spec_adam = [
     ('learning_rate', float64),
     ('beta1', float64),
@@ -83,6 +85,32 @@ class AdamOptimizer:
         layer.weights -= self.learning_rate * (m_hat / (np.sqrt(v_hat) + self.epsilon) + self.reg_lambda * layer.weights[:dW.shape[0], :dW.shape[1]])  # Update weights
         layer.biases -= self.learning_rate * db  # Update biases
 
+    def update_layers(self, layers, dWs, dbs):
+        self.t += 1  # Increment timestep
+        adam_update_layers(self.m, self.v, self.t, layers, dWs, dbs, 
+                        self.learning_rate, self.beta1, self.beta2, self.epsilon, self.reg_lambda)
+
+@njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
+def adam_update_layers(m, v, t, layers, dWs, dbs, learning_rate, beta1, beta2, epsilon, reg_lambda):
+    for i in prange(len(layers)):
+        layer = layers[i]
+        dW = dWs[i]
+        db = dbs[i]
+        rows, cols = dW.shape
+        
+        # Update first and second moment estimates
+        m[i, :rows, :cols] = beta1 * m[i, :rows, :cols] + (1 - beta1) * dW
+        v[i, :rows, :cols] = beta2 * v[i, :rows, :cols] + (1 - beta2) * (dW ** 2)
+        
+        # Bias-corrected estimates
+        m_hat = m[i, :rows, :cols] / (1 - beta1 ** t)
+        v_hat = v[i, :rows, :cols] / (1 - beta2 ** t)
+        
+        # Update weights and biases
+        layer.weights[:rows, :cols] -= learning_rate * (m_hat / (np.sqrt(v_hat) + epsilon) + reg_lambda * layer.weights[:rows, :cols])
+        layer.biases -= learning_rate * db
+
+
 spec_sgd = [
     ('learning_rate', float64),
     ('momentum', float64),
@@ -139,6 +167,25 @@ class SGDOptimizer:
         self.velocity[index][:dW.shape[0], :dW.shape[1]] = self.momentum * self.velocity[index][:dW.shape[0], :dW.shape[1]] - self.learning_rate * dW  # Update velocity
         layer.weights[:dW.shape[0], :dW.shape[1]] += self.velocity[index][:dW.shape[0], :dW.shape[1]] - self.learning_rate * self.reg_lambda * layer.weights[:dW.shape[0], :dW.shape[1]]  # Update weights
         layer.biases[:db.shape[0], :db.shape[1]] -= self.learning_rate * db  # Update biases
+
+    def update_layers(self, layers, dWs, dbs):
+            sgd_update_layers(self.velocity, layers, dWs, dbs, 
+                            self.learning_rate, self.momentum, self.reg_lambda)
+        
+@njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
+def sgd_update_layers(velocity, layers, dWs, dbs, learning_rate, momentum, reg_lambda):
+    for i in prange(len(layers)):
+        layer = layers[i]
+        dW = dWs[i]
+        db = dbs[i]
+        rows, cols = dW.shape
+        
+        # Update velocity with momentum
+        velocity[i, :rows, :cols] = momentum * velocity[i, :rows, :cols] - learning_rate * dW
+        
+        # Update weights and biases
+        layer.weights[:rows, :cols] += velocity[i, :rows, :cols] - learning_rate * reg_lambda * layer.weights[:rows, :cols]
+        layer.biases -= learning_rate * db
 
 spec_adadelta = [
     ('learning_rate', float64),
@@ -213,3 +260,30 @@ class AdadeltaOptimizer:
 
         layer.weights[:dW.shape[0], :dW.shape[1]] += delta_x - self.learning_rate * self.reg_lambda * layer.weights[:dW.shape[0], :dW.shape[1]]  # Update weights
         layer.biases[:db.shape[0], :db.shape[1]] -= self.learning_rate * db                                         # Update biases
+
+    def update_layers(self, layers, dWs, dbs):
+        adadelta_update_layers(self.E_g2, self.E_delta_x2, layers, dWs, dbs, 
+                              self.learning_rate, self.rho, self.epsilon, self.reg_lambda)
+
+
+@njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
+def adadelta_update_layers(E_g2, E_delta_x2, layers, dWs, dbs, learning_rate, rho, epsilon, reg_lambda):
+    for i in prange(len(layers)):
+        layer = layers[i]
+        dW = dWs[i]
+        db = dbs[i]
+        rows, cols = dW.shape
+        
+        # Update running average of squared gradients
+        E_g2[i, :rows, :cols] = rho * E_g2[i, :rows, :cols] + (1 - rho) * (dW ** 2)
+        
+        # Compute parameter update
+        delta_x = - (np.sqrt(E_delta_x2[i, :rows, :cols] + epsilon) / 
+                     np.sqrt(E_g2[i, :rows, :cols] + epsilon)) * dW
+        
+        # Update running average of squared parameter updates
+        E_delta_x2[i, :rows, :cols] = rho * E_delta_x2[i, :rows, :cols] + (1 - rho) * (delta_x ** 2)
+        
+        # Update weights and biases
+        layer.weights[:rows, :cols] += delta_x - learning_rate * reg_lambda * layer.weights[:rows, :cols]
+        layer.biases -= learning_rate * db

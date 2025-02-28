@@ -17,7 +17,7 @@ def sum_reduce(arr):
         sum_vals[i, 0] = np.sum(arr[i])
     return sum_vals
 
-@njit(fastmath=True, nogil=True)
+@njit(fastmath=True, nogil=True, cache=CACHE)
 def calculate_cross_entropy_loss(logits, targets):
     n = logits.shape[0]
     loss = 0.0
@@ -25,11 +25,10 @@ def calculate_cross_entropy_loss(logits, targets):
         max_val = np.max(logits[i])
         exp_sum = 0.0
         for j in range(logits.shape[1]):
-            exp_val = np.exp(logits[i, j] - max_val)
-            exp_sum += exp_val
-        for j in range(logits.shape[1]):
-            prob = np.exp(logits[i, j] - max_val) / exp_sum
-            loss -= targets[i, j] * np.log(prob + 1e-15)
+            exp_sum += np.exp(logits[i, j] - max_val)
+        log_sum_exp = max_val + np.log(exp_sum)
+        c_i = np.argmax(targets[i])  # True class index, assuming one-hot targets
+        loss += -logits[i, c_i] + log_sum_exp
     return loss / n
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
