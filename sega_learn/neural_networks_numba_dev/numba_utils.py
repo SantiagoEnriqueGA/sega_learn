@@ -7,7 +7,7 @@ CACHE = False
 # Forward and backward passes
 # -------------------------------------------------------------------------------------------------
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def _forward_jit(X, weights, biases, activations, dropout_rate, training, is_binary):
+def forward_jit(X, weights, biases, activations, dropout_rate, training, is_binary):
     num_layers = len(weights)
     # Initialize layer_outputs with empty 2D float64 arrays to set the correct type
     layer_outputs = [np.empty((0, 0), dtype=np.float64) for _ in range(num_layers + 1)]
@@ -45,7 +45,7 @@ def _forward_jit(X, weights, biases, activations, dropout_rate, training, is_bin
     return layer_outputs
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def _backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs):
+def backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs):
     m = y.shape[0]
     num_layers = len(weights)
 
@@ -159,7 +159,7 @@ def _compute_l2_reg(weights):
     return total
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def _evaluate_batch(y_hat, y_true, is_binary):
+def evaluate_batch(y_hat, y_true, is_binary):
     if is_binary:
         predicted = (y_hat > 0.5).astype(np.int32).flatten()
         accuracy = np.mean(predicted == y_true.flatten())

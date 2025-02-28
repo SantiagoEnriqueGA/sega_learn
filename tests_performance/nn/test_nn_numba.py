@@ -338,7 +338,7 @@ def time_nn_epoch_numba(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[
 
 
 if __name__ == "__main__":
-    init_compile()
+    # init_compile()
     
     # combine_timing_results(time_nn_numba(), time_nn_optimizer(), time_nn_loss())
     time_nn_numba(num_repeats=5)
