@@ -1,10 +1,13 @@
 import numpy as np
-from numba import njit
+from numba import njit, prange, float64
 
 CACHE = False
 
+# -------------------------------------------------------------------------------------------------
+# Forward and backward passes
+# -------------------------------------------------------------------------------------------------
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def _forward_jit_impl(X, weights, biases, activations, dropout_rate, training, is_binary):
+def _forward_jit(X, weights, biases, activations, dropout_rate, training, is_binary):
     num_layers = len(weights)
     # Initialize layer_outputs with empty 2D float64 arrays to set the correct type
     layer_outputs = [np.empty((0, 0), dtype=np.float64) for _ in range(num_layers + 1)]
@@ -42,7 +45,7 @@ def _forward_jit_impl(X, weights, biases, activations, dropout_rate, training, i
     return layer_outputs
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def _backward_jit_impl(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs):
+def _backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs):
     m = y.shape[0]
     num_layers = len(weights)
 
@@ -92,7 +95,84 @@ def _backward_jit_impl(layer_outputs, y, weights, activations, reg_lambda, is_bi
 
     return dWs, dbs
 
-# Activation functions and their derivatives
+
+
+# -------------------------------------------------------------------------------------------------
+# Loss functions and accuracy
+# -------------------------------------------------------------------------------------------------
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def calculate_loss_from_outputs_binary(outputs, y, weights, reg_lambda):
+    # Apply loss function
+    loss = calculate_bce_with_logits_loss(outputs, y)
+    
+    # If weights is a list, compute L2 regularization for each weight matrix
+    # If not a list, only one value, so no regularization needed
+    if isinstance(weights, list):
+        # Add L2 regularization
+        l2_reg = reg_lambda * _compute_l2_reg(weights)
+        # Add L2 regularization to loss
+        loss += l2_reg
+        
+    return float(loss)
+
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def calculate_loss_from_outputs_multi(outputs, y, weights, reg_lambda):
+    # Apply loss function
+    loss = calculate_cross_entropy_loss(outputs, y)
+    
+    # If weights is a list, compute L2 regularization for each weight matrix
+    if isinstance(weights, list):
+        # Add L2 regularization
+        l2_reg = reg_lambda * _compute_l2_reg(weights)
+        # Add L2 regularization to loss
+        loss += l2_reg
+
+    return float(loss)
+    
+
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def calculate_cross_entropy_loss(logits, targets):
+    n = logits.shape[0]
+    loss = 0.0
+    for i in prange(n):
+        max_val = np.max(logits[i])
+        exp_sum = 0.0
+        for j in range(logits.shape[1]):
+            exp_sum += np.exp(logits[i, j] - max_val)
+        log_sum_exp = max_val + np.log(exp_sum)
+        c_i = np.argmax(targets[i])  # True class index, assuming one-hot targets
+        loss += -logits[i, c_i] + log_sum_exp
+    return loss / n
+
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def calculate_bce_with_logits_loss(logits, targets):
+    probs = 1 / (1 + np.exp(-logits))  # Apply sigmoid to logits to get probabilities
+    loss = -np.mean(targets * np.log(probs + 1e-15) + (1 - targets) * np.log(1 - probs + 1e-15))  # Binary cross-entropy loss
+    return loss
+
+
+@njit(fastmath=True, nogil=True, parallel=True, cache=CACHE)
+def _compute_l2_reg(weights):
+    total = 0.0
+    for i in prange(len(weights)):
+        total += np.sum(weights[i] ** 2)
+    return total
+
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def _evaluate_batch(y_hat, y_true, is_binary):
+    if is_binary:
+        predicted = (y_hat > 0.5).astype(np.int32).flatten()
+        accuracy = np.mean(predicted == y_true.flatten())
+    else:
+        predicted = np.argmax(y_hat, axis=1).astype(np.int32)
+        accuracy = np.mean(predicted == y_true)
+    return accuracy
+
+
+
+# -------------------------------------------------------------------------------------------------
+# Activation functions
+# -------------------------------------------------------------------------------------------------
 @njit(fastmath=True, cache=CACHE)
 def relu(z):
     return np.maximum(0, z)
@@ -126,35 +206,29 @@ def sigmoid_derivative(z):
     sig = sigmoid(z)
     return sig * (1 - sig)
 
-@njit(fastmath=True, cache=CACHE)
+@njit(parallel=True, fastmath=True, cache=CACHE)
 def softmax(z):
-    max_z = np.empty(z.shape[0])
-    for i in range(z.shape[0]):
-        max_z[i] = np.max(z[i])
-    exp_z = np.empty_like(z)
-    for i in range(z.shape[0]):
-        exp_z[i] = np.exp(z[i] - max_z[i])
-    sum_exp_z = np.empty(z.shape[0])
-    for i in range(z.shape[0]):
-        sum_exp_z[i] = np.sum(exp_z[i])
-    for i in range(z.shape[0]):
-        exp_z[i] /= sum_exp_z[i]
-    return exp_z
+    out = np.empty_like(z)
+    for i in prange(z.shape[0]):
+        row = z[i]
+        max_val = np.max(row)
+        shifted = row - max_val
+        exp_vals = np.exp(shifted)
+        sum_exp = np.sum(exp_vals)
+        out[i] = exp_vals / sum_exp
+    return out
 
+
+
+# -------------------------------------------------------------------------------------------------
+# Other utility functions
+# -------------------------------------------------------------------------------------------------
 @njit(fastmath=True, cache=CACHE)
 def sum_reduce(arr):
-    """
-    Numba-compatible function to compute the sum along axis 1 with keepdims=True.
-    Args:
-        arr (np.ndarray): Input array of shape (num_samples, num_classes).
-    Returns:
-        np.ndarray: Sum values along axis 1 with keepdims=True.
-    """
     sum_vals = np.empty((arr.shape[0], 1), dtype=arr.dtype)
     for i in range(arr.shape[0]):
         sum_vals[i, 0] = np.sum(arr[i])
     return sum_vals
-
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def sum_axis0(arr):

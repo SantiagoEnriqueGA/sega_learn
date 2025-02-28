@@ -4,7 +4,6 @@ import time
 import csv
 import numpy as np
 
-
 # Set seed for reproducibility
 np.random.seed(2)
 
@@ -33,7 +32,8 @@ def init_compile():
     compile_time = time.time()
     
     # Initialize a small neural network for the purpose of JIT compilation
-    print(f"   ...Compiling small neural network", end="", flush=True)
+    step_time = time.time()
+    print(f"   ...Compiling small neural network:", end="", flush=True)
     layer_sizes = [1, 1, 1]
     nn = NeuralNetwork(
         layer_sizes=layer_sizes,
@@ -41,7 +41,7 @@ def init_compile():
         reg_lambda=0.01,
         activations=['relu', 'relu', 'softmax'],
     )
-    print(f": Time: {time.time() - compile_time:.2f} seconds")
+    print(f" Time: {time.time() - step_time:.2f} seconds")
     
     X = np.random.randn(10, layer_sizes[0])
     y = np.random.randint(0, layer_sizes[-1], size=(10,))
@@ -56,17 +56,18 @@ def init_compile():
     targets = np.eye(layer_sizes[-1])[np.random.choice(layer_sizes[-1], 10)]
     
     # Initialize all optimizers and functions
-    print(f"   ...Compiling optimizers", end="", flush=True)
+    step_time = time.time()
+    print(f"   ...Compiling optimizers:", end="", flush=True)
     optimizer = AdamOptimizer(learning_rate=0.01)
     optimizer.initialize(nn.layers)
     optimizer.update(layer, dW1, db1, 0)
     optimizer = SGDOptimizer(learning_rate=0.01, momentum=0.9)
     optimizer.initialize(nn.layers)
     optimizer.update(layer, dW1, db1, 0)
-    optimizer= AdadeltaOptimizer(learning_rate=0.01, rho=0.95, epsilon=1e-8)
+    optimizer = AdadeltaOptimizer(learning_rate=0.01, rho=0.95, epsilon=1e-8)
     optimizer.initialize(nn.layers)
     optimizer.update(layer, dW1, db1, 0)
-    print(f": Time: {time.time() - compile_time:.2f} seconds")
+    print(f"           Time: {time.time() - step_time:.2f} seconds")
     
     # Not converted to Numba JIT yet
     # # Initialize all schedulers
@@ -76,26 +77,29 @@ def init_compile():
     # scheduler = lr_scheduler_plateau(scheduler, patience=10, threshold=0.001)
     
     # Initialize the loss functions
-    print(f"   ...Compiling loss functions", end="", flush=True)
+    step_time = time.time()
+    print(f"   ...Compiling loss functions:", end="", flush=True)
     loss_fn = CrossEntropyLoss()
     loss_fn.calculate_loss(logits, targets)
     loss_fn = BCEWithLogitsLoss()
     loss_fn.calculate_loss(logits, targets.reshape(-1, 1))
-    print(f": Time: {time.time() - compile_time:.2f} seconds")
-    
-    
+    print(f"       Time: {time.time() - step_time:.2f} seconds")   
     
     # Run a dummy training step to compile the JIT code
-    print(f"   ...Compiling training step", end="", flush=True)
+    step_time = time.time()
+    print(f"   ...Compiling training step:", end="", flush=True)
     optimizer = AdamOptimizer(learning_rate=0.01)
     scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)
     nn.forward(X, training=True)
     nn.backward(y)
+    nn.apply_dropout(X)
+    nn.calculate_loss(X, y)
+    nn.evaluate(X, y)
     nn.train(X, y, epochs=1, batch_size=32, optimizer=optimizer, lr_scheduler=scheduler, p=False, use_tqdm=False)
-    print(f": Time: {time.time() - compile_time:.2f} seconds")
+    print(f"        Time: {time.time() - step_time:.2f} seconds")
     
     end_time = time.time()
-    print(f"\nNumba JIT code compilation completed in {end_time - compile_time:.2f} seconds.")
+    print(f"Numba JIT code compilation completed in {end_time - compile_time:.2f} seconds.")
 
 def time_nn_numba(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
     NUM_REPEATS = num_repeats
