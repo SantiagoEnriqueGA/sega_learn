@@ -176,10 +176,10 @@ class NeuralNetwork:
         if progress_bar: progress_bar.update(1)
         _bce.calculate_loss(np.random.randn(10, 1), np.random.randint(0, 2, 10).astype(np.float64).reshape(-1, 1))
         if progress_bar: progress_bar.update(1)
-        del _adam, _sgd, _adadelta, _cross_entropy, _bce, _
         if progress_bar:
             progress_bar.close()
         
+        # del _adam, _sgd, _adadelta, _cross_entropy, _bce, _
     
     def apply_dropout(self, X):
         """

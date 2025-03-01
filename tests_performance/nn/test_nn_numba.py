@@ -26,80 +26,15 @@ def time_function(func, num_repeats, *args, **kwargs):
 def init_compile():
     """
     Numba JIT code compilation can be slow, especially for the first call.
-    This function runs a dummy epoch to compile the JIT code.
+    This function runs the compile_numba_funtions() function to compile the JIT code.
     """
-    print("Compiling Numba JIT code...")
-    compile_time = time.time()
-    
-    # Initialize a small neural network for the purpose of JIT compilation
-    step_time = time.time()
-    print(f"   ...Compiling small neural network:", end="", flush=True)
-    layer_sizes = [1, 1, 1]
-    nn = NeuralNetwork(
-        layer_sizes=layer_sizes,
-        dropout_rate=0.5,
-        reg_lambda=0.01,
-        activations=['relu', 'relu', 'softmax'],
+    _ = NeuralNetwork(
+        layer_sizes=[10, 5, 2],
+        compile_numba=True,
+        progress_bar=True,
     )
-    print(f" Time: {time.time() - step_time:.2f} seconds")
-    
-    X = np.random.randn(10, layer_sizes[0])
-    y = np.random.randint(0, layer_sizes[-1], size=(10,))
+        
 
-    # Simulate gradients for weights and biases
-    layer = nn.layers[0]
-    dW1 = np.random.randn(*layer.weights.shape)
-    db1 = np.random.randn(*layer.biases.shape)
-    
-    # Logits and targets for loss functions
-    logits = np.random.randn(10, layer_sizes[-1])
-    targets = np.eye(layer_sizes[-1])[np.random.choice(layer_sizes[-1], 10)]
-    
-    # Initialize all optimizers and functions
-    step_time = time.time()
-    print(f"   ...Compiling optimizers:", end="", flush=True)
-    optimizer = AdamOptimizer(learning_rate=0.01)
-    optimizer.initialize(nn.layers)
-    optimizer.update(layer, dW1, db1, 0)
-    optimizer = SGDOptimizer(learning_rate=0.01, momentum=0.9)
-    optimizer.initialize(nn.layers)
-    optimizer.update(layer, dW1, db1, 0)
-    optimizer = AdadeltaOptimizer(learning_rate=0.01, rho=0.95, epsilon=1e-8)
-    optimizer.initialize(nn.layers)
-    optimizer.update(layer, dW1, db1, 0)
-    print(f"           Time: {time.time() - step_time:.2f} seconds")
-    
-    # Not converted to Numba JIT yet
-    # # Initialize all schedulers
-    # print(f"Initializing schedulers...", end="", flush=True)
-    # scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)
-    # scheduler = lr_scheduler_exp(optimizer, lr_decay=0.1, lr_decay_epoch=10)
-    # scheduler = lr_scheduler_plateau(scheduler, patience=10, threshold=0.001)
-    
-    # Initialize the loss functions
-    step_time = time.time()
-    print(f"   ...Compiling loss functions:", end="", flush=True)
-    loss_fn = CrossEntropyLoss()
-    loss_fn.calculate_loss(logits, targets)
-    loss_fn = BCEWithLogitsLoss()
-    loss_fn.calculate_loss(logits, targets.reshape(-1, 1))
-    print(f"       Time: {time.time() - step_time:.2f} seconds")   
-    
-    # Run a dummy training step to compile the JIT code
-    step_time = time.time()
-    print(f"   ...Compiling training step:", end="", flush=True)
-    optimizer = AdamOptimizer(learning_rate=0.01)
-    scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)
-    nn.forward(X, training=True)
-    nn.backward(y)
-    nn.apply_dropout(X)
-    nn.calculate_loss(X, y)
-    nn.evaluate(X, y)
-    nn.train(X, y, epochs=1, batch_size=32, optimizer=optimizer, lr_scheduler=scheduler, p=False, use_tqdm=False)
-    print(f"        Time: {time.time() - step_time:.2f} seconds")
-    
-    end_time = time.time()
-    print(f"Numba JIT code compilation completed in {end_time - compile_time:.2f} seconds.")
 
 def time_nn_numba(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
     NUM_REPEATS = num_repeats
@@ -115,6 +50,8 @@ def time_nn_numba(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000)
         dropout_rate=0.5,
         reg_lambda=0.01,
         activations=['relu', 'relu', 'softmax'],
+        progress_bar=False,
+        compile_numba=False,
     )
     
     X = np.random.randn(DATASET_SIZE, layer_sizes[0])
@@ -186,6 +123,8 @@ def time_nn_optimizer_numba(num_repeats=5, layer_sizes_multiplier=25):
         dropout_rate=0.5,
         reg_lambda=0.01,
         activations=['relu', 'relu', 'softmax'],
+        progress_bar=False,
+        compile_numba=False,
     )
 
     optimizers = {
@@ -207,7 +146,13 @@ def time_nn_optimizer_numba(num_repeats=5, layer_sizes_multiplier=25):
         db = [np.random.randn(*layer.biases.shape) for layer in nn.layers]
         
         # Time the update method for each layer
-        update_avg, update_stddev, _ = time_function(lambda: [optimizer.update(layer, dW[i], db[i], i) for i, layer in enumerate(nn.layers)], NUM_REPEATS)
+        
+        # One layer at a time
+        # update_avg, update_stddev, _ = time_function(lambda: [optimizer.update(layer, dW[i], db[i], i) for i, layer in enumerate(nn.layers)], NUM_REPEATS)
+        
+        # All layers at once
+        update_avg, update_stddev, _ = time_function(optimizer.update_layers, NUM_REPEATS, nn.layers, dW, db)
+        
         optimizer_times[f'{name}_update'] = (update_avg, update_stddev)
 
     # Print the optimizer timing results
@@ -303,7 +248,9 @@ def time_nn_epoch_numba(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[
         dropout_rate=0.5,
         reg_lambda=0.01,
         activations=['relu', 'relu', 'softmax'],
-    )
+        progress_bar=False,
+        compile_numba=False,
+)
 
     print(f"\nTiming results for NeuralNetwork train method (averaged over {NUM_REPEATS} runs):")
     print(f"Performance for Layer sizes: {layer_sizes}")
@@ -338,7 +285,7 @@ def time_nn_epoch_numba(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[
 
 
 if __name__ == "__main__":
-    # init_compile()
+    init_compile()
     
     # combine_timing_results(time_nn_numba(), time_nn_optimizer(), time_nn_loss())
     time_nn_numba(num_repeats=5)
