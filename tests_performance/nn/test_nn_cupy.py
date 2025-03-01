@@ -5,8 +5,9 @@ import csv
 import numpy as np
 import cupy as cp
 
-# Set seed for reproducibility
+# Set seed for reproducibility (both NumPy and CuPy)
 np.random.seed(2)
+cp.random.seed(2)
 
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -18,11 +19,18 @@ def time_function(func, num_repeats, *args, **kwargs):
     for _ in range(num_repeats):
         start_time = time.time()
         result = func(*args, **kwargs)
+        # Synchronize GPU to ensure timing includes all operations
+        cp.cuda.Stream.null.synchronize()
         end_time = time.time()
         times.append(end_time - start_time)
     avg_time = np.mean(times)
     stddev_time = np.std(times)
+    # Convert CuPy results back to NumPy for consistency if needed
+    if isinstance(result, cp.ndarray):
+        result = cp.asnumpy(result)
     return avg_time, stddev_time, result
+
+
 
 def time_nn_cupy(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
     NUM_REPEATS = num_repeats
@@ -128,7 +136,7 @@ def time_nn_optimizer_cupy(num_repeats=5, layer_sizes_multiplier=25):
         dW = [cp.random.randn(*layer.weights.shape) for layer in nn.layers]
         db = [cp.random.randn(*layer.biases.shape) for layer in nn.layers]
         # Time the update method for each layer
-        update_avg, update_stddev, _ = time_function(lambda: [optimizer.update(layer, dW[i], db[i]) for i, layer in enumerate(nn.layers)],NUM_REPEATS)
+        update_avg, update_stddev, _ = time_function(optimizer.update_layers, NUM_REPEATS, nn.layers, dW, db)
         optimizer_times[f'{name}_update'] = (update_avg, update_stddev)
 
     # Print the optimizer timing results
@@ -150,7 +158,7 @@ def time_nn_optimizer_cupy(num_repeats=5, layer_sizes_multiplier=25):
 
     return optimizer_times
 
-    
+
 def time_nn_loss_cupy(num_repeats=5, layer_sizes_multiplier=10, dataset_size=1_000_000):
     # Loss Function Timing
     # ---------------------------------------------------------------------------------------------

@@ -2,9 +2,10 @@ from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
 
+from .neuralNetwork import NeuralNetwork, Layer, Activation
+
 from .loss import CrossEntropyLoss, BCEWithLogitsLoss
 
-from .neuralNetwork import NeuralNetwork, Layer, Activation
 
 __all__ = [
     'AdamOptimizer',
@@ -13,9 +14,9 @@ __all__ = [
     'lr_scheduler_exp',
     'lr_scheduler_plateau',
     'lr_scheduler_step',
-    'CrossEntropyLoss',
-    'BCEWithLogitsLoss',
     'NeuralNetwork',
     'Layer',
-    'Activation',
+    'CrossEntropyLoss', 
+    'BCEWithLogitsLoss',
+    'Activation'
 ]
