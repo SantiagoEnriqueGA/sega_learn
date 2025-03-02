@@ -29,7 +29,7 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test,
         dropout_rate=dropout, 
         reg_lambda=reg_lambda, 
         activations=activations,
-        compile_numba=False,
+        compile_numba=True,
     )
     
     # Select optimizer

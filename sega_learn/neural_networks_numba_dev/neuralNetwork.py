@@ -9,7 +9,7 @@ from numba import types
 from numba.experimental import jitclass
 from tqdm.auto import tqdm
 
-CACHE = False
+CACHE = True
 
 class NeuralNetwork:
     """
@@ -79,23 +79,22 @@ class NeuralNetwork:
         """
         Compiles all Numba JIT functions to improve performance.
         """
-        # TODO: Ensure same as init_compile() from test_nn_numba.py
         if progress_bar:
             progress_bar = tqdm(total=33, desc="Compiling Numba functions")
         else:
             progress_bar = None
         # Neural network functions
         # --------------------------------------------------------------------
-        _ = self._apply_dropout_jit(np.random.randn(10, 10), self.dropout_rate)
+        self._apply_dropout_jit(np.random.randn(10, 10), self.dropout_rate)
         if progress_bar: progress_bar.update(1)
-        _ = self.compute_l2_reg(self.weights)
+        self.compute_l2_reg(self.weights)
         if progress_bar: progress_bar.update(1)
-        _ = self._process_batches(X_shuffled=np.random.randn(10, self.layer_sizes[0]), y_shuffled=np.random.randint(0, 2, 10),
+        self._process_batches(X_shuffled=np.random.randn(10, self.layer_sizes[0]), y_shuffled=np.random.randint(0, 2, 10),
                                   batch_size=32, weights=self.weights, biases=self.biases, activations=self.activations,
                                   dropout_rate=self.dropout_rate, is_binary=self.is_binary, reg_lambda=self.reg_lambda,
                                   dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache)
         if progress_bar: progress_bar.update(1)
-        _ = self._evaluate_jit(np.random.randn(10, self.layer_sizes[0]), np.random.randint(0, 2, 10), self.is_binary)
+        self._evaluate_jit(np.random.randn(10, self.layer_sizes[-1]), np.random.randint(0, 2, 10), self.is_binary)
         if progress_bar: progress_bar.update(1)
         
         # Initialize dummy layer outputs for backward pass
@@ -104,42 +103,42 @@ class NeuralNetwork:
         # Numba Utils functions
         # --------------------------------------------------------------------
         # Forward and backward passes
-        _ = forward_jit(X=np.random.randn(10, self.layer_sizes[0]), weights=self.weights, biases=self.biases, activations=self.activations,
+        forward_jit(X=np.random.randn(10, self.layer_sizes[0]), weights=self.weights, biases=self.biases, activations=self.activations,
                          dropout_rate=self.dropout_rate, training=True, is_binary=self.is_binary)
         if progress_bar: progress_bar.update(1)
-        _ = backward_jit(self.layer_outputs, np.random.randint(0, 2, 10), self.weights, self.activations, self.reg_lambda,
+        backward_jit(self.layer_outputs, np.random.randint(0, 2, 10), self.weights, self.activations, self.reg_lambda,
                           self.is_binary, self.dWs_cache, self.dbs_cache)
         if progress_bar: progress_bar.update(1)
         # Loss functions and evaluation
-        _ = calculate_loss_from_outputs_binary(np.random.randn(10, 1), np.random.randint(0, 2, 10).astype(np.float64), self.reg_lambda, self.weights)
+        calculate_loss_from_outputs_binary(np.random.randn(10, 1), np.random.randint(0, 2, 10).astype(np.float64), self.reg_lambda, self.weights)
         if progress_bar: progress_bar.update(1)
-        _ = calculate_loss_from_outputs_multi(np.random.randn(10, self.layer_sizes[-1]), np.eye(self.layer_sizes[-1])[np.random.randint(0, self.layer_sizes[-1], 10)], self.reg_lambda, self.weights)
+        calculate_loss_from_outputs_multi(np.random.randn(10, self.layer_sizes[-1]), np.eye(self.layer_sizes[-1])[np.random.randint(0, self.layer_sizes[-1], 10)], self.reg_lambda, self.weights)
         if progress_bar: progress_bar.update(1)
-        _ = evaluate_batch(np.random.randn(10, self.layer_sizes[-1]), np.random.randint(0, 2, 10), self.is_binary)
+        evaluate_batch(np.random.randn(10, self.layer_sizes[-1]), np.random.randint(0, 2, 10), self.is_binary)
         if progress_bar: progress_bar.update(1)
         # Activation functions
-        _ = relu(np.random.randn(10, 10))
+        relu(np.random.randn(10, 10))
         if progress_bar: progress_bar.update(1)
-        _ = relu_derivative(np.random.randn(10, 10))
+        relu_derivative(np.random.randn(10, 10))
         if progress_bar: progress_bar.update(1)
-        _ = leaky_relu(np.random.randn(10, 10))
+        leaky_relu(np.random.randn(10, 10))
         if progress_bar: progress_bar.update(1)
-        _ = leaky_relu_derivative(np.random.randn(10, 10))
+        leaky_relu_derivative(np.random.randn(10, 10))
         if progress_bar: progress_bar.update(1)
-        _ = tanh(np.random.randn(10, 10))
+        tanh(np.random.randn(10, 10))
         if progress_bar: progress_bar.update(1)
-        _ = tanh_derivative(np.random.randn(10, 10))
+        tanh_derivative(np.random.randn(10, 10))
         if progress_bar: progress_bar.update(1)
-        _ = sigmoid(np.random.randn(10, 10))
+        sigmoid(np.random.randn(10, 10))
         if progress_bar: progress_bar.update(1)
-        _ = sigmoid_derivative(np.random.randn(10, 10))
+        sigmoid_derivative(np.random.randn(10, 10))
         if progress_bar: progress_bar.update(1)
-        _ = softmax(np.random.randn(10, 10))
+        softmax(np.random.randn(10, 10))
         if progress_bar: progress_bar.update(1)
         # Other utility functions
-        _ = sum_reduce(np.random.randn(10, 10))
+        sum_reduce(np.random.randn(10, 10))
         if progress_bar: progress_bar.update(1)
-        _ = sum_axis0(np.random.randn(10, 10))
+        sum_axis0(np.random.randn(10, 10))
         if progress_bar: progress_bar.update(1)
         
         # Optimizers

@@ -1,7 +1,7 @@
 import numpy as np
 from numba import njit, prange, float64
 
-CACHE = False
+CACHE = True
 
 # -------------------------------------------------------------------------------------------------
 # Forward and backward passes
