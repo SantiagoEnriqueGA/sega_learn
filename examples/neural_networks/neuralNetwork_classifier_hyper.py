@@ -22,7 +22,11 @@ def hyper_train_and_evaluate_model(X, y,
     output_size = 1
 
     # Initialize Neural Network
-    nn = NeuralNetwork([input_size] + [100, 50, 25] + [output_size], dropout_rate=0.5, reg_lambda=0.0)
+    nn = NeuralNetwork(
+        [input_size] + layers[0] + [output_size],
+        dropout_rate=0.5, 
+        reg_lambda=0.0
+        )
     optimizer = AdamOptimizer(learning_rate=0.0001)
 
     # Hyperparameter tuning with Adam optimizer
@@ -48,6 +52,60 @@ def hyper_train_and_evaluate_model(X, y,
     nn.train(X_train, y_train, X_test, y_test, epochs=epochs, batch_size=batch_size, optimizer=best_optimizer)
 
     # Evaluate the Model
+    test_accuracy, y_pred = nn.evaluate(X_test, y_test)
+    print(f"Test Accuracy: {test_accuracy:.4f}")
+
+    print("Classification Report:")
+    print(classification_report(y_test, y_pred, zero_division=0))
+
+def hyper_train_and_evaluate_model_numba(X, y,
+                                   X_train, X_test, y_train, y_test, 
+                                   param_grid, layers, 
+                                   lr_range, optimizers,
+                                   epochs=100, batch_size=32):
+    """Function to train and evaluate the Neural Network with hyperparameter tuning"""
+    
+    input_size = X_train.shape[1]
+    output_size = 1
+
+    # Initialize Neural Network
+    nn = NeuralNetwork(
+        [input_size] + layers[0] + [output_size], 
+        dropout_rate=0.5, 
+        reg_lambda=0.1,
+        use_numba=True,
+        compile_numba=True,  
+        progress_bar=True,
+    )
+    optimizer = JITAdamOptimizer(learning_rate=0.0001)
+
+    # Hyperparameter tuning with Adam optimizer
+    best_params, best_accuracy = nn.tune_hyperparameters(
+        X_train, y_train, X_test, y_test,
+        param_grid,
+        layer_configs=layers,
+        optimizer_types=optimizers,
+        lr_range=lr_range,
+        epochs=epochs,
+        batch_size=batch_size
+    )
+
+    # Create the optimizer with the best parameters
+    best_optimizer = nn._create_optimizer(best_params['optimizer'], best_params['learning_rate'])
+
+    # Train the final model with best parameters
+    nn = NeuralNetwork(
+        [input_size] + best_params['layers'][1:-1] + [output_size], 
+        dropout_rate=best_params['dropout_rate'], 
+        reg_lambda=best_params['reg_lambda'],
+        activations=['tanh'] * (len(best_params['layers']) - 1) + ['softmax'],
+        use_numba=True,
+        compile_numba=False,
+    )
+                       
+    nn.train(X_train, y_train, X_test, y_test, epochs=epochs, batch_size=batch_size, optimizer=best_optimizer)
+
+    # Evaluate the Model    
     test_accuracy, y_pred = nn.evaluate(X_test, y_test)
     print(f"Test Accuracy: {test_accuracy:.4f}")
 
@@ -82,6 +140,12 @@ def main(test_case=True):
                                     param_grid, layers, 
                                     lr_range, optimizers,
                                     epochs=100, batch_size=32)
+    
+    # To use the Numba backend:
+    # hyper_train_and_evaluate_model_numba(X, y, X_train, X_test, y_train, y_test, 
+    #                                       param_grid, layers, 
+    #                                       lr_range, optimizers,
+    #                                       epochs=100, batch_size=32) 
 
 
 if __name__ == "__main__":

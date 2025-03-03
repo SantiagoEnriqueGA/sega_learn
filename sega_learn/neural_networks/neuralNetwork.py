@@ -457,6 +457,15 @@ class NeuralNetwork:
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
 
+    @staticmethod
+    def is_not_instance_of_classes(obj, classes):
+        """
+        Checks if an object is not an instance of any class in a list of classes.
+        Args:obj: The object to check.classes: A list of classes.
+        Returns: True if the object is not an instance of any class in the list of classes, False otherwise.
+        """
+        return not isinstance(obj, tuple(classes))
+
     def train_numba(self, X_train, y_train, X_val=None, y_val=None, 
               optimizer=None, epochs=100, batch_size=32, 
               early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1):
@@ -480,17 +489,9 @@ class NeuralNetwork:
         if optimizer is None:
             optimizer = JITAdamOptimizer(learning_rate=0.0001)
 
-        def is_not_instance_of_classes(obj, classes):
-            """
-            Checks if an object is not an instance of any class in a list of classes.
-            Args:obj: The object to check.classes: A list of classes.
-            Returns: True if the object is not an instance of any class in the list of classes, False otherwise.
-            """
-            return not isinstance(obj, tuple(classes))
-
         # If optimizer is not a JIT optimizer, convert it to a JIT optimizer
         jit_optimizer_classes = [JITAdamOptimizer, JITSGDOptimizer, JITAdadeltaOptimizer]
-        if is_not_instance_of_classes(optimizer, jit_optimizer_classes):
+        if NeuralNetwork.is_not_instance_of_classes(optimizer, jit_optimizer_classes):
             warnings.warn("Attempting to use a non-JIT optimizer. Converting to a JIT optimizer.", UserWarning, stacklevel=2)
 
             try:
@@ -763,57 +764,114 @@ class NeuralNetwork:
         best_accuracy = 0
         best_params = {}
         best_optimizer_type = None
-        
-        # Grid search with progress bar
-        with tqdm(total=total_iterations, desc="Tuning Hyperparameters") as pbar:
-            # Iterate through all combinations
-            for optimizer_type in optimizer_types:
-                for layer_structure in layer_configs:
-                    full_layer_structure = [X_train.shape[1]] + layer_structure + [int(output_size)]
-                    
-                    for combination in product(*values):
-                        params = dict(zip(keys, combination))
+
+        if not self.use_numba:
+            # Grid search with progress bar
+            with tqdm(total=total_iterations, desc="Tuning Hyperparameters") as pbar:
+                # Iterate through all combinations
+                for optimizer_type in optimizer_types:
+                    for layer_structure in layer_configs:
+                        full_layer_structure = [X_train.shape[1]] + layer_structure + [int(output_size)]
                         
-                        for lr in lr_options:
-                            # Create model with current hyperparameters
-                            nn = NeuralNetwork(
-                                full_layer_structure, 
-                                dropout_rate=params['dropout_rate'], 
-                                reg_lambda=params['reg_lambda']
-                            )
+                        for combination in product(*values):
+                            params = dict(zip(keys, combination))
                             
-                            # Create optimizer
-                            optimizer = self._create_optimizer(optimizer_type, lr)
-                            
-                            # Train model (with early stopping for efficiency)
-                            nn.train(
-                                X_train, y_train, X_val, y_val,
-                                optimizer=optimizer,
-                                epochs=epochs,
-                                batch_size=batch_size,
-                                early_stopping_threshold=5,
-                                p=False
-                            )
-                            
-                            # Evaluate on validation set
-                            accuracy, _ = nn.evaluate(X_val, y_val)
-                            
-                            # Update best if improved
-                            if accuracy > best_accuracy:
-                                best_accuracy = accuracy
-                                best_params = {
-                                    **params,
-                                    'layers': full_layer_structure,
-                                    'learning_rate': lr
-                                }
-                                best_optimizer_type = optimizer_type
+                            for lr in lr_options:
+                                # Create model with current hyperparameters
+                                nn = NeuralNetwork(
+                                    full_layer_structure, 
+                                    dropout_rate=params['dropout_rate'], 
+                                    reg_lambda=params['reg_lambda']
+                                )
                                 
-                                tqdm.write(f"New best: {best_accuracy:.4f} with {optimizer_type}, "
-                                      f"lr={lr}, layers={full_layer_structure}, params={params}")
+                                # Create optimizer
+                                optimizer = self._create_optimizer(optimizer_type, lr)
+                                
+                                # Train model (with early stopping for efficiency)
+                                nn.train(
+                                    X_train, y_train, X_val, y_val,
+                                    optimizer=optimizer,
+                                    epochs=epochs,
+                                    batch_size=batch_size,
+                                    early_stopping_threshold=5,
+                                    use_tqdm=False,
+                                    p=False,
+                                )
+                                
+                                # Evaluate on validation set
+                                accuracy, _ = nn.evaluate(X_val, y_val)
+                                
+                                # Update best if improved
+                                if accuracy > best_accuracy:
+                                    best_accuracy = accuracy
+                                    best_params = {
+                                        **params,
+                                        'layers': full_layer_structure,
+                                        'learning_rate': lr
+                                    }
+                                    best_optimizer_type = optimizer_type
+                                    
+                                    tqdm.write(f"New best: {best_accuracy:.4f} with {optimizer_type}, "
+                                        f"lr={lr}, layers={full_layer_structure}, params={params}")
+                                
+                                # Update progress
+                                pbar.update(1)
+
+        else:
+            # Grid search with progress bar
+            with tqdm(total=total_iterations, desc="Tuning Hyperparameters") as pbar:
+                # Iterate through all combinations
+                for optimizer_type in optimizer_types:
+                    for layer_structure in layer_configs:
+                        full_layer_structure = [X_train.shape[1]] + layer_structure + [int(output_size)]
+                        
+                        for combination in product(*values):
+                            params = dict(zip(keys, combination))
                             
-                            # Update progress
-                            pbar.update(1)
-        
+                            for lr in lr_options:
+                                # Create model with current hyperparameters
+                                nn = NeuralNetwork(
+                                    full_layer_structure, 
+                                    dropout_rate=params['dropout_rate'], 
+                                    reg_lambda=params['reg_lambda'],
+                                    use_numba=True,
+                                    compile_numba=False,
+                                )
+
+                                # Create optimizer
+                                optimizer = self._create_optimizer(optimizer_type, lr, JIT=True)
+                                
+                                # Train model (with early stopping for efficiency)
+                                nn.train(
+                                    X_train, y_train, X_val, y_val,
+                                    optimizer=optimizer,
+                                    epochs=epochs,
+                                    batch_size=batch_size,
+                                    early_stopping_threshold=5,
+                                    use_tqdm=False,
+                                    p=False,
+                                )
+
+                                # Evaluate on validation set
+                                accuracy, _ = nn.evaluate(X_val, y_val)
+                                
+                                # Update best if improved
+                                if accuracy > best_accuracy:
+                                    best_accuracy = accuracy
+                                    best_params = {
+                                        **params,
+                                        'layers': full_layer_structure,
+                                        'learning_rate': lr
+                                    }
+                                    best_optimizer_type = optimizer_type
+                                    
+                                    tqdm.write(f"New best: {best_accuracy:.4f} with {optimizer_type}, "
+                                        f"lr={lr}, layers={full_layer_structure}, params={params}")
+                                
+                                # Update progress
+                                pbar.update(1)
+
+            
         print(f"\nBest configuration: {best_optimizer_type} optimizer with lr={best_params['learning_rate']}")
         print(f"Layers: {best_params['layers']}")
         print(f"Parameters: dropout={best_params['dropout_rate']}, reg_lambda={best_params['reg_lambda']}")
@@ -824,16 +882,26 @@ class NeuralNetwork:
         
         return best_params, best_accuracy
 
-    def _create_optimizer(self, optimizer_type, learning_rate):
+    def _create_optimizer(self, optimizer_type, learning_rate, JIT=False):
         """Helper method to create optimizer instances."""
-        if optimizer_type == 'Adam':
-            return AdamOptimizer(learning_rate)
-        elif optimizer_type == 'SGD':
-            return SGDOptimizer(learning_rate)
-        elif optimizer_type == 'Adadelta':
-            return AdadeltaOptimizer(learning_rate)
+        if not JIT:
+            if optimizer_type == 'Adam':
+                return AdamOptimizer(learning_rate)
+            elif optimizer_type == 'SGD':
+                return SGDOptimizer(learning_rate)
+            elif optimizer_type == 'Adadelta':
+                return AdadeltaOptimizer(learning_rate)
+            else:
+                raise ValueError(f"Unknown optimizer type: {optimizer_type}")
         else:
-            raise ValueError(f"Unknown optimizer type: {optimizer_type}")
+            if optimizer_type == 'Adam':
+                return JITAdamOptimizer(learning_rate)
+            elif optimizer_type == 'SGD':
+                return JITSGDOptimizer(learning_rate)
+            elif optimizer_type == 'Adadelta':
+                return JITAdadeltaOptimizer(learning_rate)
+            else:
+                raise ValueError(f"Unknown optimizer type: {optimizer_type}")
         
     def create_scheduler(self, scheduler_type, optimizer, **kwargs):
         """Creates a learning rate scheduler."""
