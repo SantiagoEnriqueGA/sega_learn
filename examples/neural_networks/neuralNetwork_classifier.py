@@ -71,8 +71,8 @@ def train_and_evaluate_mode_numba(X_train, X_test, y_train, y_test,
     
     # Select optimizer
     optimizer = JITAdamOptimizer(learning_rate=lr)
-    # optimizer = SGDOptimizer(learning_rate=lr, momentum=0.25, reg_lambda=0.1)
-    # optimizer = AdadeltaOptimizer(learning_rate=lr, rho=0.95, epsilon=1e-6, reg_lambda=0.0)
+    # optimizer = JITSGDOptimizer(learning_rate=lr, momentum=0.25, reg_lambda=0.1)
+    # optimizer = JITAdadeltaOptimizer(learning_rate=lr, rho=0.95, epsilon=1e-6, reg_lambda=0.0)
     
     # Select learning rate scheduler
     sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=25)  
@@ -100,22 +100,23 @@ def main():
     # Define parameter grid and tuning ranges
     dropout = 0.1
     reg_lambda=  0.0
-    lr = 0.00005
-    layers = [100, 50, 25] 
-    output_size = 1
+    lr = 0.0001
+    layers = [250, 50, 25]
+    output_size = 3
 
-    X, y = make_classification(n_samples=1000, n_features=20, n_classes=2, weights=[0.7, 0.3], random_state=42, class_sep=.5)
+    X, y = make_classification(n_samples=3000, n_features=20, n_classes=3, n_informative=18,
+                                random_state=42, class_sep=1.0)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         
     train_and_evaluate_model(X_train, X_test, y_train, y_test, 
                                 layers, output_size, lr, dropout, reg_lambda, 
-                                hidden_activation='tanh', output_activation='softmax',
+                                hidden_activation='relu', output_activation='softmax',
                                 epochs=1000, batch_size=32)
     
     # To use the Numba backend:
     # train_and_evaluate_mode_numba(X_train, X_test, y_train, y_test, 
     #                               layers, output_size, lr, dropout, reg_lambda, 
-    #                               hidden_activation='tanh', output_activation='softmax',
+    #                               hidden_activation='relu', output_activation='softmax',
     #                               epochs=1000, batch_size=32)
 
 if __name__ == "__main__":

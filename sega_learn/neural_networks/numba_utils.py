@@ -272,7 +272,7 @@ def one_hot_encode(y, num_classes):
         y_ohe[i, y[i]] = 1.0
     return y_ohe
 
-# @njit(fastmath=True, nogil=True, cache=CACHE)
+@njit(fastmath=True, nogil=True, cache=CACHE)
 def process_batches_binary(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, reg_lambda, dWs_acc, dbs_acc):
     num_samples = X_shuffled.shape[0]
     num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division

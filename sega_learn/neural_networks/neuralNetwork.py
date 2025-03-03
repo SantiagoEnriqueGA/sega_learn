@@ -114,7 +114,7 @@ class NeuralNetwork:
         Compiles all Numba JIT functions to improve performance.
         """
         if progress_bar:
-            progress_bar = tqdm(total=34, desc="Compiling Numba functions")
+            progress_bar = tqdm(total=33, desc="Compiling Numba functions")
         else:
             progress_bar = None
         # Neural network functions
@@ -123,22 +123,26 @@ class NeuralNetwork:
         if progress_bar: progress_bar.update(1)
         compute_l2_reg(self.weights)
         if progress_bar: progress_bar.update(1)
-        process_batches_binary(
-            X_shuffled=np.random.randn(10, self.layer_sizes[0]), 
-            y_shuffled=np.random.randint(0, 2, (10, 1)),
-            batch_size=32, weights=self.weights, biases=self.biases, 
-            activations=self.activations, dropout_rate=self.dropout_rate, 
-            reg_lambda=self.reg_lambda, dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache
-        )
-        if progress_bar: progress_bar.update(1)
-        process_batches_multi(
-            X_shuffled=np.random.randn(10, self.layer_sizes[0]), 
-            y_shuffled=np.random.randint(0, 2, 10),
-            batch_size=32, weights=self.weights, biases=self.biases, 
-            activations=self.activations, dropout_rate=self.dropout_rate, 
-            reg_lambda=self.reg_lambda, dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache
-        )
-        if progress_bar: progress_bar.update(1)
+        # Compile the appropriate batch processing function based on classification type
+        if self.is_binary:
+            process_batches_binary(
+                X_shuffled=np.random.randn(10, self.layer_sizes[0]),
+                y_shuffled=np.random.randint(0, 2, (10, 1)),
+                batch_size=32, weights=self.weights, biases=self.biases,
+                activations=self.activations, dropout_rate=self.dropout_rate,
+                reg_lambda=self.reg_lambda, dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache
+            )
+            if progress_bar: progress_bar.update(1)
+        else:
+            process_batches_multi(
+                X_shuffled=np.random.randn(10, self.layer_sizes[0]),
+                y_shuffled=np.random.randint(0, 2, 10),
+                batch_size=32, weights=self.weights, biases=self.biases,
+                activations=self.activations, dropout_rate=self.dropout_rate,
+                reg_lambda=self.reg_lambda, dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache
+            )
+            if progress_bar: progress_bar.update(1)
+
         evaluate_jit(np.random.randn(10, self.layer_sizes[-1]), np.random.randint(0, 2, 10), self.is_binary)
         if progress_bar: progress_bar.update(1)
         
@@ -667,7 +671,8 @@ class NeuralNetwork:
         else:
             if self.use_numba:
                 loss_fn = JITCrossEntropyLoss()
-                loss = loss_fn.calculate_loss(outputs, y)
+                y_ohe = np.eye(self.layer_sizes[-1])[y]  # One-hot encode y for multi-class
+                loss = loss_fn.calculate_loss(outputs, y_ohe)
             else:
                 loss_fn = CrossEntropyLoss()
                 loss = loss_fn(outputs, y)
