@@ -265,26 +265,15 @@ def compute_l2_reg(weights):
     return total     
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def process_batches(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, is_binary, reg_lambda, dWs_acc, dbs_acc):
-    """
-    Process multiple batches in parallel using Numba.
-    
-    Args:
-        X_shuffled (ndarray): Shuffled input features
-        y_shuffled (ndarray): Shuffled target labels
-        batch_size (int): Size of each mini-batch
-        weights (list): List of weight matrices
-        biases (list): List of bias vectors
-        activations (list): List of activation functions
-        dropout_rate (float): Dropout rate
-        is_binary (bool): Whether the task is binary classification
-        reg_lambda (float): Regularization parameter
-        dWs_acc (list): Accumulated weight gradients as zeros
-        dbs_acc (list): Accumulated bias gradients as zeros
-        
-    Returns:
-        tuple: Lists of weight and bias gradients for each batch, loss, and accuracy
-    """
+def one_hot_encode(y, num_classes):
+    m = y.shape[0]
+    y_ohe = np.zeros((m, num_classes), dtype=np.float64)
+    for i in range(m):
+        y_ohe[i, y[i]] = 1.0
+    return y_ohe
+
+# @njit(fastmath=True, nogil=True, cache=CACHE)
+def process_batches_binary(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, reg_lambda, dWs_acc, dbs_acc):
     num_samples = X_shuffled.shape[0]
     num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
     running_loss = 0.0
@@ -298,35 +287,66 @@ def process_batches(X_shuffled, y_shuffled, batch_size, weights, biases, activat
         y_batch = y_shuffled[start_idx:end_idx]
         
         # Forward pass
-        layer_outputs = forward_jit(X_batch, weights, biases, activations, dropout_rate, True, is_binary)
+        layer_outputs = forward_jit(X_batch, weights, biases, activations, dropout_rate, True, True)
         
         # Backward pass
-        dWs, dbs = backward_jit(layer_outputs, y_batch, weights, activations, reg_lambda, is_binary, dWs_acc, dbs_acc)
+        dWs, dbs = backward_jit(layer_outputs, y_batch, weights, activations, reg_lambda, True, dWs_acc, dbs_acc)
         
-        # Calculate loss
-        if is_binary:
-            running_loss += calculate_loss_from_outputs_binary(layer_outputs[-1], y_batch, reg_lambda, weights)
-        else:
-            y_batch_ohe = np.eye(weights[-1].shape[1])[y_batch]  # One-hot encode y for multi-class
-            running_loss += calculate_loss_from_outputs_multi(layer_outputs[-1], y_batch_ohe, reg_lambda, weights)
-            
-        # Calculate accuracy
-        running_accuracy += evaluate_batch(layer_outputs[-1], y_batch, is_binary)
-                    
-        # Accumulate gradients directly
+        # Calculate loss and accuracy for binary classification
+        running_loss += calculate_loss_from_outputs_binary(layer_outputs[-1], y_batch, reg_lambda, weights)
+        running_accuracy += evaluate_batch(layer_outputs[-1], y_batch, True)
+        
+        # Accumulate gradients
         for j in range(len(dWs)):
             dWs_acc[j] += dWs[j]
             dbs_acc[j] += dbs[j]
     
-    # Average the accumulated gradients
+    # Average the accumulated gradients, loss, and accuracy
     for j in range(len(dWs_acc)):
         dWs_acc[j] /= num_batches
         dbs_acc[j] /= num_batches
-        
-    # Calculate average loss and accuracy
     running_loss /= num_batches
     running_accuracy /= num_batches
+    
+    return dWs_acc, dbs_acc, running_loss, running_accuracy
+
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def process_batches_multi(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, reg_lambda, dWs_acc, dbs_acc):
+    num_samples = X_shuffled.shape[0]
+    num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
+    running_loss = 0.0
+    running_accuracy = 0.0
+    
+    for i in prange(num_batches):
+        start_idx = i * batch_size
+        end_idx = min(start_idx + batch_size, num_samples)
         
+        X_batch = X_shuffled[start_idx:end_idx]
+        y_batch = y_shuffled[start_idx:end_idx]
+        
+        # Forward pass
+        layer_outputs = forward_jit(X_batch, weights, biases, activations, dropout_rate, True, False)
+        
+        # Backward pass
+        dWs, dbs = backward_jit(layer_outputs, y_batch, weights, activations, reg_lambda, False, dWs_acc, dbs_acc)
+        
+        # One-hot encode for multi-class loss
+        y_batch_ohe = one_hot_encode(y_batch, weights[-1].shape[1])
+        running_loss += calculate_loss_from_outputs_multi(layer_outputs[-1], y_batch_ohe, reg_lambda, weights)
+        running_accuracy += evaluate_batch(layer_outputs[-1], y_batch, False)
+        
+        # Accumulate gradients
+        for j in range(len(dWs)):
+            dWs_acc[j] += dWs[j]
+            dbs_acc[j] += dbs[j]
+    
+    # Average the accumulated gradients, loss, and accuracy
+    for j in range(len(dWs_acc)):
+        dWs_acc[j] /= num_batches
+        dbs_acc[j] /= num_batches
+    running_loss /= num_batches
+    running_accuracy /= num_batches
+    
     return dWs_acc, dbs_acc, running_loss, running_accuracy
 
 @njit(fastmath=True, nogil=True, cache=CACHE)

@@ -114,7 +114,7 @@ class NeuralNetwork:
         Compiles all Numba JIT functions to improve performance.
         """
         if progress_bar:
-            progress_bar = tqdm(total=33, desc="Compiling Numba functions")
+            progress_bar = tqdm(total=34, desc="Compiling Numba functions")
         else:
             progress_bar = None
         # Neural network functions
@@ -123,10 +123,21 @@ class NeuralNetwork:
         if progress_bar: progress_bar.update(1)
         compute_l2_reg(self.weights)
         if progress_bar: progress_bar.update(1)
-        process_batches(X_shuffled=np.random.randn(10, self.layer_sizes[0]), y_shuffled=np.random.randint(0, 2, 10),
-                                  batch_size=32, weights=self.weights, biases=self.biases, activations=self.activations,
-                                  dropout_rate=self.dropout_rate, is_binary=self.is_binary, reg_lambda=self.reg_lambda,
-                                  dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache)
+        process_batches_binary(
+            X_shuffled=np.random.randn(10, self.layer_sizes[0]), 
+            y_shuffled=np.random.randint(0, 2, (10, 1)),
+            batch_size=32, weights=self.weights, biases=self.biases, 
+            activations=self.activations, dropout_rate=self.dropout_rate, 
+            reg_lambda=self.reg_lambda, dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache
+        )
+        if progress_bar: progress_bar.update(1)
+        process_batches_multi(
+            X_shuffled=np.random.randn(10, self.layer_sizes[0]), 
+            y_shuffled=np.random.randint(0, 2, 10),
+            batch_size=32, weights=self.weights, biases=self.biases, 
+            activations=self.activations, dropout_rate=self.dropout_rate, 
+            reg_lambda=self.reg_lambda, dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache
+        )
         if progress_bar: progress_bar.update(1)
         evaluate_jit(np.random.randn(10, self.layer_sizes[-1]), np.random.randint(0, 2, 10), self.is_binary)
         if progress_bar: progress_bar.update(1)
@@ -233,6 +244,7 @@ class NeuralNetwork:
             ndarray: Output predictions of shape (batch_size, output_size).
         """
         if self.use_numba:
+            X = X.astype(np.float64)  # Ensure X is float64 for Numba JIT
             self.layer_outputs = [X]
             weights = [layer.weights for layer in self.layers]
             biases = [layer.biases for layer in self.layers]
@@ -558,13 +570,20 @@ class NeuralNetwork:
             dWs_zeros = [np.zeros_like(w) for w in weights]
             dbs_zeros = [np.zeros_like(b) for b in biases]
            
-            # Process all batches in parallel and get averaged gradients, loss
-            dWs_acc, dbs_acc, train_loss, train_accuracy = process_batches(
-                X_shuffled, y_shuffled, batch_size, weights, biases, 
-                activations, self.dropout_rate, self.is_binary, self.reg_lambda,
-                dWs_zeros, dbs_zeros
-            )
-                       
+            # Process batches based on classification type
+            if self.is_binary:
+                dWs_acc, dbs_acc, train_loss, train_accuracy = process_batches_binary(
+                    X_shuffled, y_shuffled, batch_size, weights, biases, 
+                    activations, self.dropout_rate, self.reg_lambda,
+                    dWs_zeros, dbs_zeros
+                )
+            else:
+                dWs_acc, dbs_acc, train_loss, train_accuracy = process_batches_multi(
+                    X_shuffled, y_shuffled, batch_size, weights, biases, 
+                    activations, self.dropout_rate, self.reg_lambda,
+                    dWs_zeros, dbs_zeros
+                )
+
             # Update weights and biases using the optimizer
             optimizer.update_layers(self.layers, dWs_acc, dbs_acc)
                         
@@ -681,6 +700,7 @@ class NeuralNetwork:
             y_hat = self.forward(X, training=False)
             # JIT-compiled function for evaluation
             accuracy, predicted = evaluate_jit(y_hat, y, self.is_binary)
+            predicted = predicted.reshape(y.shape)  # Match y's shape
             return accuracy, predicted
         else:
             # Get predictions
@@ -689,6 +709,7 @@ class NeuralNetwork:
             # Calculate accuracy based on problem type
             if self.is_binary:
                 predicted = (y_hat > 0.5).astype(int)
+                predicted = predicted.reshape(y.shape)  # Match y's shape
                 accuracy = float(np.mean(predicted.flatten() == y.reshape(-1, 1).flatten()))
             else:
                 predicted = np.argmax(y_hat, axis=1)
