@@ -19,7 +19,7 @@ spec_adam = [
     ('index', int32),
 ]
 @jitclass(spec_adam)
-class AdamOptimizer:
+class JITAdamOptimizer:
     """
     Adam optimizer class for training neural networks.
     Formula: w = w - alpha * m_hat / (sqrt(v_hat) + epsilon) - lambda * w 
@@ -118,7 +118,7 @@ spec_sgd = [
     ('velocity', float64[:, :, ::1]),
 ]
 @jitclass(spec_sgd)
-class SGDOptimizer:
+class JITSGDOptimizer:
     """
     Stochastic Gradient Descent (SGD) optimizer class for training neural networks.
     Formula: w = w - learning_rate * dW, b = b - learning_rate * db
@@ -197,7 +197,7 @@ spec_adadelta = [
 ]
 
 @jitclass(spec_adadelta)
-class AdadeltaOptimizer:
+class JITAdadeltaOptimizer:
     """
     Adadelta optimizer class for training neural networks.
     Formula: 

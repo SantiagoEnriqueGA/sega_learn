@@ -1,143 +1,190 @@
+Below is the updated README with all math expressions reformatted using the `$` ... `$` notation:
+
+---
+
 # Neural Networks Module
 
-The neural networks module in SEGA_LEARN provides implementations of various neural network architectures and optimization algorithms. These tools are designed to facilitate the training and evaluation of custom neural network models. The module includes classes for building neural networks, defining loss functions, and selecting optimization algorithms.
+The Neural Networks Module in **SEGA_LEARN** is a fully featured framework for building, training, and evaluating custom neural network models. It provides implementations of key neural network components using pure NumPy for clarity and flexibility as well as Numba-accelerated versions for performance gains. The module supports a wide range of functionalities including diverse layer types, activation functions, loss calculations, optimizers, learning rate schedulers, and various utility functions for efficient forward and backward propagation.
 
-## Neural Networks Conceptual Overview
+---
 
-### Overview
-Neural networks are a class of machine learning models inspired by the structure and function of the human brain. They consist of layers of interconnected nodes (neurons) that process input data and learn to make predictions or decisions based on that data.
+## Conceptual Overview
 
-### Architecture
-A typical neural network consists of an input layer, one or more hidden layers, and an output layer. Each layer contains a certain number of neurons, and each neuron is connected to neurons in the previous and next layers through weighted connections.
+Neural networks are a class of machine learning models inspired by the human brain’s architecture. In this module, a neural network is constructed as a series of layers where each layer performs a linear transformation followed by a non-linear activation. Training is achieved via backpropagation—a method that calculates gradients for each parameter and updates them using an optimizer. This module supports both single-threaded NumPy implementations and Numba-accelerated routines for increased computational performance.
 
-### Activation Functions
-Activation functions introduce non-linearity into the network, allowing it to learn complex patterns. Common activation functions include ReLU, sigmoid, and softmax.
+---
 
-### Training
-Training a neural network involves adjusting the weights of the connections between neurons to minimize the difference between the predicted and actual outputs. This is done using optimization algorithms such as gradient descent and its variants (e.g., Adam, SGD).
+## Architecture
 
-### Backpropagation
-Backpropagation is the process of calculating the gradient of the loss function with respect to each weight by applying the chain rule. This gradient is then used to update the weights during training.
+- **Layers & Weight Initialization:**  
+  The module provides a `Layer` class (and its Numba counterpart `JITLayer`) that encapsulates the weights, biases, and activation functions for a network layer. Weight initialization uses He initialization for ReLU and Leaky ReLU activations and a scaled approach for others.
 
-## Optimizers
+- **Forward & Backward Propagation:**  
+  The `NeuralNetwork` class orchestrates the forward pass, computing activations for each layer (with optional dropout during training), and the backward pass, where gradients are calculated layer by layer. Utility functions (in `numba_utils.py`) support these operations with Numba-compiled versions for faster computations.
 
-### AdamOptimizer
-Adam (Adaptive Moment Estimation) is an optimization algorithm that computes adaptive learning rates for each parameter. It combines the advantages of two other extensions of stochastic gradient descent: AdaGrad and RMSProp.
-v
-#### Formula
-$` w = w - \alpha \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon} - \lambda w `$
+- **Dual Backend Support:**  
+  Users can choose between a pure NumPy backend or a Numba-accelerated version by setting the `use_numba` flag. This design allows for both ease of debugging and high-performance training.
 
-#### Usage
-```python
-from sega_learn.neural_networks.optimizers import AdamOptimizer
+---
 
-# Initialize the Adam optimizer
-adam_optimizer = AdamOptimizer(learning_rate=0.001)
+## Activation Functions
 
-# Use the optimizer in training
-neural_network.train(X_train, y_train, optimizer=adam_optimizer)
-```
+The module provides a robust set of activation functions along with their derivatives for backpropagation:
 
-### SGDOptimizer
-Stochastic Gradient Descent (SGD) is an optimization algorithm that updates the model parameters using the gradient of the loss function with respect to the parameters.
+- **ReLU (Rectified Linear Unit):**  
+  $` \text{ReLU}(z) = \max(0, z) `$  
+  Derivative: $` f'(z) = \begin{cases} 1 & z > 0 \\ 0 & z \leq 0 \end{cases} `$
 
-#### Formula
-$` w = w - \text{learning rate} \cdot dW - \lambda \cdot w `$  
-$` b = b - \text{learning rate} \cdot db `$
+- **Leaky ReLU:**  
+  $` \text{LeakyReLU}(z) = \begin{cases} z & z > 0 \\ \alpha z & z \leq 0 \end{cases} `$  
+  Derivative: $` f'(z) = \begin{cases} 1 & z > 0 \\ \alpha & z \leq 0 \end{cases} `$
 
-#### Usage
-```python
-from sega_learn.neural_networks.optimizers import SGDOptimizer
+- **Tanh:**  
+  $` \tanh(z) `$ maps inputs to the range $`[-1, 1] `$.
 
-# Initialize the SGD optimizer
-sgd_optimizer = SGDOptimizer(learning_rate=0.01, momentum=0.9)
+- **Sigmoid:**  
+  $` \sigma(z) = \frac{1}{1+\exp(-z)} `$ maps inputs to $`[0, 1] `$.
 
-# Use the optimizer in training
-neural_network.train(X_train, y_train, optimizer=sgd_optimizer)
-```
+- **Softmax:**  
+  Converts logits into a probability distribution across classes:  
+  $` \text{softmax}(z)_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)} `$
 
-### AdadeltaOptimizer
-Adadelta is an optimization algorithm that adapts learning rates based on a moving window of gradient updates, instead of accumulating all past gradients.
+These functions are implemented in both standard (in `activations.py`) and Numba-compatible forms (in `numba_utils.py` and used by `JITLayer`).
 
-#### Formula
-**Gradient Accumulations:**
-$` E[g^2]_t = \rho E[g^2]_{t-1} + (1 - \rho) g^2 `$  
+---
 
-**Parameter Updates:**
-$` \Delta x = - \frac{\sqrt{E[\Delta x^2]_{t-1} + \epsilon}}{\sqrt{E[g^2]_t + \epsilon}} g `$  
+## Layers
 
-**Update Accumulations:**
-$` E[\Delta x^2]_t = \rho E[\Delta x^2]_{t-1} + (1 - \rho) \Delta x^2 `$  
+- **Standard Layers:**  
+  The `Layer` class (in `layers.py`) sets up a single layer with its weight matrix, bias vector, and chosen activation function. It includes methods to reset gradients, apply the activation function, and compute the derivative during backpropagation.
 
-#### Usage
-```python
-from sega_learn.neural_networks.optimizers import AdadeltaOptimizer
+- **Numba-Accelerated Layers:**  
+  For performance-critical applications, `JITLayer` (in `layers_jit.py`) uses Numba’s jitclass decorator to compile layer operations, including weight initialization, activation, and gradient resetting.
 
-# Initialize the Adadelta optimizer
-adadelta_optimizer = AdadeltaOptimizer(learning_rate=1.0)
-
-# Use the optimizer in training
-neural_network.train(X_train, y_train, optimizer=adadelta_optimizer)
-```
+---
 
 ## Loss Functions
 
-### CrossEntropyLoss
-Cross entropy loss is used for multi-class classification problems. It measures the performance of a classification model whose output is a probability value between 0 and 1.
+Two primary loss functions are provided:
 
-#### Formula
-$` \text{Loss} = -\sum(y \log(p) + (1 - y) \log(1 - p)) / m `$
+- **CrossEntropyLoss:**  
+  Used for multi-class classification, it computes the loss as:  
+  $` \text{Loss} = -\frac{1}{m} \sum \left(y \cdot \log(p + \epsilon)\right) `$  
+  where targets are one-hot encoded and $` p `$ are the probabilities obtained via softmax.
 
-#### Usage
+- **BCEWithLogitsLoss:**  
+  Designed for binary classification, combining a sigmoid activation with binary cross-entropy:  
+  $` \text{Loss} = -\frac{1}{m} \sum \left(y \cdot \log(p + \epsilon) + (1-y) \cdot \log(1-p + \epsilon)\right) `$
+
+Both standard implementations (in `loss.py`) and Numba-compiled versions (in `loss_jit.py`) are included.
+
+---
+
+## Optimizers
+
+The module supports several optimizers, each with its own update formula:
+
+- **AdamOptimizer:**  
+  Combines momentum and adaptive learning rates using first and second moment estimates.  
+  Update rule:  
+  $` w = w - \alpha \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon} - \lambda w `$  
+  Standard implementation is in `optimizers.py`, while `JITAdamOptimizer` (in `optimizers_jit.py`) offers a Numba-accelerated alternative.
+
+- **SGDOptimizer:**  
+  Implements basic stochastic gradient descent, optionally with momentum:  
+  $` w = w - \text{learning rate} \times dW - \lambda w, \quad b = b - \text{learning rate} \times db `$  
+  Also available in a Numba version as `JITSGDOptimizer`.
+
+- **AdadeltaOptimizer:**  
+  Adjusts learning rates based on a moving window of gradient updates:  
+  $` E[g^2]_t = \rho E[g^2]_{t-1} + (1 - \rho) g^2 `$  
+
+  $` \Delta x = - \frac{\sqrt{E[\Delta x^2]_{t-1} + \epsilon}}{\sqrt{E[g^2]_t + \epsilon}} g `$  
+  
+  $` E[\Delta x^2]_t = \rho E[\Delta x^2]_{t-1} + (1 - \rho) \Delta x^2 `$  
+  Implemented in both standard (`optimizers.py`) and Numba (`optimizers_jit.py`) versions.
+
+---
+
+## Learning Rate Schedulers
+
+The module provides multiple strategies to adjust the learning rate during training:
+
+- **Step Scheduler (`lr_scheduler_step`):**  
+  Reduces the learning rate by a fixed factor every set number of epochs.
+
+- **Exponential Scheduler (`lr_scheduler_exp`):**  
+  Applies an exponential decay to the learning rate at defined intervals.
+
+- **Plateau Scheduler (`lr_scheduler_plateau`):**  
+  Monitors the loss and reduces the learning rate when improvements plateau.
+
+All scheduler classes are defined in `schedulers.py` with user-friendly messages to track adjustments.
+
+---
+
+## Utility Functions (Numba Utils)
+
+The `numba_utils.py` module contains helper functions that accelerate various operations via Numba, including:
+
+- **Forward & Backward Passes:**  
+  Functions such as `forward_jit` and `backward_jit` manage data propagation and gradient computation in a highly optimized manner.
+
+- **Activation Functions:**  
+  Numba-compatible versions of ReLU, Leaky ReLU, Tanh, Sigmoid, and Softmax are provided for rapid computation.
+
+- **Regularization & Dropout:**  
+  Functions to compute L2 regularization and apply dropout (e.g., `apply_dropout_jit`) are also included.
+
+- **Batch Processing:**  
+  The `process_batches` function allows for efficient mini-batch training with parallel processing support.
+
+---
+
+## Neural Network Class
+
+The core class, `NeuralNetwork` (in `neuralNetwork.py`), integrates all the above components:
+
+- **Model Construction:**  
+  Accepts a list of layer sizes and optionally a list of activation functions. It builds the network by stacking layers (using either the standard or Numba-accelerated version).
+
+- **Forward Propagation:**  
+  Computes predictions by propagating input data through the layers. Dropout is applied during training to help regularize the model.
+
+- **Backward Propagation:**  
+  Calculates gradients for all parameters using the chain rule and updates them via the chosen optimizer.
+
+- **Training Methods:**  
+  Provides a `train` method for standard training and a `train_numba` method for accelerated training. It supports mini-batch gradient descent, parallel batch processing (via joblib), early stopping, and integration with learning rate schedulers.
+
+- **Evaluation:**  
+  Methods to compute loss and accuracy on training or validation data are included.
+
+---
+
+## Example Usage
+
 ```python
-from sega_learn.neural_networks.loss import CrossEntropyLoss
-
-# Initialize the loss function
-loss_fn = CrossEntropyLoss()
-
-# Calculate the loss
-loss = loss_fn(logits, targets)
-```
-
-### BCEWithLogitsLoss
-Binary Cross Entropy with Logits Loss is used for binary classification problems. It combines a sigmoid layer and the binary cross-entropy loss in one single class.
-
-#### Formula
-$` \text{Loss} = -\text{mean}(y \log(p) + (1 - y) \log(1 - p)) `$
-
-#### Usage
-```python
-from sega_learn.neural_networks.loss import BCEWithLogitsLoss
-
-# Initialize the loss function
-loss_fn = BCEWithLogitsLoss()
-
-# Calculate the loss
-loss = loss_fn(logits, targets)
-```
-
-## Examples
-
-### Neural Network Example
-```python
-from sega_learn.neural_networks.neuralNetwork import NeuralNetwork
-from sega_learn.neural_networks.optimizers import AdamOptimizer
+from sega_learn.neural_networks import NeuralNetwork, AdamOptimizer, lr_scheduler_step
 import numpy as np
 
 # Generate sample data
 X_train = np.random.rand(100, 10)
-y_train = np.random.randint(0, 2, size=(100, 1))
+y_train = np.random.randint(0, 2, size=(100,))
 
-# Initialize the neural network
+# Initialize the neural network (using standard NumPy backend)
 nn = NeuralNetwork(layer_sizes=[10, 5, 1], dropout_rate=0.2, reg_lambda=0.01)
 
-# Initialize the optimizer
+# Set up an optimizer
 optimizer = AdamOptimizer(learning_rate=0.001)
 
+# Optionally, set up a learning rate scheduler
+scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)
+
 # Train the neural network
-nn.train(X_train, y_train, optimizer=optimizer, epochs=100, batch_size=32)
+nn.train(X_train, y_train, optimizer=optimizer, epochs=100, batch_size=32, lr_scheduler=scheduler)
 
 # Evaluate the neural network
-accuracy, predicted = nn.evaluate(X_train, y_train)
-print(f"Accuracy: {accuracy}")
+accuracy, predictions = nn.evaluate(X_train, y_train)
+print(f"Training Accuracy: {accuracy:.4f}")
 ```

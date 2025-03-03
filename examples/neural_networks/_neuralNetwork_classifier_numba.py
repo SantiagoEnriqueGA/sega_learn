@@ -11,7 +11,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-from sega_learn.neural_networks_numba_dev import *
+from sega_learn.neural_networks import *
 
 def train_and_evaluate_model(X_train, X_test, y_train, y_test, 
                              layers, output_size, lr, dropout, reg_lambda, 
@@ -29,11 +29,13 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test,
         dropout_rate=dropout, 
         reg_lambda=reg_lambda, 
         activations=activations,
-        compile_numba=True,
+        use_numba=True,
+        compile_numba=True,  
+        progress_bar=True,
     )
     
     # Select optimizer
-    optimizer = AdamOptimizer(learning_rate=lr)
+    optimizer = JITAdamOptimizer(learning_rate=lr)
     # optimizer = SGDOptimizer(learning_rate=lr, momentum=0.25, reg_lambda=0.1)
     # optimizer = AdadeltaOptimizer(learning_rate=lr, rho=0.95, epsilon=1e-6, reg_lambda=0.0)
     

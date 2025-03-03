@@ -1,7 +1,7 @@
 import numpy as np
 from numba import njit, prange, float64
 
-CACHE = True
+CACHE = False
 
 # -------------------------------------------------------------------------------------------------
 # Forward and backward passes
@@ -237,4 +237,112 @@ def sum_axis0(arr):
         for i in range(arr.shape[0]):
             sum_vals[0, j] += arr[i, j]
     return sum_vals
+
+
+
+# -------------------------------------------------------------------------------------------------
+# Neural Network functions
+# -------------------------------------------------------------------------------------------------
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def apply_dropout_jit(X, dropout_rate):
+    """
+    Numba JIT-compiled function to apply dropout.
+    Args:
+        X (ndarray): Activation values.
+        dropout_rate (float): Dropout rate.
+    Returns:
+        ndarray: Activation values after applying dropout.
+    """
+    # Generate the entire mask at once - more vectorized approach
+    mask = (np.random.random(X.shape) < (1 - dropout_rate)).astype(np.float64)
+    return (X * mask) / (1 - dropout_rate)
+
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def compute_l2_reg(weights):
+    total = 0.0
+    for i in prange(len(weights)):
+        total += np.sum(weights[i] ** 2)
+    return total     
+
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def process_batches(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, is_binary, reg_lambda, dWs_acc, dbs_acc):
+    """
+    Process multiple batches in parallel using Numba.
     
+    Args:
+        X_shuffled (ndarray): Shuffled input features
+        y_shuffled (ndarray): Shuffled target labels
+        batch_size (int): Size of each mini-batch
+        weights (list): List of weight matrices
+        biases (list): List of bias vectors
+        activations (list): List of activation functions
+        dropout_rate (float): Dropout rate
+        is_binary (bool): Whether the task is binary classification
+        reg_lambda (float): Regularization parameter
+        dWs_acc (list): Accumulated weight gradients as zeros
+        dbs_acc (list): Accumulated bias gradients as zeros
+        
+    Returns:
+        tuple: Lists of weight and bias gradients for each batch, loss, and accuracy
+    """
+    num_samples = X_shuffled.shape[0]
+    num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
+    running_loss = 0.0
+    running_accuracy = 0.0
+    
+    for i in prange(num_batches):
+        start_idx = i * batch_size
+        end_idx = min(start_idx + batch_size, num_samples)
+        
+        X_batch = X_shuffled[start_idx:end_idx]
+        y_batch = y_shuffled[start_idx:end_idx]
+        
+        # Forward pass
+        layer_outputs = forward_jit(X_batch, weights, biases, activations, dropout_rate, True, is_binary)
+        
+        # Backward pass
+        dWs, dbs = backward_jit(layer_outputs, y_batch, weights, activations, reg_lambda, is_binary, dWs_acc, dbs_acc)
+        
+        # Calculate loss
+        if is_binary:
+            running_loss += calculate_loss_from_outputs_binary(layer_outputs[-1], y_batch, reg_lambda, weights)
+        else:
+            y_batch_ohe = np.eye(weights[-1].shape[1])[y_batch]  # One-hot encode y for multi-class
+            running_loss += calculate_loss_from_outputs_multi(layer_outputs[-1], y_batch_ohe, reg_lambda, weights)
+            
+        # Calculate accuracy
+        running_accuracy += evaluate_batch(layer_outputs[-1], y_batch, is_binary)
+                    
+        # Accumulate gradients directly
+        for j in range(len(dWs)):
+            dWs_acc[j] += dWs[j]
+            dbs_acc[j] += dbs[j]
+    
+    # Average the accumulated gradients
+    for j in range(len(dWs_acc)):
+        dWs_acc[j] /= num_batches
+        dbs_acc[j] /= num_batches
+        
+    # Calculate average loss and accuracy
+    running_loss /= num_batches
+    running_accuracy /= num_batches
+        
+    return dWs_acc, dbs_acc, running_loss, running_accuracy
+
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def evaluate_jit(y_hat, y_true, is_binary):
+    """
+    Numba JIT-compiled function to evaluate model performance.
+    Args:
+        y_hat (ndarray): Model predictions.
+        is_binary (bool): Whether the model is binary or multi-class.
+    Returns:
+        tuple: Accuracy and predicted labels.
+    """
+    if is_binary:
+        predicted = (y_hat > 0.5).astype(np.int32).flatten()
+        accuracy = np.mean(predicted == y_true.flatten())
+    else:
+        predicted = np.argmax(y_hat, axis=1).astype(np.int32)
+        accuracy = np.mean(predicted == y_true)
+    return accuracy, predicted

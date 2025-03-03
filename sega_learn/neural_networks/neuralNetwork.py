@@ -1,10 +1,25 @@
+from .layers import Layer
+from .activations import Activation
 from .loss import CrossEntropyLoss, BCEWithLogitsLoss
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
 from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 
+import warnings
 import numpy as np
 from joblib import Parallel, delayed
 from tqdm.auto import tqdm
+
+try:
+    from numba import njit, float64, int32, prange
+    from numba import types
+    from numba.experimental import jitclass
+    from .numba_utils import *
+    from .layers_jit import *
+    from .optimizers_jit import *
+    from .loss_jit import *
+    NUMBA_AVAILABLE = True
+except:
+    NUMBA_AVAILABLE = False
 
 class NeuralNetwork:
     """
@@ -16,7 +31,13 @@ class NeuralNetwork:
         - activations (list): A list of activation functions for each layer. Default is ['relu', 'relu', ... 'softmax'].
     """
     
-    def __init__(self, layer_sizes, dropout_rate=0.2, reg_lambda=0.01, activations=None):
+    def __init__(self, layer_sizes, dropout_rate=0.2, reg_lambda=0.01, activations=None, use_numba=False, compile_numba=True, progress_bar=True):        
+        if use_numba and not NUMBA_AVAILABLE: raise ValueError("Numba is not available. Please install Numba to use the Numba backend.")
+        
+        self.use_numba = use_numba
+        self.compiled = False
+        self.progress_bar = progress_bar
+
         self.layer_sizes = layer_sizes                                          # List of layer sizes
         self.dropout_rate = dropout_rate                                        # Dropout rate
         self.reg_lambda = reg_lambda                                            # Regularization lambda
@@ -26,15 +47,24 @@ class NeuralNetwork:
             self.activations = ['relu'] * (len(layer_sizes) - 2) + ['softmax']       # Default to ReLU for hidden layers and Softmax for the output layer
         else:
             self.activations = activations
-            
+        
         # Initialize layers
-        self.layers = []
-        for i in range(len(layer_sizes) - 1):
-            self.layers.append(Layer(
-                layer_sizes[i], 
-                layer_sizes[i+1], 
-                self.activations[i]
-            ))
+        if not use_numba:
+            self.layers = []
+            for i in range(len(layer_sizes) - 1):
+                self.layers.append(Layer(
+                    layer_sizes[i], 
+                    layer_sizes[i+1], 
+                    self.activations[i]
+                ))
+        elif use_numba:
+            self.layers = []
+            for i in range(len(layer_sizes) - 1):
+                self.layers.append(JITLayer(
+                    layer_sizes[i], 
+                    layer_sizes[i+1], 
+                    self.activations[i]
+                ))
             
         # Initialize weights
         self.weights = []
@@ -48,6 +78,23 @@ class NeuralNetwork:
         # Cache for forward/backward pass
         self.layer_outputs = None
         self.is_binary = layer_sizes[-1] == 1
+
+        if self.use_numba:
+            # Cache for optimizer update
+            self.dWs_cache = [np.zeros_like(w) for w in self.weights]
+            self.dbs_cache = [np.zeros_like(b) for b in self.biases]
+            
+            # Compile Numba functions for performance
+            if compile_numba and not self.compiled:
+                self.compile_numba_functions(progress_bar)
+            
+                # Reset layer outputs and caches
+                self.layer_outputs = None
+                self.dWs_cache = [np.zeros_like(w) for w in self.weights]
+                self.dbs_cache = [np.zeros_like(b) for b in self.biases]
+            
+                self.compiled = True
+                print("Numba functions compiled successfully.")
         
     def __repr__(self):
         layers = ""
@@ -62,6 +109,109 @@ class NeuralNetwork:
             layers += f"\n\tLayer {i}: {self.layers[i].weights.shape[0]} neurons with {self.layers[i].weights.shape[1]} weights"
         return f"Neural Network with layer sizes {self.layer_sizes}, \nlayer details: {layers}, \ndropout rate: {self.dropout_rate}, \nregularization lambda: {self.reg_lambda}"
 
+    def compile_numba_functions(self, progress_bar=True):
+        """
+        Compiles all Numba JIT functions to improve performance.
+        """
+        if progress_bar:
+            progress_bar = tqdm(total=33, desc="Compiling Numba functions")
+        else:
+            progress_bar = None
+        # Neural network functions
+        # --------------------------------------------------------------------
+        apply_dropout_jit(np.random.randn(10, 10), self.dropout_rate)
+        if progress_bar: progress_bar.update(1)
+        compute_l2_reg(self.weights)
+        if progress_bar: progress_bar.update(1)
+        process_batches(X_shuffled=np.random.randn(10, self.layer_sizes[0]), y_shuffled=np.random.randint(0, 2, 10),
+                                  batch_size=32, weights=self.weights, biases=self.biases, activations=self.activations,
+                                  dropout_rate=self.dropout_rate, is_binary=self.is_binary, reg_lambda=self.reg_lambda,
+                                  dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache)
+        if progress_bar: progress_bar.update(1)
+        evaluate_jit(np.random.randn(10, self.layer_sizes[-1]), np.random.randint(0, 2, 10), self.is_binary)
+        if progress_bar: progress_bar.update(1)
+        
+        # Initialize dummy layer outputs for backward pass
+        self.layer_outputs = [np.random.randn(10, size) for size in self.layer_sizes]
+        
+        # Numba Utils functions
+        # --------------------------------------------------------------------
+        # Forward and backward passes
+        forward_jit(X=np.random.randn(10, self.layer_sizes[0]), weights=self.weights, biases=self.biases, activations=self.activations,
+                         dropout_rate=self.dropout_rate, training=True, is_binary=self.is_binary)
+        if progress_bar: progress_bar.update(1)
+        backward_jit(self.layer_outputs, np.random.randint(0, 2, 10), self.weights, self.activations, self.reg_lambda,
+                          self.is_binary, self.dWs_cache, self.dbs_cache)
+        if progress_bar: progress_bar.update(1)
+        # Loss functions and evaluation
+        calculate_loss_from_outputs_binary(np.random.randn(10, 1), np.random.randint(0, 2, 10).astype(np.float64), self.reg_lambda, self.weights)
+        if progress_bar: progress_bar.update(1)
+        calculate_loss_from_outputs_multi(np.random.randn(10, self.layer_sizes[-1]), np.eye(self.layer_sizes[-1])[np.random.randint(0, self.layer_sizes[-1], 10)], self.reg_lambda, self.weights)
+        if progress_bar: progress_bar.update(1)
+        evaluate_batch(np.random.randn(10, self.layer_sizes[-1]), np.random.randint(0, 2, 10), self.is_binary)
+        if progress_bar: progress_bar.update(1)
+        # Activation functions
+        relu(np.random.randn(10, 10))
+        if progress_bar: progress_bar.update(1)
+        relu_derivative(np.random.randn(10, 10))
+        if progress_bar: progress_bar.update(1)
+        leaky_relu(np.random.randn(10, 10))
+        if progress_bar: progress_bar.update(1)
+        leaky_relu_derivative(np.random.randn(10, 10))
+        if progress_bar: progress_bar.update(1)
+        tanh(np.random.randn(10, 10))
+        if progress_bar: progress_bar.update(1)
+        tanh_derivative(np.random.randn(10, 10))
+        if progress_bar: progress_bar.update(1)
+        sigmoid(np.random.randn(10, 10))
+        if progress_bar: progress_bar.update(1)
+        sigmoid_derivative(np.random.randn(10, 10))
+        if progress_bar: progress_bar.update(1)
+        softmax(np.random.randn(10, 10))
+        if progress_bar: progress_bar.update(1)
+        # Other utility functions
+        sum_reduce(np.random.randn(10, 10))
+        if progress_bar: progress_bar.update(1)
+        sum_axis0(np.random.randn(10, 10))
+        if progress_bar: progress_bar.update(1)
+        
+        # Optimizers
+        # --------------------------------------------------------------------
+        # Adam
+        _adam = JITAdamOptimizer()
+        if progress_bar: progress_bar.update(1)
+        _adam.initialize(self.layers)
+        if progress_bar: progress_bar.update(1)
+        _adam.update_layers(self.layers, self.dWs_cache, self.dbs_cache)
+        if progress_bar: progress_bar.update(1)
+        # SGD
+        _sgd = JITSGDOptimizer()
+        if progress_bar: progress_bar.update(1)
+        _sgd.initialize(self.layers)
+        if progress_bar: progress_bar.update(1)
+        _sgd.update_layers(self.layers, self.dWs_cache, self.dbs_cache)
+        if progress_bar: progress_bar.update(1)
+        # Adadelta
+        _adadelta = JITAdadeltaOptimizer()
+        if progress_bar: progress_bar.update(1)
+        _adadelta.initialize(self.layers)
+        if progress_bar: progress_bar.update(1)
+        _adadelta.update_layers(self.layers, self.dWs_cache, self.dbs_cache)
+        if progress_bar: progress_bar.update(1)
+        
+        # Loss Modules
+        # --------------------------------------------------------------------
+        _cross_entropy = JITCrossEntropyLoss()
+        if progress_bar: progress_bar.update(1)
+        _cross_entropy.calculate_loss(np.random.randn(10, self.layer_sizes[-1]), np.eye(self.layer_sizes[-1])[np.random.randint(0, self.layer_sizes[-1], 10)])
+        if progress_bar: progress_bar.update(1)
+        _bce = JITBCEWithLogitsLoss()
+        if progress_bar: progress_bar.update(1)
+        _bce.calculate_loss(np.random.randn(10, 1), np.random.randint(0, 2, 10).astype(np.float64).reshape(-1, 1))
+        if progress_bar: progress_bar.update(1)
+        if progress_bar:
+            progress_bar.close()
+        
     def apply_dropout(self, X):
         """
         Applies dropout to the activation X.
@@ -82,32 +232,40 @@ class NeuralNetwork:
         Returns: 
             ndarray: Output predictions of shape (batch_size, output_size).
         """
-        # Store all layer activations for backprop
-        self.layer_outputs = [X]
-        
-        # Forward pass through all layers except the last
-        A = X
-        for i, layer in enumerate(self.layers[:-1]):
-            Z = np.dot(A, layer.weights) + layer.biases
-            A = layer.activate(Z)
-            
-            # Apply dropout only during training
-            if training and self.dropout_rate > 0:
-                A = self.apply_dropout(A)
-                
-            self.layer_outputs.append(A)
-        
-        # Last layer (output layer)
-        Z = np.dot(A, self.layers[-1].weights) + self.layers[-1].biases
-        
-        # Apply appropriate activation for output layer
-        if self.is_binary:
-            output = Activation.sigmoid(Z)
+        if self.use_numba:
+            self.layer_outputs = [X]
+            weights = [layer.weights for layer in self.layers]
+            biases = [layer.biases for layer in self.layers]
+            layer_outputs = forward_jit(X, weights, biases, self.activations, self.dropout_rate, training, self.is_binary)
+            self.layer_outputs = layer_outputs  # Update layer_outputs with the correct shapes
+            return self.layer_outputs[-1]
         else:
-            output = Activation.softmax(Z)
+            # Store all layer activations for backprop
+            self.layer_outputs = [X]
             
-        self.layer_outputs.append(output)
-        return output
+            # Forward pass through all layers except the last
+            A = X
+            for i, layer in enumerate(self.layers[:-1]):
+                Z = np.dot(A, layer.weights) + layer.biases
+                A = layer.activate(Z)
+                
+                # Apply dropout only during training
+                if training and self.dropout_rate > 0:
+                    A = self.apply_dropout(A)
+                    
+                self.layer_outputs.append(A)
+            
+            # Last layer (output layer)
+            Z = np.dot(A, self.layers[-1].weights) + self.layers[-1].biases
+            
+            # Apply appropriate activation for output layer
+            if self.is_binary:
+                output = Activation.sigmoid(Z)
+            else:
+                output = Activation.softmax(Z)
+                
+            self.layer_outputs.append(output)
+            return output
  
     def backward(self, y):
         """
@@ -115,47 +273,62 @@ class NeuralNetwork:
         Parameters: 
             y (ndarray): Target labels of shape (m, output_size).
         """
-        m = y.shape[0]  # Number of samples
-        
-        # Reshape y for binary classification
-        if self.is_binary:
-            y = y.reshape(-1, 1)
-        else:
-            # One-hot encode y for multi-class classification
-            y = np.eye(self.layer_sizes[-1])[y]
-            
-        # Calculate initial gradient based on loss function
-        outputs = self.layer_outputs[-1]
-        if self.is_binary:
-            # Gradient for binary cross-entropy
-            dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
-        else:
-            # Gradient for categorical cross-entropy with softmax
-            dA = outputs - y
-        
-        # Backpropagate through layers in reverse
-        for i in reversed(range(len(self.layers))):
-            # Get activation from previous layer
-            prev_activation = self.layer_outputs[i]
-            
-            # For all except the last layer, apply activation derivative
-            if i < len(self.layers) - 1:
-                dZ = dA * self.layers[i].activation_derivative(self.layer_outputs[i+1])
-            else:
-                dZ = dA
+        if self.use_numba:
+            # Reset gradients to zero
+            for i in range(len(self.dWs_cache)):
+                self.dWs_cache[i].fill(0)
+                self.dbs_cache[i].fill(0)
                 
-            # Calculate gradients
-            dW = np.dot(prev_activation.T, dZ) / m
-            # Add L2 regularization
-            dW += self.reg_lambda * self.layers[i].weights
-            db = np.sum(dZ, axis=0, keepdims=True) / m
+            # Use cached arrays in JIT function
+            dWs, dbs = backward_jit(self.layer_outputs, y, self.weights, 
+                                        self.activations, self.reg_lambda, 
+                                        self.is_binary, self.dWs_cache, self.dbs_cache)
             
-            # Store gradients in layer
-            self.layers[i].gradients = (dW, db)
+            for i, layer in enumerate(self.layers):
+                layer.weight_gradients = dWs[i]
+                layer.bias_gradients = dbs[i]
+        else:
+            m = y.shape[0]  # Number of samples
             
-            # Calculate dA for next iteration (previous layer)
-            if i > 0:  # No need to calculate for input layer
-                dA = np.dot(dZ, self.layers[i].weights.T)
+            # Reshape y for binary classification
+            if self.is_binary:
+                y = y.reshape(-1, 1)
+            else:
+                # One-hot encode y for multi-class classification
+                y = np.eye(self.layer_sizes[-1])[y]
+                
+            # Calculate initial gradient based on loss function
+            outputs = self.layer_outputs[-1]
+            if self.is_binary:
+                # Gradient for binary cross-entropy
+                dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
+            else:
+                # Gradient for categorical cross-entropy with softmax
+                dA = outputs - y
+            
+            # Backpropagate through layers in reverse
+            for i in reversed(range(len(self.layers))):
+                # Get activation from previous layer
+                prev_activation = self.layer_outputs[i]
+                
+                # For all except the last layer, apply activation derivative
+                if i < len(self.layers) - 1:
+                    dZ = dA * self.layers[i].activation_derivative(self.layer_outputs[i+1])
+                else:
+                    dZ = dA
+                    
+                # Calculate gradients
+                dW = np.dot(prev_activation.T, dZ) / m
+                # Add L2 regularization
+                dW += self.reg_lambda * self.layers[i].weights
+                db = np.sum(dZ, axis=0, keepdims=True) / m
+                
+                # Store gradients in layer
+                self.layers[i].gradients = (dW, db)
+                
+                # Calculate dA for next iteration (previous layer)
+                if i > 0:  # No need to calculate for input layer
+                    dA = np.dot(dZ, self.layers[i].weights.T)
 
     def train(self, X_train, y_train, X_val=None, y_val=None, 
               optimizer=None, epochs=100, batch_size=32, 
@@ -176,6 +349,10 @@ class NeuralNetwork:
             - use_tqdm (bool): Whether to use tqdm for progress bar (default: True).
             - n_jobs (int): Number of jobs for parallel processing (default: 1).
         """
+        if self.use_numba:
+            self.train_numba(X_train, y_train, X_val, y_val, optimizer, epochs, batch_size, early_stopping_threshold, lr_scheduler, p, use_tqdm, n_jobs)
+            return
+
         # Default optimizer if not provided
         if optimizer is None:
             optimizer = AdamOptimizer(learning_rate=0.0001)
@@ -279,37 +456,210 @@ class NeuralNetwork:
         for i, layer in enumerate(self.layers):
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
+
+    def train_numba(self, X_train, y_train, X_val=None, y_val=None, 
+              optimizer=None, epochs=100, batch_size=32, 
+              early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1):
+        """
+        Trains the neural network model.
+        Parameters:
+            - X_train (ndarray): Training data features.
+            - y_train (ndarray): Training data labels.
+            - X_val (ndarray): Validation data features, optional.
+            - y_val (ndarray): Validation data labels, optional.
+            - optimizer (Optimizer): Optimizer for updating parameters (default: Adam, lr=0.0001).
+            - epochs (int): Number of training epochs (default: 100).
+            - batch_size (int): Batch size for mini-batch gradient descent (default: 32).
+            - early_stopping_patience (int): Patience for early stopping (default: 10).
+            - lr_scheduler (Scheduler): Learning rate scheduler (default: None).
+            - verbose (bool): Whether to print training progress (default: True).
+            - use_tqdm (bool): Whether to use tqdm for progress bar (default: True).
+            - n_jobs (int): Number of jobs for parallel processing (default: 1).
+        """
+        # Default optimizer if not provided
+        if optimizer is None:
+            optimizer = JITAdamOptimizer(learning_rate=0.0001)
+
+        def is_not_instance_of_classes(obj, classes):
+            """
+            Checks if an object is not an instance of any class in a list of classes.
+            Args:obj: The object to check.classes: A list of classes.
+            Returns: True if the object is not an instance of any class in the list of classes, False otherwise.
+            """
+            return not isinstance(obj, tuple(classes))
+
+        # If optimizer is not a JIT optimizer, convert it to a JIT optimizer
+        jit_optimizer_classes = [JITAdamOptimizer, JITSGDOptimizer, JITAdadeltaOptimizer]
+        if is_not_instance_of_classes(optimizer, jit_optimizer_classes):
+            warnings.warn("Attempting to use a non-JIT optimizer. Converting to a JIT optimizer.", UserWarning, stacklevel=2)
+
+            try:
+                if optimizer.__class__.__name__ == "AdamOptimizer":
+                    optimizer = JITAdamOptimizer(
+                            learning_rate=optimizer.learning_rate,
+                            beta1=optimizer.beta1,
+                            beta2=optimizer.beta2,
+                            epsilon=optimizer.epsilon,
+                            reg_lambda=optimizer.reg_lambda,
+                        )
+                elif optimizer.__class__.__name__ == "SGDOptimizer":
+                    optimizer = JITSGDOptimizer(
+                            learning_rate=optimizer.learning_rate,
+                            momentum=optimizer.momentum,
+                            reg_lambda=optimizer.reg_lambda,
+                        )
+                elif optimizer.__class__.__name__ == "AdadeltaOptimizer":
+                    optimizer = JITAdadeltaOptimizer(
+                            learning_rate=optimizer.learning_rate,
+                            rho=optimizer.rho,
+                            epsilon=optimizer.epsilon,
+                            reg_lambda=optimizer.reg_lambda,
+                        )
+                else:
+                    raise ValueError(f"Unsupported optimizer: {optimizer.__class__.__name__}")
+            except:
+                raise ValueError("Unable to convert optimizer to a JIT optimizer. Please use a JIT optimizer.")
             
-    def calculate_loss(self, X, y, class_weights=None):
+        # Initialize optimizer
+        optimizer.initialize(self.layers)
+        
+        # Track best model for early stopping
+        best_loss = float('inf')
+        patience_counter = 0
+        best_weights = [layer.weights.copy() for layer in self.layers]
+        best_biases = [layer.biases.copy() for layer in self.layers]
+        
+        # Number of threads for parallel processing
+        # If n_jobs > 1, use that many threads, otherwise let Numba decide
+        if n_jobs > 1:
+            import os
+            os.environ['NUMBA_NUM_THREADS'] = str(n_jobs)
+
+        # Training loop with progress bar
+        progress_bar = tqdm(range(epochs)) if use_tqdm else range(epochs)
+        for epoch in progress_bar:
+            # Reset gradients
+            for layer in self.layers:
+                layer.zero_grad()
+            
+            # Shuffle training data
+            indices = np.arange(X_train.shape[0])
+            np.random.shuffle(indices)
+            X_shuffled = X_train[indices]
+            y_shuffled = y_train[indices]
+            
+            # Prepare layer parameters for JIT function
+            weights = [layer.weights for layer in self.layers]
+            biases = [layer.biases for layer in self.layers]
+            activations = [layer.activation for layer in self.layers]
+           
+            # Initialize accumulated gradients with zeros 
+            dWs_zeros = [np.zeros_like(w) for w in weights]
+            dbs_zeros = [np.zeros_like(b) for b in biases]
+           
+            # Process all batches in parallel and get averaged gradients, loss
+            dWs_acc, dbs_acc, train_loss, train_accuracy = process_batches(
+                X_shuffled, y_shuffled, batch_size, weights, biases, 
+                activations, self.dropout_rate, self.is_binary, self.reg_lambda,
+                dWs_zeros, dbs_zeros
+            )
+                       
+            # Update weights and biases using the optimizer
+            optimizer.update_layers(self.layers, dWs_acc, dbs_acc)
+                        
+            # Validation metrics
+            val_metrics = ""
+            if X_val is not None:
+                val_loss = self.calculate_loss(X_val, y_val)
+                val_accuracy, _ = self.evaluate(X_val, y_val)
+                val_metrics = f", Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.4f}"
+                
+                # Early stopping check
+                if val_loss < best_loss:
+                    best_loss = val_loss
+                    patience_counter = 0
+                    # Save best weights
+                    best_weights = [layer.weights.copy() for layer in self.layers]
+                    best_biases = [layer.biases.copy() for layer in self.layers]
+                else:
+                    patience_counter += 1
+            else:
+                # Use training loss for early stopping if no validation set
+                if train_loss < best_loss:
+                    best_loss = train_loss
+                    patience_counter = 0
+                    best_weights = [layer.weights.copy() for layer in self.layers]
+                    best_biases = [layer.biases.copy() for layer in self.layers]
+                else:
+                    patience_counter += 1
+            
+            # Update progress bar or print metrics
+            if p:
+                if use_tqdm and isinstance(progress_bar, tqdm):
+                    progress_bar.set_description(
+                        f"Epoch {epoch+1}/{epochs} - Loss: {train_loss:.4f}, Acc: {train_accuracy:.4f}{val_metrics}"
+                    )
+                else:
+                    print(f"Epoch {epoch+1}/{epochs} - Loss: {train_loss:.4f}, Acc: {train_accuracy:.4f}{val_metrics}")
+            
+            # Learning rate scheduler step
+            if lr_scheduler:
+                if isinstance(lr_scheduler, lr_scheduler_plateau):
+                    msg = lr_scheduler.step(epoch, train_loss if X_val is None else val_loss)
+                    if p and msg:
+                        tqdm.write(msg)
+                else:
+                    msg = lr_scheduler.step(epoch)
+                    if p and msg:
+                        tqdm.write(msg)
+                    
+            # Early stopping
+            if patience_counter >= early_stopping_threshold:
+                if p and use_tqdm:
+                    tqdm.write(f"Early stopping at epoch {epoch+1}")
+                break
+        
+        # Restore best weights
+        for i, layer in enumerate(self.layers):
+            layer.weights = best_weights[i]
+            layer.biases = best_biases[i]
+            
+    def calculate_loss(self, X, y):
         """
         Calculates the loss with L2 regularization.
         Parameters:
             - X (ndarray): Input data
             - y (ndarray): Target labels
-            - class_weights (ndarray, optional): Weights for each class
         Returns: 
             float: The calculated loss value
         """
         # Get predictions
         outputs = self.forward(X, training=False)
-        
-        # Apply class weights if provided
-        if class_weights is None:
-            class_weights = np.ones_like(y)
-        elif isinstance(class_weights, np.ndarray):
-            class_weights = np.asarray(class_weights)
-        
+
         # Select appropriate loss function
         if self.is_binary:
-            loss_fn = BCEWithLogitsLoss()
-            loss = loss_fn(outputs, y.reshape(-1, 1))
+            if self.use_numba:
+                loss_fn = JITBCEWithLogitsLoss()
+                loss = loss_fn.calculate_loss(outputs, y.reshape(-1, 1))
+            else:
+                loss_fn = BCEWithLogitsLoss()
+                loss = loss_fn(outputs, y.reshape(-1, 1))
         else:
-            loss_fn = CrossEntropyLoss()
-            loss = loss_fn(outputs, y)
+            if self.use_numba:
+                loss_fn = JITCrossEntropyLoss()
+                loss = loss_fn.calculate_loss(outputs, y)
+            else:
+                loss_fn = CrossEntropyLoss()
+                loss = loss_fn(outputs, y)
         
-        # Add L2 regularization
-        l2_reg = self.reg_lambda * sum(np.sum(layer.weights**2) for layer in self.layers)
-        loss += l2_reg
+        if self.use_numba:
+            weights = [layer.weights for layer in self.layers]
+            l2_reg = self.reg_lambda * compute_l2_reg(weights)
+            loss += l2_reg
+        else:
+            # Add L2 regularization
+            l2_reg = self.reg_lambda * sum(np.sum(layer.weights**2) for layer in self.layers)
+            loss += l2_reg
         
         # Convert to Python float
         return float(loss)
@@ -325,18 +675,24 @@ class NeuralNetwork:
             - accuracy (float): Model accuracy
             - predicted (ndarray): Predicted labels
         """
-        # Get predictions
-        y_hat = self.forward(X, training=False)
-        
-        # Calculate accuracy based on problem type
-        if self.is_binary:
-            predicted = (y_hat > 0.5).astype(int)
-            accuracy = float(np.mean(predicted.flatten() == y.reshape(-1, 1).flatten()))
+        if self.use_numba:
+            # Get predictions
+            y_hat = self.forward(X, training=False)
+            # JIT-compiled function for evaluation
+            accuracy, predicted = evaluate_jit(y_hat, y, self.is_binary)
+            return accuracy, predicted
         else:
-            predicted = np.argmax(y_hat, axis=1)
-            accuracy = float(np.mean(predicted == y))
-              
-        return accuracy, predicted
+            # Get predictions
+            y_hat = self.forward(X, training=False)
+            
+            # Calculate accuracy based on problem type
+            if self.is_binary:
+                predicted = (y_hat > 0.5).astype(int)
+                accuracy = float(np.mean(predicted.flatten() == y.reshape(-1, 1).flatten()))
+            else:
+                predicted = np.argmax(y_hat, axis=1)
+                accuracy = float(np.mean(predicted == y))
+            return accuracy, predicted
     
     def predict(self, X):
         """
@@ -489,144 +845,4 @@ class NeuralNetwork:
             return lr_scheduler_exp(optimizer, **kwargs)
         else:
             raise ValueError(f"Unknown scheduler type: {scheduler_type}")
-
-class Layer:
-    """
-    Initializes a Layer object.
-    Args:
-        input_size (int): The size of the input to the layer.
-        output_size (int): The size of the output from the layer.
-        activation (str): The activation function to be used in the layer.
-    """
-    def __init__(self, input_size, output_size, activation="relu"):
-        # He initialization for weights
-        if activation in ["relu", "leaky_relu"]:
-            scale = np.sqrt(2.0 / input_size)
-        else:
-            scale = np.sqrt(1.0 / input_size)
-            
-        self.weights = np.random.randn(input_size, output_size) * scale
-        self.biases = np.zeros((1, output_size))
-        self.activation = activation
-        self.gradients = None
-        
-    def zero_grad(self):
-        """Reset the gradients of the weights and biases to zero."""
-        self.gradients = None
-
-    def activate(self, Z):
-        """Apply activation function."""
-        activation_functions = {
-            "relu": Activation.relu,
-            "leaky_relu": Activation.leaky_relu,
-            "tanh": Activation.tanh,
-            "sigmoid": Activation.sigmoid,
-            "softmax": Activation.softmax
-        }
-        
-        if self.activation in activation_functions:
-            return activation_functions[self.activation](Z)
-        else:
-            raise ValueError(f"Unsupported activation: {self.activation}")
-
-    def activation_derivative(self, Z):
-        """Apply activation derivative."""
-        if self.activation == "relu":
-            return Activation.relu_derivative(Z)
-        elif self.activation == "leaky_relu":
-            return Activation.leaky_relu_derivative(Z)
-        elif self.activation == "tanh":
-            return Activation.tanh_derivative(Z)
-        elif self.activation == "sigmoid":
-            return Activation.sigmoid_derivative(Z)
-        elif self.activation == "softmax":
-            # Softmax derivative handled in loss function
-            return np.ones_like(Z)  # Identity for compatibility
-        else:
-            raise ValueError(f"Unsupported activation: {self.activation}")
-        
-class Activation:
-    """
-    This class contains various activation functions and their corresponding derivatives for use in neural networks.
-    relu: Rectified Linear Unit activation function. Returns the input directly if it's positive, otherwise returns 0.
-    leaky_relu: Leaky ReLU activation function. A variant of ReLU that allows a small gradient when the input is negative. 
-    tanh: Hyperbolic tangent activation function. Maps input to range [-1, 1]. Commonly used for normalized input.
-    sigmoid: Sigmoid activation function. Maps input to range [0, 1]. Commonly used for binary classification.
-    softmax: Softmax activation function. Maps input into a probability distribution over multiple classes.
-    """
-    
-    @staticmethod
-    def relu(z):
-        """
-        ReLU (Rectified Linear Unit) activation function: f(z) = max(0, z)
-        Returns the input directly if it's positive, otherwise returns 0.
-        """
-        return np.maximum(0, z)
-
-    @staticmethod
-    def relu_derivative(z):
-        """
-        Derivative of the ReLU function: f'(z) = 1 if z > 0, else 0
-        Returns 1 for positive input, and 0 for negative input.
-        """
-        return (z > 0).astype(np.float32)  
-
-    @staticmethod
-    def leaky_relu(z, alpha=0.01):
-        """
-        Leaky ReLU activation function: f(z) = z if z > 0, else alpha * z
-        Allows a small, non-zero gradient when the input is negative to address the dying ReLU problem.
-        """
-        return np.where(z > 0, z, alpha * z)
-
-    @staticmethod
-    def leaky_relu_derivative(z, alpha=0.01):
-        """
-        Derivative of the Leaky ReLU function: f'(z) = 1 if z > 0, else alpha
-        Returns 1 for positive input, and alpha for negative input.
-        """
-        return np.where(z > 0, 1, alpha)
-
-    @staticmethod
-    def tanh(z):
-        """
-        Hyperbolic tangent (tanh) activation function: f(z) = (exp(z) - exp(-z)) / (exp(z) + exp(-z))
-        Maps input to the range [-1, 1], typically used for normalized input.
-        """
-        return np.tanh(z)
-
-    @staticmethod
-    def tanh_derivative(z):
-        """
-        Derivative of the tanh function: f'(z) = 1 - tanh(z)^2
-        Used for backpropagation through the tanh activation.
-        """
-        return 1 - np.tanh(z) ** 2
-
-    @staticmethod
-    def sigmoid(z):
-        """
-        Sigmoid activation function: f(z) = 1 / (1 + exp(-z))
-        Maps input to the range [0, 1], commonly used for binary classification.
-        """
-        return 1 / (1 + np.exp(-z))
-
-    @staticmethod
-    def sigmoid_derivative(z):
-        """
-        Derivative of the sigmoid function: f'(z) = sigmoid(z) * (1 - sigmoid(z))
-        Used for backpropagation through the sigmoid activation.
-        """
-        sig = Activation.sigmoid(z)
-        return sig * (1 - sig)
-
-    @staticmethod
-    def softmax(z):
-        """
-        Softmax activation function: f(z)_i = exp(z_i) / sum(exp(z_j)) for all j
-        Maps input into a probability distribution over multiple classes. Used for multiclass classification.
-        """
-        # Subtract the max value from each row to prevent overflow (numerical stability)
-        exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
-        return exp_z / np.sum(exp_z, axis=1, keepdims=True)
 

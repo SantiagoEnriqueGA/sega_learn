@@ -3,7 +3,7 @@ from numba import njit, prange
 
 CACHE = False
 
-class CrossEntropyLoss:
+class JITCrossEntropyLoss:
     def __init__(self):
         self.logits = np.zeros((1, 1))
         self.targets = np.zeros((1, 1))
@@ -27,7 +27,7 @@ def calculate_cross_entropy_loss(logits, targets):
 
 
 
-class BCEWithLogitsLoss:
+class JITBCEWithLogitsLoss:
     def __init__(self):
         self.logits = np.zeros((1, 1))
         self.targets = np.zeros((1, 1))

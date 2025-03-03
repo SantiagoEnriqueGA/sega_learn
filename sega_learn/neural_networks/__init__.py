@@ -1,10 +1,9 @@
 from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
-
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
-
 from .loss import CrossEntropyLoss, BCEWithLogitsLoss
-
-from .neuralNetwork import NeuralNetwork, Layer, Activation
+from .layers import Layer
+from .activations import Activation
+from .neuralNetwork import NeuralNetwork
 
 __all__ = [
     'AdamOptimizer',
@@ -19,3 +18,18 @@ __all__ = [
     'Layer',
     'Activation',
 ]
+
+try:
+    from .numba_utils import *
+    from .optimizers_jit import JITAdamOptimizer, JITSGDOptimizer, JITAdadeltaOptimizer
+    from .layers_jit import JITLayer
+
+    __all__.extend([
+        'JITAdamOptimizer',
+        'JITSGDOptimizer',
+        'JITAdadeltaOptimizer',
+        'JITLayer',
+    ])
+except:
+    pass
+
