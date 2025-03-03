@@ -185,13 +185,14 @@ Testing Imports - Clustering
 ...........Testing Ridge Regression Model
 .........Testing KNeighborsClassifierKNeighborsBase Class
 ............Testing KNeighborsRegressor Class
-............Testing the AdadeltaOptimizer class
-..Testing the AdamOptimizer class
-..Testing the BCEWithLogitsLoss class
+............Testing the BCEWithLogitsLoss class
 ..Testing the CrossEntropyLoss class
-..Testing the NeuralNetwork class
-......Testing the SGDOptimizer class
-..Testing Classifier Tree
+..Testing NeuralNetwork class with use_numba=True
+.................Testing the AdadeltaOptimizer class
+..Testing the AdamOptimizer class
+..Testing the SGDOptimizer class
+..Testing NeuralNetwork class with use_numba=False
+.................Testing Classifier Tree
 ....Testing Classifier Tree Utility
 .....Testing Random Forest Classifier
 ...........Testing Gradient Boosted Regressor
@@ -225,12 +226,16 @@ Testing Imports - Clustering
 .Testing example file: neuralNetwork_cancer.py
 .Testing example file: neuralNetwork_classifier.py
 .Testing example file: neuralNetwork_classifier_hyper.py
-Tuning Hyperparameters: 100%|██████████████████| 2/2 [00:04<00:00,  2.30s/it]
+Tuning Hyperparameters: 100%|██████| 2/2 [00:02<00:00,  1.25s/it]
+Epoch 100/100 - Loss: 0.7561, Acc: 0.7675, Val Loss: 0.7662, Val Acc: 0.7250: 100%|█████| 100/100 [00:02<00:00, 37.50it/s]
 .Testing example file: neuralNetwork_diabetes.py
 .Testing example file: neuralNetwork_hyper.py
-Tuning Hyperparameters: 100%|██████████████████| 1/1 [00:01<00:00,  1.11s/it]
-Tuning Hyperparameters: 100%|██████████████████| 1/1 [00:00<00:00,  1.11it/s]
+Tuning Hyperparameters: 100%|██████| 1/1 [00:00<00:00,  1.14it/s]
+Epoch 100/100 - Loss: 0.7745, Acc: 0.5847, Val Loss: 0.7600, Val Acc: 0.6623: 100%|█████| 100/100 [00:01<00:00, 92.42it/s]
+Tuning Hyperparameters: 100%|██████| 1/1 [00:00<00:00,  1.39it/s]
+Epoch 100/100 - Loss: 0.6561, Acc: 0.9277, Val Loss: 0.6683, Val Acc: 0.9474: 100%|█████| 100/100 [00:00<00:00, 123.60it/s]
 .Testing example file: neuralNetwork_iris.py
+Epoch 100/100 - Loss: 0.7051, Acc: 0.8593, Val Loss: 0.7022, Val Acc: 0.9333: 100%|█████| 100/100 [00:00<00:00, 320.49it/s]
 .Testing example file: gradientBoostedRegressor.py
 .Testing example file: randomForestClassifier.py
 .Testing example file: randomForestRegressor.py
@@ -253,7 +258,7 @@ Tuning Hyperparameters: 100%|█████████████████
 .Testing example file: votingRegressor.py
 .
 ----------------------------------------------------------------------
-Ran 365 tests in 129.307s
+Ran 393 tests in 174.541s
 
 OK
 ```
