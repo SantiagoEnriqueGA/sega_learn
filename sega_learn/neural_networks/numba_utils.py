@@ -60,7 +60,8 @@ def backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary, 
         # Replace advanced indexing with a loop
         for i in range(m):
             dA[i, y[i]] -= 1  # Subtract 1 from the correct class index for each sample
-
+        
+    
     # Backpropagate through layers in reverse
     for i in range(num_layers - 1, -1, -1): 
         prev_activation = layer_outputs[i]
@@ -68,14 +69,14 @@ def backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary, 
         if i < num_layers - 1:
             output = layer_outputs[i + 1]
             if activations[i] == "relu":
-                dZ = dA * (output > 0)
+                dZ = dA * relu_derivative(output)
             elif activations[i] == "leaky_relu":
                 alpha = 0.01  # Consider passing as a parameter if needed
-                dZ = dA * np.where(output > 0, 1, alpha)
+                dZ = dA * leaky_relu_derivative(output, alpha)
             elif activations[i] == "tanh":
-                dZ = dA * (1 - output ** 2)
+                dZ = dA * tanh_derivative(output)
             elif activations[i] == "sigmoid":
-                dZ = dA * output * (1 - output)
+                dZ = dA * sigmoid_derivative(output)
             elif activations[i] == "softmax":
                 dZ = dA  # Typically not used in hidden layers
             else:

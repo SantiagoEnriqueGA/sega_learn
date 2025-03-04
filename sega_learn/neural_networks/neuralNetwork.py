@@ -289,6 +289,8 @@ class NeuralNetwork:
         Parameters: 
             y (ndarray): Target labels of shape (m, output_size).
         """
+        y = y.astype(np.int32)  # Ensure y is int32 for Numba JIT
+        
         if self.use_numba:
             # Reset gradients to zero
             for i in range(len(self.dWs_cache)):
@@ -306,21 +308,18 @@ class NeuralNetwork:
         else:
             m = y.shape[0]  # Number of samples
             
+            outputs = self.layer_outputs[-1]
             # Reshape y for binary classification
             if self.is_binary:
-                y = y.reshape(-1, 1)
-            else:
-                # One-hot encode y for multi-class classification
-                y = np.eye(self.layer_sizes[-1])[y]
-                
-            # Calculate initial gradient based on loss function
-            outputs = self.layer_outputs[-1]
-            if self.is_binary:
                 # Gradient for binary cross-entropy
+                y = y.reshape(-1, 1)
                 dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
             else:
+                # One-hot encode y for multi-class classification
                 # Gradient for categorical cross-entropy with softmax
+                y = np.eye(self.layer_sizes[-1])[y]
                 dA = outputs - y
+            
             
             # Backpropagate through layers in reverse
             for i in reversed(range(len(self.layers))):
@@ -332,18 +331,17 @@ class NeuralNetwork:
                     dZ = dA * self.layers[i].activation_derivative(self.layer_outputs[i+1])
                 else:
                     dZ = dA
-                    
+                
                 # Calculate gradients
-                dW = np.dot(prev_activation.T, dZ) / m
                 # Add L2 regularization
-                dW += self.reg_lambda * self.layers[i].weights
+                dW = np.dot(prev_activation.T, dZ) / m + self.reg_lambda * self.layers[i].weights
                 db = np.sum(dZ, axis=0, keepdims=True) / m
                 
                 # Store gradients in layer
                 self.layers[i].gradients = (dW, db)
                 
                 # Calculate dA for next iteration (previous layer)
-                if i > 0:  # No need to calculate for input layer
+                if i > 0:
                     dA = np.dot(dZ, self.layers[i].weights.T)
 
     def train(self, X_train, y_train, X_val=None, y_val=None, 
