@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.neural_networks.optimizers_jit</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.neural_networks.html" class="white">neural_networks</a>.optimizers_jit</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"><a href="numba.core.types.html">numba.core.types</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text">JITAdadeltaOptimizer(<a href="builtins.html#object">builtins.object</a>)
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.neural_networks.optimizers_jit.html#JITAdadeltaOptimizer">JITAdadeltaOptimizer</a>
+</dt></dl>
+</dd>
+<dt class="heading-text">JITAdamOptimizer(<a href="builtins.html#object">builtins.object</a>)
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.neural_networks.optimizers_jit.html#JITAdamOptimizer">JITAdamOptimizer</a>
+</dt></dl>
+</dd>
+<dt class="heading-text">JITSGDOptimizer(<a href="builtins.html#object">builtins.object</a>)
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.neural_networks.optimizers_jit.html#JITSGDOptimizer">JITSGDOptimizer</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="JITAdadeltaOptimizer">class <strong>JITAdadeltaOptimizer</strong></a>(JITAdadeltaOptimizer)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#JITAdadeltaOptimizer">JITAdadeltaOptimizer</a>(*args,&nbsp;**kwargs)<br>
+&nbsp;<br>
+Adadelta&nbsp;optimizer&nbsp;class&nbsp;for&nbsp;training&nbsp;neural&nbsp;networks.<br>
+Formula:&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;E[g^2]_t&nbsp;=&nbsp;rho&nbsp;*&nbsp;E[g^2]_{t-1}&nbsp;+&nbsp;(1&nbsp;-&nbsp;rho)&nbsp;*&nbsp;g^2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Delta_x&nbsp;=&nbsp;-&nbsp;(sqrt(E[delta_x^2]_{t-1}&nbsp;+&nbsp;epsilon)&nbsp;/&nbsp;sqrt(E[g^2]_t&nbsp;+&nbsp;epsilon))&nbsp;*&nbsp;g<br>
+&nbsp;&nbsp;&nbsp;&nbsp;E[delta_x^2]_t&nbsp;=&nbsp;rho&nbsp;*&nbsp;E[delta_x^2]_{t-1}&nbsp;+&nbsp;(1&nbsp;-&nbsp;rho)&nbsp;*&nbsp;Delta_x^2<br>
+Derived&nbsp;from:&nbsp;<a href="https://arxiv.org/abs/1212.5701">https://arxiv.org/abs/1212.5701</a><br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer.&nbsp;Defaults&nbsp;to&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;rho&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;decay&nbsp;rate.&nbsp;Defaults&nbsp;to&nbsp;0.95.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon&nbsp;(float,&nbsp;optional):&nbsp;A&nbsp;small&nbsp;value&nbsp;to&nbsp;prevent&nbsp;division&nbsp;by&nbsp;zero.&nbsp;Defaults&nbsp;to&nbsp;1e-6.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;regularization&nbsp;parameter.&nbsp;Defaults&nbsp;to&nbsp;0.0.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.neural_networks.optimizers_jit.html#JITAdadeltaOptimizer">JITAdadeltaOptimizer</a></dd>
+<dd>JITAdadeltaOptimizer</dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>class_type</strong> = jitclass.JITAdadeltaOptimizer#1fcd8d47190&lt;learni...float64, 3d, C),E_delta_x2:array(float64, 3d, C)&gt;</dl>
+
+<hr>
+Methods inherited from JITAdadeltaOptimizer:<br>
+<dl><dt><a name="JITAdadeltaOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=1.0, rho=0.95, epsilon=1e-06, reg_lambda=0.0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="JITAdadeltaOptimizer-initialize"><strong>initialize</strong></a>(self, layers)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;running&nbsp;averages&nbsp;for&nbsp;each&nbsp;layer's&nbsp;weights.<br>
+Args:&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layers&nbsp;in&nbsp;the&nbsp;neural&nbsp;network.<br>
+Returns:&nbsp;None</span></dd></dl>
+
+<dl><dt><a name="JITAdadeltaOptimizer-update"><strong>update</strong></a>(self, layer, dW, db, index)</dt><dd><span class="code">Updates&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;of&nbsp;a&nbsp;layer&nbsp;using&nbsp;the&nbsp;Adadelta&nbsp;optimization&nbsp;algorithm.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;layer&nbsp;(Layer):&nbsp;The&nbsp;layer&nbsp;to&nbsp;update.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dW&nbsp;(ndarray):&nbsp;The&nbsp;gradient&nbsp;of&nbsp;the&nbsp;weights.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;(ndarray):&nbsp;The&nbsp;gradient&nbsp;of&nbsp;the&nbsp;biases.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;layer.<br>
+Returns:&nbsp;None</span></dd></dl>
+
+<dl><dt><a name="JITAdadeltaOptimizer-update_layers"><strong>update_layers</strong></a>(self, layers, dWs, dbs)</dt></dl>
+
+<hr>
+Data descriptors inherited from JITAdadeltaOptimizer:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="JITAdamOptimizer">class <strong>JITAdamOptimizer</strong></a>(JITAdamOptimizer)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#JITAdamOptimizer">JITAdamOptimizer</a>(*args,&nbsp;**kwargs)<br>
+&nbsp;<br>
+Adam&nbsp;optimizer&nbsp;class&nbsp;for&nbsp;training&nbsp;neural&nbsp;networks.<br>
+Formula:&nbsp;w&nbsp;=&nbsp;w&nbsp;-&nbsp;alpha&nbsp;*&nbsp;m_hat&nbsp;/&nbsp;(sqrt(v_hat)&nbsp;+&nbsp;epsilon)&nbsp;-&nbsp;lambda&nbsp;*&nbsp;w&nbsp;<br>
+Derived&nbsp;from:&nbsp;<a href="https://arxiv.org/abs/1412.6980">https://arxiv.org/abs/1412.6980</a><br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer.&nbsp;Defaults&nbsp;to&nbsp;0.001.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;beta1&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;exponential&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;first&nbsp;moment&nbsp;estimates.&nbsp;Defaults&nbsp;to&nbsp;0.9.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;beta2&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;exponential&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;second&nbsp;moment&nbsp;estimates.&nbsp;Defaults&nbsp;to&nbsp;0.999.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon&nbsp;(float,&nbsp;optional):&nbsp;A&nbsp;small&nbsp;value&nbsp;to&nbsp;prevent&nbsp;division&nbsp;by&nbsp;zero.&nbsp;Defaults&nbsp;to&nbsp;1e-8.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;regularization&nbsp;parameter.&nbsp;Defaults&nbsp;to&nbsp;0.01.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.neural_networks.optimizers_jit.html#JITAdamOptimizer">JITAdamOptimizer</a></dd>
+<dd>JITAdamOptimizer</dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>class_type</strong> = jitclass.JITAdamOptimizer#1fcd8d36d10&lt;learning_r...t64, 2d, A),db:array(float64, 2d, A),index:int32&gt;</dl>
+
+<hr>
+Methods inherited from JITAdamOptimizer:<br>
+<dl><dt><a name="JITAdamOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-08, reg_lambda=0.01)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="JITAdamOptimizer-initialize"><strong>initialize</strong></a>(self, layers)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;first&nbsp;and&nbsp;second&nbsp;moment&nbsp;estimates&nbsp;for&nbsp;each&nbsp;layer's&nbsp;weights.<br>
+Args:&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layers&nbsp;in&nbsp;the&nbsp;neural&nbsp;network.<br>
+Returns:&nbsp;None</span></dd></dl>
+
+<dl><dt><a name="JITAdamOptimizer-update"><strong>update</strong></a>(self, layer, dW, db, index)</dt><dd><span class="code">Updates&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;of&nbsp;a&nbsp;layer&nbsp;using&nbsp;the&nbsp;Adam&nbsp;optimization&nbsp;algorithm.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;layer&nbsp;(Layer):&nbsp;The&nbsp;layer&nbsp;to&nbsp;update.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dW&nbsp;(ndarray):&nbsp;The&nbsp;gradient&nbsp;of&nbsp;the&nbsp;weights.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;(ndarray):&nbsp;The&nbsp;gradient&nbsp;of&nbsp;the&nbsp;biases.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;layer.<br>
+Returns:&nbsp;None</span></dd></dl>
+
+<dl><dt><a name="JITAdamOptimizer-update_layers"><strong>update_layers</strong></a>(self, layers, dWs, dbs)</dt></dl>
+
+<hr>
+Data descriptors inherited from JITAdamOptimizer:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="JITSGDOptimizer">class <strong>JITSGDOptimizer</strong></a>(JITSGDOptimizer)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#JITSGDOptimizer">JITSGDOptimizer</a>(*args,&nbsp;**kwargs)<br>
+&nbsp;<br>
+Stochastic&nbsp;Gradient&nbsp;Descent&nbsp;(SGD)&nbsp;optimizer&nbsp;class&nbsp;for&nbsp;training&nbsp;neural&nbsp;networks.<br>
+Formula:&nbsp;w&nbsp;=&nbsp;w&nbsp;-&nbsp;learning_rate&nbsp;*&nbsp;dW,&nbsp;b&nbsp;=&nbsp;b&nbsp;-&nbsp;learning_rate&nbsp;*&nbsp;db<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer.&nbsp;Defaults&nbsp;to&nbsp;0.001.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;momentum&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;momentum&nbsp;factor.&nbsp;Defaults&nbsp;to&nbsp;0.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;regularization&nbsp;parameter.&nbsp;Defaults&nbsp;to&nbsp;0.0.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.neural_networks.optimizers_jit.html#JITSGDOptimizer">JITSGDOptimizer</a></dd>
+<dd>JITSGDOptimizer</dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>class_type</strong> = jitclass.JITSGDOptimizer#1fcd8d45250&lt;learning_ra...eg_lambda:float64,velocity:array(float64, 3d, C)&gt;</dl>
+
+<hr>
+Methods inherited from JITSGDOptimizer:<br>
+<dl><dt><a name="JITSGDOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=0.001, momentum=0.0, reg_lambda=0.0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="JITSGDOptimizer-initialize"><strong>initialize</strong></a>(self, layers)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;velocity&nbsp;for&nbsp;each&nbsp;layer's&nbsp;weights.<br>
+Args:&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layers&nbsp;in&nbsp;the&nbsp;neural&nbsp;network.<br>
+Returns:&nbsp;None</span></dd></dl>
+
+<dl><dt><a name="JITSGDOptimizer-update"><strong>update</strong></a>(self, layer, dW, db, index)</dt><dd><span class="code">Updates&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;of&nbsp;a&nbsp;layer&nbsp;using&nbsp;the&nbsp;SGD&nbsp;optimization&nbsp;algorithm.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;layer&nbsp;(Layer):&nbsp;The&nbsp;layer&nbsp;to&nbsp;update.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dW&nbsp;(ndarray):&nbsp;The&nbsp;gradient&nbsp;of&nbsp;the&nbsp;weights.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;(ndarray):&nbsp;The&nbsp;gradient&nbsp;of&nbsp;the&nbsp;biases.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;layer.<br>
+Returns:&nbsp;None</span></dd></dl>
+
+<dl><dt><a name="JITSGDOptimizer-update_layers"><strong>update_layers</strong></a>(self, layers, dWs, dbs)</dt></dl>
+
+<hr>
+Data descriptors inherited from JITSGDOptimizer:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-adadelta_update_layers"><strong>adadelta_update_layers</strong></a>(E_g2, E_delta_x2, layers, dWs, dbs, learning_rate, rho, epsilon, reg_lambda)</dt></dl>
+ <dl><dt><a name="-adam_update_layers"><strong>adam_update_layers</strong></a>(m, v, t, layers, dWs, dbs, learning_rate, beta1, beta2, epsilon, reg_lambda)</dt></dl>
+ <dl><dt><a name="-sgd_update_layers"><strong>sgd_update_layers</strong></a>(velocity, layers, dWs, dbs, learning_rate, momentum, reg_lambda)</dt></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>CACHE</strong> = False<br>
+<strong>float64</strong> = float64<br>
+<strong>int32</strong> = int32<br>
+<strong>spec_adadelta</strong> = [('learning_rate', float64), ('rho', float64), ('epsilon', float64), ('reg_lambda', float64), ('E_g2', Array(float64, 3, 'C', False, aligned=True)), ('E_delta_x2', Array(float64, 3, 'C', False, aligned=True))]<br>
+<strong>spec_adam</strong> = [('learning_rate', float64), ('beta1', float64), ('beta2', float64), ('epsilon', float64), ('reg_lambda', float64), ('m', Array(float64, 3, 'C', False, aligned=True)), ('v', Array(float64, 3, 'C', False, aligned=True)), ('t', int32), ('dW', Array(float64, 2, 'A', False, aligned=True)), ('db', Array(float64, 2, 'A', False, aligned=True)), ('index', int32)]<br>
+<strong>spec_sgd</strong> = [('learning_rate', float64), ('momentum', float64), ('reg_lambda', float64), ('velocity', Array(float64, 3, 'C', False, aligned=True))]</td></tr></table>
+</body></html>

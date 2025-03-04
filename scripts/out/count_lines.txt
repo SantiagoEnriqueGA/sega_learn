@@ -1,58 +1,72 @@
 ﻿Lines per Python file, sorted by descending order:
 ____________________________________________________________________________________________________
 	sega_learn\linear_models\linearModels.py                                       :  1007
+	sega_learn\neural_networks\neuralNetwork.py                                    :   915
 	sega_learn\tests\test_utils.py                                                 :   761
-	sega_learn\neural_networks_cupy_dev\neuralNetwork.py                           :   643
-	sega_learn\neural_networks\neuralNetwork.py                                    :   611
-	sega_learn\clustering\clustering.py                                            :   607
 	sega_learn\tests\test_linear_model.py                                          :   607
+	sega_learn\clustering\clustering.py                                            :   607
 	sega_learn\tests\test_trees_regressor.py                                       :   478
+	sega_learn\neural_networks_cupy_dev\neuralNetwork.py                           :   462
 	sega_learn\linear_models\discriminantAnalysis.py                               :   420
 	sega_learn\utils\modelSelection.py                                             :   367
+	sega_learn\neural_networks\numba_utils.py                                      :   325
 	sega_learn\utils\dataAugmentation.py                                           :   289
 	sega_learn\utils\metrics.py                                                    :   280
-	sega_learn\tests\test_neural_networks.py                                       :   235
+	sega_learn\neural_networks\optimizers_jit.py                                   :   268
+	sega_learn\tests_performance\nn\test_nn_numba.py                               :   256
+	sega_learn\tests_performance\nn\test_nn_cupy.py                                :   235
 	sega_learn\trees\randomForestClassifier.py                                     :   230
-	sega_learn\tests_performance\nn\test_nn_cupy.py                                :   230
 	sega_learn\tests_performance\nn\test_nn.py                                     :   229
 	sega_learn\tests\test_clustering.py                                            :   228
 	sega_learn\tests\test_nearest_neighbors.py                                     :   217
 	sega_learn\tests\test_trees_classifier.py                                      :   213
 	sega_learn\trees\treeRegressor.py                                              :   210
+	sega_learn\tests\test_neural_networks_numba.py                                 :   201
 	sega_learn\trees\randomForestRegressor.py                                      :   198
 	sega_learn\trees\treeClassifier.py                                             :   192
 	sega_learn\tests_performance\test_linear_model.py                              :   172
+	sega_learn\tests\test_neural_networks_vanilla.py                               :   167
 	sega_learn\nearest_neighbors\base.py                                           :   148
+	sega_learn\_archive\randomForestClassifierPar.py                               :   141
+	sega_learn\neural_networks_cupy_dev\cupy_utils.py                              :   138
+	sega_learn\tests_performance\nn\nn_profiler.py                                 :   137
 	sega_learn\tests_performance\nearest_neighbors\test_nearest_neighbors.py       :   135
 	sega_learn\trees\gradientBoostedRegressor.py                                   :   134
 	sega_learn\neural_networks\optimizers.py                                       :   131
+	sega_learn\examples\neural_networks\neuralNetwork_classifier_hyper.py          :   130
 	sega_learn\tests_performance\scalability\nearest_neighbors.py                  :   129
 	sega_learn\utils\dataPrep.py                                                   :   128
 	sega_learn\tests_performance\scalability\clustering.py                         :   117
-	sega_learn\neural_networks_cupy_dev\optimizers.py                              :   116
 	sega_learn\examples\neural_networks\neuralNetwork_hyper.py                     :   113
 	sega_learn\tests_performance\scalability\linear_models.py                      :   113
 	sega_learn\examples\trees\gradientBoostedRegressor.py                          :   109
+	sega_learn\tests\test_neural_networks_optimizers.py                            :   106
+	sega_learn\examples\neural_networks\neuralNetwork_classifier.py                :   103
 	sega_learn\__init__.py                                                         :   102
 	sega_learn\tests_performance\test_clustering.py                                :    97
 	sega_learn\neural_networks\schedulers.py                                       :    94
 	sega_learn\neural_networks_cupy_dev\schedulers.py                              :    94
+	sega_learn\neural_networks_cupy_dev\optimizers.py                              :    86
 	sega_learn\examples\trees\randomForestRegressor.py                             :    83
 	sega_learn\tests\test_trees_examples.py                                        :    83
+	sega_learn\tests\test_neural_networks_loss.py                                  :    79
+	sega_learn\neural_networks\activations.py                                      :    77
 	sega_learn\tests\test_neural_networks_examples.py                              :    77
 	sega_learn\examples\neural_networks\neuralNetwork_cancer.py                    :    76
 	sega_learn\examples\neural_networks\neuralNetwork_diabetes.py                  :    75
-	sega_learn\examples\neural_networks\neuralNetwork_classifier_hyper.py          :    73
 	sega_learn\examples\trees\randomForestClassifier.py                            :    72
+	sega_learn\neural_networks\layers_jit.py                                       :    69
 	sega_learn\neural_networks_cupy_dev\loss.py                                    :    68
 	sega_learn\tests_performance\nn\test_nn_vis.py                                 :    68
 	sega_learn\tests\test_clustering_examples.py                                   :    66
-	sega_learn\tests\test_linear_model_examples.py                                 :    66
 	sega_learn\tests\test_utils_examples.py                                        :    66
 	sega_learn\tests\test_nearest_neighbors_examples.py                            :    66
+	sega_learn\tests\test_linear_model_examples.py                                 :    66
 	sega_learn\utils\polynomialTransform.py                                        :    64
-	sega_learn\examples\neural_networks\neuralNetwork_classifier.py                :    60
+	sega_learn\_archive\randomForestClassifierParallel.py                          :    61
 	sega_learn\tests\test_neural_networks_imports.py                               :    56
+	sega_learn\_archive\randomForestClassifier_Diabetes.py                         :    56
+	sega_learn\neural_networks\layers.py                                           :    55
 	sega_learn\tests_performance\test_utils.py                                     :    55
 	sega_learn\utils\voting.py                                                     :    53
 	sega_learn\examples\neural_networks\neuralNetwork_iris.py                      :    52
@@ -66,48 +80,50 @@ ________________________________________________________________________________
 	sega_learn\examples\utils\polynomialTransform.py                               :    42
 	sega_learn\examples\utils\dataAugmentation_combined.py                         :    41
 	sega_learn\examples\clustering\dbscan.py                                       :    38
-	sega_learn\examples\utils\dataAugmentation_randUnder.py                        :    37
-	sega_learn\examples\utils\dataAugmentation_smote.py                            :    37
 	sega_learn\examples\utils\dataAugmentation_randOver.py                         :    37
+	sega_learn\examples\utils\dataAugmentation_smote.py                            :    37
+	sega_learn\examples\utils\dataAugmentation_randUnder.py                        :    37
 	sega_learn\tests\test_imports.py                                               :    36
 	sega_learn\nearest_neighbors\knn_classifier.py                                 :    35
 	sega_learn\nearest_neighbors\knn_regressor.py                                  :    34
+	sega_learn\neural_networks\loss_jit.py                                         :    34
 	sega_learn\examples\clustering\dbscan_3d.py                                    :    33
-	sega_learn\tests\run_all_tests.py                                              :    31
+	sega_learn\neural_networks\__init__.py                                         :    31
 	sega_learn\examples\linear_models\ransac_vis.py                                :    31
+	sega_learn\tests\run_all_tests.py                                              :    31
+	sega_learn\tests\test_nearest_neighbors_imports.py                             :    29
 	sega_learn\examples\linear_models\passiveAggressive_vis.py                     :    29
 	sega_learn\tests\test_clustering_imports.py                                    :    29
-	sega_learn\tests\test_nearest_neighbors_imports.py                             :    29
-	sega_learn\examples\utils\randomSearchCV_bayes.py                              :    27
 	sega_learn\examples\utils\gridSearchCV_bayes.py                                :    27
+	sega_learn\examples\utils\randomSearchCV_bayes.py                              :    27
 	sega_learn\linear_models\__init__.py                                           :    26
 	sega_learn\examples\nearest_neighbors\nearestNeighborsClassifier.py            :    25
-	sega_learn\examples\utils\gridSearchCV_rfc.py                                  :    24
-	sega_learn\examples\utils\randomSearchCV_rfc.py                                :    24
 	sega_learn\utils\__init__.py                                                   :    24
+	sega_learn\examples\utils\randomSearchCV_rfc.py                                :    24
+	sega_learn\examples\utils\gridSearchCV_rfc.py                                  :    24
 	sega_learn\examples\utils\gridSearchCV_passiveAggReg.py                        :    23
-	sega_learn\examples\utils\randomSearchCV_passiveAggReg.py                      :    23
 	sega_learn\examples\nearest_neighbors\nearestNeighborsRegressor.py             :    23
+	sega_learn\examples\utils\randomSearchCV_passiveAggReg.py                      :    23
 	sega_learn\examples\utils\votingRegressor.py                                   :    22
 	sega_learn\tests\run_selected_tests.py                                         :    21
 	sega_learn\examples\linear_models\ransac.py                                    :    20
+	sega_learn\examples\utils\segaSearchCV_rfr.py                                  :    18
+	sega_learn\trees\__init__.py                                                   :    18
 	sega_learn\examples\utils\gridSearchCV_rfr.py                                  :    18
 	sega_learn\examples\utils\gridSearchCV_gbr.py                                  :    18
 	sega_learn\examples\utils\randomSearchCV_gbr.py                                :    18
 	sega_learn\examples\utils\randomSearchCV_rfr.py                                :    18
-	sega_learn\examples\utils\segaSearchCV_rfr.py                                  :    18
-	sega_learn\trees\__init__.py                                                   :    18
-	sega_learn\neural_networks\__init__.py                                         :    17
-	sega_learn\examples\linear_models\ridge.py                                     :    17
-	sega_learn\neural_networks_cupy_dev\__init__.py                                :    17
-	sega_learn\examples\linear_models\passiveAggressive.py                         :    17
 	sega_learn\examples\linear_models\lda.py                                       :    17
+	sega_learn\neural_networks_cupy_dev\__init__.py                                :    17
 	sega_learn\examples\linear_models\ols.py                                       :    17
-	sega_learn\examples\linear_models\bayes.py                                     :    16
+	sega_learn\examples\linear_models\ridge.py                                     :    17
+	sega_learn\examples\linear_models\passiveAggressive.py                         :    17
 	sega_learn\examples\linear_models\qda.py                                       :    16
+	sega_learn\examples\linear_models\bayes.py                                     :    16
 	sega_learn\examples\linear_models\lasso.py                                     :    13
 	sega_learn\clustering\__init__.py                                              :     8
 	sega_learn\nearest_neighbors\__init__.py                                       :     6
+	sega_learn\compare_outputs.py                                                  :     0
 ____________________________________________________________________________________________________
-Total lines                                                                            : 12872
+Total lines                                                                            : 15019
  

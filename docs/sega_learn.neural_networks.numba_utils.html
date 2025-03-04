@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.neural_networks.numba_utils</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.neural_networks.html" class="white">neural_networks</a>.numba_utils</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-apply_dropout_jit"><strong>apply_dropout_jit</strong></a>(X, dropout_rate)</dt><dd><span class="code">Numba&nbsp;JIT-compiled&nbsp;function&nbsp;to&nbsp;apply&nbsp;dropout.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(ndarray):&nbsp;Activation&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dropout_rate&nbsp;(float):&nbsp;Dropout&nbsp;rate.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ndarray:&nbsp;Activation&nbsp;values&nbsp;after&nbsp;applying&nbsp;dropout.</span></dd></dl>
+ <dl><dt><a name="-backward_jit"><strong>backward_jit</strong></a>(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs)</dt></dl>
+ <dl><dt><a name="-calculate_bce_with_logits_loss"><strong>calculate_bce_with_logits_loss</strong></a>(logits, targets)</dt></dl>
+ <dl><dt><a name="-calculate_cross_entropy_loss"><strong>calculate_cross_entropy_loss</strong></a>(logits, targets)</dt></dl>
+ <dl><dt><a name="-calculate_loss_from_outputs_binary"><strong>calculate_loss_from_outputs_binary</strong></a>(outputs, y, weights, reg_lambda)</dt></dl>
+ <dl><dt><a name="-calculate_loss_from_outputs_multi"><strong>calculate_loss_from_outputs_multi</strong></a>(outputs, y, weights, reg_lambda)</dt></dl>
+ <dl><dt><a name="-compute_l2_reg"><strong>compute_l2_reg</strong></a>(weights)</dt></dl>
+ <dl><dt><a name="-evaluate_batch"><strong>evaluate_batch</strong></a>(y_hat, y_true, is_binary)</dt></dl>
+ <dl><dt><a name="-evaluate_jit"><strong>evaluate_jit</strong></a>(y_hat, y_true, is_binary)</dt><dd><span class="code">Numba&nbsp;JIT-compiled&nbsp;function&nbsp;to&nbsp;evaluate&nbsp;model&nbsp;performance.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_hat&nbsp;(ndarray):&nbsp;Model&nbsp;predictions.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;is_binary&nbsp;(bool):&nbsp;Whether&nbsp;the&nbsp;model&nbsp;is&nbsp;binary&nbsp;or&nbsp;multi-class.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;Accuracy&nbsp;and&nbsp;predicted&nbsp;labels.</span></dd></dl>
+ <dl><dt><a name="-forward_jit"><strong>forward_jit</strong></a>(X, weights, biases, activations, dropout_rate, training, is_binary)</dt></dl>
+ <dl><dt><a name="-leaky_relu"><strong>leaky_relu</strong></a>(z, alpha=0.01)</dt></dl>
+ <dl><dt><a name="-leaky_relu_derivative"><strong>leaky_relu_derivative</strong></a>(z, alpha=0.01)</dt></dl>
+ <dl><dt><a name="-one_hot_encode"><strong>one_hot_encode</strong></a>(y, num_classes)</dt></dl>
+ <dl><dt><a name="-process_batches_binary"><strong>process_batches_binary</strong></a>(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, reg_lambda, dWs_acc, dbs_acc)</dt></dl>
+ <dl><dt><a name="-process_batches_multi"><strong>process_batches_multi</strong></a>(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, reg_lambda, dWs_acc, dbs_acc)</dt></dl>
+ <dl><dt><a name="-relu"><strong>relu</strong></a>(z)</dt></dl>
+ <dl><dt><a name="-relu_derivative"><strong>relu_derivative</strong></a>(z)</dt></dl>
+ <dl><dt><a name="-sigmoid"><strong>sigmoid</strong></a>(z)</dt></dl>
+ <dl><dt><a name="-sigmoid_derivative"><strong>sigmoid_derivative</strong></a>(z)</dt></dl>
+ <dl><dt><a name="-softmax"><strong>softmax</strong></a>(z)</dt></dl>
+ <dl><dt><a name="-sum_axis0"><strong>sum_axis0</strong></a>(arr)</dt></dl>
+ <dl><dt><a name="-sum_reduce"><strong>sum_reduce</strong></a>(arr)</dt></dl>
+ <dl><dt><a name="-tanh"><strong>tanh</strong></a>(z)</dt></dl>
+ <dl><dt><a name="-tanh_derivative"><strong>tanh_derivative</strong></a>(z)</dt></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>CACHE</strong> = False<br>
+<strong>float64</strong> = float64</td></tr></table>
+</body></html>

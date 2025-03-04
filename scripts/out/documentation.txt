@@ -16,9 +16,15 @@ wrote sega_learn.trees.randomForestRegressor.html
 wrote sega_learn.trees.treeClassifier.html
 wrote sega_learn.trees.treeRegressor.html
 wrote sega_learn.trees.__init__.html
+wrote sega_learn.neural_networks.activations.html
+wrote sega_learn.neural_networks.layers.html
+wrote sega_learn.neural_networks.layers_jit.html
 wrote sega_learn.neural_networks.loss.html
+wrote sega_learn.neural_networks.loss_jit.html
 wrote sega_learn.neural_networks.neuralNetwork.html
+wrote sega_learn.neural_networks.numba_utils.html
 wrote sega_learn.neural_networks.optimizers.html
+wrote sega_learn.neural_networks.optimizers_jit.html
 wrote sega_learn.neural_networks.schedulers.html
 wrote sega_learn.neural_networks.__init__.html
 wrote sega_learn.nearest_neighbors.base.html
