@@ -249,7 +249,6 @@ class NeuralNetwork:
         """
         if self.use_numba:
             X = X.astype(np.float64)  # Ensure X is float64 for Numba JIT
-            self.layer_outputs = [X]
             weights = [layer.weights for layer in self.layers]
             biases = [layer.biases for layer in self.layers]
             layer_outputs = forward_jit(X, weights, biases, self.activations, self.dropout_rate, training, self.is_binary)
@@ -275,6 +274,7 @@ class NeuralNetwork:
             Z = np.dot(A, self.layers[-1].weights) + self.layers[-1].biases
             
             # Apply appropriate activation for output layer
+            # TODO: use the selected activation function for the output layer, falling back if not available
             if self.is_binary:
                 output = Activation.sigmoid(Z)
             else:
@@ -298,7 +298,8 @@ class NeuralNetwork:
                 self.dbs_cache[i].fill(0)
                 
             # Use cached arrays in JIT function
-            dWs, dbs = backward_jit(self.layer_outputs, y, self.weights, 
+            # dWs, dbs = backward_jit(self.layer_outputs, y, self.weights, 
+            dWs, dbs = backward_jit(self.layer_outputs, y, [layer.weights for layer in self.layers], 
                                         self.activations, self.reg_lambda, 
                                         self.is_binary, self.dWs_cache, self.dbs_cache)
             

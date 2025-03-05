@@ -37,6 +37,7 @@ def forward_jit(X, weights, biases, activations, dropout_rate, training, is_bina
                         
     # Last layer (output layer)
     Z = np.dot(layer_outputs[-2], weights[-1]) + biases[-1]
+    # TODO: use the selected activation function for the output layer, falling back if not available
     if is_binary:
         layer_outputs[-1] = sigmoid(Z)
     else:
@@ -88,8 +89,8 @@ def backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary, 
         # db = sum_reduce(dZ) / m
         db = sum_axis0(dZ) / m
 
-        dWs[i] = dW
-        dbs[i] = db
+        dWs[i] += dW
+        dbs[i] += db
 
         if i > 0:
             dA = np.dot(dZ, weights[i].T)
@@ -336,10 +337,10 @@ def process_batches_multi(X_shuffled, y_shuffled, batch_size, weights, biases, a
         running_loss += calculate_loss_from_outputs_multi(layer_outputs[-1], y_batch_ohe, reg_lambda, weights)
         running_accuracy += evaluate_batch(layer_outputs[-1], y_batch, False)
         
-        # Accumulate gradients
-        for j in range(len(dWs)):
-            dWs_acc[j] += dWs[j]
-            dbs_acc[j] += dbs[j]
+        # # Accumulate gradients
+        # for j in range(len(dWs)):
+        #     dWs_acc[j] += dWs[j]
+        #     dbs_acc[j] += dbs[j]
     
     # Average the accumulated gradients, loss, and accuracy
     for j in range(len(dWs_acc)):
