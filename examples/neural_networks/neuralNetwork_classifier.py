@@ -38,7 +38,11 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test,
     # scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10) 
 
     # Call the train method
-    nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=scheduler,epochs=epochs, batch_size=batch_size, early_stopping_threshold=10, track_metrics=True)
+    nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=scheduler, epochs=epochs, 
+             batch_size=batch_size, early_stopping_threshold=10, 
+             track_metrics=True,
+             track_adv_metrics=True,
+             )
 
     # Evaluate the Model
     test_accuracy, y_pred = nn.evaluate(X_test, y_test)
@@ -49,7 +53,7 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test,
     
     # Plot metrics
     # nn.plot_metrics()
-    # nn.plot_metrics(save_dir="vanilla_nn_metrics.png")
+    # nn.plot_metrics(save_dir="examples/neural_networks/neuralNetwork_classifier_vanilla_metrics.png")
 
 
 def train_and_evaluate_model_numba(X_train, X_test, y_train, y_test, 
@@ -85,7 +89,11 @@ def train_and_evaluate_model_numba(X_train, X_test, y_train, y_test,
     # scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10) 
 
     # Call the train method
-    nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=scheduler,epochs=epochs, batch_size=batch_size, early_stopping_threshold=10, track_metrics=True)
+    nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=scheduler, epochs=epochs, 
+             batch_size=batch_size, early_stopping_threshold=10, 
+             track_metrics=True,
+             track_adv_metrics=True,
+             )
 
     # Evaluate the Model
     test_accuracy, y_pred = nn.evaluate(X_test, y_test)
@@ -96,7 +104,7 @@ def train_and_evaluate_model_numba(X_train, X_test, y_train, y_test,
 
     # Plot metrics
     # nn.plot_metrics()
-    # nn.plot_metrics(save_dir="numba_nn_metrics.png")
+    # nn.plot_metrics(save_dir="examples/neural_networks/neuralNetwork_classifier_numba_metrics.png")
 
 def main():
     import random

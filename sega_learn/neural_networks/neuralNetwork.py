@@ -347,7 +347,7 @@ class NeuralNetwork:
 
     def train(self, X_train, y_train, X_val=None, y_val=None, 
               optimizer=None, epochs=100, batch_size=32, 
-              early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1, track_metrics=False):
+              early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1, track_metrics=False, track_adv_metrics=False):
         """
         Trains the neural network model.
         Parameters:
@@ -365,7 +365,7 @@ class NeuralNetwork:
             - n_jobs (int): Number of jobs for parallel processing (default: 1).
         """
         if self.use_numba:
-            self.train_numba(X_train, y_train, X_val, y_val, optimizer, epochs, batch_size, early_stopping_threshold, lr_scheduler, p, use_tqdm, n_jobs, track_metrics)
+            self.train_numba(X_train, y_train, X_val, y_val, optimizer, epochs, batch_size, early_stopping_threshold, lr_scheduler, p, use_tqdm, n_jobs, track_metrics, track_adv_metrics)
             return
 
         # Default optimizer if not provided
@@ -389,6 +389,16 @@ class NeuralNetwork:
             if X_val is not None:
                 self.val_loss = []
                 self.val_accuracy = []
+        
+        # Set advanced metrics to track
+        if track_adv_metrics:
+            self.train_precision = []
+            self.train_recall = []
+            self.train_f1 = []
+            if X_val is not None:
+                self.val_precision = []
+                self.val_recall = []
+                self.val_f1 = []
         
         def process_batch(start_idx):
             X_batch = X_shuffled[start_idx:start_idx+batch_size]
@@ -459,6 +469,18 @@ class NeuralNetwork:
                     self.val_loss.append(val_loss)
                     self.val_accuracy.append(val_accuracy)
             
+            # Store advanced metrics
+            if track_adv_metrics:
+                train_precision, train_recall, train_f1 = self.calculate_precision_recall_f1(X_train, y_train)
+                self.train_precision.append(train_precision)
+                self.train_recall.append(train_recall)
+                self.train_f1.append(train_f1)
+                if X_val is not None:
+                    val_precision, val_recall, val_f1 = self.calculate_precision_recall_f1(X_val, y_val)
+                    self.val_precision.append(val_precision)
+                    self.val_recall.append(val_recall)
+                    self.val_f1.append(val_f1)
+            
             # Update progress bar or print metrics
             if p:
                 if use_tqdm and isinstance(progress_bar, tqdm):
@@ -500,10 +522,20 @@ class NeuralNetwork:
         if not hasattr(self, 'train_loss'):
             raise ValueError("No training history available. Please set track_metrics=True during training.")
         
-        plt.figure(figsize=(18, 5))  # Adjust the figure size to accommodate three plots
+        # Different number of plots for metrics vs metrics/adv_metrics
+        
+        # If ONLY metrics are tracked OR ONLY adv_metrics are tracked
+        if (hasattr(self, 'train_loss') + hasattr(self, 'train_precision')) == 1:
+            cnt = 1
+            plt.figure(figsize=(18, 5))  # Adjust the figure size to accommodate three plots
+            
+        elif (hasattr(self, 'train_loss') + hasattr(self, 'train_precision')) == 2:
+            cnt = 2
+            plt.figure(figsize=(18, 10))
         
         # Plot Loss
-        plt.subplot(1, 3, 1)
+        if cnt == 1: plt.subplot(1, 3, 1)
+        if cnt == 2: plt.subplot(2, 3, 1)
         plt.plot(self.train_loss, label='Train Loss')
         if hasattr(self, 'val_loss'):
             plt.plot(self.val_loss, label='Val Loss')
@@ -513,7 +545,8 @@ class NeuralNetwork:
         plt.legend()
         
         # Plot Accuracy
-        plt.subplot(1, 3, 2)
+        if cnt == 1: plt.subplot(1, 3, 2)
+        if cnt == 2: plt.subplot(2, 3, 2)
         plt.plot(self.train_accuracy, label='Train Accuracy')
         if hasattr(self, 'val_accuracy'):
             plt.plot(self.val_accuracy, label='Val Accuracy')
@@ -523,12 +556,45 @@ class NeuralNetwork:
         plt.legend()
         
         # Plot Learning Rate
-        plt.subplot(1, 3, 3)
+        if cnt == 1: plt.subplot(1, 3, 3)
+        if cnt == 2: plt.subplot(2, 3, 3)
         plt.plot(self.learning_rates, label='Learning Rate')
         plt.title("Learning Rate")
         plt.xlabel("Epoch")
         plt.ylabel("Learning Rate")
         plt.legend()
+        
+        
+        if cnt == 2:
+            # Plot Precision
+            plt.subplot(2, 3, 4)
+            plt.plot(self.train_precision, label='Train Precision')
+            if hasattr(self, 'val_precision'):
+                plt.plot(self.val_precision, label='Val Precision')
+            plt.title("Precision")
+            plt.xlabel("Epoch")
+            plt.ylabel("Precision")
+            plt.legend()
+            
+            # Plot Recall
+            plt.subplot(2, 3, 5)
+            plt.plot(self.train_recall, label='Train Recall')
+            if hasattr(self, 'val_recall'):
+                plt.plot(self.val_recall, label='Val Recall')
+            plt.title("Recall")
+            plt.xlabel("Epoch")
+            plt.ylabel("Recall")
+            plt.legend()
+            
+            # Plot F1 Score
+            plt.subplot(2, 3, 6)
+            plt.plot(self.train_f1, label='Train F1 Score')
+            if hasattr(self, 'val_f1'):
+                plt.plot(self.val_f1, label='Val F1 Score')
+            plt.title("F1 Score")
+            plt.xlabel("Epoch")
+            plt.ylabel("F1 Score")
+            plt.legend()       
         
         plt.tight_layout()
         
@@ -548,7 +614,7 @@ class NeuralNetwork:
 
     def train_numba(self, X_train, y_train, X_val=None, y_val=None, 
               optimizer=None, epochs=100, batch_size=32, 
-              early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1, track_metrics=False):
+              early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1, track_metrics=False, track_adv_metrics=False):
         """
         Trains the neural network model.
         Parameters:
@@ -623,7 +689,17 @@ class NeuralNetwork:
             self.learning_rates = []
             if X_val is not None:
                 self.val_loss = []
-                self.val_accuracy = []            
+                self.val_accuracy = []     
+                
+        # Set advanced metrics to track
+        if track_adv_metrics:
+            self.train_precision = []
+            self.train_recall = []
+            self.train_f1 = []
+            if X_val is not None:
+                self.val_precision = []
+                self.val_recall = []
+                self.val_f1 = []       
 
         # Training loop with progress bar
         progress_bar = tqdm(range(epochs)) if use_tqdm else range(epochs)
@@ -698,6 +774,18 @@ class NeuralNetwork:
                 if X_val is not None:
                     self.val_loss.append(val_loss)
                     self.val_accuracy.append(val_accuracy)
+                    
+            # Store advanced metrics
+            if track_adv_metrics:
+                train_precision, train_recall, train_f1 = self.calculate_precision_recall_f1(X_train, y_train)
+                self.train_precision.append(train_precision)
+                self.train_recall.append(train_recall)
+                self.train_f1.append(train_f1)
+                if X_val is not None:
+                    val_precision, val_recall, val_f1 = self.calculate_precision_recall_f1(X_val, y_val)
+                    self.val_precision.append(val_precision)
+                    self.val_recall.append(val_recall)
+                    self.val_f1.append(val_f1)
             
             # Update progress bar or print metrics
             if p:
@@ -779,6 +867,27 @@ class NeuralNetwork:
         # Convert to Python float
         return float(loss)
 
+    def calculate_precision_recall_f1(self, X, y):
+        """
+        Calculates precision, recall, and F1 score.
+        Parameters:
+            - X (ndarray): Input data
+            - y (ndarray): Target labels
+        Returns:
+            - precision (float): Precision score
+            - recall (float): Recall score
+            - f1 (float): F1 score
+        """
+        _, predicted = self.evaluate(X, y)
+        true_positive = np.sum((predicted == 1) & (y == 1))
+        false_positive = np.sum((predicted == 1) & (y == 0))
+        false_negative = np.sum((predicted == 0) & (y == 1))
+        
+        precision = true_positive / (true_positive + false_positive + 1e-15)
+        recall = true_positive / (true_positive + false_negative + 1e-15)
+        f1 = 2 * (precision * recall) / (precision + recall + 1e-15)
+        
+        return precision, recall, f1
 
     def evaluate(self, X, y):
         """
