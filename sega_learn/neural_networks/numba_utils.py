@@ -32,12 +32,12 @@ def forward_jit(X, weights, biases, activations, dropout_rate, training, is_bina
         
         # Apply dropout only during training
         if training and dropout_rate > 0:
-            layer_outputs[i + 1] = np.multiply(layer_outputs[i + 1], 
-                                              np.random.rand(*layer_outputs[i + 1].shape) < (1 - dropout_rate)) / (1 - dropout_rate)
+            # layer_outputs[i + 1] = np.multiply(layer_outputs[i + 1], 
+            #                                   np.random.rand(*layer_outputs[i + 1].shape) < (1 - dropout_rate)) / (1 - dropout_rate)
+            layer_outputs[i + 1] = apply_dropout_jit(layer_outputs[i + 1], dropout_rate)
                         
     # Last layer (output layer)
     Z = np.dot(layer_outputs[-2], weights[-1]) + biases[-1]
-    # TODO: use the selected activation function for the output layer, falling back if not available
     if is_binary:
         layer_outputs[-1] = sigmoid(Z)
     else:

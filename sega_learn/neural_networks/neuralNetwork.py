@@ -274,7 +274,6 @@ class NeuralNetwork:
             Z = np.dot(A, self.layers[-1].weights) + self.layers[-1].biases
             
             # Apply appropriate activation for output layer
-            # TODO: use the selected activation function for the output layer, falling back if not available
             if self.is_binary:
                 output = Activation.sigmoid(Z)
             else:
@@ -335,7 +334,7 @@ class NeuralNetwork:
                 
                 # Calculate gradients
                 # Add L2 regularization
-                dW = np.dot(prev_activation.T, dZ) / m + self.reg_lambda * self.layers[i].weights
+                dW = np.dot(prev_activation.T, dZ) / m + self.reg_lambda * self.compute_l2_reg([self.layers[i].weights])
                 db = np.sum(dZ, axis=0, keepdims=True) / m
                 
                 # Store gradients in layer
@@ -383,6 +382,7 @@ class NeuralNetwork:
         best_biases = [layer.biases.copy() for layer in self.layers]
         
         # Set metrics to track
+        # TODO: track learning rate
         if track_metrics:
             self.train_loss = []
             self.train_accuracy = []
@@ -715,6 +715,13 @@ class NeuralNetwork:
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
             
+    @staticmethod
+    def compute_l2_reg(weights):
+        total = 0.0
+        for i in range(len(weights)):
+            total += np.sum(weights[i] ** 2)
+        return total        
+    
     def calculate_loss(self, X, y):
         """
         Calculates the loss with L2 regularization.
@@ -750,7 +757,8 @@ class NeuralNetwork:
             loss += l2_reg
         else:
             # Add L2 regularization
-            l2_reg = self.reg_lambda * sum(np.sum(layer.weights**2) for layer in self.layers)
+            # l2_reg = self.reg_lambda * sum(np.sum(layer.weights**2) for layer in self.layers)
+            l2_reg = self.reg_lambda *  self.compute_l2_reg([layer.weights for layer in self.layers])   
             loss += l2_reg
         
         # Convert to Python float
