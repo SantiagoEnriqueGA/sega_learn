@@ -38,7 +38,7 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test,
     # scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10) 
 
     # Call the train method
-    nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=scheduler,epochs=epochs, batch_size=batch_size, early_stopping_threshold=10)
+    nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=scheduler,epochs=epochs, batch_size=batch_size, early_stopping_threshold=10, track_metrics=True)
 
     # Evaluate the Model
     test_accuracy, y_pred = nn.evaluate(X_test, y_test)
@@ -46,9 +46,13 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test,
 
     print("Classification Report:")
     print(classification_report(y_test, y_pred, zero_division=0))
+    
+    # Plot metrics
+    # nn.plot_metrics()
+    # nn.plot_metrics(save_dir="vanilla_nn_metrics.png")
 
 
-def train_and_evaluate_mode_numba(X_train, X_test, y_train, y_test, 
+def train_and_evaluate_model_numba(X_train, X_test, y_train, y_test, 
                              layers, output_size, lr, dropout, reg_lambda, 
                              hidden_activation='relu', output_activation='softmax',
                              epochs=100, batch_size=32):
@@ -81,7 +85,7 @@ def train_and_evaluate_mode_numba(X_train, X_test, y_train, y_test,
     # scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10) 
 
     # Call the train method
-    nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=scheduler,epochs=epochs, batch_size=batch_size, early_stopping_threshold=10)
+    nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=scheduler,epochs=epochs, batch_size=batch_size, early_stopping_threshold=10, track_metrics=True)
 
     # Evaluate the Model
     test_accuracy, y_pred = nn.evaluate(X_test, y_test)
@@ -90,7 +94,9 @@ def train_and_evaluate_mode_numba(X_train, X_test, y_train, y_test,
     print("Classification Report:")
     print(classification_report(y_test, y_pred, zero_division=0))
 
-
+    # Plot metrics
+    # nn.plot_metrics()
+    # nn.plot_metrics(save_dir="numba_nn_metrics.png")
 
 def main():
     import random
@@ -114,7 +120,7 @@ def main():
                                 epochs=1000, batch_size=32)
     
     # To use the Numba backend:
-    # train_and_evaluate_mode_numba(X_train, X_test, y_train, y_test, 
+    # train_and_evaluate_model_numba(X_train, X_test, y_train, y_test, 
     #                               layers, output_size, lr, dropout, reg_lambda, 
     #                               hidden_activation='relu', output_activation='softmax',
     #                               epochs=1000, batch_size=32)

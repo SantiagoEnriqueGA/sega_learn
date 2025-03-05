@@ -348,7 +348,7 @@ class NeuralNetwork:
 
     def train(self, X_train, y_train, X_val=None, y_val=None, 
               optimizer=None, epochs=100, batch_size=32, 
-              early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1):
+              early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1, track_metrics=False):
         """
         Trains the neural network model.
         Parameters:
@@ -359,14 +359,14 @@ class NeuralNetwork:
             - optimizer (Optimizer): Optimizer for updating parameters (default: Adam, lr=0.0001).
             - epochs (int): Number of training epochs (default: 100).
             - batch_size (int): Batch size for mini-batch gradient descent (default: 32).
-            - early_stopping_patience (int): Patience for early stopping (default: 10).
+            - early_stopping_threshold (int): Patience for early stopping (default: 10).
             - lr_scheduler (Scheduler): Learning rate scheduler (default: None).
             - verbose (bool): Whether to print training progress (default: True).
             - use_tqdm (bool): Whether to use tqdm for progress bar (default: True).
             - n_jobs (int): Number of jobs for parallel processing (default: 1).
         """
         if self.use_numba:
-            self.train_numba(X_train, y_train, X_val, y_val, optimizer, epochs, batch_size, early_stopping_threshold, lr_scheduler, p, use_tqdm, n_jobs)
+            self.train_numba(X_train, y_train, X_val, y_val, optimizer, epochs, batch_size, early_stopping_threshold, lr_scheduler, p, use_tqdm, n_jobs, track_metrics)
             return
 
         # Default optimizer if not provided
@@ -381,6 +381,14 @@ class NeuralNetwork:
         patience_counter = 0
         best_weights = [layer.weights.copy() for layer in self.layers]
         best_biases = [layer.biases.copy() for layer in self.layers]
+        
+        # Set metrics to track
+        if track_metrics:
+            self.train_loss = []
+            self.train_accuracy = []
+            if X_val is not None:
+                self.val_loss = []
+                self.val_accuracy = []            
         
         def process_batch(start_idx):
             X_batch = X_shuffled[start_idx:start_idx+batch_size]
@@ -441,6 +449,14 @@ class NeuralNetwork:
                     best_biases = [layer.biases.copy() for layer in self.layers]
                 else:
                     patience_counter += 1
+                    
+            # Store metrics
+            if track_metrics:
+                self.train_loss.append(train_loss)
+                self.train_accuracy.append(train_accuracy)
+                if X_val is not None:
+                    self.val_loss.append(val_loss)
+                    self.val_accuracy.append(val_accuracy)
             
             # Update progress bar or print metrics
             if p:
@@ -473,6 +489,40 @@ class NeuralNetwork:
         for i, layer in enumerate(self.layers):
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
+            
+    def plot_metrics(self, save_dir=None):
+        """
+        Plots the training and validation metrics.
+        """
+        import matplotlib.pyplot as plt
+        
+        if not hasattr(self, 'train_loss'):
+            raise ValueError("No training history available. Please set track_metrics=True during training.")
+        
+        plt.figure(figsize=(12, 5))
+        plt.subplot(1, 2, 1)
+        plt.plot(self.train_loss, label='Train Loss')
+        if hasattr(self, 'val_loss'):
+            plt.plot(self.val_loss, label='Val Loss')
+        plt.title("Loss")
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.legend()
+        
+        plt.subplot(1, 2, 2)
+        plt.plot(self.train_accuracy, label='Train Accuracy')
+        if hasattr(self, 'val_accuracy'):
+            plt.plot(self.val_accuracy, label='Val Accuracy')
+        plt.title("Accuracy")
+        plt.xlabel("Epoch")
+        plt.ylabel("Accuracy")
+        plt.legend()
+        plt.tight_layout()
+        
+        if save_dir:
+            plt.savefig(save_dir, dpi=600)
+        else:
+            plt.show()
 
     @staticmethod
     def is_not_instance_of_classes(obj, classes):
@@ -485,7 +535,7 @@ class NeuralNetwork:
 
     def train_numba(self, X_train, y_train, X_val=None, y_val=None, 
               optimizer=None, epochs=100, batch_size=32, 
-              early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1):
+              early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1, track_metrics=False):
         """
         Trains the neural network model.
         Parameters:
@@ -552,6 +602,14 @@ class NeuralNetwork:
         if n_jobs > 1:
             import os
             os.environ['NUMBA_NUM_THREADS'] = str(n_jobs)
+            
+                # Set metrics to track
+        if track_metrics:
+            self.train_loss = []
+            self.train_accuracy = []
+            if X_val is not None:
+                self.val_loss = []
+                self.val_accuracy = []            
 
         # Training loop with progress bar
         progress_bar = tqdm(range(epochs)) if use_tqdm else range(epochs)
@@ -617,6 +675,14 @@ class NeuralNetwork:
                     best_biases = [layer.biases.copy() for layer in self.layers]
                 else:
                     patience_counter += 1
+                    
+            # Store metrics
+            if track_metrics:
+                self.train_loss.append(train_loss)
+                self.train_accuracy.append(train_accuracy)
+                if X_val is not None:
+                    self.val_loss.append(val_loss)
+                    self.val_accuracy.append(val_accuracy)
             
             # Update progress bar or print metrics
             if p:
