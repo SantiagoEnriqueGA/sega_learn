@@ -339,7 +339,8 @@ class NeuralNetwork:
                 db = np.sum(dZ, axis=0, keepdims=True) / m
                 
                 # Store gradients in layer
-                self.layers[i].gradients = (dW, db)
+                self.layers[i].weight_gradients = dW
+                self.layers[i].bias_gradients = db
                 
                 # Calculate dA for next iteration (previous layer)
                 if i > 0:
@@ -391,7 +392,8 @@ class NeuralNetwork:
             
             # Update weights and biases
             for idx, layer in enumerate(self.layers):
-                dW, db = layer.gradients
+                dW = layer.weight_gradients
+                db = layer.bias_gradients
                 optimizer.update(layer, dW, db, idx)
         
         # Training loop with progress bar

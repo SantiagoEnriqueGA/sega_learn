@@ -87,7 +87,8 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
         self.nn_binary.forward(self.X)
         self.nn_binary.backward(self.y_binary)
         for layer in self.nn_binary.layers:
-            dW, db = layer.gradients
+            dW = layer.weight_gradients
+            db = layer.bias_gradients
             self.assertEqual(dW.shape, layer.weights.shape)
             self.assertEqual(db.shape, layer.biases.shape)
             self.assertFalse(np.all(dW == 0))  # Ensure gradients are non-zero

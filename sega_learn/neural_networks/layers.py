@@ -19,11 +19,13 @@ class Layer:
         self.weights = np.random.randn(input_size, output_size) * scale
         self.biases = np.zeros((1, output_size))
         self.activation = activation
-        self.gradients = None
+        self.weight_gradients = None
+        self.bias_gradients = None
         
     def zero_grad(self):
         """Reset the gradients of the weights and biases to zero."""
-        self.gradients = None
+        self.weight_gradients = None
+        self.bias_gradients = None
 
     def activate(self, Z):
         """Apply activation function."""
@@ -55,4 +57,4 @@ class Layer:
             return np.ones_like(Z)  # Identity for compatibility
         else:
             raise ValueError(f"Unsupported activation: {self.activation}")
-        
+
