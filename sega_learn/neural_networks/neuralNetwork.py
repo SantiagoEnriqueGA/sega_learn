@@ -382,13 +382,13 @@ class NeuralNetwork:
         best_biases = [layer.biases.copy() for layer in self.layers]
         
         # Set metrics to track
-        # TODO: track learning rate
         if track_metrics:
             self.train_loss = []
             self.train_accuracy = []
+            self.learning_rates = []
             if X_val is not None:
                 self.val_loss = []
-                self.val_accuracy = []            
+                self.val_accuracy = []
         
         def process_batch(start_idx):
             X_batch = X_shuffled[start_idx:start_idx+batch_size]
@@ -416,7 +416,7 @@ class NeuralNetwork:
             np.random.shuffle(indices)
             X_shuffled = X_train[indices]
             y_shuffled = y_train[indices]
-            
+        
             # Mini-batch training with parallel processing
             Parallel(n_jobs=n_jobs)(delayed(process_batch)(i) for i in range(0, X_train.shape[0], batch_size))
             
@@ -454,6 +454,7 @@ class NeuralNetwork:
             if track_metrics:
                 self.train_loss.append(train_loss)
                 self.train_accuracy.append(train_accuracy)
+                self.learning_rates.append(optimizer.learning_rate)
                 if X_val is not None:
                     self.val_loss.append(val_loss)
                     self.val_accuracy.append(val_accuracy)
@@ -499,8 +500,10 @@ class NeuralNetwork:
         if not hasattr(self, 'train_loss'):
             raise ValueError("No training history available. Please set track_metrics=True during training.")
         
-        plt.figure(figsize=(12, 5))
-        plt.subplot(1, 2, 1)
+        plt.figure(figsize=(18, 5))  # Adjust the figure size to accommodate three plots
+        
+        # Plot Loss
+        plt.subplot(1, 3, 1)
         plt.plot(self.train_loss, label='Train Loss')
         if hasattr(self, 'val_loss'):
             plt.plot(self.val_loss, label='Val Loss')
@@ -509,7 +512,8 @@ class NeuralNetwork:
         plt.ylabel("Loss")
         plt.legend()
         
-        plt.subplot(1, 2, 2)
+        # Plot Accuracy
+        plt.subplot(1, 3, 2)
         plt.plot(self.train_accuracy, label='Train Accuracy')
         if hasattr(self, 'val_accuracy'):
             plt.plot(self.val_accuracy, label='Val Accuracy')
@@ -517,6 +521,15 @@ class NeuralNetwork:
         plt.xlabel("Epoch")
         plt.ylabel("Accuracy")
         plt.legend()
+        
+        # Plot Learning Rate
+        plt.subplot(1, 3, 3)
+        plt.plot(self.learning_rates, label='Learning Rate')
+        plt.title("Learning Rate")
+        plt.xlabel("Epoch")
+        plt.ylabel("Learning Rate")
+        plt.legend()
+        
         plt.tight_layout()
         
         if save_dir:
@@ -603,10 +616,11 @@ class NeuralNetwork:
             import os
             os.environ['NUMBA_NUM_THREADS'] = str(n_jobs)
             
-                # Set metrics to track
+        # Set metrics to track
         if track_metrics:
             self.train_loss = []
             self.train_accuracy = []
+            self.learning_rates = []
             if X_val is not None:
                 self.val_loss = []
                 self.val_accuracy = []            
@@ -680,6 +694,7 @@ class NeuralNetwork:
             if track_metrics:
                 self.train_loss.append(train_loss)
                 self.train_accuracy.append(train_accuracy)
+                self.learning_rates.append(optimizer.learning_rate)
                 if X_val is not None:
                     self.val_loss.append(val_loss)
                     self.val_accuracy.append(val_accuracy)
