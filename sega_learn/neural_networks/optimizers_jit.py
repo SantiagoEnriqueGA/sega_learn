@@ -86,7 +86,8 @@ class JITAdamOptimizer:
         layer.biases -= self.learning_rate * db  # Update biases
 
     def update_layers(self, layers, dWs, dbs):
-        self.t += 1  # Increment timestep
+        # Increment timestep by number of layers
+        self.t += len(layers)
         adam_update_layers(self.m, self.v, self.t, layers, dWs, dbs, 
                         self.learning_rate, self.beta1, self.beta2, self.epsilon, self.reg_lambda)
 
