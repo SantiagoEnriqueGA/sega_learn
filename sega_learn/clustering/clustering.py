@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from heapq import heappush, heappop
 
+from sega_learn.utils import DataPrep
+
 class KMeans:
     """
     This class implements the K-Means clustering algorithm along with methods for evaluating the optimal number of clusters 
@@ -68,18 +70,8 @@ class KMeans:
         Returns:
         - X_processed: The processed data with categorical columns encoded.
         """
-        cat_columns = [col for col in range(X.shape[1]) if isinstance(X[0, col], str)]  # Identify categorical columns
-        
-        if not cat_columns:     # No categorical columns found
-            return X  
-        
-        # TODO: Replace sklearn OneHotEncoder with custom implementation
-        from sklearn.preprocessing import OneHotEncoder
-        encoder = OneHotEncoder(sparse_output=False)                # One-hot encoder
-        X_cat_encoded = encoder.fit_transform(X[:, cat_columns])    # Replace categorical columns with encoded values
-        
-        X_processed = np.delete(X, cat_columns, axis=1)             # Remove categorical columns
-        X_processed = np.hstack((X_processed, X_cat_encoded))       # Concatenate encoded columns
+        categorical_cols = DataPrep.find_categorical_columns(X) 
+        X_processed = DataPrep.one_hot_encode(X, categorical_cols)  # One-hot encode categorical columns
         
         return X_processed
     
@@ -475,18 +467,8 @@ class DBSCAN:
         Returns:
         - X_processed: The processed data with categorical columns encoded.
         """
-        cat_columns = [col for col in range(X.shape[1]) if isinstance(X[0, col], str)]  # Identify categorical columns
-        
-        if not cat_columns: # If no categorical columns found
-            return X        # Return the input data
-        
-        # TODO: Replace sklearn OneHotEncoder with custom implementation
-        from sklearn.preprocessing import OneHotEncoder
-        encoder = OneHotEncoder(sparse_output=False)                # One-hot encoder
-        X_cat_encoded = encoder.fit_transform(X[:, cat_columns])    # Replace categorical columns with encoded values
-        
-        X_processed = np.delete(X, cat_columns, axis=1)         # Remove categorical columns
-        X_processed = np.hstack((X_processed, X_cat_encoded))   # Concatenate encoded columns
+        categorical_cols = DataPrep.find_categorical_columns(X) 
+        X_processed = DataPrep.one_hot_encode(X, categorical_cols)  # One-hot encode categorical columns
         
         return X_processed
 

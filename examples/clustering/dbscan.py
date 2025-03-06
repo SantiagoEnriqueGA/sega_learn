@@ -8,6 +8,7 @@ from sega_learn.clustering import *
 from sklearn.datasets import make_blobs
 import matplotlib.pyplot as plt
 import numpy as np
+np.random.seed(0)
 
 # Generate synthetic data for testing
 true_k = 8
