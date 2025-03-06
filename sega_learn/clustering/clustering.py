@@ -73,6 +73,7 @@ class KMeans:
         if not cat_columns:     # No categorical columns found
             return X  
         
+        # TODO: Replace sklearn OneHotEncoder with custom implementation
         from sklearn.preprocessing import OneHotEncoder
         encoder = OneHotEncoder(sparse_output=False)                # One-hot encoder
         X_cat_encoded = encoder.fit_transform(X[:, cat_columns])    # Replace categorical columns with encoded values
@@ -479,6 +480,7 @@ class DBSCAN:
         if not cat_columns: # If no categorical columns found
             return X        # Return the input data
         
+        # TODO: Replace sklearn OneHotEncoder with custom implementation
         from sklearn.preprocessing import OneHotEncoder
         encoder = OneHotEncoder(sparse_output=False)                # One-hot encoder
         X_cat_encoded = encoder.fit_transform(X[:, cat_columns])    # Replace categorical columns with encoded values
