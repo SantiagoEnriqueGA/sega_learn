@@ -5,7 +5,46 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "sega_learn"
 version = "0.1.0"
-dependencies = []
+requires-python = ">=3.11"
+dependencies = [
+    # Core data science and machine learning libraries
+    "numpy>=1.26.4",
+    "scipy>=1.14.1",
+    "scikit-learn>=1.5.2",
+    "pandas>=2.2.3",
+    # Visualization libraries
+    "matplotlib>=3.9.2",
+    "seaborn>=0.13.2",
+    # Utilities
+    "tqdm>=4.66.5",
+    "pillow>=11.0.0",
+    "pywin32>=304; sys_platform == 'win32'",  # Windows-specific
+    # Build tools
+    "setuptools>=75.1.0",
+    "wheel>=0.44.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Testing and code quality tools
+    "pytest>=7.0.0",
+    "black>=23.12.1",
+    "mypy>=1.0.0",
+    "flake8>=6.0.0",
+    # Documentation tools
+    "sphinx>=7.0.0",
+    "alabaster>=1.0.0",
+    "pydoc-markdown>=4.8.2",
+    # Development and interactive tools
+    "jupyter>=1.1.1",
+    "ipykernel>=6.29.5",
+]
+accelerate = [
+    # Acceleration and GPU support
+    "numba>=0.61.0",
+    "numba-cuda>=0.5.0",
+    "cupy-cuda12x>=13.3.0",
+]
 
 [tool.setuptools.packages]
-find = { include = ["sega_learn*"] }  # This ensures only sega_learn is installed
+find = { include = ["sega_learn*"] }
