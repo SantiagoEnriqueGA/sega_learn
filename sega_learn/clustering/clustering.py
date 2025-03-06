@@ -332,7 +332,10 @@ class KMeans:
         - db_optimal_k: The optimal number of clusters based on the Davies-Bouldin Index.
         - silhouette_optimal_k: The optimal number of clusters based on the Silhouette Score.
         """
-        import matplotlib.pyplot as plt
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError:
+            raise ImportError("Matplotlib is required for plotting. Please install matplotlib first.")
         
         X = self.X.astype(float)                # Convert X to float type if necessary
         distortions = self.elbow_method(max_k)  # Calculate distortions for each k

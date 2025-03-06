@@ -5,7 +5,6 @@ import ast
 from datetime import datetime
 from math import log, floor, ceil
 import random
-import matplotlib.pyplot as plt
 
 class RegressorTreeUtility(object):
     """

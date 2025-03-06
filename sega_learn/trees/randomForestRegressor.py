@@ -13,7 +13,6 @@ import ast
 from datetime import datetime
 from math import log, floor, ceil
 import random
-import matplotlib.pyplot as plt
 
 from .treeRegressor import RegressorTreeUtility, RegressorTree
 

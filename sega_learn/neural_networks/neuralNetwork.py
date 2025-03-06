@@ -535,7 +535,10 @@ class NeuralNetwork:
         """
         Plots the training and validation metrics.
         """
-        import matplotlib.pyplot as plt
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError:
+            raise ImportError("Matplotlib is required for plotting. Please install matplotlib first.")
         
         if not hasattr(self, 'train_loss'):
             raise ValueError("No training history available. Please set track_metrics=True during training.")

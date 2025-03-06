@@ -14,7 +14,6 @@ import ast
 from datetime import datetime
 from math import log, floor, ceil
 import random
-import matplotlib.pyplot as plt
 
 from .treeClassifier import ClassifierTreeUtility, ClassifierTree
 
@@ -233,6 +232,11 @@ class RandomForestClassifier(object):
         """
         Plots the information gains of all decision trees together.
         """
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError:
+            raise ImportError("Matplotlib is required for plotting. Please install matplotlib first.")
+        
         for i, info_gain in enumerate(self.info_gains):     # For each decision tree
             plt.plot(info_gain, label=f"Tree {i+1}")        # Plot the information gain
         plt.xlabel("Split")
@@ -245,6 +249,11 @@ class RandomForestClassifier(object):
         """
         Plots the information gain of each decision tree separately.
         """
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError:
+            raise ImportError("Matplotlib is required for plotting. Please install matplotlib first.")
+        
         for i, info_gain in enumerate(self.info_gains):     # For each decision tree, plot the information gain
             plt.plot(info_gain)
             plt.xlabel("Split")
