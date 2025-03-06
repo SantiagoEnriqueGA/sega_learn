@@ -7,7 +7,6 @@ from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 import warnings
 import numpy as np
 from joblib import Parallel, delayed
-from tqdm.auto import tqdm
 
 try:
     from numba import njit, float64, int32, prange
@@ -21,6 +20,12 @@ try:
 except:
     NUMBA_AVAILABLE = False
 
+try:
+    from tqdm.auto import tqdm
+    TQDM_AVAILABLE = True
+except:
+    TQDM_AVAILABLE = False
+
 class NeuralNetwork:
     """
     Neural network class for training and evaluating a custom neural network model.
@@ -33,10 +38,14 @@ class NeuralNetwork:
     
     def __init__(self, layer_sizes, dropout_rate=0.2, reg_lambda=0.01, activations=None, use_numba=False, compile_numba=True, progress_bar=True):        
         if use_numba and not NUMBA_AVAILABLE: raise ValueError("Numba is not available. Please install Numba to use the Numba backend.")
+        if progress_bar and not TQDM_AVAILABLE: 
+            warnings.warn("TQDM is not available. Disabling progress bar.", UserWarning, stacklevel=2)
+            self.progress_bar = False
+        else:
+            self.progress_bar = progress_bar
         
         self.use_numba = use_numba
         self.compiled = False
-        self.progress_bar = progress_bar
 
         self.layer_sizes = layer_sizes                                          # List of layer sizes
         self.dropout_rate = dropout_rate                                        # Dropout rate
@@ -364,6 +373,10 @@ class NeuralNetwork:
             - use_tqdm (bool): Whether to use tqdm for progress bar (default: True).
             - n_jobs (int): Number of jobs for parallel processing (default: 1).
         """
+        if use_tqdm and not TQDM_AVAILABLE:
+            warnings.warn("TQDM is not available. Disabling progress bar.", UserWarning, stacklevel=2)
+            use_tqdm = False
+        
         if self.use_numba:
             self.train_numba(X_train, y_train, X_val, y_val, optimizer, epochs, batch_size, early_stopping_threshold, lr_scheduler, p, use_tqdm, n_jobs, track_metrics, track_adv_metrics)
             return
@@ -494,18 +507,23 @@ class NeuralNetwork:
             if lr_scheduler:
                 if isinstance(lr_scheduler, lr_scheduler_plateau):
                     msg = lr_scheduler.step(epoch, train_loss if X_val is None else val_loss)
-                    if p and msg:
+                    if use_tqdm and p and msg:
                         tqdm.write(msg)
+                    elif p and msg:
+                        print(msg)
                 else:
                     msg = lr_scheduler.step(epoch)
-                    if p and msg:
+                    if use_tqdm and p and msg:
                         tqdm.write(msg)
-                    
+                    elif p and msg:
+                        print(msg)                    
             
             # Early stopping
             if patience_counter >= early_stopping_threshold:
                 if p and use_tqdm:
                     tqdm.write(f"Early stopping at epoch {epoch+1}")
+                elif p:
+                    print(f"Early stopping at epoch {epoch+1}")
                 break
         
         # Restore best weights
@@ -956,6 +974,10 @@ class NeuralNetwork:
             - best_params: Best hyperparameters found
             - best_accuracy: Best validation accuracy
         """
+        if not TQDM_AVAILABLE:
+            # TODO: Make tqdm optional for hyperparameter tuning
+            raise ImportError("TQDM is currently required for hyperparameter tuning. Please install it using 'pip install tqdm'.")
+        
         from itertools import product
         import warnings
         warnings.filterwarnings('ignore')
