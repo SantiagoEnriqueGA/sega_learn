@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.neighbors import NearestNeighbors
+from sega_learn.nearest_neighbors import KNeighborsClassifier
 
 class _Utils:
     """
@@ -122,14 +122,12 @@ class SMOTE:
         separated_samples = _Utils.separate_samples(X, y)
         X_minority = separated_samples[minority_class]
         X_majority = separated_samples[majority_class]
-        
-        # Fit nearest neighbors
-        # TODO: Replace with custom implementation of KNN
-        nn = NearestNeighbors(n_neighbors=self.k_neighbors + 1)
-        nn.fit(X_minority)
-        
-        # Get nearest neighbors for each minority sample
-        nns = nn.kneighbors(X_minority, return_distance=False)[:, 1:]
+        y_minority = np.full(len(X_minority), minority_class)
+
+        # Instantiate the KNNClassifier
+        nn = KNeighborsClassifier(n_neighbors=self.k_neighbors + 1, one_hot_encode=True)
+        nn.fit(X_minority, y_minority)       
+        nns = nn.get_distance_indices(X_minority)
         
         # Generate synthetic samples
         synthetic_samples = []

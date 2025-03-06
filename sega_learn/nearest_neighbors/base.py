@@ -51,6 +51,27 @@ class KNeighborsBase(ABC):
         self.X_train = X
         self.y_train = y
         
+    def get_distance_indices(self, X):
+        """
+        Compute the distances and return the indices of the nearest points im the training data.
+        Parameters:
+        - X: array-like, shape (n_samples, n_features). The input data.
+        Returns:
+        - indices: array, shape (n_samples, n_neighbors). The indices of the nearest neighbors.
+        """
+        # Apply one-hot encoding if specified        
+        if self.one_hot_encode: X = self._one_hot_encode(X)
+        
+        # Set the floating point precision for the input data
+        X, _ = self._data_precision(X)
+        
+        # Compute the distances between all training samples and the input data
+        distances = self._compute_distances(X)
+        
+        # Find the indices of the k nearest neighbors
+        indices = np.argsort(distances, axis=1)[:, 1:]
+        return indices
+        
     def _data_precision(self, X, y=None):
         """
         Set the floating point precision for the input data.
