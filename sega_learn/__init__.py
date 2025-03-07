@@ -6,6 +6,11 @@ from .utils import (
     GridSearchCV,
     RandomSearchCV,
     Metrics,
+    PCA,
+    RandomOverSampler,
+    RandomUnderSampler,
+    SMOTE,
+    Augmenter,
 )
 
 from .clustering import (
@@ -63,6 +68,11 @@ __all__ = [
     "GridSearchCV",
     "RandomSearchCV",
     "Metrics",
+    "PCA",
+    "RandomOverSampler",
+    "RandomUnderSampler",
+    "SMOTE",
+    "Augmenter",
     
     # Clustering
     "KMeans",
