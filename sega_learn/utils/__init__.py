@@ -4,7 +4,7 @@ from .polynomialTransform import PolynomialTransform
 from .dataPrep import DataPrep
 from .modelSelection import ModelSelectionUtility, GridSearchCV, RandomSearchCV
 from .metrics import Metrics
-from .decomposition import PCA
+from .decomposition import PCA, SVD
 from .dataAugmentation import (
     RandomOverSampler,
     RandomUnderSampler,
@@ -25,4 +25,5 @@ __all__ = [
     "SMOTE",
     "Augmenter",
     "PCA",
+    "SVD",
 ]

@@ -774,5 +774,70 @@ class TestDataAugmentation(unittest.TestCase):
             augmenter = Augmenter(techniques=[self.rus, invalid_technique], verbose=False)
             augmenter.augment(self.X, self.y)
 
+class TestDataDecomposition(unittest.TestCase):
+    """
+    Unit test for the Decomposition class.
+    Methods:
+    - setUp: Initializes a new instance of the Decomposition class before each test method is run.
+    - test_pca_fit_transform: Tests the fit_transform method of the PCA class.
+    - test_pca_inverse_transform: Tests the inverse_transform method of the PCA class.
+    - test_svd_fit_transform: Tests the fit_transform method of the SVD class.
+    - test_svd_get_singular_values: Tests the get_singular_values method of the SVD class.
+    """
+    @classmethod
+    def setUpClass(cls):
+        print("Testing Decomposition")
+    
+    def setUp(self):
+        self.X = np.random.rand(100, 5)
+    
+    def test_pca_fit_transform(self):
+        pca = PCA(n_components=2)
+        X_transformed = pca.fit_transform(self.X)
+        self.assertEqual(X_transformed.shape[1], 2)
+        self.assertEqual(pca.get_components().shape[1], 2)
+    
+    def test_svd_fit_transform(self):
+        svd = SVD(n_components=2)
+        X_transformed = svd.fit_transform(self.X)
+        self.assertEqual(X_transformed.shape[1], 2)
+        self.assertEqual(svd.get_singular_values().shape[0], 2)
+    
+    def test_svd_get_singular_values(self):
+        svd = SVD(n_components=2)
+        svd.fit(self.X)
+        singular_values = svd.get_singular_values()
+        self.assertEqual(singular_values.shape[0], 2)
+
+    def test_pca_invalid_input(self):
+        pca = PCA(n_components=2)
+        with self.assertRaises(ValueError):
+            pca.fit("invalid_input")
+        with self.assertRaises(ValueError):
+            pca.fit(np.random.rand(100))
+        with self.assertRaises(ValueError):
+            pca.fit(np.random.rand(100, 1))
+        with self.assertRaises(ValueError):
+            pca.transform("invalid_input")
+        with self.assertRaises(ValueError):
+            pca.transform(np.random.rand(100))
+        with self.assertRaises(ValueError):
+            pca.inverse_transform("invalid_input")
+        with self.assertRaises(ValueError):
+            pca.inverse_transform(np.random.rand(100))
+
+    def test_svd_invalid_input(self):
+        svd = SVD(n_components=2)
+        with self.assertRaises(ValueError):
+            svd.fit("invalid_input")
+        with self.assertRaises(ValueError):
+            svd.fit(np.random.rand(100))
+        with self.assertRaises(ValueError):
+            svd.fit(np.random.rand(1, 100))
+        with self.assertRaises(ValueError):
+            svd.transform("invalid_input")
+        with self.assertRaises(ValueError):
+            svd.transform(np.random.rand(100))
+
 if __name__ == '__main__':
     unittest.main()

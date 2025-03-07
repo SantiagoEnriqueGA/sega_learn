@@ -24,6 +24,13 @@ class PCA:
         - X: numpy array of shape (n_samples, n_features)
              The data to fit the model to.
         """
+        if not isinstance(X, np.ndarray):
+            raise ValueError("Input data must be a numpy array.")
+        if X.ndim != 2:
+            raise ValueError("Input data must be a 2D array.")
+        if self.n_components > X.shape[1]:
+            raise ValueError("Number of components cannot be greater than the number of features.")
+        
         # Mean centering
         self.mean_ = np.mean(X, axis=0)
         X = X - self.mean_
@@ -53,6 +60,13 @@ class PCA:
         - X_transformed: numpy array of shape (n_samples, n_components)
                          The data transformed into the principal component space.
         """
+        if not isinstance(X, np.ndarray):
+            raise ValueError("Input data must be a numpy array.")
+        if X.ndim != 2:
+            raise ValueError("Input data must be a 2D array.")
+        if X.shape[1] != self.mean_.shape[0]:
+            raise ValueError("Input data must have the same number of features as the data used to fit the model.")
+        
         # Project data to the principal component space
         X = X - self.mean_
         return np.dot(X, self.components_)
@@ -82,4 +96,84 @@ class PCA:
         return self.components_
 
     def inverse_transform(self, X_reduced):
+        if not isinstance(X_reduced, np.ndarray):
+            raise ValueError("Input data must be a numpy array.")
+        if X_reduced.ndim != 2:
+            raise ValueError("Input data must be a 2D array.")
         return np.dot(X_reduced, self.components_.T) + self.mean_
+
+class SVD:
+    """
+    Singular Value Decomposition (SVD) implementation.
+    """
+    def __init__(self, n_components):
+        """
+        Singular Value Decomposition (SVD) implementation.
+        
+        Parameters:
+        - n_components: number of singular values and vectors to keep
+        """
+        self.n_components = n_components
+        self.U = None
+        self.S = None
+        self.Vt = None
+
+    def fit(self, X):
+        """
+        Fit the SVD model to the data X.
+        
+        Parameters:
+        - X: numpy array of shape (n_samples, n_features)
+             The data to fit the model to.
+        """
+        if not isinstance(X, np.ndarray):
+            raise ValueError("Input data must be a numpy array.")
+        if X.ndim != 2:
+            raise ValueError("Input data must be a 2D array.")
+        if self.n_components > min(X.shape):
+            raise ValueError("Number of components cannot be greater than the minimum dimension of the input data.")
+        
+        U, S, Vt = np.linalg.svd(X, full_matrices=False)
+        self.U = U[:, :self.n_components]
+        self.S = S[:self.n_components]
+        self.Vt = Vt[:self.n_components, :]
+
+    def transform(self, X):
+        """
+        Apply the SVD transformation on X.
+        
+        Parameters:
+        - X: numpy array of shape (n_samples, n_features)
+             The data to transform.
+        
+        Returns:
+        - X_transformed: numpy array of shape (n_samples, n_components)
+                         The data transformed into the singular value space.
+        """
+        if not isinstance(X, np.ndarray):
+            raise ValueError("Input data must be a numpy array.")
+        if X.ndim != 2:
+            raise ValueError("Input data must be a 2D array.")
+        
+        return np.dot(X, self.Vt.T)
+
+    def fit_transform(self, X):
+        """
+        Fit the SVD model to the data X and apply the SVD transformation on X.
+        
+        Parameters:
+        - X: numpy array of shape (n_samples, n_features)
+             The data to fit the model to and transform.
+        
+        Returns:
+        - X_transformed: numpy array of shape (n_samples, n_components)
+                         The data transformed into the singular value space.
+        """
+        self.fit(X)
+        return self.transform(X)
+    
+    def get_singular_values(self):
+        return self.S
+    
+    def get_singular_vectors(self):
+        return self.U, self.Vt
