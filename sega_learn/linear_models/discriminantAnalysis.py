@@ -241,7 +241,7 @@ class QuadraticDiscriminantAnalysis(object):
         """
         self.classes_ = np.unique(y)                # Unique classes, i.e., distinct class labels
         self.means_ = {}                            # Mean of each feature per class
-        self.covariance_ = {}                       # Covariance matrix of each class
+        self.covariances_ = {}                      # Covariance matrix of each class
         if self.priors is None:                     # Prior probabilities of each class
             self.priors_ = {}
         else:
@@ -253,8 +253,12 @@ class QuadraticDiscriminantAnalysis(object):
             self.means_[cls] = np.mean(X_cls, axis=0)           # Mean of each feature per class
             self.priors_[cls] = X_cls.shape[0] / X.shape[0]     # Prior probability of class cls
             
-            self.covariance_[cls] = np.cov(X_cls, rowvar=False)             # Covariance matrix of all features
-            self.covariance_[cls] += self.reg_param * np.eye(X.shape[1])    # Add regularization term
+            cov = np.cov(X_cls, rowvar=False)                   # Covariance matrix of all features
+            
+            if self.reg_param > 0.0:
+                self.covariances_[cls] = cov + np.eye(cov.shape[0]) * self.reg_param  # Add regularization term to diagonal
+            else:
+                self.covariances_[cls] = cov + np.eye(cov.shape[0]) * 1e-6  # Add small value to diagonal
     
     def predict(self, X):
         """
@@ -284,7 +288,7 @@ class QuadraticDiscriminantAnalysis(object):
         # Compute log-likelihood of each class
         for cls in self.classes_:
             mean = self.means_[cls]     # Mean of each feature per class
-            cov = self.covariance_[cls] # Covariance matrix of each class
+            cov = self.covariances_[cls] # Covariance matrix of each class
             prior = self.priors_[cls]   # Prior probability of class cls
             
             # Compute the inverse of the covariance matrix and the log-determinant of the covariance matrix
