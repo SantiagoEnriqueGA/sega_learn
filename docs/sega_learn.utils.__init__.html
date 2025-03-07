@@ -52,6 +52,8 @@ td.singlecolumn { width: 100%; }
 </dt><dt class="heading-text"><a href="sega_learn.utils.dataAugmentation.html#RandomUnderSampler">sega_learn.utils.dataAugmentation.RandomUnderSampler</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.dataAugmentation.html#SMOTE">sega_learn.utils.dataAugmentation.SMOTE</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.dataPrep.html#DataPrep">sega_learn.utils.dataPrep.DataPrep</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.decomposition.html#PCA">sega_learn.utils.decomposition.PCA</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.decomposition.html#SVD">sega_learn.utils.decomposition.SVD</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.metrics.html#Metrics">sega_learn.utils.metrics.Metrics</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.modelSelection.html#GridSearchCV">sega_learn.utils.modelSelection.GridSearchCV</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.modelSelection.html#ModelSelectionUtility">sega_learn.utils.modelSelection.ModelSelectionUtility</a>
@@ -390,6 +392,63 @@ Data descriptors defined here:<br>
 </td></tr></table> <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="PCA">class <strong>PCA</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#PCA">PCA</a>(n_components)<br>
+&nbsp;<br>
+Principal&nbsp;Component&nbsp;Analysis&nbsp;(<a href="#PCA">PCA</a>)&nbsp;implementation.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="PCA-__init__"><strong>__init__</strong></a>(self, n_components)</dt><dd><span class="code">Principal&nbsp;Component&nbsp;Analysis&nbsp;(<a href="#PCA">PCA</a>)&nbsp;implementation.<br>
+Uses&nbsp;the&nbsp;eigendecomposition&nbsp;of&nbsp;the&nbsp;covariance&nbsp;matrix&nbsp;to&nbsp;project&nbsp;the&nbsp;data&nbsp;onto&nbsp;a&nbsp;lower-dimensional&nbsp;space.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;n_components:&nbsp;number&nbsp;of&nbsp;principal&nbsp;components&nbsp;to&nbsp;keep</span></dd></dl>
+
+<dl><dt><a name="PCA-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#PCA">PCA</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;model&nbsp;to.</span></dd></dl>
+
+<dl><dt><a name="PCA-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#PCA">PCA</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;X&nbsp;and&nbsp;apply&nbsp;the&nbsp;dimensionality&nbsp;reduction&nbsp;on&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;model&nbsp;to&nbsp;and&nbsp;transform.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X_transformed:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;principal&nbsp;component&nbsp;space.</span></dd></dl>
+
+<dl><dt><a name="PCA-get_components"><strong>get_components</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="PCA-get_explained_variance_ratio"><strong>get_explained_variance_ratio</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="PCA-inverse_transform"><strong>inverse_transform</strong></a>(self, X_reduced)</dt></dl>
+
+<dl><dt><a name="PCA-transform"><strong>transform</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;the&nbsp;dimensionality&nbsp;reduction&nbsp;on&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;transform.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X_transformed:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;principal&nbsp;component&nbsp;space.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="PolynomialTransform">class <strong>PolynomialTransform</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
@@ -591,6 +650,60 @@ Data descriptors defined here:<br>
 </td></tr></table> <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="SVD">class <strong>SVD</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#SVD">SVD</a>(n_components)<br>
+&nbsp;<br>
+Singular&nbsp;Value&nbsp;Decomposition&nbsp;(<a href="#SVD">SVD</a>)&nbsp;implementation.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="SVD-__init__"><strong>__init__</strong></a>(self, n_components)</dt><dd><span class="code">Singular&nbsp;Value&nbsp;Decomposition&nbsp;(<a href="#SVD">SVD</a>)&nbsp;implementation.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;n_components:&nbsp;number&nbsp;of&nbsp;singular&nbsp;values&nbsp;and&nbsp;vectors&nbsp;to&nbsp;keep</span></dd></dl>
+
+<dl><dt><a name="SVD-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;model&nbsp;to.</span></dd></dl>
+
+<dl><dt><a name="SVD-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;X&nbsp;and&nbsp;apply&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;transformation&nbsp;on&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;model&nbsp;to&nbsp;and&nbsp;transform.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X_transformed:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;singular&nbsp;value&nbsp;space.</span></dd></dl>
+
+<dl><dt><a name="SVD-get_singular_values"><strong>get_singular_values</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="SVD-get_singular_vectors"><strong>get_singular_vectors</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="SVD-transform"><strong>transform</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;transformation&nbsp;on&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;transform.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X_transformed:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;singular&nbsp;value&nbsp;space.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="VotingRegressor">class <strong>VotingRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
@@ -635,5 +748,5 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
     
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'ModelSelectionUtility', 'GridSearchCV', 'RandomSearchCV', 'Metrics', 'RandomOverSampler', 'RandomUnderSampler', 'SMOTE', 'Augmenter']</td></tr></table>
+<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'ModelSelectionUtility', 'GridSearchCV', 'RandomSearchCV', 'Metrics', 'RandomOverSampler', 'RandomUnderSampler', 'SMOTE', 'Augmenter', 'PCA', 'SVD']</td></tr></table>
 </body></html>

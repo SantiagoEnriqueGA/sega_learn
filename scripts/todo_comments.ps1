@@ -23,7 +23,11 @@ $todoComments | Tee-Object -FilePath "scripts/out/todo_comments.txt" | Format-Ta
 # Append the "Other" section to the file
 # Add new TODOs here:
 $otherTodos = @"
-Other:
+Planned/Ideas:
+Time Series Analysis - ARIMA, Moving Average, Exponential Smoothing
+Anomaly Detection - Isolation Forest, One-Class SVM
+Deep Learning Enhancements - Convolutional Layers, Recurrent Layers
+Data Preprocessing - Normalization, Standardization, Missing Value Imputation
 "@
 
 Add-Content -Path "scripts/out/todo_comments.txt" -Value $otherTodos

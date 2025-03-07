@@ -89,6 +89,12 @@ Parameters:<br>
 -&nbsp;X:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).&nbsp;The&nbsp;training&nbsp;data.<br>
 -&nbsp;y:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,).&nbsp;The&nbsp;target&nbsp;values.</span></dd></dl>
 
+<dl><dt><a name="KNeighborsBase-get_distance_indices"><strong>get_distance_indices</strong></a>(self, X)</dt><dd><span class="code">Compute&nbsp;the&nbsp;distances&nbsp;and&nbsp;return&nbsp;the&nbsp;indices&nbsp;of&nbsp;the&nbsp;nearest&nbsp;points&nbsp;im&nbsp;the&nbsp;training&nbsp;data.<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).&nbsp;The&nbsp;input&nbsp;data.<br>
+Returns:<br>
+-&nbsp;indices:&nbsp;array,&nbsp;shape&nbsp;(n_samples,&nbsp;n_neighbors).&nbsp;The&nbsp;indices&nbsp;of&nbsp;the&nbsp;nearest&nbsp;neighbors.</span></dd></dl>
+
 <dl><dt><a name="KNeighborsBase-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">The&nbsp;@abstractmethod&nbsp;decorator&nbsp;indicates&nbsp;that&nbsp;this&nbsp;<br>
 method&nbsp;must&nbsp;be&nbsp;implemented&nbsp;by&nbsp;any&nbsp;subclass&nbsp;of&nbsp;KNNBase.</span></dd></dl>
 

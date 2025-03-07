@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.utils.decomposition</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.utils.html" class="white">utils</a>.decomposition</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.utils.decomposition.html#PCA">PCA</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.decomposition.html#SVD">SVD</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="PCA">class <strong>PCA</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#PCA">PCA</a>(n_components)<br>
+&nbsp;<br>
+Principal&nbsp;Component&nbsp;Analysis&nbsp;(<a href="#PCA">PCA</a>)&nbsp;implementation.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="PCA-__init__"><strong>__init__</strong></a>(self, n_components)</dt><dd><span class="code">Principal&nbsp;Component&nbsp;Analysis&nbsp;(<a href="#PCA">PCA</a>)&nbsp;implementation.<br>
+Uses&nbsp;the&nbsp;eigendecomposition&nbsp;of&nbsp;the&nbsp;covariance&nbsp;matrix&nbsp;to&nbsp;project&nbsp;the&nbsp;data&nbsp;onto&nbsp;a&nbsp;lower-dimensional&nbsp;space.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;n_components:&nbsp;number&nbsp;of&nbsp;principal&nbsp;components&nbsp;to&nbsp;keep</span></dd></dl>
+
+<dl><dt><a name="PCA-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#PCA">PCA</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;model&nbsp;to.</span></dd></dl>
+
+<dl><dt><a name="PCA-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#PCA">PCA</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;X&nbsp;and&nbsp;apply&nbsp;the&nbsp;dimensionality&nbsp;reduction&nbsp;on&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;model&nbsp;to&nbsp;and&nbsp;transform.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X_transformed:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;principal&nbsp;component&nbsp;space.</span></dd></dl>
+
+<dl><dt><a name="PCA-get_components"><strong>get_components</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="PCA-get_explained_variance_ratio"><strong>get_explained_variance_ratio</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="PCA-inverse_transform"><strong>inverse_transform</strong></a>(self, X_reduced)</dt></dl>
+
+<dl><dt><a name="PCA-transform"><strong>transform</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;the&nbsp;dimensionality&nbsp;reduction&nbsp;on&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;transform.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X_transformed:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;principal&nbsp;component&nbsp;space.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="SVD">class <strong>SVD</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#SVD">SVD</a>(n_components)<br>
+&nbsp;<br>
+Singular&nbsp;Value&nbsp;Decomposition&nbsp;(<a href="#SVD">SVD</a>)&nbsp;implementation.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="SVD-__init__"><strong>__init__</strong></a>(self, n_components)</dt><dd><span class="code">Singular&nbsp;Value&nbsp;Decomposition&nbsp;(<a href="#SVD">SVD</a>)&nbsp;implementation.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;n_components:&nbsp;number&nbsp;of&nbsp;singular&nbsp;values&nbsp;and&nbsp;vectors&nbsp;to&nbsp;keep</span></dd></dl>
+
+<dl><dt><a name="SVD-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;model&nbsp;to.</span></dd></dl>
+
+<dl><dt><a name="SVD-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;X&nbsp;and&nbsp;apply&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;transformation&nbsp;on&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;model&nbsp;to&nbsp;and&nbsp;transform.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X_transformed:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;singular&nbsp;value&nbsp;space.</span></dd></dl>
+
+<dl><dt><a name="SVD-get_singular_values"><strong>get_singular_values</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="SVD-get_singular_vectors"><strong>get_singular_vectors</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="SVD-transform"><strong>transform</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;transformation&nbsp;on&nbsp;X.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;transform.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;X_transformed:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;singular&nbsp;value&nbsp;space.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>
