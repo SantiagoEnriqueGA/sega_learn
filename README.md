@@ -200,14 +200,16 @@ Testing Imports - Clustering
 ..............Testing Regressor Tree
 .....Testing Regressor Tree Utility
 .................Testing Data Augmentation
-......................Testing Data Prep
+......................Testing Decomposition
+.....Testing Data Prep
 ...............Testing GridSearchCV
 ...........Testing Metrics
 ...............Testing Model Selection Utils
 ..........Testing Polynomial Transform
 ....Testing RandomSearchCV
 .............Testing Voting Regressor
-....Testing example file: dbscan.py
+....Testing makeData utilities
+............................Testing example file: dbscan.py
 .Testing example file: dbscan_3d.py
 .Testing example file: dbscan_3d_aimated.py
 .Testing example file: kmeans.py
@@ -226,16 +228,16 @@ Testing Imports - Clustering
 .Testing example file: neuralNetwork_cancer.py
 .Testing example file: neuralNetwork_classifier.py
 .Testing example file: neuralNetwork_classifier_hyper.py
-Tuning Hyperparameters: 100%|██████| 2/2 [00:02<00:00,  1.25s/it]
-Epoch 100/100 - Loss: 0.7561, Acc: 0.7675, Val Loss: 0.7662, Val Acc: 0.7250: 100%|█████| 100/100 [00:02<00:00, 37.50it/s]
+Tuning Hyperparameters: 100%|█████| 2/2 [00:02<00:00,  1.50s/it]
+Epoch 100/100 - Loss: 0.7441, Acc: 0.7087, Val Loss: 0.7619, Val Acc: 0.6950: 100%|█████| 100/100 [00:02<00:00, 35.35it/s]
 .Testing example file: neuralNetwork_diabetes.py
 .Testing example file: neuralNetwork_hyper.py
-Tuning Hyperparameters: 100%|██████| 1/1 [00:00<00:00,  1.14it/s]
-Epoch 100/100 - Loss: 0.7745, Acc: 0.5847, Val Loss: 0.7600, Val Acc: 0.6623: 100%|█████| 100/100 [00:01<00:00, 92.42it/s]
-Tuning Hyperparameters: 100%|██████| 1/1 [00:00<00:00,  1.39it/s]
-Epoch 100/100 - Loss: 0.6561, Acc: 0.9277, Val Loss: 0.6683, Val Acc: 0.9474: 100%|█████| 100/100 [00:00<00:00, 123.60it/s]
+Tuning Hyperparameters: 100%|█████| 1/1 [00:01<00:00,  1.05s/it]
+Epoch 100/100 - Loss: 0.7709, Acc: 0.6787, Val Loss: 0.7545, Val Acc: 0.6364: 100%|█████| 100/100 [00:01<00:00, 92.35it/s]
+Tuning Hyperparameters: 100%|█████| 1/1 [00:00<00:00,  1.24it/s]
+Epoch 100/100 - Loss: 0.7087, Acc: 0.9023, Val Loss: 0.7012, Val Acc: 0.8596: 100%|█████| 100/100 [00:00<00:00, 119.95it/s]
 .Testing example file: neuralNetwork_iris.py
-Epoch 100/100 - Loss: 0.7051, Acc: 0.8593, Val Loss: 0.7022, Val Acc: 0.9333: 100%|█████| 100/100 [00:00<00:00, 320.49it/s]
+Epoch 100/100 - Loss: 0.7051, Acc: 0.8593, Val Loss: 0.7022, Val Acc: 0.9333: 100%|█████| 100/100 [00:00<00:00, 315.15it/s]
 .Testing example file: gradientBoostedRegressor.py
 .Testing example file: randomForestClassifier.py
 .Testing example file: randomForestRegressor.py
@@ -248,6 +250,9 @@ Epoch 100/100 - Loss: 0.7051, Acc: 0.8593, Val Loss: 0.7022, Val Acc: 0.9333: 10
 .Testing example file: gridSearchCV_passiveAggReg.py
 .Testing example file: gridSearchCV_rfc.py
 .Testing example file: gridSearchCV_rfr.py
+.Testing example file: makeData.py
+.Testing example file: pca_classification.py
+.Testing example file: pca_regression.py
 .Testing example file: polynomialTransform.py
 .Testing example file: randomSearchCV_bayes.py
 .Testing example file: randomSearchCV_gbr.py
@@ -255,10 +260,12 @@ Epoch 100/100 - Loss: 0.7051, Acc: 0.8593, Val Loss: 0.7022, Val Acc: 0.9333: 10
 .Testing example file: randomSearchCV_rfc.py
 .Testing example file: randomSearchCV_rfr.py
 .Testing example file: segaSearchCV_rfr.py
+.Testing example file: svd_classification.py
+.Testing example file: svd_regression.py
 .Testing example file: votingRegressor.py
 .
 ----------------------------------------------------------------------
-Ran 393 tests in 174.541s
+Ran 431 tests in 197.768s
 
 OK
 ```
