@@ -4,7 +4,6 @@ import sys
 import os
 import numpy as np
 import pandas as pd
-from sklearn.datasets import make_regression, make_classification
 from sklearn import metrics as sk_metrics
 from sklearn.model_selection import train_test_split
 
@@ -14,6 +13,7 @@ from sega_learn.utils import *
 from sega_learn.linear_models import *
 from sega_learn.trees import *
 from tests.utils import synthetic_data_regression, suppress_print
+from sega_learn.utils import make_regression, make_classification
 
 
 class TestPolynomialTransform(unittest.TestCase):

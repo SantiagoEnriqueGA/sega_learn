@@ -2,9 +2,11 @@ import unittest
 import sys
 import os
 import numpy as np
-from sklearn.metrics import r2_score, accuracy_score
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from sega_learn.utils import Metrics
+r2_score = Metrics.r_squared
+accuracy_score = Metrics.accuracy
 
 from sega_learn.linear_models import *
 from sega_learn.linear_models import make_sample_data

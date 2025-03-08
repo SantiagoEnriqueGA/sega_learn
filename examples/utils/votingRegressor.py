@@ -1,9 +1,11 @@
-from sklearn.datasets import make_regression
-from sklearn.metrics import r2_score
-
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+from sega_learn.utils import make_regression
+from sega_learn.utils import Metrics
+r2_score = Metrics.r_squared
+
 
 from sega_learn.linear_models import OrdinaryLeastSquares
 from sega_learn.linear_models import Lasso

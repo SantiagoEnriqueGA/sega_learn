@@ -12,8 +12,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from sega_learn.nearest_neighbors import *
 import sega_learn.nearest_neighbors
 
-from sklearn.datasets import make_classification, make_regression
-from sklearn.metrics import classification_report, accuracy_score, r2_score, mean_squared_error
+from sega_learn.utils import make_classification, make_regression
 
 
 def time_function(func, num_repeats, *args, **kwargs):

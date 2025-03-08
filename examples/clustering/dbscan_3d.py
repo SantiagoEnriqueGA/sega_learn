@@ -5,12 +5,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 from sega_learn.clustering import *
 
-from sklearn.datasets import make_blobs
+from sega_learn.utils import make_blobs
 import matplotlib.pyplot as plt
 
 # Genetrate 3D data
 true_k = 4
-X, _ = make_blobs(n_samples=300, centers=true_k, n_features=3, cluster_std=0.60, random_state=0)
+X, y, _ = make_blobs(n_samples=300, centers=true_k, n_features=3, cluster_std=0.60, random_state=0)
 
 # Initialize DBSCAN
 eps = 0.5

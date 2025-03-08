@@ -3,11 +3,11 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report
-from sklearn.datasets import make_classification
 
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from sega_learn.utils import make_classification
 
 from sega_learn.neural_networks import *
 

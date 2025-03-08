@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.utils.dataAugmentation import *
-from sklearn.datasets import make_classification
+from sega_learn.utils import make_classification
 from sklearn.model_selection import train_test_split
 
 X, y = make_classification(n_samples=1000, n_features=20, n_classes=2, weights=[0.7, 0.3], random_state=42, class_sep=.5)
@@ -35,7 +35,8 @@ print(f"Resampled dataset shape: {X_resampled.shape}, {y_resampled.shape}")
 # Fit both models
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
-from sklearn.metrics import accuracy_score
+from sega_learn.utils import Metrics
+accuracy_score = Metrics.accuracy
 
 # Train a Random Forest classifier on the original data
 rf_original = RandomForestClassifier(random_state=42)

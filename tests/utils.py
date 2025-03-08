@@ -37,7 +37,7 @@ def synthetic_data_regression(n_samples=1000, n_features=5, noise=0.1, random_st
     - X: array-like, shape (n_samples, n_features), generated features
     - y: array-like, shape (n_samples,), generated target values
     """
-    from sklearn.datasets import make_regression
+    from sega_learn.utils import make_regression
     return make_regression(n_samples=n_samples, n_features=n_features, noise=noise, random_state=random_state)
 
 def strip_file_path(file_path):

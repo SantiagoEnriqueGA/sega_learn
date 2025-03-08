@@ -5,8 +5,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 from sega_learn.linear_models import PassiveAggressiveRegressor
 import sega_learn.utils.modelSelection as ms
-from sklearn.datasets import make_regression
-from sklearn.metrics import r2_score
+from sega_learn.utils import make_regression
+from sega_learn.utils import Metrics
+r2_score = Metrics.r_squared
 
 X, y = make_regression(n_samples=100, n_features=5, noise=25, random_state=42)
 

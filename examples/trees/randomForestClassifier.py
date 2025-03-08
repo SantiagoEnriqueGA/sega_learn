@@ -9,6 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 import sega_learn.trees.randomForestClassifier as rfc
 import sega_learn.utils.dataPrep as dp
+from sega_learn.utils import Metrics
 
 # Source file location
 file_orig = "example_datasets/Wisconsin_breast_prognostic.csv"
@@ -21,7 +22,7 @@ def basic_example(num_trees=10, max_depth=5):
     """
     print("\n\nRandom Forest Classifier on Synthetic Dataset\n")
     
-    from sklearn.datasets import make_classification
+    from sega_learn.utils import make_classification
     X, y = make_classification(n_samples=1000, n_features=5, n_classes=2, random_state=42)
         
     # Initialize random forest object
@@ -29,6 +30,9 @@ def basic_example(num_trees=10, max_depth=5):
     
     # Train random forest model
     rfObjBreastCancer.fit()
+
+    print(f"Accuracy: {Metrics.accuracy(y, rfObjBreastCancer.predict(X))}")
+    
 
 def cancer_example(num_trees=10, max_depth=5):
     """
@@ -41,6 +45,8 @@ def cancer_example(num_trees=10, max_depth=5):
     
     # Train random forest model
     rfObjBreastCancer.fit()
+
+    print(f"Accuracy: {Metrics.accuracy(y, rfObjBreastCancer.predict(X))}")
 
 
 def grid_search():

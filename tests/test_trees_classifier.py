@@ -4,12 +4,12 @@ import sys
 import os
 from matplotlib.pylab import f
 import numpy as np
-from sklearn.metrics import r2_score, accuracy_score
-from sklearn.datasets import make_classification
+
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from sega_learn.trees import *
+from sega_learn.utils import make_classification
 from tests.utils import synthetic_data_regression, suppress_print
 
 class TestClassifierTreeUtility(unittest.TestCase):
@@ -100,7 +100,7 @@ class TestClassifierTree(unittest.TestCase):
         self.assertDictEqual(self.tree.tree, {})
         
     def test_learn(self):
-        from sklearn.datasets import make_classification
+        from sega_learn.utils import make_classification
         X, y = make_classification(n_samples=100, n_features=5, n_classes=2)
         self.tree.learn(X, y)
         self.assertIsInstance(self.tree.tree, dict)

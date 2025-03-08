@@ -8,7 +8,7 @@ import sega_learn.utils.dataPrep as dp
 import sega_learn.utils.modelSelection as ms
 import sega_learn.utils.metrics as mt
 
-from sklearn.datasets import make_classification
+from sega_learn.utils import make_classification
 X, y = make_classification(n_samples=100, n_features=5, n_classes=2, random_state=42)
 
 grid = [

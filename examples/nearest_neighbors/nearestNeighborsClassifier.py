@@ -8,7 +8,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.nearest_neighbors import *
-from sklearn.datasets import make_classification
+from sega_learn.utils import make_classification
 from sklearn.metrics import classification_report, accuracy_score
 
 X, y = make_classification(n_samples=1000, n_features=5, n_classes=2, random_state=42)

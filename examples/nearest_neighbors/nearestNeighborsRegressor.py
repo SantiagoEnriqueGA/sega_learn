@@ -8,8 +8,10 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.nearest_neighbors import *
-from sklearn.datasets import make_regression
-from sklearn.metrics import r2_score, mean_squared_error
+from sega_learn.utils import make_regression
+from sega_learn.utils import Metrics
+r2_score = Metrics.r_squared
+mean_squared_error = Metrics.mean_squared_error
 
 X, y = make_regression(n_samples=1000, n_features=5, n_informative=3, noise=0.1, random_state=42)
 

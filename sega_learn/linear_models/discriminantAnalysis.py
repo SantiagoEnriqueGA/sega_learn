@@ -390,8 +390,6 @@ if __name__ == '__main__':
     import numpy as np
     import matplotlib as mpl
     import matplotlib.pyplot as plt 
-    from sklearn.inspection import DecisionBoundaryDisplay
-    from sklearn.metrics import accuracy_score
     
     # ---------------------------------------------------------------------
     # LDA SVD vs LSQR vs EIGEN

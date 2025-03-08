@@ -6,7 +6,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.utils.decomposition import PCA
-from sklearn.datasets import make_classification
+from sega_learn.utils import make_classification
 
 # Example data
 X, y = make_classification(n_samples=1000, n_features=10, n_classes=2, n_informative=9, n_redundant=1, random_state=0)

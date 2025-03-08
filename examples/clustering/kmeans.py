@@ -5,14 +5,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 from sega_learn.clustering import *
 
-from sklearn.datasets import make_blobs
+from sega_learn.utils import make_blobs
 import matplotlib.pyplot as plt
 import numpy as np
 np.random.seed(1)
 
 true_k = 8
 # Generate synthetic data for testing
-X, y = make_blobs(n_samples=1000, n_features=2, centers=true_k, cluster_std=0.60, random_state=1)
+X, y, _ = make_blobs(n_samples=1000, n_features=2, centers=true_k, cluster_std=0.60, random_state=1)
 
 # Initialize KMeans object
 kmeans = KMeans(X)

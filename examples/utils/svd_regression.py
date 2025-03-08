@@ -6,7 +6,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.utils.decomposition import SVD
-from sklearn.datasets import make_regression
+from sega_learn.utils import make_regression
 
 # Example data
 X, y = make_regression(n_samples=10_000, n_features=10, noise=25, random_state=0)

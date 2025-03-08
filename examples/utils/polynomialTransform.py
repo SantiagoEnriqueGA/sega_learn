@@ -6,7 +6,8 @@ from sega_learn.linear_models import OrdinaryLeastSquares
 from sega_learn.utils import PolynomialTransform
 
 import numpy as np
-from sklearn.metrics import r2_score
+from sega_learn.utils import Metrics
+r2_score = Metrics.r_squared
 
 np.random.seed(42)  # Random seed for reproducibility
 

@@ -7,7 +7,7 @@ import sega_learn.trees.gradientBoostedRegressor as gbr
 import sega_learn.utils.dataPrep as dp
 import sega_learn.utils.modelSelection as ms
 
-from sklearn.datasets import make_regression
+from sega_learn.utils import make_regression
 X, y = make_regression(n_samples=100, n_features=3, noise=5, random_state=42)
 
 grid = [

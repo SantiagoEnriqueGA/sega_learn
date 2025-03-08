@@ -28,7 +28,7 @@ def basic_example(num_trees=10, max_depth=5):
     """
     print("\n\nGradient Boosted Regressor on Synthetic Dataset\n")
     
-    from sklearn.datasets import make_regression
+    from sega_learn.utils import make_regression
     X, y = make_regression(n_samples=1000, n_features=3, noise=5, random_state=42)
     
     # Initialize GBDT object

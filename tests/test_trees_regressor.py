@@ -4,7 +4,6 @@ import sys
 import os
 from matplotlib.pylab import f
 import numpy as np
-from sklearn.metrics import r2_score, accuracy_score
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
