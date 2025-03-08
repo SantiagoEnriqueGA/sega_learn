@@ -13,7 +13,7 @@ from sega_learn.linear_models import RANSAC as rns
 from sega_learn.linear_models import PassiveAggressiveRegressor as par
 from sega_learn.linear_models import LinearDiscriminantAnalysis as lda
 from sega_learn.linear_models import QuadraticDiscriminantAnalysis as qda
-from sega_learn.linear_models import make_data as mdt
+from sega_learn.linear_models import make_sample_data as mdt
 
 from sega_learn.linear_models import *
 

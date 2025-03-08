@@ -7,7 +7,7 @@ from sklearn.metrics import r2_score, accuracy_score
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from sega_learn.linear_models import *
-from sega_learn.linear_models import make_data
+from sega_learn.linear_models import make_sample_data
 from tests.utils import synthetic_data_regression, suppress_print
 
 class TestOrdinaryLeastSquares(unittest.TestCase):
@@ -499,7 +499,7 @@ class TestLinearDiscriminantAnalysis(unittest.TestCase):
         self.cov_class_2 = self.cov_class_1.T                           # Covariance matrix for class 2, same as class 1 but transposed
         
         # Generate data
-        self.X, self.y = make_data(n_samples=1000, n_features=2, cov_class_1=self.cov_class_1, cov_class_2=self.cov_class_2, shift=[4,1], seed=1)
+        self.X, self.y = make_sample_data(n_samples=1000, n_features=2, cov_class_1=self.cov_class_1, cov_class_2=self.cov_class_2, shift=[4,1], seed=1)
         
     def test_lda(self):
         lda = LinearDiscriminantAnalysis()
@@ -566,7 +566,7 @@ class TestQuadraticDiscriminantAnalysis(unittest.TestCase):
         self.cov_class_2 = self.cov_class_1.T                           # Covariance matrix for class 2, same as class 1 but transposed
         
         # Generate data
-        self.X, self.y = make_data(n_samples=1000, n_features=2, cov_class_1=self.cov_class_1, cov_class_2=self.cov_class_2, shift=[4,1], seed=1)
+        self.X, self.y = make_sample_data(n_samples=1000, n_features=2, cov_class_1=self.cov_class_1, cov_class_2=self.cov_class_2, shift=[4,1], seed=1)
         
     def test_qda(self):
         qda = QuadraticDiscriminantAnalysis()

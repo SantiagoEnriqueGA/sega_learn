@@ -12,6 +12,9 @@ from .utils import (
     RandomUnderSampler,
     SMOTE,
     Augmenter,
+    make_blobs,
+    make_regression,
+    make_classification,
 )
 
 from .clustering import (
@@ -28,7 +31,7 @@ from .linear_models import (
     PassiveAggressiveRegressor,
     LinearDiscriminantAnalysis,
     QuadraticDiscriminantAnalysis,
-    make_data
+    make_sample_data
 )
 
 from .trees import (
@@ -75,6 +78,9 @@ __all__ = [
     "RandomUnderSampler",
     "SMOTE",
     "Augmenter",
+    "make_blobs",
+    "make_regression",
+    "make_classification",
     
     # Clustering
     "KMeans",

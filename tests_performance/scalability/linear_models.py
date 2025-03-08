@@ -12,7 +12,7 @@ from utils import suppress_print
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from sega_learn.linear_models import *
-from sega_learn.linear_models import make_data
+from sega_learn.linear_models import make_sample_data
 from utils import synthetic_data_regression, suppress_print
 
 from sklearn import linear_model

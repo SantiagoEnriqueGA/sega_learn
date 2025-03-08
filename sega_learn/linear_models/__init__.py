@@ -9,7 +9,7 @@ from .linearModels import (
 from .discriminantAnalysis import (
     LinearDiscriminantAnalysis,
     QuadraticDiscriminantAnalysis,
-    make_data
+    make_sample_data
 )
 
 __all__ = [

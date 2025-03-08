@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from sega_learn.linear_models import *
-from sega_learn.linear_models import make_data
+from sega_learn.linear_models import make_sample_data
 from tests.utils import synthetic_data_regression, suppress_print
 
 from sega_learn.nearest_neighbors.knn_classifier import KNeighborsClassifier

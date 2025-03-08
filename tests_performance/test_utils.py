@@ -9,7 +9,7 @@ from utils import suppress_print
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from sega_learn.utils import *
-from sega_learn.linear_models import make_data
+from sega_learn.linear_models import make_sample_data
 from utils import synthetic_data_regression, suppress_print
 
 from sklearn.preprocessing import PolynomialFeatures
