@@ -81,6 +81,7 @@ __all__ = [
     "make_blobs",
     "make_regression",
     "make_classification",
+    "train_test_split",
     
     # Clustering
     "KMeans",

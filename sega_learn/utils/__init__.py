@@ -6,6 +6,7 @@ from .modelSelection import ModelSelectionUtility, GridSearchCV, RandomSearchCV
 from .metrics import Metrics
 from .decomposition import PCA, SVD
 from .makeData import make_regression, make_classification, make_blobs
+from .dataSplitting import train_test_split
 from .dataAugmentation import (
     RandomOverSampler,
     RandomUnderSampler,
