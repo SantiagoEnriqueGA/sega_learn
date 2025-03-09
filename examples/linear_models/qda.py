@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 from sega_learn.linear_models import QuadraticDiscriminantAnalysis, make_sample_data
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sega_learn.utils import train_test_split
 import sega_learn.utils.metrics as mt
 
 X, y = make_sample_data(n_samples=1000, n_features=2, cov_class_1=np.array([[0.0, -1.0], [2.5, 0.7]]) * 2.0, cov_class_2=np.array([[0.0, -1.0], [2.5, 0.7]]).T * 2.0, shift=[4, 1], seed=1)

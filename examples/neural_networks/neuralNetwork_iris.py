@@ -14,7 +14,7 @@ def test_model(load_data_func, nn_layers, dropout_rate, reg_lambda, test_size=0.
     np.random.seed(42)
     random.seed(42)
     
-    from sklearn.model_selection import train_test_split
+    from sega_learn.utils import train_test_split
     from sklearn.preprocessing import StandardScaler
     from sklearn.metrics import classification_report
 

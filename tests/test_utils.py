@@ -5,7 +5,6 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn import metrics as sk_metrics
-from sklearn.model_selection import train_test_split
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -14,6 +13,7 @@ from sega_learn.linear_models import *
 from sega_learn.trees import *
 from tests.utils import synthetic_data_regression, suppress_print
 from sega_learn.utils import make_regression, make_classification
+from sega_learn.utils import train_test_split
 
 
 class TestPolynomialTransform(unittest.TestCase):
