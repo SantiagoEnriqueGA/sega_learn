@@ -5,7 +5,9 @@ wrote sega_learn.linear_models.linearModels.html
 wrote sega_learn.linear_models.__init__.html
 wrote sega_learn.utils.dataAugmentation.html
 wrote sega_learn.utils.dataPrep.html
+wrote sega_learn.utils.dataSplitting.html
 wrote sega_learn.utils.decomposition.html
+wrote sega_learn.utils.makeData.html
 wrote sega_learn.utils.metrics.html
 wrote sega_learn.utils.modelSelection.html
 wrote sega_learn.utils.polynomialTransform.html

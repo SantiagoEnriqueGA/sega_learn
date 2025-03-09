@@ -1,6 +1,6 @@
 # Find TODO comments in Python files, excluding paths containing "__archive"
 $todoComments = Get-ChildItem -Recurse -Filter *.py | Where-Object { 
-    -not ($_.FullName -like "*__archive*") 
+    -not ($_.FullName -like "*_archive*") -and -not ($_.FullName -like "*.venv*")
 } | ForEach-Object {
     $file = $_
     $lines = Get-Content $file.FullName
@@ -30,4 +30,5 @@ Deep Learning Enhancements - Convolutional Layers, Recurrent Layers
 Data Preprocessing - Normalization, Standardization, Missing Value Imputation
 "@
 
+# Add the "Other" section to the file and console output
 Add-Content -Path "scripts/out/todo_comments.txt" -Value $otherTodos

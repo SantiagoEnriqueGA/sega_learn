@@ -45,12 +45,14 @@ td.singlecolumn { width: 100%; }
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="sega_learn.utils.dataAugmentation.html">dataAugmentation</a><br>
 <a href="sega_learn.utils.dataPrep.html">dataPrep</a><br>
+<a href="sega_learn.utils.dataSplitting.html">dataSplitting</a><br>
 </td><td class="multicolumn"><a href="sega_learn.utils.decomposition.html">decomposition</a><br>
+<a href="sega_learn.utils.makeData.html">makeData</a><br>
 <a href="sega_learn.utils.metrics.html">metrics</a><br>
 </td><td class="multicolumn"><a href="sega_learn.utils.modelSelection.html">modelSelection</a><br>
 <a href="sega_learn.utils.polynomialTransform.html">polynomialTransform</a><br>
-</td><td class="multicolumn"><a href="sega_learn.utils.voting.html">voting</a><br>
-</td></tr></table></td></tr></table><p>
+<a href="sega_learn.utils.voting.html">voting</a><br>
+</td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
@@ -757,9 +759,126 @@ Data descriptors defined here:<br>
 </dl>
 </td></tr></table></td></tr></table><p>
 <table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-make_blobs"><strong>make_blobs</strong></a>(n_samples=100, n_features=2, centers=None, cluster_std=1.0, center_box=(-10.0, 10.0), shuffle=True, random_state=None)</dt><dd><span class="code">Generate&nbsp;isotropic&nbsp;Gaussian&nbsp;blobs&nbsp;for&nbsp;clustering.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+n_samples&nbsp;:&nbsp;int&nbsp;or&nbsp;array-like,&nbsp;default=100<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;int,&nbsp;it&nbsp;is&nbsp;the&nbsp;total&nbsp;number&nbsp;of&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;array-like,&nbsp;it&nbsp;contains&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;per&nbsp;cluster.<br>
+n_features&nbsp;:&nbsp;int,&nbsp;default=2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;features.<br>
+centers&nbsp;:&nbsp;int&nbsp;or&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_centers,&nbsp;n_features),&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;centers&nbsp;to&nbsp;generate,&nbsp;or&nbsp;the&nbsp;fixed&nbsp;center&nbsp;locations.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;n_samples&nbsp;is&nbsp;an&nbsp;int&nbsp;and&nbsp;centers&nbsp;is&nbsp;None,&nbsp;3&nbsp;centers&nbsp;are&nbsp;generated.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;n_samples&nbsp;is&nbsp;array-like,&nbsp;centers&nbsp;must&nbsp;be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;either&nbsp;None&nbsp;or&nbsp;an&nbsp;array&nbsp;of&nbsp;length&nbsp;equal&nbsp;to&nbsp;the&nbsp;length&nbsp;of&nbsp;n_samples.<br>
+cluster_std&nbsp;:&nbsp;float&nbsp;or&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_centers,),&nbsp;default=1.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;standard&nbsp;deviation&nbsp;of&nbsp;the&nbsp;clusters.<br>
+center_box&nbsp;:&nbsp;tuple&nbsp;of&nbsp;float&nbsp;(min,&nbsp;max),&nbsp;default=(-10.0,&nbsp;10.0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;bounding&nbsp;box&nbsp;for&nbsp;each&nbsp;cluster&nbsp;center&nbsp;when&nbsp;centers&nbsp;are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;generated&nbsp;at&nbsp;random.<br>
+shuffle&nbsp;:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Shuffle&nbsp;the&nbsp;samples.<br>
+random_state&nbsp;:&nbsp;int&nbsp;or&nbsp;None,&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Random&nbsp;seed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Returns<br>
+-------<br>
+X&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;generated&nbsp;samples.<br>
+y&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;integer&nbsp;labels&nbsp;for&nbsp;cluster&nbsp;membership&nbsp;of&nbsp;each&nbsp;sample.<br>
+centers&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_centers,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;centers&nbsp;of&nbsp;each&nbsp;cluster.&nbsp;Only&nbsp;returned&nbsp;if&nbsp;return_centers&nbsp;is&nbsp;True.</span></dd></dl>
+ <dl><dt><a name="-make_classification"><strong>make_classification</strong></a>(n_samples=100, n_features=20, n_informative=2, n_redundant=2, n_repeated=0, n_classes=2, n_clusters_per_class=2, weights=None, flip_y=0.01, class_sep=1.0, hypercube=True, shift=0.0, scale=1.0, shuffle=True, random_state=None)</dt><dd><span class="code">Generate&nbsp;a&nbsp;random&nbsp;n-class&nbsp;classification&nbsp;problem.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+n_samples&nbsp;:&nbsp;int,&nbsp;default=100<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;samples.<br>
+n_features&nbsp;:&nbsp;int,&nbsp;default=20<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;total&nbsp;number&nbsp;of&nbsp;features.<br>
+n_informative&nbsp;:&nbsp;int,&nbsp;default=2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;informative&nbsp;features.<br>
+n_redundant&nbsp;:&nbsp;int,&nbsp;default=2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;redundant&nbsp;features.<br>
+n_repeated&nbsp;:&nbsp;int,&nbsp;default=0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;duplicated&nbsp;features.<br>
+n_classes&nbsp;:&nbsp;int,&nbsp;default=2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;classes&nbsp;(or&nbsp;labels)&nbsp;of&nbsp;the&nbsp;classification&nbsp;problem.<br>
+n_clusters_per_class&nbsp;:&nbsp;int,&nbsp;default=2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;clusters&nbsp;per&nbsp;class.<br>
+weights&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_classes,)&nbsp;or&nbsp;None,&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;proportions&nbsp;of&nbsp;samples&nbsp;assigned&nbsp;to&nbsp;each&nbsp;class.<br>
+flip_y&nbsp;:&nbsp;float,&nbsp;default=0.01<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;fraction&nbsp;of&nbsp;samples&nbsp;whose&nbsp;class&nbsp;is&nbsp;randomly&nbsp;exchanged.<br>
+class_sep&nbsp;:&nbsp;float,&nbsp;default=1.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;factor&nbsp;multiplying&nbsp;the&nbsp;hypercube&nbsp;size.<br>
+hypercube&nbsp;:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;True,&nbsp;the&nbsp;clusters&nbsp;are&nbsp;put&nbsp;on&nbsp;the&nbsp;vertices&nbsp;of&nbsp;a&nbsp;hypercube.<br>
+shift&nbsp;:&nbsp;float,&nbsp;default=0.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Shift&nbsp;features&nbsp;by&nbsp;the&nbsp;specified&nbsp;value.<br>
+scale&nbsp;:&nbsp;float,&nbsp;default=1.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Multiply&nbsp;features&nbsp;by&nbsp;the&nbsp;specified&nbsp;value.<br>
+shuffle&nbsp;:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Shuffle&nbsp;the&nbsp;samples&nbsp;and&nbsp;the&nbsp;features.<br>
+random_state&nbsp;:&nbsp;int&nbsp;or&nbsp;None,&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Random&nbsp;seed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Returns<br>
+-------<br>
+X&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;generated&nbsp;samples.<br>
+y&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;integer&nbsp;labels&nbsp;for&nbsp;class&nbsp;membership&nbsp;of&nbsp;each&nbsp;sample.</span></dd></dl>
+ <dl><dt><a name="-make_regression"><strong>make_regression</strong></a>(n_samples=100, n_features=100, n_informative=10, n_targets=1, bias=0.0, effective_rank=None, tail_strength=0.5, noise=0.0, shuffle=True, coef=False, random_state=None)</dt><dd><span class="code">Generate&nbsp;a&nbsp;random&nbsp;regression&nbsp;problem.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+n_samples&nbsp;:&nbsp;int,&nbsp;default=100<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;samples.<br>
+n_features&nbsp;:&nbsp;int,&nbsp;default=100<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;features.<br>
+n_informative&nbsp;:&nbsp;int,&nbsp;default=10<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;informative&nbsp;features,&nbsp;i.e.,&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;used<br>
+&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;build&nbsp;the&nbsp;linear&nbsp;model&nbsp;used&nbsp;to&nbsp;generate&nbsp;the&nbsp;output.<br>
+n_targets&nbsp;:&nbsp;int,&nbsp;default=1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;regression&nbsp;targets,&nbsp;i.e.,&nbsp;the&nbsp;dimension&nbsp;of&nbsp;the&nbsp;y&nbsp;output.<br>
+bias&nbsp;:&nbsp;float,&nbsp;default=0.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;bias&nbsp;term&nbsp;in&nbsp;the&nbsp;underlying&nbsp;linear&nbsp;model.<br>
+effective_rank&nbsp;:&nbsp;int&nbsp;or&nbsp;None,&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;not&nbsp;None,&nbsp;the&nbsp;approximate&nbsp;dimension&nbsp;of&nbsp;the&nbsp;data&nbsp;matrix.<br>
+tail_strength&nbsp;:&nbsp;float,&nbsp;default=0.5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;relative&nbsp;importance&nbsp;of&nbsp;the&nbsp;fat&nbsp;noisy&nbsp;tail&nbsp;of&nbsp;the&nbsp;singular&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;profile&nbsp;if&nbsp;`effective_rank`&nbsp;is&nbsp;not&nbsp;None.<br>
+noise&nbsp;:&nbsp;float,&nbsp;default=0.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;standard&nbsp;deviation&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;f&nbsp;the&nbsp;gaussian&nbsp;noise&nbsp;applied&nbsp;to&nbsp;the&nbsp;output.<br>
+shuffle&nbsp;:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;shuffle&nbsp;the&nbsp;samples&nbsp;and&nbsp;the&nbsp;features.<br>
+coef&nbsp;:&nbsp;bool,&nbsp;default=False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;True,&nbsp;the&nbsp;coefficients&nbsp;of&nbsp;the&nbsp;underlying&nbsp;linear&nbsp;model&nbsp;are&nbsp;returned.<br>
+random_state&nbsp;:&nbsp;int&nbsp;or&nbsp;None,&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Random&nbsp;seed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Returns<br>
+-------<br>
+X&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;input&nbsp;samples.<br>
+y&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_samples,&nbsp;n_targets)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;output&nbsp;values.<br>
+coef&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_features,)&nbsp;or&nbsp;(n_features,&nbsp;n_targets)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;coefficient&nbsp;of&nbsp;the&nbsp;underlying&nbsp;linear&nbsp;model.&nbsp;Only&nbsp;returned&nbsp;if<br>
+&nbsp;&nbsp;&nbsp;&nbsp;coef=True.</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
 <tr class="decor data-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
     
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'ModelSelectionUtility', 'GridSearchCV', 'RandomSearchCV', 'Metrics', 'RandomOverSampler', 'RandomUnderSampler', 'SMOTE', 'Augmenter', 'PCA', 'SVD']</td></tr></table>
+<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'ModelSelectionUtility', 'GridSearchCV', 'RandomSearchCV', 'Metrics', 'RandomOverSampler', 'RandomUnderSampler', 'SMOTE', 'Augmenter', 'PCA', 'SVD', 'make_regression', 'make_classification', 'make_blobs']</td></tr></table>
 </body></html>

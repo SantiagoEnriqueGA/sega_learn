@@ -9,9 +9,9 @@ $output = @()
 $output += "Lines per Python file, sorted by descending order:"
 $output += $separator
 
-# Collect file info in an array, filtering out paths containing "__archive"
+# Collect file info in an array, filtering out paths containing "_archive" or ".venv"
 $files = Get-ChildItem -Recurse -Filter *.py | Where-Object { 
-    -not ($_.FullName -like "*__archive*") 
+    -not ($_.FullName -like "*_archive*") -and -not ($_.FullName -like "*.venv*")
 } | ForEach-Object {
     $filePath = $_.FullName -replace ".*sega_learn", "`tsega_learn"
     $lineCount = (Get-Content $_.FullName | Measure-Object -Line).Lines
@@ -29,9 +29,9 @@ $sortedFiles | ForEach-Object {
     $output += "{0,-80}: {1,5}" -f $_.FilePath, $_.LineCount
 }
 
-# Calculate the total number of lines, excluding paths with "__archive"
+# Calculate the total number of lines, excluding paths with "_archive"
 $totalLines = Get-ChildItem -Recurse -Filter *.py | Where-Object { 
-    -not ($_.FullName -like "*__archive*") 
+    -not ($_.FullName -like "*_archive*") -and -not ($_.FullName -like "*.venv*")
 } | Get-Content | Measure-Object -Line | Select-Object -ExpandProperty Lines
 
 $output += $separator
