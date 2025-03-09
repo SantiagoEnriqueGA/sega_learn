@@ -237,6 +237,13 @@ class TestMakeData(unittest.TestCase):
     
     def test_make_classification_flip_y(self):
         """Test flip_y parameter introduces label noise."""
+        # Estimate difficulty using cross-validation
+        try:
+            from sklearn.linear_model import LogisticRegression
+            from sklearn.model_selection import cross_val_score
+        except:  # Skip if sklearn is not installed
+            return
+
         n_samples = 1000
         flip_y_low, flip_y_high = 0.01, 0.3
         
@@ -245,10 +252,6 @@ class TestMakeData(unittest.TestCase):
                                                     class_sep=5.0, random_state=self.random_state)
         X_high_flip, y_high_flip = make_classification(n_samples=n_samples, flip_y=flip_y_high, 
                                                     class_sep=5.0, random_state=self.random_state)
-        
-        # Estimate difficulty using cross-validation
-        from sklearn.linear_model import LogisticRegression
-        from sklearn.model_selection import cross_val_score
         
         def get_accuracy(X, y):
             model = LogisticRegression(solver='liblinear')
