@@ -2,14 +2,14 @@ import os
 import sys
 import time
 
-from utils import suppress_print
+from tests_performance._utils import suppress_print
 
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from sega_learn.linear_models import *
 from sega_learn.linear_models import make_sample_data
-from utils import synthetic_data_regression, suppress_print
+from tests_performance._utils import synthetic_data_regression, suppress_print
 
 from sklearn import linear_model
 from sklearn.preprocessing import PolynomialFeatures

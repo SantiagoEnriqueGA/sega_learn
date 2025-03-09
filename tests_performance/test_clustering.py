@@ -2,13 +2,13 @@ import os
 import sys
 import time
 
-from utils import suppress_print
+from tests_performance._utils import suppress_print
 
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from sega_learn.clustering import *
-from utils import suppress_print
+from tests_performance._utils import suppress_print
 
 from sklearn.datasets import make_blobs
 from sklearn import cluster
