@@ -4,102 +4,6 @@ from numba import njit, prange, float64
 CACHE = False
 
 # -------------------------------------------------------------------------------------------------
-# Forward and backward passes
-# -------------------------------------------------------------------------------------------------
-@njit(fastmath=True, nogil=True, cache=CACHE)
-def forward_jit(X, weights, biases, activations, dropout_rate, training, is_binary):
-    num_layers = len(weights)
-    # Initialize layer_outputs with empty 2D float64 arrays to set the correct type
-    layer_outputs = [np.empty((0, 0), dtype=np.float64) for _ in range(num_layers + 1)]
-    layer_outputs[0] = X
-    
-    # Forward pass through all layers except the last
-    for i in range(num_layers - 1):
-        # Calculate linear transformation
-        Z = np.dot(layer_outputs[i], weights[i]) + biases[i]
-        if activations[i] == "relu":
-            layer_outputs[i + 1] = relu(Z)
-        elif activations[i] == "leaky_relu":
-            layer_outputs[i + 1] = leaky_relu(Z)
-        elif activations[i] == "tanh":
-            layer_outputs[i + 1] = tanh(Z)
-        elif activations[i] == "sigmoid":
-            layer_outputs[i + 1] = sigmoid(Z)
-        elif activations[i] == "softmax":
-            layer_outputs[i + 1] = softmax(Z)
-        else:
-            raise ValueError(f"Unsupported activation: {activations[i]}")
-        
-        # Apply dropout only during training
-        if training and dropout_rate > 0:
-            # layer_outputs[i + 1] = np.multiply(layer_outputs[i + 1], 
-            #                                   np.random.rand(*layer_outputs[i + 1].shape) < (1 - dropout_rate)) / (1 - dropout_rate)
-            layer_outputs[i + 1] = apply_dropout_jit(layer_outputs[i + 1], dropout_rate)
-                        
-    # Last layer (output layer)
-    Z = np.dot(layer_outputs[-2], weights[-1]) + biases[-1]
-    if is_binary:
-        layer_outputs[-1] = sigmoid(Z)
-    else:
-        layer_outputs[-1] = softmax(Z)
-    
-    return layer_outputs
-
-@njit(fastmath=True, nogil=True, cache=CACHE)
-def backward_jit(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs):
-    m = y.shape[0]
-    num_layers = len(weights)
-
-    # Reshape y for binary classification
-    # Calculate initial gradient based on loss function
-    outputs = layer_outputs[-1]
-    if is_binary:
-        y = y.reshape(-1, 1).astype(np.float64)
-        dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
-    else:
-        dA = outputs.copy()
-        # Replace advanced indexing with a loop
-        for i in range(m):
-            dA[i, y[i]] -= 1  # Subtract 1 from the correct class index for each sample
-        
-    
-    # Backpropagate through layers in reverse
-    for i in range(num_layers - 1, -1, -1): 
-        prev_activation = layer_outputs[i]
-
-        if i < num_layers - 1:
-            output = layer_outputs[i + 1]
-            if activations[i] == "relu":
-                dZ = dA * relu_derivative(output)
-            elif activations[i] == "leaky_relu":
-                alpha = 0.01  # Consider passing as a parameter if needed
-                dZ = dA * leaky_relu_derivative(output, alpha)
-            elif activations[i] == "tanh":
-                dZ = dA * tanh_derivative(output)
-            elif activations[i] == "sigmoid":
-                dZ = dA * sigmoid_derivative(output)
-            elif activations[i] == "softmax":
-                dZ = dA  # Typically not used in hidden layers
-            else:
-                raise ValueError(f"Unsupported activation: {activations[i]}")
-        else:
-            dZ = dA
-
-        dW = np.dot(prev_activation.T, dZ) / m + reg_lambda * weights[i]
-        # db = sum_reduce(dZ) / m
-        db = sum_axis0(dZ) / m
-
-        dWs[i] += dW
-        dbs[i] += db
-
-        if i > 0:
-            dA = np.dot(dZ, weights[i].T)
-
-    return dWs, dbs
-
-
-
-# -------------------------------------------------------------------------------------------------
 # Loss functions and accuracy
 # -------------------------------------------------------------------------------------------------
 @njit(fastmath=True, nogil=True, cache=CACHE)
@@ -275,7 +179,7 @@ def one_hot_encode(y, num_classes):
     return y_ohe
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def process_batches_binary(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, reg_lambda, dWs_acc, dbs_acc):
+def process_batches_binary(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, reg_lambda, dWs_acc, dbs_acc):
     num_samples = X_shuffled.shape[0]
     num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
     running_loss = 0.0
@@ -289,19 +193,34 @@ def process_batches_binary(X_shuffled, y_shuffled, batch_size, weights, biases, 
         y_batch = y_shuffled[start_idx:end_idx]
         
         # Forward pass
-        layer_outputs = forward_jit(X_batch, weights, biases, activations, dropout_rate, True, True)
+        layer_outputs = [X_batch]
+        A = X_batch.astype(np.float64)
+        for layer in layers[:-1]:
+            A = layer.forward(A)
+            if dropout_rate > 0:
+                A = apply_dropout_jit(A, dropout_rate)
+            layer_outputs.append(A)
+        Z = layers[-1].forward(A)
+        output = sigmoid(Z)
+        layer_outputs.append(output)
         
         # Backward pass
-        dWs, dbs = backward_jit(layer_outputs, y_batch, weights, activations, reg_lambda, True, dWs_acc, dbs_acc)
+        m = y_batch.shape[0]
+        outputs = layer_outputs[-1]
+        y_batch = y_batch.reshape(-1, 1).astype(np.float64)
+        dA = -(y_batch / (outputs + 1e-15) - (1 - y_batch) / (1 - outputs + 1e-15))
+        
+        for j in range(len(layers) - 1, -1, -1):
+            dA = layers[j].backward(dA, reg_lambda)
         
         # Calculate loss and accuracy for binary classification
-        running_loss += calculate_loss_from_outputs_binary(layer_outputs[-1], y_batch, reg_lambda, weights)
+        running_loss += calculate_loss_from_outputs_binary(layer_outputs[-1], y_batch, reg_lambda, [layer.weights for layer in layers])
         running_accuracy += evaluate_batch(layer_outputs[-1], y_batch, True)
         
         # Accumulate gradients
-        for j in range(len(dWs)):
-            dWs_acc[j] += dWs[j]
-            dbs_acc[j] += dbs[j]
+        for j in range(len(layers)):
+            dWs_acc[j] += layers[j].weight_gradients
+            dbs_acc[j] += layers[j].bias_gradients
     
     # Average the accumulated gradients, loss, and accuracy
     for j in range(len(dWs_acc)):
@@ -313,7 +232,7 @@ def process_batches_binary(X_shuffled, y_shuffled, batch_size, weights, biases, 
     return dWs_acc, dbs_acc, running_loss, running_accuracy
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def process_batches_multi(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, reg_lambda, dWs_acc, dbs_acc):
+def process_batches_multi(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, reg_lambda, dWs_acc, dbs_acc):
     num_samples = X_shuffled.shape[0]
     num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
     running_loss = 0.0
@@ -327,20 +246,36 @@ def process_batches_multi(X_shuffled, y_shuffled, batch_size, weights, biases, a
         y_batch = y_shuffled[start_idx:end_idx]
         
         # Forward pass
-        layer_outputs = forward_jit(X_batch, weights, biases, activations, dropout_rate, True, False)
+        layer_outputs = [X_batch]
+        A = X_batch.astype(np.float64)
+        for layer in layers[:-1]:
+            A = layer.forward(A)
+            if dropout_rate > 0:
+                A = apply_dropout_jit(A, dropout_rate)
+            layer_outputs.append(A)
+        Z = layers[-1].forward(A)
+        output = softmax(Z)
+        layer_outputs.append(output)
         
         # Backward pass
-        dWs, dbs = backward_jit(layer_outputs, y_batch, weights, activations, reg_lambda, False, dWs_acc, dbs_acc)
+        m = y_batch.shape[0]
+        outputs = layer_outputs[-1]
+        dA = outputs.copy()
+        for k in range(m):
+            dA[k, y_batch[k]] -= 1
+        
+        for j in range(len(layers) - 1, -1, -1):
+            dA = layers[j].backward(dA, reg_lambda)
         
         # One-hot encode for multi-class loss
-        y_batch_ohe = one_hot_encode(y_batch, weights[-1].shape[1])
-        running_loss += calculate_loss_from_outputs_multi(layer_outputs[-1], y_batch_ohe, reg_lambda, weights)
+        y_batch_ohe = one_hot_encode(y_batch, layers[-1].weights.shape[1])
+        running_loss += calculate_loss_from_outputs_multi(layer_outputs[-1], y_batch_ohe, reg_lambda, [layer.weights for layer in layers])
         running_accuracy += evaluate_batch(layer_outputs[-1], y_batch, False)
         
-        # # Accumulate gradients
-        # for j in range(len(dWs)):
-        #     dWs_acc[j] += dWs[j]
-        #     dbs_acc[j] += dbs[j]
+        # Accumulate gradients
+        for j in range(len(layers)):
+            dWs_acc[j] += layers[j].weight_gradients
+            dbs_acc[j] += layers[j].bias_gradients
     
     # Average the accumulated gradients, loss, and accuracy
     for j in range(len(dWs_acc)):

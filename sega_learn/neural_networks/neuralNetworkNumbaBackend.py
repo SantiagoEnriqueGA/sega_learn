@@ -47,8 +47,20 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         
         if compile_numba and not self.compiled:
             self.compile_numba_functions(self.progress_bar)
+            
+            # Drop and re-initialize layers after compilation
+            self.drop_layers()
+            self.initialize_layers()
             self.compiled = True
 
+    def drop_layers(self):
+        """Drops the layers from the network."""
+        self.layers = []
+        self.weights = []
+        self.biases = []
+        self.dWs_cache = []
+        self.dbs_cache = []
+    
     def initialize_layers(self):
         """
         Initializes the layers of the neural network.
@@ -73,16 +85,20 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             ndarray: Output predictions of shape (batch_size, output_size).
         """
         # Convert input to float64 for Numba compatibility
-        X = X.astype(np.float64)
+        self.layer_outputs = [X]
+        A = X.astype(np.float64)
+                       
+        for i, layer in enumerate(self.layers[:-1]):
+            A = layer.forward(A)
+            if training and self.dropout_rate > 0:
+                A = apply_dropout_jit(A, self.dropout_rate)            
+            self.layer_outputs.append(A)
         
-        # Initialize weights and biases for JIT function
-        weights = [layer.weights for layer in self.layers]
-        biases = [layer.biases for layer in self.layers]
-        layer_outputs = forward_jit(X, weights, biases, self.activations, self.dropout_rate, training, self.is_binary)
-        
-        # Update layer outputs
-        self.layer_outputs = layer_outputs
-        return self.layer_outputs[-1]
+        Z = self.layers[-1].forward(A)
+        output = Z if self.is_binary else softmax(Z)
+        self.layer_outputs.append(output)
+        return output
+                
 
     def backward(self, y):
         """
@@ -91,20 +107,20 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             y (ndarray): Target labels of shape (m, output_size).
         """
         # Convert target labels to int32 for Numba compatibility
-        y = y.astype(np.int32)
+        y = y.astype(np.int32)        
+        m = y.shape[0]
+        outputs = self.layer_outputs[-1]
         
-        # Reset gradients caches
-        for i in range(len(self.dWs_cache)):
-            self.dWs_cache[i].fill(0)
-            self.dbs_cache[i].fill(0)
-        dWs, dbs = backward_jit(self.layer_outputs, y, [layer.weights for layer in self.layers], 
-                                self.activations, self.reg_lambda, self.is_binary, 
-                                self.dWs_cache, self.dbs_cache)
-        
-        # Update weights and biases gradients
-        for i, layer in enumerate(self.layers):
-            layer.weight_gradients = dWs[i]
-            layer.bias_gradients = dbs[i]
+        if self.is_binary:
+            y = y.reshape(-1, 1).astype(np.float64)
+            dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
+        else:
+            dA = outputs.copy()
+            for i in range(m):
+                dA[i, y[i]] -= 1
+            
+        for i in reversed(range(len(self.layers))):
+            dA = self.layers[i].backward(dA, self.reg_lambda)
 
     @staticmethod
     def is_not_instance_of_classes(obj, classes):
@@ -231,18 +247,18 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             # Initialize accumulated gradients with zeros 
             dWs_zeros = [np.zeros_like(w) for w in weights]
             dbs_zeros = [np.zeros_like(b) for b in biases]
-           
+                           
             # Process batches based on classification type
             if self.is_binary:
                 dWs_acc, dbs_acc, train_loss, train_accuracy = process_batches_binary(
-                    X_shuffled, y_shuffled, batch_size, weights, biases, 
-                    activations, self.dropout_rate, self.reg_lambda,
+                    X_shuffled, y_shuffled, batch_size, self.layers, 
+                    self.dropout_rate, self.reg_lambda,
                     dWs_zeros, dbs_zeros
                 )
             else:
                 dWs_acc, dbs_acc, train_loss, train_accuracy = process_batches_multi(
-                    X_shuffled, y_shuffled, batch_size, weights, biases, 
-                    activations, self.dropout_rate, self.reg_lambda,
+                    X_shuffled, y_shuffled, batch_size, self.layers, 
+                    self.dropout_rate, self.reg_lambda,
                     dWs_zeros, dbs_zeros
                 )
 
@@ -520,11 +536,12 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             progress_bar (bool): Whether to display a progress bar.
         """
         if progress_bar:
-            progress_bar = tqdm(total=33, desc="Compiling Numba functions")
+            progress_bar = tqdm(total=31, desc="Compiling Numba functions")
         else:
             progress_bar = None
         # Neural network functions
         # --------------------------------------------------------------------
+        if progress_bar: progress_bar.set_description("Compiling Neural Network Functions")
         apply_dropout_jit(np.random.randn(10, 10), self.dropout_rate)
         if progress_bar: progress_bar.update(1)
         compute_l2_reg(self.weights)
@@ -534,8 +551,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             process_batches_binary(
                 X_shuffled=np.random.randn(10, self.layer_sizes[0]),
                 y_shuffled=np.random.randint(0, 2, (10, 1)),
-                batch_size=32, weights=self.weights, biases=self.biases,
-                activations=self.activations, dropout_rate=self.dropout_rate,
+                batch_size=32, layers=self.layers, dropout_rate=self.dropout_rate,
                 reg_lambda=self.reg_lambda, dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache
             )
             if progress_bar: progress_bar.update(1)
@@ -543,8 +559,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             process_batches_multi(
                 X_shuffled=np.random.randn(10, self.layer_sizes[0]),
                 y_shuffled=np.random.randint(0, 2, 10),
-                batch_size=32, weights=self.weights, biases=self.biases,
-                activations=self.activations, dropout_rate=self.dropout_rate,
+                batch_size=32, layers=self.layers, dropout_rate=self.dropout_rate,
                 reg_lambda=self.reg_lambda, dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache
             )
             if progress_bar: progress_bar.update(1)
@@ -557,13 +572,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         
         # Numba Utils functions
         # --------------------------------------------------------------------
-        # Forward and backward passes
-        forward_jit(X=np.random.randn(10, self.layer_sizes[0]), weights=self.weights, biases=self.biases, activations=self.activations,
-                         dropout_rate=self.dropout_rate, training=True, is_binary=self.is_binary)
-        if progress_bar: progress_bar.update(1)
-        backward_jit(self.layer_outputs, np.random.randint(0, 2, 10), self.weights, self.activations, self.reg_lambda,
-                          self.is_binary, self.dWs_cache, self.dbs_cache)
-        if progress_bar: progress_bar.update(1)
+        if progress_bar: progress_bar.set_description("Compiling Numba Utils Functions")
         # Loss functions and evaluation
         calculate_loss_from_outputs_binary(np.random.randn(10, 1), np.random.randint(0, 2, 10).astype(np.float64), self.reg_lambda, self.weights)
         if progress_bar: progress_bar.update(1)
@@ -598,6 +607,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         
         # Optimizers
         # --------------------------------------------------------------------
+        if progress_bar: progress_bar.set_description("Compiling Optimizer Functions")
         # Adam
         _adam = JITAdamOptimizer()
         if progress_bar: progress_bar.update(1)
@@ -622,6 +632,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         
         # Loss Modules
         # --------------------------------------------------------------------
+        if progress_bar: progress_bar.set_description("Compiling Loss Functions")
         _cross_entropy = JITCrossEntropyLoss()
         if progress_bar: progress_bar.update(1)
         _cross_entropy.calculate_loss(np.random.randn(10, self.layer_sizes[-1]), np.eye(self.layer_sizes[-1])[np.random.randint(0, self.layer_sizes[-1], 10)])

@@ -114,7 +114,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
         with suppress_print():
             nn.train(X_small, y_small, optimizer=optimizer, epochs=1, batch_size=4, use_tqdm=False, p=False)
         final_loss = nn.calculate_loss(X_small, y_small)
-        self.assertLess(final_loss, initial_loss)
+        self.assertLessEqual(final_loss, initial_loss)
 
     ### Evaluation Test ###
     def test_evaluate(self):

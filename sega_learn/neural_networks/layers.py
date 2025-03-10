@@ -26,6 +26,24 @@ class Layer:
         """Reset the gradients of the weights and biases to zero."""
         self.weight_gradients = None
         self.bias_gradients = None
+        
+    def forward(self, X):
+        Z = np.dot(X, self.weights) + self.biases
+        self.input_cache = X
+        self.output_cache = self.activate(Z)
+        return self.output_cache
+
+    def backward(self, dA, reg_lambda):
+        m = self.input_cache.shape[0]
+        dZ = dA * self.activation_derivative(self.output_cache)
+        dW = np.dot(self.input_cache.T, dZ) / m + reg_lambda * self.weights
+        db = np.sum(dZ, axis=0, keepdims=True) / m
+        dA_prev = np.dot(dZ, self.weights.T)
+        
+        self.weight_gradients = dW
+        self.bias_gradients = db
+        
+        return dA_prev
 
     def activate(self, Z):
         """Apply activation function."""

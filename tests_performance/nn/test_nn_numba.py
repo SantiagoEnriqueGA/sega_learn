@@ -96,7 +96,7 @@ def time_nn_numba(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000)
     X_small = np.random.randn(DATASET_SIZE // 10, layer_sizes[0])
     y_small = np.random.randint(0, layer_sizes[-1], size=(DATASET_SIZE // 10,))
     
-    optimizer = AdamOptimizer(learning_rate=0.01)
+    optimizer = JITAdamOptimizer(learning_rate=0.01)
     sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=100)  
     scheduler = lr_scheduler_plateau(sub_scheduler, patience=100, threshold=0.001)  
     train_avg, train_stddev, _ = time_function(nn.train, 
@@ -128,9 +128,9 @@ def time_nn_optimizer_numba(num_repeats=5, layer_sizes_multiplier=25):
     )
 
     optimizers = {
-        'Adam': AdamOptimizer(learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8, reg_lambda=0.01),
-        'SGD': SGDOptimizer(learning_rate=0.001, momentum=0.9, reg_lambda=0.01),
-        'Adadelta': AdadeltaOptimizer(learning_rate=0.001, rho=0.95, epsilon=1e-8, reg_lambda=0.01),
+        'Adam': JITAdamOptimizer(learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8, reg_lambda=0.01),
+        'SGD': JITSGDOptimizer(learning_rate=0.001, momentum=0.9, reg_lambda=0.01),
+        'Adadelta': JITAdadeltaOptimizer(learning_rate=0.001, rho=0.95, epsilon=1e-8, reg_lambda=0.01),
     }
 
     optimizer_times = {}
@@ -184,8 +184,8 @@ def time_nn_loss_numba(num_repeats=5, layer_sizes_multiplier=10, dataset_size=1_
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
 
     loss_functions = {
-        'CrossEntropyLoss': CrossEntropyLoss(),
-        'BCEWithLogitsLoss': BCEWithLogitsLoss()
+        'CrossEntropyLoss': JITCrossEntropyLoss(),
+        'BCEWithLogitsLoss': JITBCEWithLogitsLoss()
     }
 
     loss_times = {}
@@ -261,7 +261,7 @@ def time_nn_epoch_numba(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[
         X_small = np.random.randn(dataset_size, layer_sizes[0])
         y_small = np.random.randint(0, layer_sizes[-1], size=(dataset_size,))
         
-        optimizer = AdamOptimizer(learning_rate=0.01)
+        optimizer = JITAdamOptimizer(learning_rate=0.01)
         sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)  
         scheduler = lr_scheduler_plateau(sub_scheduler, patience=5, threshold=0.001)  
         train_avg, train_stddev, _ = time_function(nn.train, 

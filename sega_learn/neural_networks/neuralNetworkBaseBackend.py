@@ -55,10 +55,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         
         # Pass through each layer (except the last)
         for i, layer in enumerate(self.layers[:-1]):
-            # Calculate the linear combination of inputs and weights
-            Z = np.dot(A, layer.weights) + layer.biases
-            A = layer.activate(Z)
-            
+            A = layer.forward(A)
             # If training and dropout is enabled, apply dropout
             if training and self.dropout_rate > 0:
                 A = self.apply_dropout(A)
@@ -69,7 +66,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         # Handle the last layer separately
         # For binary classification, use sigmoid activation
         # For multi-class classification, use softmax activation
-        Z = np.dot(A, self.layers[-1].weights) + self.layers[-1].biases
+        Z = self.layers[-1].forward(A)
         output = Activation.sigmoid(Z) if self.is_binary else Activation.softmax(Z)
         self.layer_outputs.append(output)
         
@@ -81,8 +78,6 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         Parameters: 
             y (ndarray): Target labels of shape (m, output_size).
         """
-        # Number of samples
-        m = y.shape[0]
         outputs = self.layer_outputs[-1]
         
         # If binary classification, calculate the gradient for binary cross-entropy
@@ -96,22 +91,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             
         # Backpropagation through the network in reverse order
         for i in reversed(range(len(self.layers))):
-            # Get the previous layer's output
-            prev_activation = self.layer_outputs[i]
-            
-            # Calculate the gradient for the current layer (if not the last layer)
-            dZ = dA * self.layers[i].activation_derivative(self.layer_outputs[i+1]) if i < len(self.layers) - 1 else dA
-            
-            # Calculate gradients for weights and biases and add L2 regularization term
-            dW = np.dot(prev_activation.T, dZ) / m + self.reg_lambda * self.compute_l2_reg([self.layers[i].weights])
-            db = np.sum(dZ, axis=0, keepdims=True) / m
-            
-            # Store gradients for the current layer
-            self.layers[i].weight_gradients = dW
-            self.layers[i].bias_gradients = db
-            
-            # If not the last layer, calculate the gradient for the previous layer
-            if i > 0: dA = np.dot(dZ, self.layers[i].weights.T)
+            dA = self.layers[i].backward(dA, self.reg_lambda)
 
     def train(self, X_train, y_train, X_val=None, y_val=None, 
               optimizer=None, epochs=100, batch_size=32, 

@@ -6,11 +6,13 @@ from numba.experimental import jitclass
 from .numba_utils import *
 
 spec = [
-    ('weights', float64[:,:]),            # 2D array for weights
-    ('biases', float64[:,:]),             # 2D array for biases
-    ('activation', types.unicode_type),   # String for activation function
-    ('weight_gradients', float64[:,:]),   # 2D array for weight gradients
-    ('bias_gradients', float64[:,:]),     # 2D array for bias gradients
+    ('weights', float64[:,::1]),            # 2D array for weights
+    ('biases', float64[:,::1]),             # 2D array for biases
+    ('activation', types.unicode_type),     # String for activation function
+    ('weight_gradients', float64[:,::1]),   # 2D array for weight gradients
+    ('bias_gradients', float64[:,::1]),     # 2D array for bias gradients
+    ('input_cache', float64[:,::1]),        # 2D array for input cache
+    ('output_cache', float64[:,::1]),       # 2D array for output cache
     ('input_size', int32),
     ('output_size', int32),
 ]
@@ -33,13 +35,33 @@ class JITLayer:
         self.weights = np.random.randn(input_size, output_size) * scale
         self.biases = np.zeros((1, output_size))
         self.activation = activation
-        self.weight_gradients = np.zeros((input_size, output_size))  # Initialize weight gradients to zeros
-        self.bias_gradients = np.zeros((1, output_size))  # Initialize bias gradients to zeros
+        self.weight_gradients = np.zeros((input_size, output_size)) # Initialize weight gradients to zeros
+        self.bias_gradients = np.zeros((1, output_size))            # Initialize bias gradients to zeros
+        self.input_cache = np.zeros((1, input_size))        
+        self.output_cache = np.zeros((1, output_size))
         
     def zero_grad(self):
         """Reset the gradients of the weights and biases to zero."""
         self.weight_gradients = np.zeros_like(self.weight_gradients)
         self.bias_gradients = np.zeros_like(self.bias_gradients)
+        
+    def forward(self, X):
+        Z = np.dot(X, self.weights) + self.biases
+        self.input_cache = X
+        self.output_cache = self.activate(Z)
+        return self.output_cache
+
+    def backward(self, dA, reg_lambda):
+        m = self.input_cache.shape[0]
+        dZ = dA * self.activation_derivative(self.output_cache)
+        dW = np.dot(self.input_cache.T, dZ) / m + reg_lambda * self.weights
+        db = sum_axis0(dZ) / m
+        dA_prev = np.dot(dZ, self.weights.T)
+        
+        self.weight_gradients = dW
+        self.bias_gradients = db
+        
+        return dA_prev
 
     def activate(self, Z):
         """Apply activation function."""
