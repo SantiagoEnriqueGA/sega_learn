@@ -26,8 +26,11 @@ $otherTodos = @"
 Planned/Ideas:
 Time Series Analysis - ARIMA, Moving Average, Exponential Smoothing
 Anomaly Detection - Isolation Forest, One-Class SVM
-Deep Learning Enhancements - Convolutional Layers, Recurrent Layers
 Data Preprocessing - Normalization, Standardization, Missing Value Imputation
+Deep Learning Enhancements
+    - Refactor NeuralNetwork class to use base class and inherit from it for base vs numba backend
+    - Implement Convolutional Layers, Recurrent Layers
+    - Implement Data Preprocessing Layers
 "@
 
 # Add the "Other" section to the file and console output
