@@ -1,4 +1,3 @@
-
 # Neural Networks Module
 
 The Neural Networks Module in **SEGA_LEARN** is a fully featured framework for building, training, and evaluating custom neural network models. It provides implementations of key neural network components using pure NumPy for clarity and flexibility as well as Numba-accelerated versions for performance gains. The module supports a wide range of functionalities including diverse layer types, activation functions, loss calculations, optimizers, learning rate schedulers, and various utility functions for efficient forward and backward propagation.
@@ -17,10 +16,10 @@ Neural networks are a class of machine learning models inspired by the human bra
   The module provides a `Layer` class (and its Numba counterpart `JITLayer`) that encapsulates the weights, biases, and activation functions for a network layer. Weight initialization uses He initialization for ReLU and Leaky ReLU activations and a scaled approach for others.
 
 - **Forward & Backward Propagation:**  
-  The `NeuralNetwork` class orchestrates the forward pass, computing activations for each layer (with optional dropout during training), and the backward pass, where gradients are calculated layer by layer. Utility functions (in `numba_utils.py`) support these operations with Numba-compiled versions for faster computations.
+  The `BaseBackendNeuralNetwork` and `NumbaBackendNeuralNetwork` classes orchestrate the forward pass, computing activations for each layer (with optional dropout during training), and the backward pass, where gradients are calculated layer by layer. Utility functions (in `numba_utils.py`) support these operations with Numba-compiled versions for faster computations.
 
 - **Dual Backend Support:**  
-  Users can choose between a pure NumPy backend or a Numba-accelerated version by setting the `use_numba` flag. This design allows for both ease of debugging and high-performance training.
+  Users can choose between a pure NumPy backend (`BaseBackendNeuralNetwork`) or a Numba-accelerated version (`NumbaBackendNeuralNetwork`) by selecting the appropriate class. This design allows for both ease of debugging and high-performance training.
 
 ---
 
@@ -138,9 +137,9 @@ The `numba_utils.py` module contains helper functions that accelerate various op
 
 ---
 
-## Neural Network Class
+## Neural Network Classes
 
-The core class, `NeuralNetwork` (in `neuralNetwork.py`), integrates all the above components:
+The core classes, `BaseBackendNeuralNetwork` and `NumbaBackendNeuralNetwork`, integrate all the above components:
 
 - **Model Construction:**  
   Accepts a list of layer sizes and optionally a list of activation functions. It builds the network by stacking layers (using either the standard or Numba-accelerated version).
@@ -162,7 +161,7 @@ The core class, `NeuralNetwork` (in `neuralNetwork.py`), integrates all the abov
 ## Example Usage
 
 ```python
-from sega_learn.neural_networks import NeuralNetwork, AdamOptimizer, lr_scheduler_step
+from sega_learn.neural_networks import BaseBackendNeuralNetwork, AdamOptimizer, lr_scheduler_step
 import numpy as np
 
 # Generate sample data
@@ -170,7 +169,7 @@ X_train = np.random.rand(100, 10)
 y_train = np.random.randint(0, 2, size=(100,))
 
 # Initialize the neural network (using standard NumPy backend)
-nn = NeuralNetwork(layer_sizes=[10, 5, 1], dropout_rate=0.2, reg_lambda=0.01)
+nn = BaseBackendNeuralNetwork(layer_sizes=[10, 5, 1], dropout_rate=0.2, reg_lambda=0.01)
 
 # Set up an optimizer
 optimizer = AdamOptimizer(learning_rate=0.001)

@@ -16,21 +16,21 @@ from tests.utils import suppress_print
 
 class TestNeuralNetworkNumba(unittest.TestCase):
     """
-    Comprehensive test suite for NeuralNetwork class with use_numba=True.
+    Comprehensive test suite for NumbaBackendNeuralNetwork class.
     Tests all major functions and edge cases under Numba acceleration.
     """
 
     @classmethod
     def setUpClass(cls):
-        print("Testing NeuralNetwork class with use_numba=True")    
+        print("Testing NeuralNetwork class with Numba backend")
 
     def setUp(self):
-        """Initialize test fixtures with use_numba=True."""
+        """Initialize test fixtures."""
         with suppress_print():
             # Binary classification network
-            self.nn_binary = NeuralNetwork([2, 100, 25, 1], dropout_rate=0.2, reg_lambda=0.01, use_numba=True, compile_numba=False)
+            self.nn_binary = NumbaBackendNeuralNetwork([2, 100, 25, 1], dropout_rate=0.2, reg_lambda=0.01, compile_numba=False)
             # Multi-class classification network
-            self.nn_multi = NeuralNetwork([2, 100, 25, 10], dropout_rate=0.2, reg_lambda=0.01, use_numba=True, compile_numba=False)
+            self.nn_multi = NumbaBackendNeuralNetwork([2, 100, 25, 10], dropout_rate=0.2, reg_lambda=0.01, compile_numba=False)
         self.optimizer = JITAdamOptimizer(learning_rate=0.01)
         np.random.seed(42)
         self.X = np.random.randn(100, 2)
@@ -43,7 +43,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
     ### Initialization Tests ###
     def test_initialization(self):
         """Test layer initialization with custom sizes and activations."""
-        nn = NeuralNetwork([3, 4, 2], activations=['tanh', 'sigmoid'], use_numba=True, compile_numba=False, progress_bar=False)
+        nn = NumbaBackendNeuralNetwork([3, 4, 2], activations=['tanh', 'sigmoid'], compile_numba=False, progress_bar=False)
         self.assertEqual(len(nn.layers), 2)
         self.assertEqual(nn.layers[0].activation, 'tanh')
         self.assertEqual(nn.layers[1].activation, 'sigmoid')
@@ -54,7 +54,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
 
     def test_default_activations(self):
         """Test default activation settings."""
-        nn = NeuralNetwork([3, 4, 5, 2], use_numba=True, compile_numba=False, progress_bar=False)
+        nn = NumbaBackendNeuralNetwork([3, 4, 5, 2], compile_numba=False, progress_bar=False)
         self.assertEqual(nn.activations, ['relu', 'relu', 'softmax'])
 
     ### Dropout Tests ###
@@ -72,7 +72,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
 
     def test_apply_dropout_zero(self):
         """Test dropout with rate=0 (no dropout)."""
-        nn = NeuralNetwork([2, 100, 1], dropout_rate=0, use_numba=True, compile_numba=False, progress_bar=False)
+        nn = NumbaBackendNeuralNetwork([2, 100, 1], dropout_rate=0, compile_numba=False, progress_bar=False)
         A = np.random.randn(10, 10)
         A_dropped = nn.apply_dropout(A)
         np.testing.assert_array_equal(A, A_dropped)
@@ -124,7 +124,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
         """Test if loss decreases after a training step with Numba."""
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            nn = NeuralNetwork([2, 10, 1], dropout_rate=0, reg_lambda=0, use_numba=True, compile_numba=False, progress_bar=False)
+            nn = NumbaBackendNeuralNetwork([2, 10, 1], dropout_rate=0, reg_lambda=0, compile_numba=False, progress_bar=False)
             optimizer = JITSGDOptimizer(learning_rate=0.1)
             X_small = np.array([[0.5, 0.5], [0.5, -0.5], [-0.5, 0.5], [-0.5, -0.5]])
             y_small = np.array([[1], [0], [0], [0]])
@@ -179,7 +179,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
         """Test regularization effect on loss with Numba."""
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            nn = NeuralNetwork([2, 100, 1], reg_lambda=0, use_numba=True, compile_numba=False, progress_bar=False)
+            nn = NumbaBackendNeuralNetwork([2, 100, 1], reg_lambda=0, compile_numba=False, progress_bar=False)
             loss_no_reg = nn.calculate_loss(self.X, self.y_binary)
             nn.reg_lambda = 0.01
             loss_with_reg = nn.calculate_loss(self.X, self.y_binary)
@@ -192,7 +192,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
             warnings.simplefilter("ignore")
             X_single = np.random.randn(1, 2)
             y_single = np.array([[1]])  # Shape (1, 1) for binary classification
-            nn = NeuralNetwork([2, 10, 1], use_numba=True, compile_numba=False, progress_bar=False)
+            nn = NumbaBackendNeuralNetwork([2, 10, 1], compile_numba=False, progress_bar=False)
             nn.forward(X_single)
             nn.backward(y_single)
             accuracy, predicted = nn.evaluate(X_single, y_single)
@@ -202,7 +202,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
         """Test learning rate scheduler integration with Numba."""
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            nn = NeuralNetwork([2, 100, 1], use_numba=True, compile_numba=False, progress_bar=False)
+            nn = NumbaBackendNeuralNetwork([2, 100, 1], compile_numba=False, progress_bar=False)
             optimizer = JITAdamOptimizer(learning_rate=0.01)
             scheduler = nn.create_scheduler('step', optimizer, lr_decay=0.5, lr_decay_epoch=2)
             initial_lr = optimizer.learning_rate
@@ -218,7 +218,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
             warnings.simplefilter("ignore")
             X_int = np.array([[1, 2], [3, 4]])
             y_int = np.array([[0], [1]])
-            nn = NeuralNetwork([2, 10, 1], use_numba=True, compile_numba=False, progress_bar=False)
+            nn = NumbaBackendNeuralNetwork([2, 10, 1], compile_numba=False, progress_bar=False)
             outputs = nn.forward(X_int)
             self.assertEqual(outputs.shape, (2, 1))
 

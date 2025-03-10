@@ -5,17 +5,27 @@ import os
 # Change the working directory to the parent directory to allow importing the package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from sega_learn.neural_networks import AdamOptimizer as adam
-from sega_learn.neural_networks import SGDOptimizer as sgd
-from sega_learn.neural_networks import AdadeltaOptimizer as adadelta
 from sega_learn.neural_networks import lr_scheduler_exp as lrExp
 from sega_learn.neural_networks import lr_scheduler_plateau as lrPlateau
 from sega_learn.neural_networks import lr_scheduler_step as lrStep
+from sega_learn.neural_networks import NeuralNetworkBase as nn
+
+from sega_learn.neural_networks import AdamOptimizer as adam
+from sega_learn.neural_networks import SGDOptimizer as sgd
+from sega_learn.neural_networks import AdadeltaOptimizer as adadelta
 from sega_learn.neural_networks import CrossEntropyLoss as cel
 from sega_learn.neural_networks import BCEWithLogitsLoss as bcel
-from sega_learn.neural_networks import NeuralNetwork as nn
 from sega_learn.neural_networks import Layer as lay
 from sega_learn.neural_networks import Activation as act
+from sega_learn.neural_networks import neuralNetworkBaseBackend as nnBackend
+
+from sega_learn.neural_networks import JITAdamOptimizer as jitadam
+from sega_learn.neural_networks import JITSGDOptimizer as jitsgd
+from sega_learn.neural_networks import JITAdadeltaOptimizer as jitadadelta
+from sega_learn.neural_networks import JITCrossEntropyLoss as jitcel
+from sega_learn.neural_networks import JITBCEWithLogitsLoss as jitbcel
+from sega_learn.neural_networks import JITLayer as jitlay
+from sega_learn.neural_networks import neuralNetworkNumbaBackend as nnNumba
 
 from sega_learn.neural_networks import *
 
@@ -31,20 +41,30 @@ class TestImportsNeuralNetworks(unittest.TestCase):
     def setUpClass(cls):
         print("Testing Imports - Neural Networks")
     
-    def test_individual_imports(self):
-        assert adam is not None
-        assert sgd is not None
-        assert adadelta is not None
+    def test_base_method_imports(self):
         assert lrExp is not None
         assert lrPlateau is not None
         assert lrStep is not None
+        assert nn is not None
+    
+    def test_base_method_wildcard_import(self):
+        assert lr_scheduler_exp is not None
+        assert lr_scheduler_plateau is not None
+        assert lr_scheduler_step is not None
+        assert NeuralNetworkBase is not None
+    
+    def test_base_backend_imports(self):
+        assert adam is not None
+        assert sgd is not None
+        assert adadelta is not None
         assert cel is not None
         assert bcel is not None
         assert nn is not None
         assert lay is not None
         assert act is not None
-   
-    def test_wildcard_import(self):
+        assert nnBackend is not None
+    
+    def test_base_backend_wildcard_import(self):
         assert AdamOptimizer is not None
         assert SGDOptimizer is not None
         assert AdadeltaOptimizer is not None
@@ -53,9 +73,28 @@ class TestImportsNeuralNetworks(unittest.TestCase):
         assert lr_scheduler_step is not None
         assert CrossEntropyLoss is not None
         assert BCEWithLogitsLoss is not None
-        assert NeuralNetwork is not None
         assert Layer is not None
         assert Activation is not None
+        assert BaseBackendNeuralNetwork is not None
+        
+    def test_numba_method_imports(self):
+        assert jitadam is not None
+        assert jitsgd is not None
+        assert jitadadelta is not None
+        assert jitcel is not None
+        assert jitbcel is not None
+        assert jitlay is not None
+        assert nnNumba is not None
+        
+    def test_numba_method_wildcard_import(self):
+        assert JITAdamOptimizer is not None
+        assert JITSGDOptimizer is not None
+        assert JITAdadeltaOptimizer is not None
+        assert JITCrossEntropyLoss is not None
+        assert JITBCEWithLogitsLoss is not None
+        assert JITLayer is not None
+        assert NumbaBackendNeuralNetwork is not None
+   
 
 if __name__ == '__main__':
     unittest.main()

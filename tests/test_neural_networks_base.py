@@ -6,25 +6,25 @@ import numpy as np
 # Adjust sys.path to import from the parent directory
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from sega_learn.neural_networks import NeuralNetwork, AdamOptimizer, SGDOptimizer
+from sega_learn.neural_networks import BaseBackendNeuralNetwork, AdamOptimizer, SGDOptimizer
 from tests.utils import suppress_print
 
 class TestNeuralNetworkVanilla(unittest.TestCase):
     """
-    Comprehensive test suite for NeuralNetwork class with use_numba=False.
+    Comprehensive test suite for BaseBackendNeuralNetwork class.
     Tests all major functions and edge cases.
     """
 
     @classmethod
     def setUpClass(cls):
-        print("Testing NeuralNetwork class with use_numba=False")
+        print("Testing NeuralNetwork class with base backend")
 
     def setUp(self):
         """Initialize test fixtures."""
         # Binary classification network
-        self.nn_binary = NeuralNetwork([2, 100, 25, 1], dropout_rate=0.2, reg_lambda=0.01, use_numba=False)
+        self.nn_binary = BaseBackendNeuralNetwork([2, 100, 25, 1], dropout_rate=0.2, reg_lambda=0.01)
         # Multi-class classification network
-        self.nn_multi = NeuralNetwork([2, 100, 25, 10], dropout_rate=0.2, reg_lambda=0.01, use_numba=False)
+        self.nn_multi = BaseBackendNeuralNetwork([2, 100, 25, 10], dropout_rate=0.2, reg_lambda=0.01)
         self.optimizer = AdamOptimizer(learning_rate=0.01)
         np.random.seed(42)
         self.X = np.random.randn(100, 2)
@@ -34,7 +34,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
     ### Initialization Tests ###
     def test_initialization(self):
         """Test layer initialization with custom sizes and activations."""
-        nn = NeuralNetwork([3, 4, 2], activations=['tanh', 'sigmoid'], use_numba=False)
+        nn = BaseBackendNeuralNetwork([3, 4, 2], activations=['tanh', 'sigmoid'])
         self.assertEqual(len(nn.layers), 2)
         self.assertEqual(nn.layers[0].activation, 'tanh')
         self.assertEqual(nn.layers[1].activation, 'sigmoid')
@@ -45,7 +45,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
 
     def test_default_activations(self):
         """Test default activation settings."""
-        nn = NeuralNetwork([3, 4, 5, 2], use_numba=False)
+        nn = BaseBackendNeuralNetwork([3, 4, 5, 2])
         self.assertEqual(nn.activations, ['relu', 'relu', 'softmax'])
 
     ### Dropout Tests ###
@@ -63,7 +63,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
 
     def test_apply_dropout_zero(self):
         """Test dropout with rate=0 (no dropout)."""
-        nn = NeuralNetwork([2, 100, 1], dropout_rate=0, use_numba=False)
+        nn = BaseBackendNeuralNetwork([2, 100, 1], dropout_rate=0)
         A = np.random.randn(10, 10)
         A_dropped = nn.apply_dropout(A)
         np.testing.assert_array_equal(A, A_dropped)
@@ -106,7 +106,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
 
     def test_train_loss_decrease(self):
         """Test if loss decreases after a training step."""
-        nn = NeuralNetwork([2, 10, 1], dropout_rate=0, reg_lambda=0, use_numba=False)
+        nn = BaseBackendNeuralNetwork([2, 10, 1], dropout_rate=0, reg_lambda=0)
         optimizer = SGDOptimizer(learning_rate=0.1)
         X_small = np.array([[0.5, 0.5], [0.5, -0.5], [-0.5, 0.5], [-0.5, -0.5]])
         y_small = np.array([[1], [0], [0], [0]])
@@ -151,7 +151,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
     ### Regularization Test ###
     def test_regularization(self):
         """Test regularization effect on loss."""
-        nn = NeuralNetwork([2, 100, 1], reg_lambda=0, use_numba=False)
+        nn = BaseBackendNeuralNetwork([2, 100, 1], reg_lambda=0)
         loss_no_reg = nn.calculate_loss(self.X, self.y_binary)
         nn.reg_lambda = 0.01
         loss_with_reg = nn.calculate_loss(self.X, self.y_binary)
@@ -162,7 +162,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
         """Test handling of single-sample input."""
         X_single = np.random.randn(1, 2)
         y_single = np.array([1])
-        nn = NeuralNetwork([2, 10, 1], use_numba=False)
+        nn = BaseBackendNeuralNetwork([2, 10, 1])
         nn.forward(X_single)
         nn.backward(y_single)
         accuracy, predicted = nn.evaluate(X_single, y_single)
@@ -170,7 +170,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
 
     def test_lr_scheduler(self):
         """Test learning rate scheduler integration."""
-        nn = NeuralNetwork([2, 100, 1], use_numba=False)
+        nn = BaseBackendNeuralNetwork([2, 100, 1])
         optimizer = AdamOptimizer(learning_rate=0.01)
         scheduler = nn.create_scheduler('step', optimizer, lr_decay=0.5, lr_decay_epoch=2)
         initial_lr = optimizer.learning_rate
@@ -184,7 +184,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
         """Test handling of integer inputs."""
         X_int = np.array([[1, 2], [3, 4]])
         y_int = np.array([0, 1])
-        nn = NeuralNetwork([2, 10, 1], use_numba=False)
+        nn = BaseBackendNeuralNetwork([2, 10, 1])
         outputs = nn.forward(X_int)
         self.assertEqual(outputs.shape, (2, 1))
 

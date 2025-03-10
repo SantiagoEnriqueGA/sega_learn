@@ -38,7 +38,7 @@ def test_model(load_data_func, nn_layers, dropout_rate, reg_lambda, test_size=0.
     activations = ['relu'] * len(nn_layers) + ['sigmoid']
 
     # Initialize the neural network and optimizer
-    nn = NeuralNetwork(nn_layers, dropout_rate=dropout_rate, reg_lambda=reg_lambda, activations=activations)
+    nn = BaseBackendNeuralNetwork(nn_layers, dropout_rate=dropout_rate, reg_lambda=reg_lambda, activations=activations)
     optimizer = AdamOptimizer(learning_rate=0.0001)
     sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=5)  # Learning rate scheduler
     scheduler = lr_scheduler_plateau(sub_scheduler, patience=10, threshold=0.001)  # Learning rate scheduler

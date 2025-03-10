@@ -24,7 +24,7 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test,
     activations = [hidden_activation] * len(layers) + [output_activation]
 
     # Initialize Neural Network
-    nn = NeuralNetwork([input_size] + layers + [output_size], dropout_rate=dropout, reg_lambda=reg_lambda, activations=activations)
+    nn = BaseBackendNeuralNetwork([input_size] + layers + [output_size], dropout_rate=dropout, reg_lambda=reg_lambda, activations=activations)
     
     # Select optimizer
     optimizer = AdamOptimizer(learning_rate=lr)
@@ -67,12 +67,11 @@ def train_and_evaluate_model_numba(X_train, X_test, y_train, y_test,
     activations = [hidden_activation] * len(layers) + [output_activation]
 
     # Initialize Neural Network
-    nn = NeuralNetwork(
+    nn = NumbaBackendNeuralNetwork(
         [input_size] + layers + [output_size], 
         dropout_rate=dropout, 
         reg_lambda=reg_lambda, 
         activations=activations,
-        use_numba=True,
         compile_numba=True,  
         progress_bar=True,
     )

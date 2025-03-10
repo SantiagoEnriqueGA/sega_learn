@@ -53,7 +53,8 @@ from .neural_networks import (
     lr_scheduler_step,
     CrossEntropyLoss,
     BCEWithLogitsLoss,
-    NeuralNetwork,
+    NeuralNetworkBase,
+    BaseBackendNeuralNetwork,
     Layer,
     Activation,
 )
@@ -119,8 +120,30 @@ __all__ = [
     'NeuralNetwork',
     'Layer',
     'Activation',
+    'NeuralNetworkBase',
+    'BaseBackendNeuralNetwork',
     
     # Nearest Neighbors
     "KNeighborsClassifier",
     "KNeighborsRegressor",
 ]
+
+try:
+    from .neural_networks.numba_utils import *
+    from .neural_networks.optimizers_jit import JITAdamOptimizer, JITSGDOptimizer, JITAdadeltaOptimizer
+    from .neural_networks.loss_jit import JITBCEWithLogitsLoss, JITCrossEntropyLoss
+    from .neural_networks.layers_jit import JITLayer
+    from .neural_networks.neuralNetworkNumbaBackend import NumbaBackendNeuralNetwork
+    
+    __all__.extend([
+        'JITAdamOptimizer',
+        'JITSGDOptimizer',
+        'JITAdadeltaOptimizer',
+        'JITBCEWithLogitsLoss',
+        'JITCrossEntropyLoss',
+        'JITLayer',
+        'NumbaBackendNeuralNetwork',
+    ])
+except:
+    pass
+

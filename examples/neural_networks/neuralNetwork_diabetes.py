@@ -10,8 +10,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.utils import train_test_split
-from sega_learn.neural_networks import NeuralNetwork, AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
-from sega_learn.neural_networks import lr_scheduler_exp, lr_scheduler_step, lr_scheduler_plateau
+from sega_learn.neural_networks import *
 
 def load_pima_diabetes_data(file_path):
     """Function to load and preprocess Pima Indians Diabetes dataset"""
@@ -40,7 +39,7 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test,
     activations = [hidden_activation] * len(layers) + [output_activation]
 
     # Initialize Neural Network
-    nn = NeuralNetwork([input_size] + layers + [output_size], dropout_rate=dropout, reg_lambda=reg_lambda, activations=activations)
+    nn = BaseBackendNeuralNetwork([input_size] + layers + [output_size], dropout_rate=dropout, reg_lambda=reg_lambda, activations=activations)
     
     # Select optimizer
     optimizer = AdamOptimizer(learning_rate=lr)

@@ -22,7 +22,7 @@ def hyper_train_and_evaluate_model(X, y,
     output_size = 1
 
     # Initialize Neural Network
-    nn = NeuralNetwork(
+    nn = BaseBackendNeuralNetwork(
         [input_size] + layers[0] + [output_size],
         dropout_rate=0.5, 
         reg_lambda=0.0
@@ -44,7 +44,7 @@ def hyper_train_and_evaluate_model(X, y,
     best_optimizer = nn._create_optimizer(best_params['optimizer'], best_params['learning_rate'])
 
     # Train the final model with best parameters
-    nn = NeuralNetwork([input_size] + best_params['layers'][1:-1] + [output_size], 
+    nn = BaseBackendNeuralNetwork([input_size] + best_params['layers'][1:-1] + [output_size], 
                        dropout_rate=best_params['dropout_rate'], 
                        reg_lambda=best_params['reg_lambda'],
                        activations=['tanh'] * (len(best_params['layers']) - 1) + ['softmax'])
@@ -69,11 +69,10 @@ def hyper_train_and_evaluate_model_numba(X, y,
     output_size = 1
 
     # Initialize Neural Network
-    nn = NeuralNetwork(
+    nn = NumbaBackendNeuralNetwork(
         [input_size] + layers[0] + [output_size], 
         dropout_rate=0.5, 
         reg_lambda=0.1,
-        use_numba=True,
         compile_numba=True,  
         progress_bar=True,
     )
@@ -94,12 +93,11 @@ def hyper_train_and_evaluate_model_numba(X, y,
     best_optimizer = nn._create_optimizer(best_params['optimizer'], best_params['learning_rate'])
 
     # Train the final model with best parameters
-    nn = NeuralNetwork(
+    nn = NumbaBackendNeuralNetwork(
         [input_size] + best_params['layers'][1:-1] + [output_size], 
         dropout_rate=best_params['dropout_rate'], 
         reg_lambda=best_params['reg_lambda'],
         activations=['tanh'] * (len(best_params['layers']) - 1) + ['softmax'],
-        use_numba=True,
         compile_numba=False,
     )
                        

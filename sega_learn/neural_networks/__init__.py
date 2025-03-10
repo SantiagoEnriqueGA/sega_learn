@@ -3,7 +3,8 @@ from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_ste
 from .loss import CrossEntropyLoss, BCEWithLogitsLoss
 from .layers import Layer
 from .activations import Activation
-from .neuralNetwork import NeuralNetwork
+from .neuralNetworkBase import NeuralNetworkBase
+from .neuralNetworkBaseBackend import BaseBackendNeuralNetwork
 
 __all__ = [
     'AdamOptimizer',
@@ -14,21 +15,27 @@ __all__ = [
     'lr_scheduler_step',
     'CrossEntropyLoss',
     'BCEWithLogitsLoss',
-    'NeuralNetwork',
     'Layer',
     'Activation',
+    'NeuralNetworkBase',
+    'BaseBackendNeuralNetwork',
 ]
 
 try:
     from .numba_utils import *
     from .optimizers_jit import JITAdamOptimizer, JITSGDOptimizer, JITAdadeltaOptimizer
+    from .loss_jit import JITBCEWithLogitsLoss, JITCrossEntropyLoss
     from .layers_jit import JITLayer
+    from .neuralNetworkNumbaBackend import NumbaBackendNeuralNetwork
 
     __all__.extend([
         'JITAdamOptimizer',
         'JITSGDOptimizer',
         'JITAdadeltaOptimizer',
+        'JITBCEWithLogitsLoss',
+        'JITCrossEntropyLoss',
         'JITLayer',
+        'NumbaBackendNeuralNetwork',
     ])
 except:
     pass

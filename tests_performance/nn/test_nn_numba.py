@@ -10,7 +10,7 @@ np.random.seed(2)
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-from sega_learn.neural_networks_numba_dev import *
+from sega_learn.neural_networks import *
 
 def time_function(func, num_repeats, *args, **kwargs):
     times = []
@@ -28,7 +28,7 @@ def init_compile():
     Numba JIT code compilation can be slow, especially for the first call.
     This function runs the compile_numba_funtions() function to compile the JIT code.
     """
-    _ = NeuralNetwork(
+    _ = NumbaBackendNeuralNetwork(
         layer_sizes=[10, 5, 2],
         compile_numba=True,
         progress_bar=True,
@@ -45,7 +45,7 @@ def time_nn_numba(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000)
     DATASET_SIZE = dataset_size
 
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
-    nn = NeuralNetwork(
+    nn = NumbaBackendNeuralNetwork(
         layer_sizes=layer_sizes,
         dropout_rate=0.5,
         reg_lambda=0.01,
@@ -118,7 +118,7 @@ def time_nn_optimizer_numba(num_repeats=5, layer_sizes_multiplier=25):
     LAYER_SIZES_MULTIPLIER = layer_sizes_multiplier
     
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 75, 50, 25]]
-    nn = NeuralNetwork(
+    nn = NumbaBackendNeuralNetwork(
         layer_sizes=layer_sizes,
         dropout_rate=0.5,
         reg_lambda=0.01,
@@ -243,7 +243,7 @@ def time_nn_epoch_numba(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[
 
     times = []
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
-    nn = NeuralNetwork(
+    nn = NumbaBackendNeuralNetwork(
         layer_sizes=layer_sizes,
         dropout_rate=0.5,
         reg_lambda=0.01,

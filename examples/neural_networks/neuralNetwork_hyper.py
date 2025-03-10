@@ -8,7 +8,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.utils import train_test_split
-from sega_learn.neural_networks import NeuralNetwork, AdamOptimizer
+from sega_learn.neural_networks import *
 
 def load_pima_diabetes_data(file_path):
     """Function to load and preprocess Pima Indians Diabetes dataset"""
@@ -52,7 +52,7 @@ def hyper_train_and_evaluate_model(X, y ,X_train, X_test, y_train, y_test,
     output_size = 1
 
     # Initialize Neural Network
-    nn = NeuralNetwork([input_size] + [100, 50, 25] + [output_size], dropout_rate=0.5, reg_lambda=0.0)
+    nn = BaseBackendNeuralNetwork([input_size] + [100, 50, 25] + [output_size], dropout_rate=0.5, reg_lambda=0.0)
     optimizer = AdamOptimizer(learning_rate=0.0001)
 
     # Hyperparameter tuning with Adam optimizer
@@ -70,7 +70,7 @@ def hyper_train_and_evaluate_model(X, y ,X_train, X_test, y_train, y_test,
     best_optimizer = nn._create_optimizer(best_params['optimizer'], best_params['learning_rate'])
 
     # Train the final model with best parameters
-    nn = NeuralNetwork([input_size] + best_params['layers'][1:-1] + [output_size], 
+    nn = BaseBackendNeuralNetwork([input_size] + best_params['layers'][1:-1] + [output_size], 
                        dropout_rate=best_params['dropout_rate'], 
                        reg_lambda=best_params['reg_lambda'])
     nn.train(X_train, y_train, X_test, y_test, optimizer=best_optimizer, epochs=epochs, batch_size=batch_size)
