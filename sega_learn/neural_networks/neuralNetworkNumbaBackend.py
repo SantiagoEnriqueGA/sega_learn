@@ -23,21 +23,26 @@ try:
 except:
     TQDM_AVAILABLE = False
 
+# TODO: Fix layer inputs when using Layer objects
 class NumbaBackendNeuralNetwork(NeuralNetworkBase):
-    def __init__(self, layer_sizes, dropout_rate=0.2, reg_lambda=0.01, activations=None, compile_numba=True, progress_bar=True):
+    def __init__(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None, compile_numba=True, progress_bar=True):
         """
         Initializes the Numba backend neural network.
         Args:
-            layer_sizes (list): List of layer sizes.
+            layers (list): List of layer sizes or Layer objects.
             dropout_rate (float): Dropout rate for regularization.
             reg_lambda (float): L2 regularization parameter.
             activations (list): List of activation functions for each layer.
             compile_numba (bool): Whether to compile Numba functions.
             progress_bar (bool): Whether to display a progress bar.
         """
-        super().__init__(layer_sizes, dropout_rate, reg_lambda, activations)
+        super().__init__(layers, dropout_rate, reg_lambda, activations)
         self.compiled = False
-        self.initialize_layers()
+        # if layers are empty list, initialize them
+        if len(self.layers) == 0:
+            self.initialize_new_layers()
+        else:
+            self.initialize_existing_layers()
         
         if progress_bar and not TQDM_AVAILABLE: 
             warnings.warn("tqdm is not installed. Progress bar will not be displayed.")
@@ -46,22 +51,37 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             self.progress_bar = progress_bar
         
         if compile_numba and not self.compiled:
+            self.store_layers()
             self.compile_numba_functions(self.progress_bar)
-            
-            # Drop and re-initialize layers after compilation
-            self.drop_layers()
-            self.initialize_layers()
+            self.restore_layers()
             self.compiled = True
 
-    def drop_layers(self):
-        """Drops the layers from the network."""
-        self.layers = []
-        self.weights = []
-        self.biases = []
-        self.dWs_cache = []
-        self.dbs_cache = []
+    def store_layers(self):
+        """Stores the layers to restore after initialization."""
+        self._layers = self.layers.copy()
+        self._weights = [layer.weights.copy() for layer in self.layers]
+        self._biases = [layer.biases.copy() for layer in self.layers]
+
+    def restore_layers(self):
+        """Restores the layers after initialization."""
+        self.layers = self._layers.copy()
+        self.weights = [layer.weights.copy() for layer in self.layers]
+        self.biases = [layer.biases.copy() for layer in self.layers]
     
-    def initialize_layers(self):
+    def initialize_existing_layers(self):
+        """
+        Initializes the existing layers of the neural network.
+        Sets the weights and biases to random values.
+        """
+        for i in range(len(self.layer_sizes) - 1):
+            weight = np.random.randn(self.layer_sizes[i], self.layer_sizes[i + 1]) * 0.01
+            bias = np.zeros((1, self.layer_sizes[i + 1]))
+            self.weights.append(weight)
+            self.biases.append(bias)
+        self.dWs_cache = [np.zeros_like(w) for w in self.weights]
+        self.dbs_cache = [np.zeros_like(b) for b in self.biases]
+    
+    def initialize_new_layers(self):
         """
         Initializes the layers of the neural network.
         Each layer is created with the specified number of neurons and activation function.

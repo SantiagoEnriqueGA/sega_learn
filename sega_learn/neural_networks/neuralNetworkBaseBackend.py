@@ -16,19 +16,23 @@ except:
     TQDM_AVAILABLE = False
 
 class BaseBackendNeuralNetwork(NeuralNetworkBase):
-    def __init__(self, layer_sizes, dropout_rate=0.2, reg_lambda=0.01, activations=None):
+    def __init__(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None):
         """
         Initializes the Numba backend neural network.
         Args:
-            layer_sizes (list): List of layer sizes.
+            layers (list): List of layer sizes or Layer objects.
             dropout_rate (float): Dropout rate for regularization.
             reg_lambda (float): L2 regularization parameter.
             activations (list): List of activation functions for each layer.
         """
-        super().__init__(layer_sizes, dropout_rate, reg_lambda, activations)
-        self.initialize_layers()
+        super().__init__(layers, dropout_rate, reg_lambda, activations)
+        
+        # if layers are empty list, initialize them
+        if len(self.layers) == 0:
+            self.initialize_new_layers()          
+        
 
-    def initialize_layers(self):
+    def initialize_new_layers(self):
         """
         Initializes the layers of the neural network.
         Each layer is created with the specified number of neurons and activation function.

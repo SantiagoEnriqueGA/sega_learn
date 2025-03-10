@@ -2,18 +2,33 @@ import numpy as np
 import warnings
 
 from .schedulers import *
+from .layers import Layer
+try:
+    from .layers_jit import JITLayer
+except:
+    JITLayer = None
+
 
 class NeuralNetworkBase:
-    def __init__(self, layer_sizes, dropout_rate=0.2, reg_lambda=0.01, activations=None):
-        self.layer_sizes = layer_sizes
-        self.dropout_rate = dropout_rate
-        self.reg_lambda = reg_lambda
-        self.activations = activations if activations else ['relu'] * (len(layer_sizes) - 2) + ['softmax']
-        self.layers = []
-        self.weights = []
-        self.biases = []
-        self.layer_outputs = None
-        self.is_binary = layer_sizes[-1] == 1
+    def __init__(self, layers, dropout_rate=0.0, reg_lambda=0.0, activations=None):
+        if all(isinstance(layer, int) for layer in layers):
+            self.layer_sizes = layers
+            self.dropout_rate = dropout_rate
+            self.reg_lambda = reg_lambda
+            self.activations = activations if activations else ['relu'] * (len(layers) - 2) + ['softmax']
+            self.layers = []
+            self.weights = []
+            self.biases = []
+            self.layer_outputs = None
+            self.is_binary = layers[-1] == 1
+        elif all(isinstance(layer, (Layer, JITLayer)) for layer in layers):
+            self.layers = layers
+            self.layer_sizes = [layer.input_size for layer in layers] + [layers[-1].output_size]
+            self.dropout_rate = dropout_rate
+            self.reg_lambda = reg_lambda
+            self.is_binary = layers[-1].output_size == 1
+        else:
+            raise ValueError("layers must be a list of integers or a list of Layer objects.")
         
     def initialize_layers(self):
         raise NotImplementedError("This method should be implemented by subclasses")

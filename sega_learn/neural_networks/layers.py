@@ -3,11 +3,28 @@ from .activations import Activation
 
 class Layer:
     """
-    Initializes a Layer object.
+    Initializes a fully connected layer object, where each neuron is connected to all neurons in the previous layer.
+    Each layer consists of weights, biases, and an activation function.
     Args:
         input_size (int): The size of the input to the layer.
         output_size (int): The size of the output from the layer.
         activation (str): The activation function to be used in the layer.
+        
+    Attributes:
+        weights (np.ndarray): Weights of the layer.
+        biases (np.ndarray): Biases of the layer.
+        activation (str): Activation function name.
+        weight_gradients (np.ndarray): Gradients of the weights.
+        bias_gradients (np.ndarray): Gradients of the biases.
+        input_cache (np.ndarray): Cached input for backpropagation.
+        output_cache (np.ndarray): Cached output for backpropagation.
+        
+    Methods:
+        zero_grad(): Resets the gradients of the weights and biases to zero.
+        forward(X): Performs the forward pass of the layer.
+        backward(dA, reg_lambda): Performs the backward pass of the layer.
+        activate(Z): Applies the activation function.
+        activation_derivative(Z): Applies the derivative of the activation function.
     """
     def __init__(self, input_size, output_size, activation="relu"):
         # He initialization for weights
@@ -18,6 +35,8 @@ class Layer:
             
         self.weights = np.random.randn(input_size, output_size) * scale
         self.biases = np.zeros((1, output_size))
+        self.input_size = input_size
+        self.output_size = output_size
         self.activation = activation
         self.weight_gradients = None
         self.bias_gradients = None
