@@ -1,6 +1,3 @@
-Below is the updated README with all math expressions reformatted using the `$` ... `$` notation:
-
----
 
 # Neural Networks Module
 
