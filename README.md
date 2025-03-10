@@ -30,7 +30,7 @@ For more detailed information on each module, see the following READMEs:
 - [Linear Models Module](sega_learn/linear_models/README.md)
 - [Clustering Module](sega_learn/clustering/README.md)
 - [Trees Module](sega_learn/trees/README.md)
-- [Nearest Neighbors Module](sega_learn/nearest_neighbors/README.md)
+- [Nearest Neighbors Module](sega_learn/nearest_neighbors/README.MD)
 - [Neural Networks Module](sega_learn/neural_networks/README.md)
 - [Utilities Module](sega_learn/utils/README.md)
 
