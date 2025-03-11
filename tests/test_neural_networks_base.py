@@ -6,7 +6,7 @@ import numpy as np
 # Adjust sys.path to import from the parent directory
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from sega_learn.neural_networks import BaseBackendNeuralNetwork, AdamOptimizer, SGDOptimizer
+from sega_learn.neural_networks import *
 from tests.utils import suppress_print
 
 class TestNeuralNetworkVanilla(unittest.TestCase):
@@ -47,6 +47,18 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
         """Test default activation settings."""
         nn = BaseBackendNeuralNetwork([3, 4, 5, 2])
         self.assertEqual(nn.activations, ['relu', 'relu', 'softmax'])
+
+    def test_initialize_layers(self):
+        """Test layer initialization."""
+        layers = [Layer(2, 4, 'relu'), Layer(4, 2, 'sigmoid')] 
+        nn = BaseBackendNeuralNetwork(layers)
+        self.assertEqual(len(nn.layers), 2)
+        self.assertEqual(nn.layers[0].activation, 'relu')
+        self.assertEqual(nn.layers[1].activation, 'sigmoid')
+        self.assertEqual(nn.layers[0].weights.shape, (2, 4))
+        self.assertEqual(nn.layers[1].weights.shape, (4, 2))
+        self.assertEqual(nn.layers[0].biases.shape, (1, 4))
+        self.assertEqual(nn.layers[1].biases.shape, (1, 2))
 
     ### Dropout Tests ###
     def test_apply_dropout(self):

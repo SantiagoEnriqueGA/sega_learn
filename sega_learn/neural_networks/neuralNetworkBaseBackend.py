@@ -31,7 +31,6 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         if len(self.layers) == 0:
             self.initialize_new_layers()          
         
-
     def initialize_new_layers(self):
         """
         Initializes the layers of the neural network.

@@ -56,6 +56,8 @@ class JITLayer:
         self.bias_gradients = np.zeros((1, output_size))            # Initialize bias gradients to zeros
         self.input_cache = np.zeros((1, input_size))        
         self.output_cache = np.zeros((1, output_size))
+        self.input_size = input_size
+        self.output_size = output_size
         
     def zero_grad(self):
         """Reset the gradients of the weights and biases to zero."""

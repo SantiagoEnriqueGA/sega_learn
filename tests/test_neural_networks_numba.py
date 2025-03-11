@@ -57,6 +57,26 @@ class TestNeuralNetworkNumba(unittest.TestCase):
         nn = NumbaBackendNeuralNetwork([3, 4, 5, 2], compile_numba=False, progress_bar=False)
         self.assertEqual(nn.activations, ['relu', 'relu', 'softmax'])
 
+    def test_initialize_layers(self):
+        """Test layer initialization."""
+        layers = [JITLayer(2, 4, 'relu'), JITLayer(4, 2, 'sigmoid')]
+        nn = BaseBackendNeuralNetwork(layers)
+        self.assertEqual(len(nn.layers), 2)
+        self.assertEqual(nn.layers[0].activation, 'relu')
+        self.assertEqual(nn.layers[1].activation, 'sigmoid')
+        self.assertEqual(nn.layers[0].weights.shape, (2, 4))
+        self.assertEqual(nn.layers[1].weights.shape, (4, 2))
+        self.assertEqual(nn.layers[0].biases.shape, (1, 4))
+        self.assertEqual(nn.layers[1].biases.shape, (1, 2))
+
+    def test_nonJIT_optimizer(self):
+        """Test non-JIT optimizer conversion."""
+        optimizer = AdamOptimizer(learning_rate=0.01)
+        nn = NumbaBackendNeuralNetwork([2, 100, 1], compile_numba=False, progress_bar=False)
+        with self.assertWarns(UserWarning):
+            with suppress_print():
+                nn.train(self.X, self.y_binary, optimizer=optimizer, epochs=1, batch_size=32, use_tqdm=False)
+
     ### Dropout Tests ###
     def test_apply_dropout(self):
         """Test dropout application with Numba."""

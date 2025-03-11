@@ -34,7 +34,7 @@ def time_nn_base(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000):
 
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
     nn = BaseBackendNeuralNetwork(
-        layer_sizes=layer_sizes,
+        layers=layer_sizes,
         dropout_rate=0.5,
         reg_lambda=0.01,
         activations=['relu', 'relu', 'softmax'],
@@ -105,7 +105,7 @@ def time_nn_optimizer(num_repeats=5, layer_sizes_multiplier=25):
     
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 75, 50, 25]]
     nn = BaseBackendNeuralNetwork(
-        layer_sizes=layer_sizes,
+        layers=layer_sizes,
         dropout_rate=0.5,
         reg_lambda=0.01,
         activations=['relu', 'relu', 'softmax'],
@@ -220,7 +220,7 @@ def time_nn_epoch(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[1_000,
     times = []
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
     nn = BaseBackendNeuralNetwork(
-        layer_sizes=layer_sizes,
+        layers=layer_sizes,
         dropout_rate=0.5,
         reg_lambda=0.01,
         activations=['relu', 'relu', 'softmax'],

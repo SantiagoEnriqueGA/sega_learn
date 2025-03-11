@@ -37,7 +37,7 @@ def init_compile():
     print(f"   ...Compiling small neural network", end="", flush=True)
     layer_sizes = [1, 1, 1]
     nn = NeuralNetwork(
-        layer_sizes=layer_sizes,
+        layers=layer_sizes,
         dropout_rate=0.5,
         reg_lambda=0.01,
         activations=['relu', 'relu', 'softmax'],
@@ -108,7 +108,7 @@ def time_nn_epoch(num_repeats=5, layer_sizes_multiplier=1, dataset_size=100_000)
     times = []
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
     nn = NeuralNetwork(
-        layer_sizes=layer_sizes,
+        layers=layer_sizes,
         dropout_rate=0.5,
         reg_lambda=0.01,
         activations=['relu', 'relu', 'softmax'],

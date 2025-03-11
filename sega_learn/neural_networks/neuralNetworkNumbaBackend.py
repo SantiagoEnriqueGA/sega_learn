@@ -23,7 +23,6 @@ try:
 except:
     TQDM_AVAILABLE = False
 
-# TODO: Fix layer inputs when using Layer objects
 class NumbaBackendNeuralNetwork(NeuralNetworkBase):
     def __init__(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None, compile_numba=True, progress_bar=True):
         """
@@ -41,8 +40,6 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         # if layers are empty list, initialize them
         if len(self.layers) == 0:
             self.initialize_new_layers()
-        else:
-            self.initialize_existing_layers()
         
         if progress_bar and not TQDM_AVAILABLE: 
             warnings.warn("tqdm is not installed. Progress bar will not be displayed.")
@@ -67,19 +64,6 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         self.layers = self._layers.copy()
         self.weights = [layer.weights.copy() for layer in self.layers]
         self.biases = [layer.biases.copy() for layer in self.layers]
-    
-    def initialize_existing_layers(self):
-        """
-        Initializes the existing layers of the neural network.
-        Sets the weights and biases to random values.
-        """
-        for i in range(len(self.layer_sizes) - 1):
-            weight = np.random.randn(self.layer_sizes[i], self.layer_sizes[i + 1]) * 0.01
-            bias = np.zeros((1, self.layer_sizes[i + 1]))
-            self.weights.append(weight)
-            self.biases.append(bias)
-        self.dWs_cache = [np.zeros_like(w) for w in self.weights]
-        self.dbs_cache = [np.zeros_like(b) for b in self.biases]
     
     def initialize_new_layers(self):
         """

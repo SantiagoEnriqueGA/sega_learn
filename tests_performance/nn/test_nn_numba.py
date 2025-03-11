@@ -29,7 +29,7 @@ def init_compile():
     This function runs the compile_numba_funtions() function to compile the JIT code.
     """
     _ = NumbaBackendNeuralNetwork(
-        layer_sizes=[10, 5, 2],
+        layers=[10, 5, 2],
         compile_numba=True,
         progress_bar=True,
     )
@@ -46,7 +46,7 @@ def time_nn_numba(num_repeats=5, layer_sizes_multiplier=5, dataset_size=100_000)
 
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
     nn = NumbaBackendNeuralNetwork(
-        layer_sizes=layer_sizes,
+        layers=layer_sizes,
         dropout_rate=0.5,
         reg_lambda=0.01,
         activations=['relu', 'relu', 'softmax'],
@@ -119,7 +119,7 @@ def time_nn_optimizer_numba(num_repeats=5, layer_sizes_multiplier=25):
     
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 75, 50, 25]]
     nn = NumbaBackendNeuralNetwork(
-        layer_sizes=layer_sizes,
+        layers=layer_sizes,
         dropout_rate=0.5,
         reg_lambda=0.01,
         activations=['relu', 'relu', 'softmax'],
@@ -244,7 +244,7 @@ def time_nn_epoch_numba(num_repeats=5, layer_sizes_multiplier=1, dataset_sizes=[
     times = []
     layer_sizes = [size * LAYER_SIZES_MULTIPLIER for size in [100, 50, 10]]
     nn = NumbaBackendNeuralNetwork(
-        layer_sizes=layer_sizes,
+        layers=layer_sizes,
         dropout_rate=0.5,
         reg_lambda=0.01,
         activations=['relu', 'relu', 'softmax'],
