@@ -53,7 +53,7 @@ def train_and_evaluate_model(X_train, X_test, y_train, y_test,
     
     # Plot metrics
     # nn.plot_metrics()
-    # nn.plot_metrics(save_dir="examples/neural_networks/neuralNetwork_classifier_vanilla_metrics.png")
+    # nn.plot_metrics(save_dir="examples/neural_networks/plots/neuralNetwork_classifier_vanilla_metrics.png")
 
 
 def train_and_evaluate_model_numba(X_train, X_test, y_train, y_test, 
@@ -103,12 +103,12 @@ def train_and_evaluate_model_numba(X_train, X_test, y_train, y_test,
 
     # Plot metrics
     # nn.plot_metrics()
-    # nn.plot_metrics(save_dir="examples/neural_networks/neuralNetwork_classifier_numba_metrics.png")
+    # nn.plot_metrics(save_dir="examples/neural_networks/plots/neuralNetwork_classifier_numba_metrics.png")
 
 def main():
     import random
-    np.random.seed(41)
-    random.seed(41)
+    np.random.seed(1)
+    random.seed(1)
     
     # Define parameter grid and tuning ranges
     dropout = 0.1

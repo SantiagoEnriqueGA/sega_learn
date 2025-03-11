@@ -28,7 +28,8 @@ Time Series Analysis - ARIMA, Moving Average, Exponential Smoothing
 Anomaly Detection - Isolation Forest, One-Class SVM
 Data Preprocessing - Normalization, Standardization, Missing Value Imputation
 Deep Learning Enhancements
-    - Implement Convolutional Layers, Recurrent Layers
+    - Implement Flatten Layer, Conv Layer:Base Done, Numba: TODO
+    - Implement Recurrent Layers
     - Implement Data Preprocessing Layers
     - Live plotting of training and validation loss
 "@
