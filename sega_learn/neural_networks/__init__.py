@@ -1,7 +1,7 @@
 from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
 from .loss import CrossEntropyLoss, BCEWithLogitsLoss
-from .layers import DenseLayer
+from .layers import DenseLayer, FlattenLayer,ConvLayer, RNNLayer
 from .activations import Activation
 from .neuralNetworkBase import NeuralNetworkBase
 from .neuralNetworkBaseBackend import BaseBackendNeuralNetwork
@@ -16,6 +16,9 @@ __all__ = [
     'CrossEntropyLoss',
     'BCEWithLogitsLoss',
     'DenseLayer',
+    'FlattenLayer',
+    'ConvLayer',
+    'RNNLayer',
     'Activation',
     'NeuralNetworkBase',
     'BaseBackendNeuralNetwork',

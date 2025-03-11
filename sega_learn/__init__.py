@@ -56,6 +56,9 @@ from .neural_networks import (
     NeuralNetworkBase,
     BaseBackendNeuralNetwork,
     DenseLayer,
+    FlattenLayer,
+    ConvLayer,
+    RNNLayer,
     Activation,
 )
 
@@ -119,6 +122,9 @@ __all__ = [
     'BCEWithLogitsLoss',
     'NeuralNetwork',
     'DenseLayer',
+    'FlattenLayer',
+    'ConvLayer',
+    'RNNLayer',
     'Activation',
     'NeuralNetworkBase',
     'BaseBackendNeuralNetwork',

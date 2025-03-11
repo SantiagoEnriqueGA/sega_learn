@@ -1,4 +1,5 @@
 import numpy as np
+from .layers import FlattenLayer
 
 class AdamOptimizer:
     """
@@ -29,7 +30,9 @@ class AdamOptimizer:
         Args: layers (list): List of layers in the neural network.
         Returns: None
         """
-        for layer in layers:                                # For each layer in the neural network..
+        for layer in layers:                                # For each layer in the neural network.
+            if isinstance(layer, FlattenLayer):             # FlattenLayer has no trainable parameters.
+                continue
             self.m.append(np.zeros_like(layer.weights))     # Initialize first moment estimates
             self.v.append(np.zeros_like(layer.weights))     # Initialize second moment estimates
 

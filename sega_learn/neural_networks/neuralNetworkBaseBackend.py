@@ -1,5 +1,5 @@
 from .neuralNetworkBase import NeuralNetworkBase
-from .layers import DenseLayer
+from .layers import *
 from .activations import Activation
 from .loss import CrossEntropyLoss, BCEWithLogitsLoss
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
@@ -56,24 +56,19 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         self.layer_outputs = [X]
         A = X
         
-        # Pass through each layer (except the last)
-        for i, layer in enumerate(self.layers[:-1]):
+        # Pass through each layer
+        for i, layer in enumerate(self.layers):
             A = layer.forward(A)
-            # If training and dropout is enabled, apply dropout
-            if training and self.dropout_rate > 0:
+            # Apply dropout only to DenseLayer outputs during training
+            if training and self.dropout_rate > 0 and isinstance(layer, DenseLayer):
                 A = self.apply_dropout(A)
-            
-            # Store the output of the layer
             self.layer_outputs.append(A)
-            
-        # Handle the last layer separately
-        # For binary classification, use sigmoid activation
-        # For multi-class classification, use softmax activation
-        Z = self.layers[-1].forward(A)
-        output = Activation.sigmoid(Z) if self.is_binary else Activation.softmax(Z)
-        self.layer_outputs.append(output)
         
-        return output
+        # Final output handling (sigmoid for binary, softmax for multi-class)
+        if self.is_binary:
+            return Activation.sigmoid(A)
+        else:
+            return Activation.softmax(A) if A.ndim > 1 else A  # Softmax if multi-class and 2D output
 
     def backward(self, y):
         """
@@ -89,7 +84,8 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
         # If multi-class classification, calculate the gradient for categorical cross-entropy
         else:
-            y = np.eye(self.layer_sizes[-1])[y]
+            if y.ndim == 1:     # Assume one-hot encoding
+                y = np.eye(self.layer_sizes[-1])[y]
             dA = outputs - y
             
         # Backpropagation through the network in reverse order
@@ -133,8 +129,8 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         # Track best model for early stopping
         best_loss = float('inf')
         patience_counter = 0
-        best_weights = [layer.weights.copy() for layer in self.layers]
-        best_biases = [layer.biases.copy() for layer in self.layers]
+        best_weights = [layer.weights.copy() for layer in self.layers if hasattr(layer, 'weights')]
+        best_biases = [layer.biases.copy() for layer in self.layers if hasattr(layer, 'biases')]
         
         # Set metrics to track
         if track_metrics:
@@ -164,17 +160,21 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             self.backward(y_batch)
             
             # Update weights and biases
-            for idx, layer in enumerate(self.layers):
-                dW = layer.weight_gradients
-                db = layer.bias_gradients
-                optimizer.update(layer, dW, db, idx)
+            trainable_idx = 0  # Separate index for trainable layers
+            for layer in self.layers:
+                if hasattr(layer, 'weight_gradients') and layer.weight_gradients is not None:
+                    dW = layer.weight_gradients
+                    db = layer.bias_gradients
+                    optimizer.update(layer, dW, db, trainable_idx)
+                    trainable_idx += 1
         
         # Training loop with progress bar
         progress_bar = tqdm(range(epochs)) if use_tqdm else range(epochs)
         for epoch in progress_bar:
             # Reset gradients
             for layer in self.layers:
-                layer.zero_grad()
+                if hasattr(layer, 'zero_grad'):
+                    layer.zero_grad()
             
             # Shuffle training data
             indices = np.arange(X_train.shape[0])
@@ -201,8 +201,8 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                     best_loss = val_loss
                     patience_counter = 0
                     # Save best weights
-                    best_weights = [layer.weights.copy() for layer in self.layers]
-                    best_biases = [layer.biases.copy() for layer in self.layers]
+                    best_weights = [layer.weights.copy() for layer in self.layers if hasattr(layer, 'weights')]
+                    best_biases = [layer.biases.copy() for layer in self.layers if hasattr(layer, 'biases')]
                 else:
                     patience_counter += 1
             else:
@@ -210,8 +210,8 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                 if train_loss < best_loss:
                     best_loss = train_loss
                     patience_counter = 0
-                    best_weights = [layer.weights.copy() for layer in self.layers]
-                    best_biases = [layer.biases.copy() for layer in self.layers]
+                    best_weights = [layer.weights.copy() for layer in self.layers if hasattr(layer, 'weights')]
+                    best_biases = [layer.biases.copy() for layer in self.layers if hasattr(layer, 'biases')]
                 else:
                     patience_counter += 1
                     
@@ -269,7 +269,8 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                 break
         
         # Restore best weights
-        for i, layer in enumerate(self.layers):
+        trainable_layers = [l for l in self.layers if hasattr(l, 'weights')]
+        for i, layer in enumerate(trainable_layers):
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
 
@@ -310,7 +311,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             loss = loss_fn(outputs, y)
         
         # Add L2 regularization term to the loss
-        l2_reg = self.reg_lambda * self.compute_l2_reg([layer.weights for layer in self.layers])
+        l2_reg = self.reg_lambda * self.compute_l2_reg([layer.weights for layer in self.layers if hasattr(layer, 'weights')])
         loss += l2_reg
         return float(loss)
     

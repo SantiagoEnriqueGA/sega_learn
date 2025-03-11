@@ -71,7 +71,8 @@ class DenseLayer:
             "leaky_relu": Activation.leaky_relu,
             "tanh": Activation.tanh,
             "sigmoid": Activation.sigmoid,
-            "softmax": Activation.softmax
+            "softmax": Activation.softmax,
+            "none": lambda Z: Z
         }
         
         if self.activation in activation_functions:
@@ -95,179 +96,340 @@ class DenseLayer:
         else:
             raise ValueError(f"Unsupported activation: {self.activation}")
 
-
-# class ConvLayer:
-#     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, activation="relu"):
-#         self.in_channels = in_channels
-#         self.out_channels = out_channels
-#         self.kernel_size = kernel_size  # assume square kernels
-#         self.stride = stride
-#         self.padding = padding
-#         # He initialization for convolutional weights
-#         self.weights = np.random.randn(out_channels, in_channels, kernel_size, kernel_size) * np.sqrt(2.0 / (in_channels * kernel_size * kernel_size))
-#         self.biases = np.zeros((out_channels, 1))
-#         self.activation = activation
-#         # Placeholders for gradients and cache for backpropagation
-#         self.weight_gradients = None
-#         self.bias_gradients = None
-#         self.input_cache = None
-
-#     def forward(self, X):
-#         """
-#         X: numpy array with shape (batch_size, in_channels, height, width)
-#         Returns:
-#             Output feature maps after convolution and activation.
-#         """
-#         self.input_cache = X
-#         batch_size, in_channels, h_in, w_in = X.shape
-#         # Calculate output dimensions
-#         h_out = int((h_in + 2 * self.padding - self.kernel_size) / self.stride) + 1
-#         w_out = int((w_in + 2 * self.padding - self.kernel_size) / self.stride) + 1
-
-#         # Apply padding if needed
-#         if self.padding > 0:
-#             X_padded = np.pad(X, ((0, 0), (0, 0), (self.padding, self.padding), (self.padding, self.padding)), mode='constant')
-#         else:
-#             X_padded = X
-
-#         output = np.zeros((batch_size, self.out_channels, h_out, w_out))
-#         # Convolution operation (naively implemented)
-#         for b in range(batch_size):
-#             for c in range(self.out_channels):
-#                 for i in range(h_out):
-#                     for j in range(w_out):
-#                         h_start = i * self.stride
-#                         h_end = h_start + self.kernel_size
-#                         w_start = j * self.stride
-#                         w_end = w_start + self.kernel_size
-#                         region = X_padded[b, :, h_start:h_end, w_start:w_end]
-#                         output[b, c, i, j] = np.sum(region * self.weights[c]) + self.biases[c]
-
-#         # Apply activation
-#         if self.activation == "relu":
-#             return np.maximum(0, output)
-#         elif self.activation == "sigmoid":
-#             return 1 / (1 + np.exp(-output))
-#         elif self.activation == "tanh":
-#             return np.tanh(output)
-#         else:
-#             return output
-
-#     def backward(self, d_out):
-#         """
-#         A simple (and not highly optimized) backward pass.
-#         d_out: Gradient of the loss with respect to the layer output,
-#                shape (batch_size, out_channels, h_out, w_out)
-#         Returns:
-#             dX: Gradient with respect to the input X.
-#         """
-#         X = self.input_cache
-#         batch_size, in_channels, h_in, w_in = X.shape
-
-#         # Pad input if necessary
-#         if self.padding > 0:
-#             X_padded = np.pad(X, ((0, 0), (0, 0), (self.padding, self.padding), (self.padding, self.padding)), mode='constant')
-#         else:
-#             X_padded = X
-
-#         # Initialize gradients
-#         d_weights = np.zeros_like(self.weights)
-#         d_biases = np.zeros_like(self.biases)
-#         d_X_padded = np.zeros_like(X_padded)
-#         batch_size, out_channels, h_out, w_out = d_out.shape
-
-#         for b in range(batch_size):
-#             for c in range(out_channels):
-#                 for i in range(h_out):
-#                     for j in range(w_out):
-#                         h_start = i * self.stride
-#                         h_end = h_start + self.kernel_size
-#                         w_start = j * self.stride
-#                         w_end = w_start + self.kernel_size
-#                         region = X_padded[b, :, h_start:h_end, w_start:w_end]
-#                         d_weights[c] += d_out[b, c, i, j] * region
-#                         d_biases[c] += d_out[b, c, i, j]
-#                         d_X_padded[b, :, h_start:h_end, w_start:w_end] += d_out[b, c, i, j] * self.weights[c]
-
-#         # Remove padding from gradient if applied
-#         if self.padding > 0:
-#             d_X = d_X_padded[:, :, self.padding:-self.padding, self.padding:-self.padding]
-#         else:
-#             d_X = d_X_padded
-
-#         self.weight_gradients = d_weights
-#         self.bias_gradients = d_biases
-#         return d_X
+class FlattenLayer:
+    """
+    A layer that flattens multi-dimensional input into a 2D array (batch_size, flattened_size).
+    Useful for transitioning from convolutional layers to dense layers.
+    
+    Attributes:
+        input_shape (tuple): Shape of the input data (excluding batch size).
+        output_size (int): Size of the flattened output vector.
+        input_cache (np.ndarray): Cached input for backpropagation.
+        input_size (int): Size of the input (same as input_shape).
+        output_size (int): Size of the output (same as output_size).
+    """
+    def __init__(self):
+        self.input_shape = None
+        self.output_size = None
+        self.input_cache = None
+        # These are set dynamically during the forward pass
+        self.input_size = None  # Will be set based on input channels * height * width
+        self.output_size = None  # Same as input_size (flattened)
 
 
-# class RNNLayer:
-#     def __init__(self, input_size, hidden_size, activation="tanh"):
-#         self.input_size = input_size
-#         self.hidden_size = hidden_size
-#         # Initialize weights (small random values)
-#         self.Wxh = np.random.randn(input_size, hidden_size) * 0.01  # Input-to-hidden weights
-#         self.Whh = np.random.randn(hidden_size, hidden_size) * 0.01  # Hidden-to-hidden weights
-#         self.bh = np.zeros((1, hidden_size))                       # Biases
-#         self.activation = activation
-#         self.weight_gradients = {"Wxh": None, "Whh": None, "bh": None}
-#         # Caches for backpropagation through time
-#         self.last_inputs = None
-#         self.last_hs = None
+    def forward(self, X):
+        """
+        Flattens the input tensor.
+        
+        Args:
+            X (np.ndarray): Input data of shape (batch_size, channels, height, width)
+                           or any multi-dimensional shape after batch dimension.
+        
+        Returns:
+            np.ndarray: Flattened output of shape (batch_size, flattened_size)
+        """
+        self.input_cache = X.copy()
+        batch_size = X.shape[0]
+        self.input_shape = X.shape[1:]  # Store input shape excluding batch size
+        
+        # Calculate the size of the flattened vector
+        self.input_size = np.prod(self.input_shape)
+        self.output_size = self.input_size
+        
+        # Reshape to (batch_size, flattened_size)
+        return X.reshape(batch_size, self.input_size)
 
-#     def forward(self, X):
-#         """
-#         X: numpy array with shape (batch_size, time_steps, input_size)
-#         Returns:
-#             hidden_states: numpy array with shape (batch_size, time_steps, hidden_size)
-#         """
-#         batch_size, time_steps, _ = X.shape
-#         # Initialize hidden state to zeros
-#         h = np.zeros((batch_size, self.hidden_size))
-#         self.last_hs = {-1: h}
-#         self.last_inputs = X
-#         outputs = []
-#         # Process each time step
-#         for t in range(time_steps):
-#             x_t = X[:, t, :]
-#             h = np.tanh(np.dot(x_t, self.Wxh) + np.dot(h, self.Whh) + self.bh)
-#             self.last_hs[t] = h
-#             outputs.append(h)
-#         # Stack outputs along time dimension
-#         return np.stack(outputs, axis=1)
+    def backward(self, dA, reg_lambda=0):
+        """
+        Reshapes the gradient back to the original input shape.
+        
+        Args:
+            dA (np.ndarray): Gradient of the loss with respect to the layer's output,
+                            shape (batch_size, flattened_size)
+            reg_lambda (float): Regularization parameter (unused in FlattenLayer).
+        
+        Returns:
+            np.ndarray: Gradient with respect to the input, reshaped to original input shape.
+        """
+        batch_size = dA.shape[0]
+        # Reshape gradient back to the original input shape
+        return dA.reshape(batch_size, *self.input_shape)
 
-#     def backward(self, d_out, learning_rate=1e-2):
-#         """
-#         d_out: Gradient of the loss with respect to the hidden states,
-#                shape (batch_size, time_steps, hidden_size)
-#         learning_rate: Learning rate for parameter updates
-#         Returns:
-#             d_h_next: Gradient to propagate to previous network layers (from t=0)
-#         """
-#         X = self.last_inputs
-#         batch_size, time_steps, _ = X.shape
-#         dWxh = np.zeros_like(self.Wxh)
-#         dWhh = np.zeros_like(self.Whh)
-#         dbh = np.zeros_like(self.bh)
-#         d_h_next = np.zeros((batch_size, self.hidden_size))
+class ConvLayer:
+    """
+    A convolutional layer implementation for neural networks.  
 
-#         # Backpropagation through time
-#         for t in reversed(range(time_steps)):
-#             h = self.last_hs[t]
-#             h_prev = self.last_hs[t-1]
-#             # Total gradient at current time step
-#             dh = d_out[:, t, :] + d_h_next
-#             # Derivative of tanh activation
-#             dtanh = (1 - h * h) * dh
-#             dWxh += np.dot(X[:, t, :].T, dtanh)
-#             dWhh += np.dot(h_prev.T, dtanh)
-#             dbh += np.sum(dtanh, axis=0, keepdims=True)
-#             d_h_next = np.dot(dtanh, self.Whh.T)
+    This layer performs 2D convolution operations, commonly used in convolutional neural networks (CNNs).
+    The implementation uses the im2col technique for efficient computation, transforming the convolution operation into matrix multiplication.
+    An optional activation function is applied element-wise to the output.
+    
+    Args:
+        in_channels (int): Number of input channels (depth of input volume).
+        out_channels (int): Number of output channels (number of filters).
+        kernel_size (int): Size of the convolutional kernel (square kernel assumed).
+        stride (int, optional): Stride of the convolution. Default: 1.
+        padding (int, optional): Zero-padding added to both sides of the input. Default: 0.
+        activation (str, optional): Activation function to use. Options are "relu", "sigmoid", "tanh", or None. Default: "relu".
+    
+    Attributes:
+        in_channels (int): Number of input channels.
+        out_channels (int): Number of output channels.
+        kernel_size (int): Size of the square convolutional kernel.
+        stride (int): Stride of the convolution.
+        padding (int): Zero-padding added to both sides of the input.
+        weights (numpy.ndarray): Learnable weights of shape (out_channels, in_channels, kernel_size, kernel_size).
+        biases (numpy.ndarray): Learnable biases of shape (out_channels, 1).
+        activation (str): Type of activation function.
+        weight_gradients (numpy.ndarray): Gradients with respect to weights.
+        bias_gradients (numpy.ndarray): Gradients with respect to biases.
+        input_cache (numpy.ndarray): Cached input for use in backward pass.
+        X_cols (numpy.ndarray): Cached column-transformed input.
+        X_padded (numpy.ndarray): Cached padded input.
+        h_out (int): Height of output feature maps.
+        w_out (int): Width of output feature maps.
+        input_size (int): Size of input (same as in_channels).
+        output_size (int): Size of output (same as out_channels).
+    
+    Methods:
+        zero_grad(): Reset gradients to zero.
+        _im2col(x, h_out, w_out): Convert image regions to columns for efficient convolution.
+        forward(X): Perform forward pass of the convolutional layer.
+        _col2im(dcol, x_shape): Convert column back to image format for the backward pass.
+        backward(d_out, reg_lambda=0): Perform backward pass of the convolutional layer.
+    """
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, activation="relu"):
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.kernel_size = kernel_size  # assume square kernels
+        self.stride = stride
+        self.padding = padding
+        # He initialization for convolutional weights
+        self.weights = np.random.randn(out_channels, in_channels, kernel_size, kernel_size) * np.sqrt(2.0 / (in_channels * kernel_size * kernel_size))
+        self.biases = np.zeros((out_channels, 1))
+        self.activation = activation
+        # Placeholders for gradients and cache for backpropagation
+        self.weight_gradients = None
+        self.bias_gradients = None
+        self.input_cache = None
+        # Laeyr size info
+        self.input_size = in_channels
+        self.output_size = out_channels
 
-#         # Store gradients
-#         self.weight_gradients = {"Wxh": dWxh, "Whh": dWhh, "bh": dbh}
-#         # (Optionally, update weights here or do it externally with an optimizer)
-#         # For example:
-#         # self.Wxh -= learning_rate * dWxh
-#         # self.Whh -= learning_rate * dWhh
-#         # self.bh -= learning_rate * dbh
-#         return d_h_next  # This could be used to propagate gradients to earlier layers
+    def zero_grad(self):
+        """Reset the gradients of the weights and biases to zero."""
+        self.weight_gradients = np.zeros_like(self.weights)
+        self.bias_gradients = np.zeros_like(self.biases)
+
+    def _im2col(self, x, h_out, w_out):
+        """
+        Convert image regions to columns for efficient convolution.
+        This transforms the 4D input tensor into a 2D matrix where each column
+        contains a kernel-sized region of the input.
+        """
+        batch_size, channels, h, w = x.shape
+        col = np.zeros((batch_size, channels * self.kernel_size * self.kernel_size, h_out * w_out))
+        
+        for b in range(batch_size):
+            col_idx = 0
+            for i in range(0, h - self.kernel_size + 1, self.stride):
+                for j in range(0, w - self.kernel_size + 1, self.stride):
+                    patch = x[b, :, i:i+self.kernel_size, j:j+self.kernel_size]
+                    col[b, :, col_idx] = patch.reshape(-1)
+                    col_idx += 1
+        
+        return col
+    
+    def _col2im(self, dcol, x_shape):
+        """
+        Convert column back to image format for the backward pass.
+        """
+        batch_size, channels, h, w = x_shape
+        h_padded, w_padded = h + 2 * self.padding, w + 2 * self.padding
+        dx_padded = np.zeros((batch_size, channels, h_padded, w_padded))
+        
+        for b in range(batch_size):
+            col_idx = 0
+            for i in range(0, h_padded - self.kernel_size + 1, self.stride):
+                for j in range(0, w_padded - self.kernel_size + 1, self.stride):
+                    col_patch = dcol[b, :, col_idx].reshape(channels, self.kernel_size, self.kernel_size)
+                    dx_padded[b, :, i:i+self.kernel_size, j:j+self.kernel_size] += col_patch
+                    col_idx += 1
+        
+        if self.padding > 0:
+            return dx_padded[:, :, self.padding:-self.padding, self.padding:-self.padding]
+        return dx_padded
+    
+    def forward(self, X):
+        """
+        X: numpy array with shape (batch_size, in_channels, height, width)
+        Returns:
+            Output feature maps after convolution and activation.
+        """
+        self.input_cache = X
+        batch_size, in_channels, h_in, w_in = X.shape
+        
+        # Calculate output dimensions
+        h_out = int((h_in + 2 * self.padding - self.kernel_size) / self.stride) + 1
+        w_out = int((w_in + 2 * self.padding - self.kernel_size) / self.stride) + 1
+        
+        # Apply padding if needed
+        if self.padding > 0:
+            X_padded = np.pad(X, ((0, 0), (0, 0), (self.padding, self.padding), (self.padding, self.padding)), mode='constant')
+        else:
+            X_padded = X
+            
+        # Use im2col to transform input for efficient matrix multiplication
+        X_cols = self._im2col(X_padded, h_out, w_out)
+        
+        # Reshape weights for batch matrix multiplication
+        W_reshaped = self.weights.reshape(self.out_channels, -1)  # (out_channels, in_channels*k*k)
+        
+        # Perform convolution using matrix multiplication
+        output = np.zeros((batch_size, self.out_channels, h_out * w_out))
+        for b in range(batch_size):
+            output[b] = W_reshaped @ X_cols[b] + self.biases
+        
+        # Reshape output to feature map format
+        output = output.reshape(batch_size, self.out_channels, h_out, w_out)
+        
+        # Cache for backward pass
+        self.X_cols = X_cols
+        self.X_padded = X_padded
+        self.h_out, self.w_out = h_out, w_out
+
+        return self.activate(output)
+
+    def backward(self, d_out, reg_lambda=0):
+        """
+        Optimized backward pass using im2col technique.
+        Args:
+            d_out (np.ndarray): Gradient of the loss with respect to the layer output,
+                              shape (batch_size, out_channels, h_out, w_out)
+            reg_lambda (float, optional): Regularization parameter.
+        Returns:
+            dX: Gradient with respect to the input X.
+        """
+        X = self.input_cache
+        batch_size = X.shape[0]
+        
+        # Reshape gradients to match the im2col format
+        d_out_reshaped = d_out.reshape(batch_size, self.out_channels, -1)  # (batch, out_channels, h_out*w_out)
+        
+        # Initialize gradients
+        d_weights = np.zeros_like(self.weights)
+        d_biases = np.zeros((self.out_channels, 1))
+        d_X_cols = np.zeros_like(self.X_cols)
+        
+        # Reshape weights
+        W_reshaped = self.weights.reshape(self.out_channels, -1)  # (out_channels, in_channels*k*k)
+        
+        # Compute gradients
+        for b in range(batch_size):
+            # Gradient of bias is the sum across spatial dimensions
+            d_biases += np.sum(d_out_reshaped[b], axis=1, keepdims=True)
+            
+            # Gradient of weights
+            d_weights_reshaped = d_out_reshaped[b] @ self.X_cols[b].T  # (out_channels, in_channels*k*k)
+            d_weights += d_weights_reshaped.reshape(self.weights.shape)
+            
+            # Gradient of input
+            d_X_cols[b] = W_reshaped.T @ d_out_reshaped[b]
+        
+        # Convert gradients back to image format
+        d_X = self._col2im(d_X_cols, X.shape)
+        
+        # Store gradients
+        self.weight_gradients = d_weights
+        self.bias_gradients = d_biases
+        
+        return d_X
+    
+    def activate(self, Z):
+        """Apply activation function."""
+        activation_functions = {
+            "relu": Activation.relu,
+            "leaky_relu": Activation.leaky_relu,
+            "tanh": Activation.tanh,
+            "sigmoid": Activation.sigmoid,
+            "softmax": Activation.softmax,
+            "none": lambda Z: Z
+        }
+        
+        if self.activation in activation_functions:
+            return activation_functions[self.activation](Z)
+        else:
+            raise ValueError(f"Unsupported activation: {self.activation}")
+
+
+class RNNLayer:
+    def __init__(self, input_size, hidden_size, activation="tanh"):
+        pass
+    #     self.input_size = input_size
+    #     self.hidden_size = hidden_size
+    #     # Initialize weights (small random values)
+    #     self.Wxh = np.random.randn(input_size, hidden_size) * 0.01  # Input-to-hidden weights
+    #     self.Whh = np.random.randn(hidden_size, hidden_size) * 0.01  # Hidden-to-hidden weights
+    #     self.bh = np.zeros((1, hidden_size))                       # Biases
+    #     self.activation = activation
+    #     self.weight_gradients = {"Wxh": None, "Whh": None, "bh": None}
+    #     # Caches for backpropagation through time
+    #     self.last_inputs = None
+    #     self.last_hs = None
+
+    # def forward(self, X):
+    #     """
+    #     X: numpy array with shape (batch_size, time_steps, input_size)
+    #     Returns:
+    #         hidden_states: numpy array with shape (batch_size, time_steps, hidden_size)
+    #     """
+    #     batch_size, time_steps, _ = X.shape
+    #     # Initialize hidden state to zeros
+    #     h = np.zeros((batch_size, self.hidden_size))
+    #     self.last_hs = {-1: h}
+    #     self.last_inputs = X
+    #     outputs = []
+    #     # Process each time step
+    #     for t in range(time_steps):
+    #         x_t = X[:, t, :]
+    #         h = np.tanh(np.dot(x_t, self.Wxh) + np.dot(h, self.Whh) + self.bh)
+    #         self.last_hs[t] = h
+    #         outputs.append(h)
+    #     # Stack outputs along time dimension
+    #     return np.stack(outputs, axis=1)
+
+    # def backward(self, d_out, learning_rate=1e-2):
+    #     """
+    #     d_out: Gradient of the loss with respect to the hidden states,
+    #            shape (batch_size, time_steps, hidden_size)
+    #     learning_rate: Learning rate for parameter updates
+    #     Returns:
+    #         d_h_next: Gradient to propagate to previous network layers (from t=0)
+    #     """
+    #     X = self.last_inputs
+    #     batch_size, time_steps, _ = X.shape
+    #     dWxh = np.zeros_like(self.Wxh)
+    #     dWhh = np.zeros_like(self.Whh)
+    #     dbh = np.zeros_like(self.bh)
+    #     d_h_next = np.zeros((batch_size, self.hidden_size))
+
+    #     # Backpropagation through time
+    #     for t in reversed(range(time_steps)):
+    #         h = self.last_hs[t]
+    #         h_prev = self.last_hs[t-1]
+    #         # Total gradient at current time step
+    #         dh = d_out[:, t, :] + d_h_next
+    #         # Derivative of tanh activation
+    #         dtanh = (1 - h * h) * dh
+    #         dWxh += np.dot(X[:, t, :].T, dtanh)
+    #         dWhh += np.dot(h_prev.T, dtanh)
+    #         dbh += np.sum(dtanh, axis=0, keepdims=True)
+    #         d_h_next = np.dot(dtanh, self.Whh.T)
+
+    #     # Store gradients
+    #     self.weight_gradients = {"Wxh": dWxh, "Whh": dWhh, "bh": dbh}
+    #     # (Optionally, update weights here or do it externally with an optimizer)
+    #     # For example:
+    #     # self.Wxh -= learning_rate * dWxh
+    #     # self.Whh -= learning_rate * dWhh
+    #     # self.bh -= learning_rate * dbh
+    #     return d_h_next  # This could be used to propagate gradients to earlier layers

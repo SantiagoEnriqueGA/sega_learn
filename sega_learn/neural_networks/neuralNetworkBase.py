@@ -2,15 +2,20 @@ import numpy as np
 import warnings
 
 from .schedulers import *
-from .layers import DenseLayer
+from .layers import *
 try:
-    from .layers_jit import JITDenseLayer
+    from .layers_jit import *
 except:
     JITDenseLayer = None
 
 
 class NeuralNetworkBase:
     def __init__(self, layers, dropout_rate=0.0, reg_lambda=0.0, activations=None):
+        _layers = [DenseLayer, FlattenLayer, ConvLayer, RNNLayer]
+        _layers_jit = [JITDenseLayer]
+        available_layers = tuple(_layers + _layers_jit)
+        
+        # iF all layers are integers, initialize the layers as DenseLayers
         if all(isinstance(layer, int) for layer in layers):
             self.layer_sizes = layers
             self.dropout_rate = dropout_rate
@@ -21,7 +26,9 @@ class NeuralNetworkBase:
             self.biases = []
             self.layer_outputs = None
             self.is_binary = layers[-1] == 1
-        elif all(isinstance(layer, (DenseLayer, JITDenseLayer)) for layer in layers):
+
+        # Else if all layers are Layer objects, use them directly
+        elif all(isinstance(layer, available_layers) for layer in layers):
             self.layers = layers
             self.layer_sizes = [layer.input_size for layer in layers] + [layers[-1].output_size]
             self.dropout_rate = dropout_rate
