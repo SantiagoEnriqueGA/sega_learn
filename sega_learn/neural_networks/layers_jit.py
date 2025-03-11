@@ -17,7 +17,7 @@ spec = [
     ('output_size', int32),
 ]
 @jitclass(spec)
-class JITLayer:
+class JITDenseLayer:
     """
     Initializes a fully connected layer object, where each neuron is connected to all neurons in the previous layer.
     Each layer consists of weights, biases, and an activation function.

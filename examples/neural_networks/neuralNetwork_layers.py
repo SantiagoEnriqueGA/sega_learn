@@ -27,12 +27,21 @@ input_size = X_train.shape[1]
 # Select optimizers
 optimizer1 = AdamOptimizer(learning_rate=lr)
 optimizer2 = AdamOptimizer(learning_rate=lr)
+optimizer3 = AdamOptimizer(learning_rate=lr)
+optimizer4 = AdamOptimizer(learning_rate=lr)
 
 # Select learning rate schedulers
 sub_scheduler1 = lr_scheduler_step(optimizer1, lr_decay=0.1, lr_decay_epoch=10)  
 scheduler1 = lr_scheduler_plateau(sub_scheduler1, patience=5, threshold=0.001)  
+
 sub_scheduler2 = lr_scheduler_step(optimizer2, lr_decay=0.1, lr_decay_epoch=10)  
 scheduler2 = lr_scheduler_plateau(sub_scheduler2, patience=5, threshold=0.001)
+
+sub_scheduler3 = lr_scheduler_step(optimizer3, lr_decay=0.1, lr_decay_epoch=10)  
+scheduler3 = lr_scheduler_plateau(sub_scheduler3, patience=5, threshold=0.001)
+
+sub_scheduler4 = lr_scheduler_step(optimizer4, lr_decay=0.1, lr_decay_epoch=10)  
+scheduler4 = lr_scheduler_plateau(sub_scheduler4, patience=5, threshold=0.001)
 
 
 # Layer creation method #1: Provide a list of layer sizes and activation functions
@@ -63,10 +72,10 @@ print(classification_report(y_test, y_pred, zero_division=0))
 # Ensure no cary-over from previous method, delete the previous neural network
 
 layers = [
-        Layer(input_size, layers[0], activation="relu"),
-        Layer(layers[0], layers[1], activation="relu"),
-        Layer(layers[1], layers[2], activation="relu"),
-        Layer(layers[2], output_size, activation="softmax"),
+        DenseLayer(input_size, layers[0], activation="relu"),
+        DenseLayer(layers[0], layers[1], activation="relu"),
+        DenseLayer(layers[1], layers[2], activation="relu"),
+        DenseLayer(layers[2], output_size, activation="softmax"),
 ]
 
 # Initialize Neural Network
@@ -84,3 +93,59 @@ print(f"Test Accuracy: {test_accuracy:.4f}")
 
 print("Classification Report:")
 print(classification_report(y_test, y_pred, zero_division=0))
+
+
+# # Advanced Layer types - ConvLayer (Convolutional Layer)
+# #       - These must be passed as a list of Layer objects
+# # --------------------------------------------------------------------------------------------------------------------------
+
+# layers = [
+#     ConvLayer(in_channels=1, out_channels=32, kernel_size=3, stride=1, padding=0, activation="relu"),
+#     ConvLayer(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=0, activation="relu"),
+#     DenseLayer(64, 256, activation="relu"),
+#     DenseLayer(256, 10, activation="softmax"),
+# ]
+
+# # Initialize Neural Network
+# nn3 = BaseBackendNeuralNetwork(layers=layers, dropout_rate=dropout, reg_lambda=reg_lambda)
+
+# # Call the train method
+# nn3.train(X_train, y_train, X_test, y_test, optimizer=optimizer3, lr_scheduler=scheduler3, 
+#          epochs=100, batch_size=32, early_stopping_threshold=10, 
+#          track_metrics=True, track_adv_metrics=True,
+#          )
+
+# # Evaluate the Model
+# test_accuracy, y_pred = nn3.evaluate(X_test, y_test)
+# print(f"Test Accuracy: {test_accuracy:.4f}")
+
+# print("Classification Report:")
+# print(classification_report(y_test, y_pred, zero_division=0))
+
+
+# # Advanced Layer types - RNNLayer (Recurrent Layer)
+# #       - These must be passed as a list of Layer objects
+# # --------------------------------------------------------------------------------------------------------------------------
+
+# layers = [
+#     RNNLayer(input_size=1, hidden_size=32, activation="relu"),
+#     RNNLayer(input_size=32, hidden_size=64, activation="relu"),
+#     DenseLayer(64, 256, activation="relu"),
+#     DenseLayer(256, 10, activation="softmax"),
+# ]
+
+# # Initialize Neural Network
+# nn4 = BaseBackendNeuralNetwork(layers=layers, dropout_rate=dropout, reg_lambda=reg_lambda)
+
+# # Call the train method
+# nn4.train(X_train, y_train, X_test, y_test, optimizer=optimizer4, lr_scheduler=scheduler4, 
+#          epochs=100, batch_size=32, early_stopping_threshold=10, 
+#          track_metrics=True, track_adv_metrics=True,
+#          )
+
+# # Evaluate the Model
+# test_accuracy, y_pred = nn4.evaluate(X_test, y_test)
+# print(f"Test Accuracy: {test_accuracy:.4f}")
+
+# print("Classification Report:")
+# print(classification_report(y_test, y_pred, zero_division=0))

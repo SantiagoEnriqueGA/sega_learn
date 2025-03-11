@@ -1,5 +1,5 @@
 from .neuralNetworkBase import NeuralNetworkBase
-from .layers import Layer
+from .layers import DenseLayer
 from .activations import Activation
 from .loss import CrossEntropyLoss, BCEWithLogitsLoss
 from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
@@ -37,7 +37,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         Each layer is created with the specified number of neurons and activation function.
         """
         for i in range(len(self.layer_sizes) - 1):
-            self.layers.append(Layer(self.layer_sizes[i], self.layer_sizes[i+1], self.activations[i]))
+            self.layers.append(DenseLayer(self.layer_sizes[i], self.layer_sizes[i+1], self.activations[i]))
             weight = np.random.randn(self.layer_sizes[i], self.layer_sizes[i + 1]) * 0.01
             bias = np.zeros((1, self.layer_sizes[i + 1]))
             self.weights.append(weight)

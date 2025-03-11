@@ -1,7 +1,7 @@
 import numpy as np
 from .activations import Activation
 
-class Layer:
+class DenseLayer:
     """
     Initializes a fully connected layer object, where each neuron is connected to all neurons in the previous layer.
     Each layer consists of weights, biases, and an activation function.

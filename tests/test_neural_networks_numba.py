@@ -59,7 +59,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
 
     def test_initialize_layers(self):
         """Test layer initialization."""
-        layers = [JITLayer(2, 4, 'relu'), JITLayer(4, 2, 'sigmoid')]
+        layers = [JITDenseLayer(2, 4, 'relu'), JITDenseLayer(4, 2, 'sigmoid')]
         nn = BaseBackendNeuralNetwork(layers)
         self.assertEqual(len(nn.layers), 2)
         self.assertEqual(nn.layers[0].activation, 'relu')

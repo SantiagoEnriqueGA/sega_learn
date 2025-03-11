@@ -15,7 +15,7 @@ from sega_learn.neural_networks import SGDOptimizer as sgd
 from sega_learn.neural_networks import AdadeltaOptimizer as adadelta
 from sega_learn.neural_networks import CrossEntropyLoss as cel
 from sega_learn.neural_networks import BCEWithLogitsLoss as bcel
-from sega_learn.neural_networks import Layer as lay
+from sega_learn.neural_networks import DenseLayer as lay
 from sega_learn.neural_networks import Activation as act
 from sega_learn.neural_networks import neuralNetworkBaseBackend as nnBackend
 
@@ -24,7 +24,7 @@ from sega_learn.neural_networks import JITSGDOptimizer as jitsgd
 from sega_learn.neural_networks import JITAdadeltaOptimizer as jitadadelta
 from sega_learn.neural_networks import JITCrossEntropyLoss as jitcel
 from sega_learn.neural_networks import JITBCEWithLogitsLoss as jitbcel
-from sega_learn.neural_networks import JITLayer as jitlay
+from sega_learn.neural_networks import JITDenseLayer as jitlay
 from sega_learn.neural_networks import neuralNetworkNumbaBackend as nnNumba
 
 from sega_learn.neural_networks import *
@@ -73,7 +73,7 @@ class TestImportsNeuralNetworks(unittest.TestCase):
         assert lr_scheduler_step is not None
         assert CrossEntropyLoss is not None
         assert BCEWithLogitsLoss is not None
-        assert Layer is not None
+        assert DenseLayer is not None
         assert Activation is not None
         assert BaseBackendNeuralNetwork is not None
         
@@ -92,7 +92,7 @@ class TestImportsNeuralNetworks(unittest.TestCase):
         assert JITAdadeltaOptimizer is not None
         assert JITCrossEntropyLoss is not None
         assert JITBCEWithLogitsLoss is not None
-        assert JITLayer is not None
+        assert JITDenseLayer is not None
         assert NumbaBackendNeuralNetwork is not None
    
 

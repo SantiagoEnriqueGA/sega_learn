@@ -71,7 +71,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         Each layer is created with the specified number of neurons and activation function.
         """
         for i in range(len(self.layer_sizes) - 1):
-            self.layers.append(JITLayer(self.layer_sizes[i], self.layer_sizes[i+1], self.activations[i]))
+            self.layers.append(JITDenseLayer(self.layer_sizes[i], self.layer_sizes[i+1], self.activations[i]))
             weight = np.random.randn(self.layer_sizes[i], self.layer_sizes[i + 1]) * 0.01
             bias = np.zeros((1, self.layer_sizes[i + 1]))
             self.weights.append(weight)

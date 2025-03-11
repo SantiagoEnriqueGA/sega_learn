@@ -2,11 +2,11 @@ import numpy as np
 import warnings
 
 from .schedulers import *
-from .layers import Layer
+from .layers import DenseLayer
 try:
-    from .layers_jit import JITLayer
+    from .layers_jit import JITDenseLayer
 except:
-    JITLayer = None
+    JITDenseLayer = None
 
 
 class NeuralNetworkBase:
@@ -21,7 +21,7 @@ class NeuralNetworkBase:
             self.biases = []
             self.layer_outputs = None
             self.is_binary = layers[-1] == 1
-        elif all(isinstance(layer, (Layer, JITLayer)) for layer in layers):
+        elif all(isinstance(layer, (DenseLayer, JITDenseLayer)) for layer in layers):
             self.layers = layers
             self.layer_sizes = [layer.input_size for layer in layers] + [layers[-1].output_size]
             self.dropout_rate = dropout_rate

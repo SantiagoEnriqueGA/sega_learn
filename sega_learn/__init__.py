@@ -55,7 +55,7 @@ from .neural_networks import (
     BCEWithLogitsLoss,
     NeuralNetworkBase,
     BaseBackendNeuralNetwork,
-    Layer,
+    DenseLayer,
     Activation,
 )
 
@@ -118,7 +118,7 @@ __all__ = [
     'CrossEntropyLoss',
     'BCEWithLogitsLoss',
     'NeuralNetwork',
-    'Layer',
+    'DenseLayer',
     'Activation',
     'NeuralNetworkBase',
     'BaseBackendNeuralNetwork',
@@ -132,7 +132,7 @@ try:
     from .neural_networks.numba_utils import *
     from .neural_networks.optimizers_jit import JITAdamOptimizer, JITSGDOptimizer, JITAdadeltaOptimizer
     from .neural_networks.loss_jit import JITBCEWithLogitsLoss, JITCrossEntropyLoss
-    from .neural_networks.layers_jit import JITLayer
+    from .neural_networks.layers_jit import JITDenseLayer
     from .neural_networks.neuralNetworkNumbaBackend import NumbaBackendNeuralNetwork
     
     __all__.extend([
@@ -141,7 +141,7 @@ try:
         'JITAdadeltaOptimizer',
         'JITBCEWithLogitsLoss',
         'JITCrossEntropyLoss',
-        'JITLayer',
+        'JITDenseLayer',
         'NumbaBackendNeuralNetwork',
     ])
 except:

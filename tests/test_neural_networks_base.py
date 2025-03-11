@@ -50,7 +50,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
 
     def test_initialize_layers(self):
         """Test layer initialization."""
-        layers = [Layer(2, 4, 'relu'), Layer(4, 2, 'sigmoid')] 
+        layers = [DenseLayer(2, 4, 'relu'), DenseLayer(4, 2, 'sigmoid')] 
         nn = BaseBackendNeuralNetwork(layers)
         self.assertEqual(len(nn.layers), 2)
         self.assertEqual(nn.layers[0].activation, 'relu')
