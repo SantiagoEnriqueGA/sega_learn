@@ -24,7 +24,9 @@ wrote sega_learn.neural_networks.layers.html
 wrote sega_learn.neural_networks.layers_jit.html
 wrote sega_learn.neural_networks.loss.html
 wrote sega_learn.neural_networks.loss_jit.html
-wrote sega_learn.neural_networks.neuralNetwork.html
+wrote sega_learn.neural_networks.neuralNetworkBase.html
+wrote sega_learn.neural_networks.neuralNetworkBaseBackend.html
+wrote sega_learn.neural_networks.neuralNetworkNumbaBackend.html
 wrote sega_learn.neural_networks.numba_utils.html
 wrote sega_learn.neural_networks.optimizers.html
 wrote sega_learn.neural_networks.optimizers_jit.html

@@ -67,11 +67,28 @@ td.singlecolumn { width: 100%; }
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#JITLayer">JITLayer</a>(*args,&nbsp;**kwargs)<br>
 &nbsp;<br>
-Initializes&nbsp;a&nbsp;Layer&nbsp;object.<br>
+Initializes&nbsp;a&nbsp;fully&nbsp;connected&nbsp;layer&nbsp;object,&nbsp;where&nbsp;each&nbsp;neuron&nbsp;is&nbsp;connected&nbsp;to&nbsp;all&nbsp;neurons&nbsp;in&nbsp;the&nbsp;previous&nbsp;layer.<br>
+Each&nbsp;layer&nbsp;consists&nbsp;of&nbsp;weights,&nbsp;biases,&nbsp;and&nbsp;an&nbsp;activation&nbsp;function.<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;input_size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;input&nbsp;to&nbsp;the&nbsp;layer.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;output_size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;output&nbsp;from&nbsp;the&nbsp;layer.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;activation&nbsp;(str):&nbsp;The&nbsp;activation&nbsp;function&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;the&nbsp;layer.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;activation&nbsp;(str):&nbsp;The&nbsp;activation&nbsp;function&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weights&nbsp;(np.ndarray):&nbsp;Weights&nbsp;of&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;biases&nbsp;(np.ndarray):&nbsp;Biases&nbsp;of&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activation&nbsp;(str):&nbsp;Activation&nbsp;function&nbsp;name.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weight_gradients&nbsp;(np.ndarray):&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;weights.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bias_gradients&nbsp;(np.ndarray):&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;biases.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_cache&nbsp;(np.ndarray):&nbsp;Cached&nbsp;input&nbsp;for&nbsp;backpropagation.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_cache&nbsp;(np.ndarray):&nbsp;Cached&nbsp;output&nbsp;for&nbsp;backpropagation.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#JITLayer-zero_grad">zero_grad</a>():&nbsp;Resets&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#JITLayer-forward">forward</a>(X):&nbsp;Performs&nbsp;the&nbsp;forward&nbsp;pass&nbsp;of&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#JITLayer-backward">backward</a>(dA,&nbsp;reg_lambda):&nbsp;Performs&nbsp;the&nbsp;backward&nbsp;pass&nbsp;of&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#JITLayer-activate">activate</a>(Z):&nbsp;Applies&nbsp;the&nbsp;activation&nbsp;function.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#JITLayer-activation_derivative">activation_derivative</a>(Z):&nbsp;Applies&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;activation&nbsp;function.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn"><dl><dt>Method resolution order:</dt>
 <dd><a href="sega_learn.neural_networks.layers_jit.html#JITLayer">JITLayer</a></dd>
@@ -80,7 +97,7 @@ Args:<br>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>class_type</strong> = jitclass.JITLayer#1f7e5054a10&lt;weights:array(floa...oat64, 2d, A),input_size:int32,output_size:int32&gt;</dl>
+<dl><dt><strong>class_type</strong> = jitclass.JITLayer#22aaf57fa50&lt;weights:array(floa...oat64, 2d, C),input_size:int32,output_size:int32&gt;</dl>
 
 <hr>
 Methods inherited from JITLayer:<br>
@@ -89,6 +106,10 @@ Methods inherited from JITLayer:<br>
 <dl><dt><a name="JITLayer-activate"><strong>activate</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;function.</span></dd></dl>
 
 <dl><dt><a name="JITLayer-activation_derivative"><strong>activation_derivative</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;derivative.</span></dd></dl>
+
+<dl><dt><a name="JITLayer-backward"><strong>backward</strong></a>(self, dA, reg_lambda)</dt></dl>
+
+<dl><dt><a name="JITLayer-forward"><strong>forward</strong></a>(self, X)</dt></dl>
 
 <dl><dt><a name="JITLayer-zero_grad"><strong>zero_grad</strong></a>(self)</dt><dd><span class="code">Reset&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.</span></dd></dl>
 
@@ -109,5 +130,5 @@ Data descriptors inherited from JITLayer:<br>
 <td class="singlecolumn"><strong>CACHE</strong> = False<br>
 <strong>float64</strong> = float64<br>
 <strong>int32</strong> = int32<br>
-<strong>spec</strong> = [('weights', Array(float64, 2, 'A', False, aligned=True)), ('biases', Array(float64, 2, 'A', False, aligned=True)), ('activation', unicode_type), ('weight_gradients', Array(float64, 2, 'A', False, aligned=True)), ('bias_gradients', Array(float64, 2, 'A', False, aligned=True)), ('input_size', int32), ('output_size', int32)]</td></tr></table>
+<strong>spec</strong> = [('weights', Array(float64, 2, 'C', False, aligned=True)), ('biases', Array(float64, 2, 'C', False, aligned=True)), ('activation', unicode_type), ('weight_gradients', Array(float64, 2, 'C', False, aligned=True)), ('bias_gradients', Array(float64, 2, 'C', False, aligned=True)), ('input_cache', Array(float64, 2, 'C', False, aligned=True)), ('output_cache', Array(float64, 2, 'C', False, aligned=True)), ('input_size', int32), ('output_size', int32)]</td></tr></table>
 </body></html>

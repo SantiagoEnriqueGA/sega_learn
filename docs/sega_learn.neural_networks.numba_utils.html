@@ -56,7 +56,6 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;dropout_rate&nbsp;(float):&nbsp;Dropout&nbsp;rate.<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ndarray:&nbsp;Activation&nbsp;values&nbsp;after&nbsp;applying&nbsp;dropout.</span></dd></dl>
- <dl><dt><a name="-backward_jit"><strong>backward_jit</strong></a>(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs)</dt></dl>
  <dl><dt><a name="-calculate_bce_with_logits_loss"><strong>calculate_bce_with_logits_loss</strong></a>(logits, targets)</dt></dl>
  <dl><dt><a name="-calculate_cross_entropy_loss"><strong>calculate_cross_entropy_loss</strong></a>(logits, targets)</dt></dl>
  <dl><dt><a name="-calculate_loss_from_outputs_binary"><strong>calculate_loss_from_outputs_binary</strong></a>(outputs, y, weights, reg_lambda)</dt></dl>
@@ -69,12 +68,11 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;is_binary&nbsp;(bool):&nbsp;Whether&nbsp;the&nbsp;model&nbsp;is&nbsp;binary&nbsp;or&nbsp;multi-class.<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;Accuracy&nbsp;and&nbsp;predicted&nbsp;labels.</span></dd></dl>
- <dl><dt><a name="-forward_jit"><strong>forward_jit</strong></a>(X, weights, biases, activations, dropout_rate, training, is_binary)</dt></dl>
  <dl><dt><a name="-leaky_relu"><strong>leaky_relu</strong></a>(z, alpha=0.01)</dt></dl>
  <dl><dt><a name="-leaky_relu_derivative"><strong>leaky_relu_derivative</strong></a>(z, alpha=0.01)</dt></dl>
  <dl><dt><a name="-one_hot_encode"><strong>one_hot_encode</strong></a>(y, num_classes)</dt></dl>
- <dl><dt><a name="-process_batches_binary"><strong>process_batches_binary</strong></a>(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, reg_lambda, dWs_acc, dbs_acc)</dt></dl>
- <dl><dt><a name="-process_batches_multi"><strong>process_batches_multi</strong></a>(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, reg_lambda, dWs_acc, dbs_acc)</dt></dl>
+ <dl><dt><a name="-process_batches_binary"><strong>process_batches_binary</strong></a>(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, reg_lambda, dWs_acc, dbs_acc)</dt></dl>
+ <dl><dt><a name="-process_batches_multi"><strong>process_batches_multi</strong></a>(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, reg_lambda, dWs_acc, dbs_acc)</dt></dl>
  <dl><dt><a name="-relu"><strong>relu</strong></a>(z)</dt></dl>
  <dl><dt><a name="-relu_derivative"><strong>relu_derivative</strong></a>(z)</dt></dl>
  <dl><dt><a name="-sigmoid"><strong>sigmoid</strong></a>(z)</dt></dl>

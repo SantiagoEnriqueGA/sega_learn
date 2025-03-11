@@ -66,11 +66,28 @@ td.singlecolumn { width: 100%; }
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#Layer">Layer</a>(input_size,&nbsp;output_size,&nbsp;activation='relu')<br>
 &nbsp;<br>
-Initializes&nbsp;a&nbsp;<a href="#Layer">Layer</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+Initializes&nbsp;a&nbsp;fully&nbsp;connected&nbsp;layer&nbsp;<a href="builtins.html#object">object</a>,&nbsp;where&nbsp;each&nbsp;neuron&nbsp;is&nbsp;connected&nbsp;to&nbsp;all&nbsp;neurons&nbsp;in&nbsp;the&nbsp;previous&nbsp;layer.<br>
+Each&nbsp;layer&nbsp;consists&nbsp;of&nbsp;weights,&nbsp;biases,&nbsp;and&nbsp;an&nbsp;activation&nbsp;function.<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;input_size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;input&nbsp;to&nbsp;the&nbsp;layer.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;output_size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;output&nbsp;from&nbsp;the&nbsp;layer.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;activation&nbsp;(str):&nbsp;The&nbsp;activation&nbsp;function&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;the&nbsp;layer.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;activation&nbsp;(str):&nbsp;The&nbsp;activation&nbsp;function&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weights&nbsp;(np.ndarray):&nbsp;Weights&nbsp;of&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;biases&nbsp;(np.ndarray):&nbsp;Biases&nbsp;of&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activation&nbsp;(str):&nbsp;Activation&nbsp;function&nbsp;name.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weight_gradients&nbsp;(np.ndarray):&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;weights.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bias_gradients&nbsp;(np.ndarray):&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;biases.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_cache&nbsp;(np.ndarray):&nbsp;Cached&nbsp;input&nbsp;for&nbsp;backpropagation.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_cache&nbsp;(np.ndarray):&nbsp;Cached&nbsp;output&nbsp;for&nbsp;backpropagation.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Layer-zero_grad">zero_grad</a>():&nbsp;Resets&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Layer-forward">forward</a>(X):&nbsp;Performs&nbsp;the&nbsp;forward&nbsp;pass&nbsp;of&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Layer-backward">backward</a>(dA,&nbsp;reg_lambda):&nbsp;Performs&nbsp;the&nbsp;backward&nbsp;pass&nbsp;of&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Layer-activate">activate</a>(Z):&nbsp;Applies&nbsp;the&nbsp;activation&nbsp;function.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Layer-activation_derivative">activation_derivative</a>(Z):&nbsp;Applies&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;activation&nbsp;function.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="Layer-__init__"><strong>__init__</strong></a>(self, input_size, output_size, activation='relu')</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
@@ -78,6 +95,10 @@ Args:<br>
 <dl><dt><a name="Layer-activate"><strong>activate</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;function.</span></dd></dl>
 
 <dl><dt><a name="Layer-activation_derivative"><strong>activation_derivative</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;derivative.</span></dd></dl>
+
+<dl><dt><a name="Layer-backward"><strong>backward</strong></a>(self, dA, reg_lambda)</dt></dl>
+
+<dl><dt><a name="Layer-forward"><strong>forward</strong></a>(self, X)</dt></dl>
 
 <dl><dt><a name="Layer-zero_grad"><strong>zero_grad</strong></a>(self)</dt><dd><span class="code">Reset&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.</span></dd></dl>
 

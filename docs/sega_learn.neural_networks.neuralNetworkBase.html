@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.neural_networks.neuralNetworkBase</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.neural_networks.html" class="white">neural_networks</a>.neuralNetworkBase</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"><a href="warnings.html">warnings</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.neural_networks.neuralNetworkBase.html#NeuralNetworkBase">NeuralNetworkBase</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="NeuralNetworkBase">class <strong>NeuralNetworkBase</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#NeuralNetworkBase">NeuralNetworkBase</a>(layers,&nbsp;dropout_rate=0.0,&nbsp;reg_lambda=0.0,&nbsp;activations=None)<br>
+&nbsp;<br>
+<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="NeuralNetworkBase-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.0, reg_lambda=0.0, activations=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="NeuralNetworkBase-apply_dropout"><strong>apply_dropout</strong></a>(self, X)</dt><dd><span class="code">Applies&nbsp;dropout&nbsp;to&nbsp;the&nbsp;activation&nbsp;X.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(ndarray):&nbsp;Activation&nbsp;values.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ndarray:&nbsp;Activation&nbsp;values&nbsp;after&nbsp;applying&nbsp;dropout.</span></dd></dl>
+
+<dl><dt><a name="NeuralNetworkBase-backward"><strong>backward</strong></a>(self, y)</dt></dl>
+
+<dl><dt><a name="NeuralNetworkBase-calculate_loss"><strong>calculate_loss</strong></a>(self, X, y)</dt></dl>
+
+<dl><dt><a name="NeuralNetworkBase-calculate_precision_recall_f1"><strong>calculate_precision_recall_f1</strong></a>(self, X, y)</dt><dd><span class="code">Calculates&nbsp;precision,&nbsp;recall,&nbsp;and&nbsp;F1&nbsp;score.<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(ndarray):&nbsp;Input&nbsp;data<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y&nbsp;(ndarray):&nbsp;Target&nbsp;labels<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;precision&nbsp;(float):&nbsp;Precision&nbsp;score<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;recall&nbsp;(float):&nbsp;Recall&nbsp;score<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;f1&nbsp;(float):&nbsp;F1&nbsp;score</span></dd></dl>
+
+<dl><dt><a name="NeuralNetworkBase-compute_l2_reg"><strong>compute_l2_reg</strong></a>(self, weights)</dt><dd><span class="code">Computes&nbsp;the&nbsp;L2&nbsp;regularization&nbsp;term.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weights&nbsp;(list):&nbsp;List&nbsp;of&nbsp;weight&nbsp;matrices.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;L2&nbsp;regularization&nbsp;term.</span></dd></dl>
+
+<dl><dt><a name="NeuralNetworkBase-create_scheduler"><strong>create_scheduler</strong></a>(self, scheduler_type, optimizer, **kwargs)</dt><dd><span class="code">Creates&nbsp;a&nbsp;learning&nbsp;rate&nbsp;scheduler.</span></dd></dl>
+
+<dl><dt><a name="NeuralNetworkBase-evaluate"><strong>evaluate</strong></a>(self, X, y)</dt></dl>
+
+<dl><dt><a name="NeuralNetworkBase-forward"><strong>forward</strong></a>(self, X, training=True)</dt></dl>
+
+<dl><dt><a name="NeuralNetworkBase-initialize_layers"><strong>initialize_layers</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="NeuralNetworkBase-plot_metrics"><strong>plot_metrics</strong></a>(self, save_dir=None)</dt><dd><span class="code">Plots&nbsp;the&nbsp;training&nbsp;and&nbsp;validation&nbsp;metrics.</span></dd></dl>
+
+<dl><dt><a name="NeuralNetworkBase-predict"><strong>predict</strong></a>(self, X)</dt></dl>
+
+<dl><dt><a name="NeuralNetworkBase-train"><strong>train</strong></a>(self, X_train, y_train, X_val=None, y_val=None, optimizer=None, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1, track_metrics=False, track_adv_metrics=False)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>
