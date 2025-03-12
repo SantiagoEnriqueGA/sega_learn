@@ -138,7 +138,7 @@ try:
     from .neural_networks.numba_utils import *
     from .neural_networks.optimizers_jit import JITAdamOptimizer, JITSGDOptimizer, JITAdadeltaOptimizer
     from .neural_networks.loss_jit import JITBCEWithLogitsLoss, JITCrossEntropyLoss
-    from .neural_networks.layers_jit import JITDenseLayer
+    from .neural_networks.layers_jit import JITDenseLayer, JITFlattenLayer, JITConvLayer, JITRNNLayer
     from .neural_networks.neuralNetworkNumbaBackend import NumbaBackendNeuralNetwork
     
     __all__.extend([
@@ -148,6 +148,9 @@ try:
         'JITBCEWithLogitsLoss',
         'JITCrossEntropyLoss',
         'JITDenseLayer',
+        'JITFlattenLayer',
+        'JITConvLayer',
+        'JITRNNLayer',
         'NumbaBackendNeuralNetwork',
     ])
 except:

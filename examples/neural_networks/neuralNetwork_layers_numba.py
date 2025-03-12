@@ -27,8 +27,8 @@ input_size = X_train.shape[1]
 # Create optimizers and learning rate schedulers
 # --------------------------------------------------------------------------------------------------------------------------
 # Select optimizers
-optimizer1 = AdamOptimizer(learning_rate=lr)
-optimizer2 = AdamOptimizer(learning_rate=lr)
+optimizer1 = JITAdamOptimizer(learning_rate=lr)
+optimizer2 = JITAdamOptimizer(learning_rate=lr)
 
 # Select learning rate schedulers
 sub_scheduler1 = lr_scheduler_step(optimizer1, lr_decay=0.1, lr_decay_epoch=10)  
@@ -42,7 +42,7 @@ scheduler2 = lr_scheduler_plateau(sub_scheduler2, patience=5, threshold=0.001)
 activations = ['relu'] * len(layers) + ['softmax']
 
 # Initialize Neural Network
-nn1 = BaseBackendNeuralNetwork(layers = [input_size] + layers + [output_size], activations=activations,
+nn1 = NumbaBackendNeuralNetwork(layers = [input_size] + layers + [output_size], activations=activations,
                               dropout_rate=dropout, reg_lambda=reg_lambda)
 
 
@@ -63,14 +63,14 @@ print(classification_report(y_test, y_pred, zero_division=0))
 # Layer creation method #2: Provide a list of Layer objects
 # --------------------------------------------------------------------------------------------------------------------------
 layers = [
-        DenseLayer(input_size, layers[0], activation="relu"),
-        DenseLayer(layers[0], layers[1], activation="relu"),
-        DenseLayer(layers[1], layers[2], activation="relu"),
-        DenseLayer(layers[2], output_size, activation="softmax"),
+        JITDenseLayer(input_size, layers[0], activation="relu"),
+        JITDenseLayer(layers[0], layers[1], activation="relu"),
+        JITDenseLayer(layers[1], layers[2], activation="relu"),
+        JITDenseLayer(layers[2], output_size, activation="softmax"),
 ]
 
 # Initialize Neural Network
-nn2 = BaseBackendNeuralNetwork(layers=layers, dropout_rate=dropout, reg_lambda=reg_lambda)
+nn2 = NumbaBackendNeuralNetwork(layers=layers, dropout_rate=dropout, reg_lambda=reg_lambda)
 
 # Call the train method
 nn2.train(X_train, y_train, X_test, y_test, optimizer=optimizer2, lr_scheduler=scheduler2, 

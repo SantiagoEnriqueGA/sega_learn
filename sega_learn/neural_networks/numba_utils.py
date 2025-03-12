@@ -179,7 +179,7 @@ def one_hot_encode(y, num_classes):
     return y_ohe
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def process_batches_binary(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, reg_lambda, dWs_acc, dbs_acc):
+def process_batches_binary(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, dropout_layer_indices, reg_lambda, dWs_acc, dbs_acc):
     num_samples = X_shuffled.shape[0]
     num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
     running_loss = 0.0
@@ -195,14 +195,11 @@ def process_batches_binary(X_shuffled, y_shuffled, batch_size, layers, dropout_r
         # Forward pass
         layer_outputs = [X_batch]
         A = X_batch.astype(np.float64)
-        for layer in layers[:-1]:
+        for i, layer in enumerate(layers):
             A = layer.forward(A)
-            if dropout_rate > 0:
+            if dropout_rate > 0 and i in dropout_layer_indices:
                 A = apply_dropout_jit(A, dropout_rate)
             layer_outputs.append(A)
-        Z = layers[-1].forward(A)
-        output = sigmoid(Z)
-        layer_outputs.append(output)
         
         # Backward pass
         m = y_batch.shape[0]
@@ -232,7 +229,7 @@ def process_batches_binary(X_shuffled, y_shuffled, batch_size, layers, dropout_r
     return dWs_acc, dbs_acc, running_loss, running_accuracy
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def process_batches_multi(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, reg_lambda, dWs_acc, dbs_acc):
+def process_batches_multi(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, dropout_layer_indices, reg_lambda, dWs_acc, dbs_acc):
     num_samples = X_shuffled.shape[0]
     num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
     running_loss = 0.0
@@ -248,14 +245,11 @@ def process_batches_multi(X_shuffled, y_shuffled, batch_size, layers, dropout_ra
         # Forward pass
         layer_outputs = [X_batch]
         A = X_batch.astype(np.float64)
-        for layer in layers[:-1]:
+        for i, layer in enumerate(layers):
             A = layer.forward(A)
-            if dropout_rate > 0:
+            if dropout_rate > 0 and i in dropout_layer_indices:
                 A = apply_dropout_jit(A, dropout_rate)
             layer_outputs.append(A)
-        Z = layers[-1].forward(A)
-        output = softmax(Z)
-        layer_outputs.append(output)
         
         # Backward pass
         m = y_batch.shape[0]

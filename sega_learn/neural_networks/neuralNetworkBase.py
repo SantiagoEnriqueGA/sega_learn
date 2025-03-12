@@ -12,7 +12,7 @@ except:
 class NeuralNetworkBase:
     def __init__(self, layers, dropout_rate=0.0, reg_lambda=0.0, activations=None):
         _layers = [DenseLayer, FlattenLayer, ConvLayer, RNNLayer]
-        _layers_jit = [JITDenseLayer]
+        _layers_jit = [JITDenseLayer, JITFlattenLayer, JITConvLayer, JITRNNLayer]
         available_layers = tuple(_layers + _layers_jit)
         
         # iF all layers are integers, initialize the layers as DenseLayers

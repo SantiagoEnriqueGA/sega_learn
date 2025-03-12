@@ -41,6 +41,9 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         if len(self.layers) == 0:
             self.initialize_new_layers()
         
+        # Identify trainable layers
+        self.trainable_layers = [layer for layer in self.layers if hasattr(layer, 'weights') and hasattr(layer, 'biases')]
+        
         if progress_bar and not TQDM_AVAILABLE: 
             warnings.warn("tqdm is not installed. Progress bar will not be displayed.")
             self.progress_bar = False
@@ -48,22 +51,27 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             self.progress_bar = progress_bar
         
         if compile_numba and not self.compiled:
-            self.store_layers()
+            self.store_init_layers()
             self.compile_numba_functions(self.progress_bar)
             self.restore_layers()
             self.compiled = True
 
-    def store_layers(self):
+    def store_init_layers(self):
         """Stores the layers to restore after initialization."""
         self._layers = self.layers.copy()
-        self._weights = [layer.weights.copy() for layer in self.layers]
-        self._biases = [layer.biases.copy() for layer in self.layers]
+        self._weights = [layer.weights.copy() for layer in self.layers if hasattr(layer, 'weights')]
+        self._biases = [layer.biases.copy() for layer in self.layers if hasattr(layer, 'biases')]
+        
+        self.weights = [layer.weights.copy() for layer in self.layers if hasattr(layer, 'weights')]
+        self.biases = [layer.biases.copy() for layer in self.layers if hasattr(layer, 'biases')]
+        self.dWs_cache = [np.zeros_like(w) for w in self.weights]
+        self.dbs_cache = [np.zeros_like(b) for b in self.biases]
 
     def restore_layers(self):
         """Restores the layers after initialization."""
         self.layers = self._layers.copy()
-        self.weights = [layer.weights.copy() for layer in self.layers]
-        self.biases = [layer.biases.copy() for layer in self.layers]
+        self.weights = [layer.weights.copy() for layer in self.layers if hasattr(layer, 'weights')]
+        self.biases = [layer.biases.copy() for layer in self.layers if hasattr(layer, 'biases')]
     
     def initialize_new_layers(self):
         """
@@ -91,19 +99,20 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         # Convert input to float64 for Numba compatibility
         self.layer_outputs = [X]
         A = X.astype(np.float64)
-                       
-        for i, layer in enumerate(self.layers[:-1]):
+        
+        output = None
+        for i, layer in enumerate(self.layers):
             A = layer.forward(A)
-            if training and self.dropout_rate > 0:
+
+            # If last layer, store output for return
+            if i == len(self.layers) - 1: output = A
+
+            if training and self.dropout_rate > 0 and isinstance(layer, JITDenseLayer):
                 A = apply_dropout_jit(A, self.dropout_rate)            
             self.layer_outputs.append(A)
         
-        Z = self.layers[-1].forward(A)
-        output = Z if self.is_binary else softmax(Z)
-        self.layer_outputs.append(output)
         return output
                 
-
     def backward(self, y):
         """
         Performs backward propagation to calculate the gradients.
@@ -197,13 +206,13 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
                 raise ValueError("Unable to convert optimizer to a JIT optimizer. Please use a JIT optimizer.")
             
         # Initialize optimizer
-        optimizer.initialize(self.layers)
+        optimizer.initialize(self.trainable_layers)
         
         # Track best model for early stopping
         best_loss = float('inf')
         patience_counter = 0
-        best_weights = [layer.weights.copy() for layer in self.layers]
-        best_biases = [layer.biases.copy() for layer in self.layers]
+        best_weights = [layer.weights.copy() for layer in self.layers if hasattr(layer, 'weights')]
+        best_biases = [layer.biases.copy() for layer in self.layers if hasattr(layer, 'biases')]
         
         # Number of threads for parallel processing
         # If n_jobs > 1, use that many threads, otherwise let Numba decide
@@ -234,7 +243,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         progress_bar = tqdm(range(epochs)) if use_tqdm else range(epochs)
         for epoch in progress_bar:
             # Reset gradients
-            for layer in self.layers:
+            for layer in self.trainable_layers:
                 layer.zero_grad()
             
             # Shuffle training data
@@ -244,30 +253,33 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             y_shuffled = y_train[indices]
             
             # Prepare layer parameters for JIT function
-            weights = [layer.weights for layer in self.layers]
-            biases = [layer.biases for layer in self.layers]
-            activations = [layer.activation for layer in self.layers]
-           
+            weights = [layer.weights for layer in self.trainable_layers]
+            biases = [layer.biases for layer in self.trainable_layers]
+
             # Initialize accumulated gradients with zeros 
             dWs_zeros = [np.zeros_like(w) for w in weights]
             dbs_zeros = [np.zeros_like(b) for b in biases]
-                           
+            
+            # Get indices of dropout layers
+            dropout_layer_indices = [i for i, layer in enumerate(self.layers) if isinstance(layer, JITDenseLayer)]
+            if len(dropout_layer_indices) == 0: dropout_layer_indices = [-1]
+
             # Process batches based on classification type
             if self.is_binary:
                 dWs_acc, dbs_acc, train_loss, train_accuracy = process_batches_binary(
                     X_shuffled, y_shuffled, batch_size, self.layers, 
-                    self.dropout_rate, self.reg_lambda,
+                    self.dropout_rate, dropout_layer_indices, self.reg_lambda,
                     dWs_zeros, dbs_zeros
                 )
             else:
                 dWs_acc, dbs_acc, train_loss, train_accuracy = process_batches_multi(
                     X_shuffled, y_shuffled, batch_size, self.layers, 
-                    self.dropout_rate, self.reg_lambda,
+                    self.dropout_rate, dropout_layer_indices, self.reg_lambda,
                     dWs_zeros, dbs_zeros
                 )
 
             # Update weights and biases using the optimizer
-            optimizer.update_layers(self.layers, dWs_acc, dbs_acc)
+            optimizer.update_layers(self.trainable_layers, dWs_acc, dbs_acc)
                         
             # Validation metrics
             val_metrics = ""
@@ -281,8 +293,8 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
                     best_loss = val_loss
                     patience_counter = 0
                     # Save best weights
-                    best_weights = [layer.weights.copy() for layer in self.layers]
-                    best_biases = [layer.biases.copy() for layer in self.layers]
+                    best_weights = [layer.weights.copy() for layer in self.layers if hasattr(layer, 'weights')]
+                    best_biases = [layer.biases.copy() for layer in self.layers if hasattr(layer, 'biases')]
                 else:
                     patience_counter += 1
             else:
@@ -290,8 +302,8 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
                 if train_loss < best_loss:
                     best_loss = train_loss
                     patience_counter = 0
-                    best_weights = [layer.weights.copy() for layer in self.layers]
-                    best_biases = [layer.biases.copy() for layer in self.layers]
+                    best_weights = [layer.weights.copy() for layer in self.layers if hasattr(layer, 'weights')]
+                    best_biases = [layer.biases.copy() for layer in self.layers if hasattr(layer, 'biases')]
                 else:
                     patience_counter += 1
                     
@@ -343,7 +355,8 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
                 break
         
         # Restore best weights
-        for i, layer in enumerate(self.layers):
+        trainable_layers = [l for l in self.layers if hasattr(l, 'weights')]
+        for i, layer in enumerate(trainable_layers):
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
 
@@ -398,7 +411,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             loss = loss_fn.calculate_loss(outputs, y_ohe)
         
         # Add L2 regularization term
-        weights = [layer.weights for layer in self.layers]
+        weights = [layer.weights for layer in self.layers if hasattr(layer, 'weights')]
         l2_reg = self.reg_lambda * compute_l2_reg(weights)
         loss += l2_reg
         return float(loss)
@@ -555,7 +568,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             process_batches_binary(
                 X_shuffled=np.random.randn(10, self.layer_sizes[0]),
                 y_shuffled=np.random.randint(0, 2, (10, 1)),
-                batch_size=32, layers=self.layers, dropout_rate=self.dropout_rate,
+                batch_size=32, layers=self.layers, dropout_rate=self.dropout_rate, dropout_layer_indices=[1],
                 reg_lambda=self.reg_lambda, dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache
             )
             if progress_bar: progress_bar.update(1)
@@ -563,7 +576,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             process_batches_multi(
                 X_shuffled=np.random.randn(10, self.layer_sizes[0]),
                 y_shuffled=np.random.randint(0, 2, 10),
-                batch_size=32, layers=self.layers, dropout_rate=self.dropout_rate,
+                batch_size=32, layers=self.layers, dropout_rate=self.dropout_rate, dropout_layer_indices=[1],
                 reg_lambda=self.reg_lambda, dWs_acc=self.dWs_cache, dbs_acc=self.dbs_cache
             )
             if progress_bar: progress_bar.update(1)

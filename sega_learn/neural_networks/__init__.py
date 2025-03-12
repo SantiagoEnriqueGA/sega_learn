@@ -28,7 +28,7 @@ try:
     from .numba_utils import *
     from .optimizers_jit import JITAdamOptimizer, JITSGDOptimizer, JITAdadeltaOptimizer
     from .loss_jit import JITBCEWithLogitsLoss, JITCrossEntropyLoss
-    from .layers_jit import JITDenseLayer
+    from .layers_jit import JITDenseLayer, JITFlattenLayer, JITConvLayer, JITRNNLayer
     from .neuralNetworkNumbaBackend import NumbaBackendNeuralNetwork
 
     __all__.extend([
@@ -38,6 +38,9 @@ try:
         'JITBCEWithLogitsLoss',
         'JITCrossEntropyLoss',
         'JITDenseLayer',
+        'JITFlattenLayer',
+        'JITConvLayer',
+        'JITRNNLayer',
         'NumbaBackendNeuralNetwork',
     ])
 except:
