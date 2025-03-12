@@ -1,5 +1,9 @@
-from numba import jitclass, float64, int32, types
 import numpy as np
+from numba import jit, njit, vectorize, float64, int32, prange
+from numba import types
+from numba.experimental import jitclass
+
+from .numba_utils import *
 
 # Define the unified layer specification, including a field for flatten layers.
 layer_spec = [
@@ -10,6 +14,10 @@ layer_spec = [
     # Dense-specific fields:
     ('dense_weights', float64[:, ::1]),
     ('dense_biases', float64[:, ::1]),
+    ('dense_weight_grad', float64[:, ::1]),  # Gradient of weights
+    ('dense_bias_grad', float64[:, ::1]),    # Gradient of biases
+    ('dense_input_cache', float64[:, ::1]),  # Cache for input during forward pass
+    ('dense_output_cache', float64[:, ::1]), # Cache for output during forward pass
     # Convolution-specific fields:
     ('conv_weights', float64[:,:,:,:]),
     ('conv_biases', float64[:, ::1]),
@@ -19,7 +27,6 @@ layer_spec = [
     # Flatten-specific field:
     ('flatten_input_shape', types.UniTuple(int32, 3)),
 ]
-
 @jitclass(layer_spec)
 class JITLayer:
     def __init__(self, layer_type, input_size, output_size, activation="relu",
@@ -31,9 +38,18 @@ class JITLayer:
 
         if layer_type == "dense":
             # For dense layers, use He initialization (for relu-like activations)
-            scale = np.sqrt(2.0 / input_size)
+            if activation in ["relu", "leaky_relu"]:
+                scale = np.sqrt(2.0 / input_size)
+            else:
+                scale = np.sqrt(1.0 / input_size)
             self.dense_weights = np.random.randn(input_size, output_size) * scale
             self.dense_biases = np.zeros((1, output_size))
+            self.dense_weight_grad = np.zeros_like(self.dense_weights)
+            self.dense_bias_grad = np.zeros_like(self.dense_biases)
+            # Cache for input and output during forward pass
+            self.dense_input_cache = np.zeros((1, input_size))
+            self.dense_output_cache = np.zeros((1, output_size))
+            
             # Dummy initialization for conv/flatten fields
             self.conv_weights = np.zeros((0, 0, 0, 0))
             self.conv_biases = np.zeros((0, 0))
@@ -41,6 +57,7 @@ class JITLayer:
             self.stride = 1
             self.padding = 0
             self.flatten_input_shape = (0, 0, 0)
+        
         elif layer_type == "conv":
             # For convolutional layers, input_size is number of input channels.
             self.kernel_size = kernel_size
@@ -66,67 +83,83 @@ class JITLayer:
         else:
             raise ValueError("Unsupported layer type")
     
+    def zero_grad(self):
+        """Zero out gradients for the layer."""
+        if self.layer_type == "dense":
+            self.dense_weight_grad = np.zeros_like(self.dense_weights)
+            self.dense_bias_grad = np.zeros_like(self.dense_biases)
+        elif self.layer_type == "conv":
+            self.conv_weights = np.zeros_like(self.conv_weights)
+            self.conv_biases = np.zeros_like(self.conv_biases)
+        elif self.layer_type == "flatten":
+            pass
+    
     def forward(self, X):
         if self.layer_type == "dense":
-            # Simple dense layer: Z = X.dot(W) + b, with ReLU as example
-            Z = np.dot(X, self.dense_weights) + self.dense_biases
-            if self.activation == "relu":
-                return np.maximum(0, Z)
-            else:
-                return Z  # Extend with other activations as needed.
+            return self._forward_dense(X)
         elif self.layer_type == "conv":
-            # Pseudocode for convolution forward pass.
-            # Here you would compute output dimensions, apply padding, use im2col, etc.
-            # For brevity, assume a helper function `conv_forward(self, X)` exists.
-            return conv_forward(self, X)
+            pass
         elif self.layer_type == "flatten":
-            # Store the shape (excluding the batch dimension) for use in backward
-            batch_size = X.shape[0]
-            self.flatten_input_shape = (X.shape[1], X.shape[2], X.shape[3])
-            flat_size = X.shape[1] * X.shape[2] * X.shape[3]
-            self.output_size = flat_size  # Update output_size dynamically.
-            # Manually flatten to ensure contiguity.
-            out = np.empty((batch_size, flat_size), dtype=np.float64)
-            for b in range(batch_size):
-                idx = 0
-                for c in range(X.shape[1]):
-                    for h in range(X.shape[2]):
-                        for w in range(X.shape[3]):
-                            out[b, idx] = X[b, c, h, w]
-                            idx += 1
-            return out
+            pass
         else:
             raise ValueError("Unsupported layer type")
     
     def backward(self, dA, reg_lambda):
         if self.layer_type == "dense":
-            # Pseudocode for dense backward pass.
-            # You would compute gradients with respect to weights, biases, and the input.
-            m = dA.shape[0]
-            # Assume activation derivative is 1 for simplicity; plug in the correct derivative.
-            dZ = dA  
-            # Compute gradients (this is a simplified version).
-            dW = np.dot(self.input_cache.T, dZ) / m + reg_lambda * self.dense_weights
-            db = np.sum(dZ, axis=0, keepdims=True) / m
-            dA_prev = np.dot(dZ, self.dense_weights.T)
-            # (Store gradients as needed.)
-            return dA_prev
+            return self._backward_dense(dA, reg_lambda)
         elif self.layer_type == "conv":
-            # Pseudocode for convolutional backward pass.
-            # For example, assume a helper function `conv_backward(self, dA)` exists.
-            return conv_backward(self, dA)
+            pass
         elif self.layer_type == "flatten":
-            # Reshape dA (of shape [batch_size, flat_size]) back to the original input dimensions.
-            batch_size = dA.shape[0]
-            C, H, W = self.flatten_input_shape
-            out = np.empty((batch_size, C, H, W), dtype=np.float64)
-            for b in range(batch_size):
-                idx = 0
-                for c in range(C):
-                    for h in range(H):
-                        for w in range(W):
-                            out[b, c, h, w] = dA[b, idx]
-                            idx += 1
-            return out
+            pass
         else:
             raise ValueError("Unsupported layer type")
+        
+    def _forward_dense(self, X):
+        """Forward pass for dense layer."""
+        Z = np.dot(X, self.dense_weights) + self.dense_biases
+        self.dense_input_cache = X
+        self.dense_output_cache = self.activate(Z)
+        return self.dense_output_cache
+    
+    def _backward_dense(self, dA, reg_lambda):
+        """Backward pass for dense layer."""
+        m = self.dense_input_cache.shape[0]
+        dZ = dA * self.activation_derivative(self.dense_output_cache)
+        dW = np.dot(self.dense_input_cache.T, dZ) / m + reg_lambda * self.dense_weights
+        db = sum_axis0(dZ) / m
+        dA_prev = np.dot(dZ, self.dense_weights.T)
+        
+        self.dense_weight_grad = dW
+        self.dense_bias_grad = db
+        
+        return dA_prev
+        
+    def activate(self, Z):
+        """Apply activation function."""
+        if self.activation == "relu":
+            return relu(Z)
+        elif self.activation == "leaky_relu":
+            return leaky_relu(Z)
+        elif self.activation == "tanh":
+            return tanh(Z)
+        elif self.activation == "sigmoid":
+            return sigmoid(Z)
+        elif self.activation == "softmax":
+            return softmax(Z)
+        else:
+            raise ValueError(f"Unsupported activation: {self.activation}")
+        
+    def activation_derivative(self, Z):
+        """Apply activation derivative."""
+        if self.activation == "relu":
+            return relu_derivative(Z)
+        elif self.activation == "leaky_relu":
+            return leaky_relu_derivative(Z)
+        elif self.activation == "tanh":
+            return tanh_derivative(Z)
+        elif self.activation == "sigmoid":
+            return sigmoid_derivative(Z)
+        elif self.activation == "softmax":
+            return np.ones_like(Z)  # Identity for compatibility
+        else:
+            raise ValueError(f"Unsupported activation: {self.activation}")
