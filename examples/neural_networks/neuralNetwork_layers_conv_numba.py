@@ -10,6 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from sega_learn.utils import train_test_split
 from sega_learn.neural_networks import *
 
+
 # Hyperparameters
 # ---------------------------------------------------------------------------------------
 dropout = 0.1
@@ -40,10 +41,20 @@ scheduler1 = lr_scheduler_plateau(sub_scheduler1, patience=5, threshold=0.001)
 layers = [
     JITConvLayer(in_channels=input_channels, out_channels=32, kernel_size=3, stride=1, padding=0, activation="relu"),
     JITConvLayer(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=0, activation="relu"),
-    # JITFlattenLayer(),
-    # JITDenseLayer(64 * 24 * 24, 256, activation="relu"),  # Corrected input size: 64 * 24 * 24 = 1728
-    # JITDenseLayer(256, output_size, activation="softmax"),  # Added output layer for 3 classes
+    JITFlattenLayer(),
+    JITDenseLayer(64 * 24 * 24, 256, activation="relu"),  # Corrected input size: 64 * 24 * 24 = 1728
+    JITDenseLayer(256, output_size, activation="softmax"),  # Added output layer for 3 classes
 ]
+
+# MAYBE?
+# from sega_learn.neural_networks.layers_jit_unified import UnifiedJITLayer
+# layers = [
+#     UnifiedJITLayer(1, "relu", input_size=input_channels, output_size=32, in_channels=input_channels, out_channels=32, kernel_size=3, stride=1, padding=0),
+#     UnifiedJITLayer(1, "relu", input_size=32, output_size=64, in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=0),
+#     JITFlattenLayer(),  # You can keep flatten as its own layer if needed.
+#     UnifiedJITLayer(0, "relu", input_size=64 * 24 * 24, output_size=256),
+#     UnifiedJITLayer(0, "softmax", input_size=256, output_size=output_size),
+# ]
 
 # Initialize and Train Neural Network 
 # ---------------------------------------------------------------------------------------

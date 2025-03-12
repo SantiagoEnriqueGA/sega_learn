@@ -23,6 +23,16 @@ try:
 except:
     TQDM_AVAILABLE = False
 
+# Notes: Using different JITLayers is currently broken, IDEAS:
+# ---------------------------------------------------------------------------------------
+# 1. Split the Layers into Homogeneous Lists
+# Separate your layers by type and then initialize/update them separately. 
+    # trainable_conv_layers = [layer for layer in self.layers if isinstance(layer, JITConvLayer)]
+    # trainable_dense_layers = [layer for layer in self.layers if isinstance(layer, JITDenseLayer)]
+# 2. Refactor to a Single Layer Type
+    # Refactoring code so that both convolutional and dense layers share a unified interface and are implemented as a single jitclass type. 
+    # Store all layers in one homogeneous list.  
+
 class NumbaBackendNeuralNetwork(NeuralNetworkBase):
     def __init__(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None, compile_numba=True, progress_bar=True):
         """
