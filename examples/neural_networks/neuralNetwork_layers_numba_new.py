@@ -12,8 +12,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from sega_learn.utils import train_test_split
 from sega_learn.utils import make_classification
 from sega_learn.neural_networks_numba_dev import *
-from sega_learn.neural_networks_numba_dev.layers_jit_unified import JITLayer
-from sega_learn.neural_networks_numba_dev.optimizers_jit import JITAdamOptimizer
+
 
 # Define parameter grid and tuning ranges
 dropout = 0.1
@@ -47,7 +46,7 @@ layers = [
 ]
 
 # Initialize Neural Network
-nn3 = NumbaBackendNeuralNetwork(layers=layers, dropout_rate=dropout, reg_lambda=reg_lambda, compile_numba=True)
+nn3 = NumbaBackendNeuralNetwork(layers=layers, dropout_rate=dropout, reg_lambda=reg_lambda, compile_numba=False)
 
 # Call the train method
 nn3.train(X_train, y_train, X_test, y_test, optimizer=optimizer3, lr_scheduler=scheduler3, 

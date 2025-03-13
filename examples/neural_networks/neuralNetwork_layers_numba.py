@@ -19,8 +19,7 @@ layers = [250, 50, 25]
 output_size = 3
 
 # Get training and test data
-# X, y = make_classification(n_samples=3000, n_features=20, n_classes=3, n_informative=18,random_state=42, class_sep=.5)
-X, y = make_classification(n_samples=300, n_features=20, n_classes=3, n_informative=18,random_state=42, class_sep=.5)
+X, y = make_classification(n_samples=3000, n_features=20, n_classes=3, n_informative=18,random_state=42, class_sep=.5)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 input_size = X_train.shape[1]
 
