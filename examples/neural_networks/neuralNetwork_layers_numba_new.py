@@ -20,7 +20,7 @@ lr = 0.0001
 layers = [250, 50, 25]
 
 # Get training and test data
-X, y = make_classification(n_samples=3000, n_features=20, n_classes=2, n_informative=18,random_state=42, class_sep=.5)
+X, y = make_classification(n_samples=3000, n_features=20, n_classes=3, n_informative=18,random_state=42, class_sep=.5)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 input_size = X_train.shape[1]
 output_size = len(np.unique(y_train))
@@ -35,7 +35,7 @@ def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
         JITLayer("dense", input_size, layers[0], activation="relu"),
         JITLayer("dense", layers[0], layers[1], activation="relu"),
         JITLayer("dense", layers[1], layers[2], activation="relu"),
-        JITLayer("dense", layers[2], output_size, activation="softmax"),
+        JITLayer("dense", layers[2], output_size, activation="softmax" if output_size > 2 else "sigmoid"),
     ]
 
     nn = NumbaBackendNeuralNetwork(layers=layers_list, dropout_rate=dropout, reg_lambda=reg_lambda, compile_numba=True)

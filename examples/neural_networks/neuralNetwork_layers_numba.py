@@ -38,7 +38,7 @@ scheduler2 = lr_scheduler_plateau(sub_scheduler2, patience=5, threshold=0.001)
 
 # Layer creation method #1: Provide a list of layer sizes and activation functions
 # --------------------------------------------------------------------------------------------------------------------------
-activations = ['relu'] * len(layers) + ['softmax']
+activations = ['relu'] * len(layers) + ['softmax' if output_size > 2 else 'sigmoid']  # Activation functions for each layer
 
 # Initialize Neural Network
 nn1 = NumbaBackendNeuralNetwork(layers = [input_size] + layers + [output_size], activations=activations,
@@ -65,7 +65,7 @@ layers = [
         JITDenseLayer(input_size, layers[0], activation="relu"),
         JITDenseLayer(layers[0], layers[1], activation="relu"),
         JITDenseLayer(layers[1], layers[2], activation="relu"),
-        JITDenseLayer(layers[2], output_size, activation="softmax"),
+        JITDenseLayer(layers[2], output_size, activation="softmax" if output_size > 2 else "sigmoid"),
 ]
 
 # Initialize Neural Network
