@@ -46,7 +46,7 @@ class JITLayer:
                  kernel_size=0, stride=1, padding=0, 
                  
                  # Flatten-specific parameters (defaults for dense/conv)
-                 flatten_input_shape=(int32(0), int32(0), int32(0))
+                 # None
                  ):
         
         # For all layers, set the layer type and sizes
@@ -83,7 +83,6 @@ class JITLayer:
             self.X_padded = np.zeros((0, 0, 0, 0))
             self.h_out = 0
             self.w_out = 0
-            self.flatten_input_shape = (int32(0), int32(0), int32(0))
             self.flatten_input_cache = np.zeros((1, input_size, 0, 0))  # Dummy initialization for flatten
             
         elif layer_type == "conv":
@@ -114,13 +113,11 @@ class JITLayer:
             self.dense_bias_grad = np.zeros((0, 0))
             self.dense_input_cache = np.zeros((1, input_size))
             self.dense_output_cache = np.zeros((1, output_size))            
-            self.flatten_input_shape = (int32(0), int32(0), int32(0))
             self.flatten_input_cache = np.zeros((1, input_size, 0, 0))  # Dummy initialization for flatten
             
         elif layer_type == "flatten":
             # Flatten layers do not have weights. Store the input shape on forward pass.
             # Ensure int32 for compatibility with Numba
-            self.flatten_input_shape = (int32(input_size), int32(0), int32(0))  # Dummy shape
             self.flatten_input_cache = np.zeros((1, input_size, 0, 0))  # Dummy initialization
             
             # Dummy initialization for dense

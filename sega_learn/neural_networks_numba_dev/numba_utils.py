@@ -279,13 +279,13 @@ def process_batches_multi(X_shuffled, y_shuffled, batch_size, layers, dropout_ra
         running_accuracy += evaluate_batch(layer_outputs[-1], y_batch, False)
         
         # Accumulate gradients
-        for j in range(len(layers)):
-            if layers[j].layer_type == "dense":
-                dWs_acc[j] += layers[j].dense_weight_grad
-                dbs_acc[j] += layers[j].dense_bias_grad
-            elif layers[j].layer_type == "conv":
-                dWs_acc[j] += layers[j].conv_weights
-                dbs_acc[j] += layers[j].conv_biases
+        for i, layer in enumerate(layers):
+            if layer.layer_type == "dense":
+                dWs_acc.append(layer.dense_weight_grad)
+                dbs_acc.append(layer.dense_bias_grad)
+            elif layer.layer_type == "conv":
+                dWs_acc.append(layer.conv_weight_grad)
+                dbs_acc.append(layer.conv_bias_grad)
     
     # Average the accumulated gradients, loss, and accuracy
     for j in range(len(dWs_acc)):

@@ -281,11 +281,18 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
                     biases.append(layer.conv_biases)
                 
             # Initialize accumulated gradients with zeros 
-            dWs_zeros = [np.zeros_like(w) for w in weights]
-            dbs_zeros = [np.zeros_like(b) for b in biases]
+            dWs_zeros = []
+            dbs_zeros = []
+            for layer in self.trainable_layers:
+                if layer.layer_type == "dense":
+                    dWs_zeros.append(np.zeros_like(layer.dense_weights))
+                    dbs_zeros.append(np.zeros_like(layer.dense_biases))
+                elif layer.layer_type == "conv":
+                    dWs_zeros.append(np.zeros_like(layer.conv_weights))
+                    dbs_zeros.append(np.zeros_like(layer.conv_biases))
             
-            # Get indices of dropout layers
-            dropout_layer_indices = [i for i, layer in enumerate(self.layers) if isinstance(layer, JITLayer)]
+            # Get indices of dropout layers (not flatten)
+            dropout_layer_indices = [i for i, layer in enumerate(self.layers) if layer.layer_type != "flatten"]
             if len(dropout_layer_indices) == 0: dropout_layer_indices = [-1]
 
             # Process batches based on classification type
