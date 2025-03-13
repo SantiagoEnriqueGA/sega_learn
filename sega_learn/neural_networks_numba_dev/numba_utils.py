@@ -211,8 +211,10 @@ def process_batches_binary(X_shuffled, y_shuffled, batch_size, layers, dropout_r
         for j in range(len(layers) - 1, -1, -1):
             dA = layers[j].backward(dA, reg_lambda)
         
-        # Calculate loss and accuracy for binary classification
-        running_loss += calculate_loss_from_outputs_binary(layer_outputs[-1], y_batch, reg_lambda, [layer.weights for layer in layers])
+        # Calculate loss and accuracy for binary classification          
+        all_weights = [layer.dense_weights if layer.layer_type == "dense" else layer.conv_weights for layer in layers]
+        running_loss += calculate_loss_from_outputs_binary(layer_outputs[-1], y_batch, all_weights, reg_lambda)
+        
         running_accuracy += evaluate_batch(layer_outputs[-1], y_batch, True)
         
         # Accumulate gradients
@@ -266,11 +268,14 @@ def process_batches_multi(X_shuffled, y_shuffled, batch_size, layers, dropout_ra
         # One-hot encode for multi-class loss
         if layers[-1].layer_type == "dense":
             y_batch_ohe = one_hot_encode(y_batch, layers[-1].dense_weights.shape[1])
-            running_loss += calculate_loss_from_outputs_multi(layer_outputs[-1], y_batch_ohe, reg_lambda, [layer.dense_weights for layer in layers])
+            # running_loss += calculate_loss_from_outputs_multi(layer_outputs[-1], y_batch_ohe, reg_lambda, [layer.dense_weights for layer in layers])
         elif layers[-1].layer_type == "conv":
             y_batch_ohe = one_hot_encode(y_batch, layers[-1].conv_weights.shape[0])
-            running_loss += calculate_loss_from_outputs_multi(layer_outputs[-1], y_batch_ohe, reg_lambda, [layer.conv_weights for layer in layers])
+            # running_loss += calculate_loss_from_outputs_multi(layer_outputs[-1], y_batch_ohe, reg_lambda, [layer.conv_weights for layer in layers])
             
+        all_weights = [layer.dense_weights if layer.layer_type == "dense" else layer.conv_weights for layer in layers]
+        running_loss += calculate_loss_from_outputs_multi(layer_outputs[-1], y_batch_ohe, reg_lambda, all_weights)
+        
         running_accuracy += evaluate_batch(layer_outputs[-1], y_batch, False)
         
         # Accumulate gradients

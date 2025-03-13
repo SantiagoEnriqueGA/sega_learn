@@ -16,12 +16,12 @@ dropout = 0.1
 reg_lambda=  0.0
 lr = 0.0001
 layers = [250, 50, 25]
-output_size = 3
 
 # Get training and test data
 X, y = make_classification(n_samples=3000, n_features=20, n_classes=3, n_informative=18,random_state=42, class_sep=.5)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 input_size = X_train.shape[1]
+output_size = len(np.unique(y_train))
 
 # Create optimizers and learning rate schedulers
 # --------------------------------------------------------------------------------------------------------------------------
@@ -36,10 +36,9 @@ scheduler1 = lr_scheduler_plateau(sub_scheduler1, patience=5, threshold=0.001)
 sub_scheduler2 = lr_scheduler_step(optimizer2, lr_decay=0.1, lr_decay_epoch=10)  
 scheduler2 = lr_scheduler_plateau(sub_scheduler2, patience=5, threshold=0.001)
 
-
 # Layer creation method #1: Provide a list of layer sizes and activation functions
 # --------------------------------------------------------------------------------------------------------------------------
-activations = ['relu'] * len(layers) + ['softmax']
+activations = ['relu'] * len(layers) + ['softmax' if output_size > 2 else 'sigmoid']  # Activation functions for each layer
 
 # Initialize Neural Network
 nn1 = NumbaBackendNeuralNetwork(layers = [input_size] + layers + [output_size], activations=activations,
@@ -66,7 +65,7 @@ layers = [
         JITDenseLayer(input_size, layers[0], activation="relu"),
         JITDenseLayer(layers[0], layers[1], activation="relu"),
         JITDenseLayer(layers[1], layers[2], activation="relu"),
-        JITDenseLayer(layers[2], output_size, activation="softmax"),
+        JITDenseLayer(layers[2], output_size, activation="softmax" if output_size > 2 else "sigmoid"),
 ]
 
 # Initialize Neural Network
