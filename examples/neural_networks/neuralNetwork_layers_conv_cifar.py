@@ -39,18 +39,19 @@ def load_cifar10(path, subset=None):
     test_labels = np.array(test_batch[b'labels'])  # Convert to NumPy array
 
     if subset:
-        # Randomly select a subset percentage of the data
+        # Select a subset of training data
         num_samples_train = train_data.shape[0]
-        subset_size = int(num_samples_train * subset)
-        indices = np.random.choice(num_samples_train, subset_size, replace=False)
-        train_data = train_data[indices]
-        train_labels = train_labels[indices]
+        subset_size_train = int(num_samples_train * subset)
+        train_indices = np.random.choice(num_samples_train, subset_size_train, replace=False)
+        train_data = train_data[train_indices]
+        train_labels = train_labels[train_indices]
         
+        # Select a subset of test data
         num_samples_test = test_data.shape[0]
-        indices = np.random.choice(num_samples_test, subset_size, replace=False)
-        test_data = test_data[indices]
-        test_labels = test_labels[indices]
-        
+        subset_size_test = int(num_samples_test * subset)
+        test_indices = np.random.choice(num_samples_test, subset_size_test, replace=False)
+        test_data = test_data[test_indices]
+        test_labels = test_labels[test_indices]
 
     return train_data, train_labels, test_data, test_labels
 
@@ -75,14 +76,14 @@ reg_lambda = 0.0
 lr = 0.0001
 output_size = 10  # CIFAR-10 has 10 classes
 batch_size = 32
-epochs = 25  # Reduced for demonstration, increase for better results.
+epochs = 100  # Reduced for demonstration, increase for better results.
 input_channels = 3  # RGB images
 image_height = 32
 image_width = 32
 # Download cifar-10 dataset and put it in example_datasets folder
 # https://www.cs.toronto.edu/~kriz/cifar.html
 cifar10_path = 'example_datasets/cifar-10-batches-py'
-subset = 0.01  # Randomly select 1% of the data
+subset = 0.10  # Select 10% of the data
 
 
 # Load and Preprocess Data
@@ -91,7 +92,7 @@ train_data, train_labels, test_data, test_labels = load_cifar10(cifar10_path, su
 X_train, X_test = preprocess_cifar10(train_data, test_data)
 y_train, y_test = train_labels, test_labels
 
-if subset: (f"Training on CIFAR-10 subset with {subset*100:.2f}% of the data.\n\tTraining size: {X_train.shape[0]}\n\tTest size: {X_test.shape[0]}")
+if subset: print(f"Training on CIFAR-10 subset with {subset*100:.2f}% of the data.\n\tTraining size: {X_train.shape[0]}\n\tTest size: {X_test.shape[0]}")
 else: print(f"Training on full CIFAR-10 dataset.\n\tTraining size: {X_train.shape[0]}\n\tTest size: {X_test.shape[0]}")
 
 # Calculate the output dimensions of the convolutional layers
