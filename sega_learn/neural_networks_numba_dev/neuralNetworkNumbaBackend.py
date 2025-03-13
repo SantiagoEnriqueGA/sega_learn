@@ -659,20 +659,20 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         if progress_bar: progress_bar.update(1)
         _adam.update_layers(self.layers, self.dWs_cache, self.dbs_cache)
         if progress_bar: progress_bar.update(1)
-        # # SGD
-        # _sgd = JITSGDOptimizer()
-        # if progress_bar: progress_bar.update(1)
-        # _sgd.initialize(self.layers)
-        # if progress_bar: progress_bar.update(1)
-        # _sgd.update_layers(self.layers, self.dWs_cache, self.dbs_cache)
-        # if progress_bar: progress_bar.update(1)
-        # # Adadelta
-        # _adadelta = JITAdadeltaOptimizer()
-        # if progress_bar: progress_bar.update(1)
-        # _adadelta.initialize(self.layers)
-        # if progress_bar: progress_bar.update(1)
-        # _adadelta.update_layers(self.layers, self.dWs_cache, self.dbs_cache)
-        # if progress_bar: progress_bar.update(1)
+        # SGD
+        _sgd = JITSGDOptimizer()
+        if progress_bar: progress_bar.update(1)
+        _sgd.initialize(self.layers)
+        if progress_bar: progress_bar.update(1)
+        _sgd.update_layers(self.layers, self.dWs_cache, self.dbs_cache)
+        if progress_bar: progress_bar.update(1)
+        # Adadelta
+        _adadelta = JITAdadeltaOptimizer()
+        if progress_bar: progress_bar.update(1)
+        _adadelta.initialize(self.layers)
+        if progress_bar: progress_bar.update(1)
+        _adadelta.update_layers(self.layers, self.dWs_cache, self.dbs_cache)
+        if progress_bar: progress_bar.update(1)
         
         # Loss Modules
         # --------------------------------------------------------------------

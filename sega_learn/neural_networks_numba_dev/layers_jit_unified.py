@@ -94,6 +94,7 @@ class JITLayer:
         elif self.layer_type == "flatten":
             pass
     
+    # TODO: Implement forward pass for conv layer/flatten layer
     def forward(self, X):
         if self.layer_type == "dense":
             return self._forward_dense(X)
@@ -104,6 +105,7 @@ class JITLayer:
         else:
             raise ValueError("Unsupported layer type")
     
+    # TODO: Implement backward pass for conv layer/flatten layer
     def backward(self, dA, reg_lambda):
         if self.layer_type == "dense":
             return self._backward_dense(dA, reg_lambda)

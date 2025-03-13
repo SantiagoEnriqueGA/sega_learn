@@ -33,7 +33,7 @@ def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
         JITLayer("dense", layers[2], output_size, activation="softmax"),
     ]
 
-    nn = NumbaBackendNeuralNetwork(layers=layers_list, dropout_rate=dropout, reg_lambda=reg_lambda, compile_numba=False)
+    nn = NumbaBackendNeuralNetwork(layers=layers_list, dropout_rate=dropout, reg_lambda=reg_lambda)
 
     nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=lr_scheduler, 
              epochs=100, batch_size=32, early_stopping_threshold=10, 
@@ -46,7 +46,7 @@ def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
     print("Classification Report:")
     print(classification_report(y_test, y_pred, zero_division=0))
 
-    nn.plot_metrics()
+    # nn.plot_metrics()
 
 # JITAdamOptimizer
 # --------------------------------------------------------------------------------------------------------------------------
