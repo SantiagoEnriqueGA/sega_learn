@@ -10,17 +10,22 @@ from sega_learn.utils import train_test_split
 from sega_learn.utils import make_classification
 from sega_learn.neural_networks_numba_dev import *
 
+# import numba
+# numba.config.DISABLE_JIT = True
+
 # Define parameter grid and tuning ranges
 dropout = 0.1
 reg_lambda=  0.0
 lr = 0.0001
 layers = [250, 50, 25]
-output_size = 3
 
 # Get training and test data
-X, y = make_classification(n_samples=3000, n_features=20, n_classes=3, n_informative=18,random_state=42, class_sep=.5)
+X, y = make_classification(n_samples=3000, n_features=20, n_classes=2, n_informative=18,random_state=42, class_sep=.5)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 input_size = X_train.shape[1]
+output_size = len(np.unique(y_train))
+
+print(f"Input size: {input_size}, Output size: {output_size}")
 
 # Function to train and evaluate a model with a given optimizer
 def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
@@ -33,7 +38,7 @@ def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
         JITLayer("dense", layers[2], output_size, activation="softmax"),
     ]
 
-    nn = NumbaBackendNeuralNetwork(layers=layers_list, dropout_rate=dropout, reg_lambda=reg_lambda)
+    nn = NumbaBackendNeuralNetwork(layers=layers_list, dropout_rate=dropout, reg_lambda=reg_lambda, compile_numba=True)
 
     nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=lr_scheduler, 
              epochs=100, batch_size=32, early_stopping_threshold=10, 
