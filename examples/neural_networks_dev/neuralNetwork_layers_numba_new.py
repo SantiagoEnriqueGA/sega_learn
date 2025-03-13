@@ -36,9 +36,11 @@ def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
         JITLayer("dense", layers[0], layers[1], activation="relu"),
         JITLayer("dense", layers[1], layers[2], activation="relu"),
         JITLayer("dense", layers[2], output_size, activation="softmax" if output_size > 2 else "sigmoid"),
+        # For testing
+        # JITLayer("flatten", input_size=output_size, output_size=output_size, activation="none"),
     ]
 
-    nn = NumbaBackendNeuralNetwork(layers=layers_list, dropout_rate=dropout, reg_lambda=reg_lambda, compile_numba=True)
+    nn = NumbaBackendNeuralNetwork(layers=layers_list, dropout_rate=dropout, reg_lambda=reg_lambda, compile_numba=False)
 
     nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=lr_scheduler, 
              epochs=100, batch_size=32, early_stopping_threshold=10, 
@@ -53,7 +55,7 @@ def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
 
     # nn.plot_metrics()
 
-# JITAdamOptimizer
+# JI    TAdamOptimizer
 # --------------------------------------------------------------------------------------------------------------------------
 optimizer_adam = JITAdamOptimizer(learning_rate=lr)
 sub_scheduler_adam = lr_scheduler_step(optimizer_adam, lr_decay=0.1, lr_decay_epoch=10)

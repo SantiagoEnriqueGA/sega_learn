@@ -8,8 +8,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.utils import train_test_split
-from sega_learn.neural_networks import *
-
+from sega_learn.neural_networks_numba_dev import *
 
 # Hyperparameters
 # ---------------------------------------------------------------------------------------
@@ -39,24 +38,12 @@ scheduler1 = lr_scheduler_plateau(sub_scheduler1, patience=5, threshold=0.001)
 # Layers
 # ---------------------------------------------------------------------------------------
 layers = [
-    JITConvLayer(in_channels=input_channels, out_channels=32, kernel_size=3, stride=1, padding=0, activation="relu"),
-    JITConvLayer(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=0, activation="relu"),
-    JITFlattenLayer(),
-    JITDenseLayer(64 * 24 * 24, 256, activation="relu"),  # Corrected input size: 64 * 24 * 24 = 1728
-    JITDenseLayer(256, output_size, activation="softmax"),  # Added output layer for 3 classes
+    JITLayer("conv", input_size=input_channels, output_size=32, kernel_size=3, stride=1, padding=0, activation="relu"),
+    JITLayer("conv", input_size=32, output_size=64, kernel_size=3, stride=1, padding=0, activation="relu"),
+    JITLayer("flatten", input_size=0, output_size=0, activation="none"),
+    JITLayer("dense", 64 * 24 * 24, 256, activation="relu"),  # Corrected input size: 64 * 24 * 24 = 1728
+    JITLayer("dense", 256, output_size, activation="softmax"),  # Added output layer for 3 classes
 ]
-
-# MAYBE?
-# from sega_learn.neural_networks.layers_jit_unified import UnifiedJITLayer
-# layers = [
-#     JITLayer("conv", input_size=input_channels, output_size=32, activation="relu", kernel_size=3, stride=1, padding=0),
-#     JITLayer("conv", input_size=32, output_size=64, activation="relu", kernel_size=3, stride=1, padding=0),
-#     # Flatten layer – note that input_size/output_size are dummies here.
-#     JITLayer("flatten", input_size=0, output_size=0, activation="none"),
-#     JITLayer("dense", input_size=64 * 24 * 24, output_size=256, activation="relu"),
-#     JITLayer("dense", input_size=256, output_size=output_size, activation="softmax"),
-# ]
-
 
 # Initialize and Train Neural Network 
 # ---------------------------------------------------------------------------------------
