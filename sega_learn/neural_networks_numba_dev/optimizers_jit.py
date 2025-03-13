@@ -212,7 +212,7 @@ class JITSGDOptimizer:
         self.learning_rate = learning_rate      # Learning rate
         self.momentum = momentum                # Momentum factor
         self.reg_lambda = reg_lambda            # Regularization parameter
-        self.velocity = np.zeros((1, 1, 1))           # Velocity for momentum
+        self.velocity = np.zeros((1, 1, 1))     # Velocity for momentum
 
     def initialize(self, layers):
         """
@@ -265,28 +265,90 @@ class JITSGDOptimizer:
             layer.conv_biases[:db.shape[0]] -= self.learning_rate * db  # Update biases
 
     def update_layers(self, layers, dWs, dbs):
-        sgd_update_layers(self.velocity, layers, dWs, dbs, 
-                          self.learning_rate, self.momentum, self.reg_lambda)
+        # Build typed lists for dense layers
+        dense_indices = List.empty_list(types.int64)
+        dense_weights = List()
+        dense_biases = List()
+        dense_dWs = List()
+        dense_dbs = List()
+        # Build typed lists for conv layers
+        conv_indices = List.empty_list(types.int64)
+        conv_weights = List()
+        conv_biases = List()
+        conv_dWs = List()
+        conv_dbs = List()
+        
+        for i in range(len(layers)):
+            if layers[i].layer_type == 'dense':
+                dense_indices.append(i)
+                dense_weights.append(layers[i].dense_weights)
+                dense_biases.append(layers[i].dense_biases)
+                dense_dWs.append(dWs[i])
+                dense_dbs.append(dbs[i])
+            else:
+                conv_indices.append(i)
+                conv_weights.append(layers[i].conv_weights)
+                conv_biases.append(layers[i].conv_biases)
+                conv_dWs.append(dWs[i])
+                conv_dbs.append(dbs[i])
+        
+        # Call separate helper functions for dense and conv layers
+        dense_sgd_update_layers(self.velocity, dense_indices, dense_weights, dense_biases,
+                                dense_dWs, dense_dbs, self.learning_rate, self.momentum, self.reg_lambda)
+        conv_sgd_update_layers(self.velocity, conv_indices, conv_weights, conv_biases,
+                               conv_dWs, conv_dbs, self.learning_rate, self.momentum, self.reg_lambda)
 
-# @njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
-@njit(fastmath=True, nogil=True, cache=CACHE)
-def sgd_update_layers(velocity, layers, dWs, dbs, learning_rate, momentum, reg_lambda):
-    for i in prange(len(layers)):
-        layer = layers[i]
-        dW = dWs[i]
-        db = dbs[i]
-        rows, cols = dW.shape
+
+@njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
+def dense_sgd_update_layers(velocity, indices, weights, biases, dWs, dbs, 
+                           learning_rate, momentum, reg_lambda):
+    n = len(indices)
+    for j in prange(n):
+        i = indices[j]       # original index into velocity
+        dW = dWs[j]
+        db = dbs[j]
+        rows = int(dW.shape[0])
+        cols = int(dW.shape[1])
         
         # Update velocity with momentum
-        velocity[i, :rows, :cols] = momentum * velocity[i, :rows, :cols] - learning_rate * dW
+        for r in range(rows):
+            for c in range(cols):
+                velocity[i, r, c] = momentum * velocity[i, r, c] - learning_rate * dW[r, c]
         
-        # Update weights and biases
-        if layer.layer_type == 'dense':
-            layer.dense_weights[:rows, :cols] += velocity[i, :rows, :cols] - learning_rate * reg_lambda * layer.dense_weights[:rows, :cols]
-            layer.dense_biases[:db.shape[0]] -= learning_rate * db
-        elif layer.layer_type == 'conv':
-            layer.conv_weights[:rows, :cols] += velocity[i, :rows, :cols] - learning_rate * reg_lambda * layer.conv_weights[:rows, :cols]
-            layer.conv_biases[:db.shape[0]] -= learning_rate * db
+        # Update weights with velocity and regularization
+        for r in range(rows):
+            for c in range(cols):
+                weights[j][r, c] += velocity[i, r, c] - learning_rate * reg_lambda * weights[j][r, c]
+        
+        # Update biases elementwise
+        for k in range(db.shape[0]):
+            biases[j][k] -= learning_rate * db[k]
+
+
+@njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
+def conv_sgd_update_layers(velocity, indices, weights, biases, dWs, dbs, 
+                          learning_rate, momentum, reg_lambda):
+    n = len(indices)
+    for j in prange(n):
+        i = indices[j]       # original index into velocity
+        dW = dWs[j]
+        db = dbs[j]
+        rows = int(dW.shape[0])
+        cols = int(dW.shape[1])
+        
+        # Update velocity with momentum
+        for r in range(rows):
+            for c in range(cols):
+                velocity[i, r, c] = momentum * velocity[i, r, c] - learning_rate * dW[r, c]
+        
+        # Update weights with velocity and regularization
+        for r in range(rows):
+            for c in range(cols):
+                weights[j][r, c] += velocity[i, r, c] - learning_rate * reg_lambda * weights[j][r, c]
+        
+        # Update biases elementwise
+        for k in range(db.shape[0]):
+            biases[j][k] -= learning_rate * db[k]
 
 
 spec_adadelta = [
@@ -377,32 +439,107 @@ class JITAdadeltaOptimizer:
             layer.conv_biases[:db.shape[0]] -= self.learning_rate * db  # Update biases
 
     def update_layers(self, layers, dWs, dbs):
-        adadelta_update_layers(self.E_g2, self.E_delta_x2, layers, dWs, dbs, 
-                               self.learning_rate, self.rho, self.epsilon, self.reg_lambda)
+        # Build typed lists for dense layers
+        dense_indices = List.empty_list(types.int64)
+        dense_weights = List()
+        dense_biases = List()
+        dense_dWs = List()
+        dense_dbs = List()
+        # Build typed lists for conv layers
+        conv_indices = List.empty_list(types.int64)
+        conv_weights = List()
+        conv_biases = List()
+        conv_dWs = List()
+        conv_dbs = List()
+        
+        for i in range(len(layers)):
+            if layers[i].layer_type == 'dense':
+                dense_indices.append(i)
+                dense_weights.append(layers[i].dense_weights)
+                dense_biases.append(layers[i].dense_biases)
+                dense_dWs.append(dWs[i])
+                dense_dbs.append(dbs[i])
+            else:
+                conv_indices.append(i)
+                conv_weights.append(layers[i].conv_weights)
+                conv_biases.append(layers[i].conv_biases)
+                conv_dWs.append(dWs[i])
+                conv_dbs.append(dbs[i])
+        
+        # Call separate helper functions for dense and conv layers
+        dense_adadelta_update_layers(self.E_g2, self.E_delta_x2, dense_indices, dense_weights, dense_biases,
+                                     dense_dWs, dense_dbs, self.learning_rate, self.rho, 
+                                     self.epsilon, self.reg_lambda)
+        conv_adadelta_update_layers(self.E_g2, self.E_delta_x2, conv_indices, conv_weights, conv_biases,
+                                    conv_dWs, conv_dbs, self.learning_rate, self.rho, 
+                                    self.epsilon, self.reg_lambda)
 
-# @njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
-@njit(fastmath=True, nogil=True, cache=CACHE)
-def adadelta_update_layers(E_g2, E_delta_x2, layers, dWs, dbs, learning_rate, rho, epsilon, reg_lambda):
-    for i in prange(len(layers)):
-        layer = layers[i]
-        dW = dWs[i]
-        db = dbs[i]
-        rows, cols = dW.shape
+
+@njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
+def dense_adadelta_update_layers(E_g2, E_delta_x2, indices, weights, biases, dWs, dbs,
+                                learning_rate, rho, epsilon, reg_lambda):
+    n = len(indices)
+    for j in prange(n):
+        i = indices[j]       # original index into E_g2 and E_delta_x2
+        dW = dWs[j]
+        db = dbs[j]
+        rows = int(dW.shape[0])
+        cols = int(dW.shape[1])
         
         # Update running average of squared gradients
-        E_g2[i, :rows, :cols] = rho * E_g2[i, :rows, :cols] + (1 - rho) * (dW ** 2)
+        for r in range(rows):
+            for c in range(cols):
+                E_g2[i, r, c] = rho * E_g2[i, r, c] + (1 - rho) * (dW[r, c] ** 2)
         
-        # Compute parameter update
-        delta_x = - (np.sqrt(E_delta_x2[i, :rows, :cols] + epsilon) / 
-                     np.sqrt(E_g2[i, :rows, :cols] + epsilon)) * dW
+        # Compute parameter updates and update running average of squared updates
+        delta_x = np.zeros((rows, cols))
+        for r in range(rows):
+            for c in range(cols):
+                # Compute parameter update
+                delta_x[r, c] = - (np.sqrt(E_delta_x2[i, r, c] + epsilon) / 
+                                  np.sqrt(E_g2[i, r, c] + epsilon)) * dW[r, c]
+                
+                # Update running average of squared parameter updates
+                E_delta_x2[i, r, c] = rho * E_delta_x2[i, r, c] + (1 - rho) * (delta_x[r, c] ** 2)
+                
+                # Apply update to weights
+                weights[j][r, c] += delta_x[r, c] - learning_rate * reg_lambda * weights[j][r, c]
         
-        # Update running average of squared parameter updates
-        E_delta_x2[i, :rows, :cols] = rho * E_delta_x2[i, :rows, :cols] + (1 - rho) * (delta_x ** 2)
+        # Update biases elementwise
+        for k in range(db.shape[0]):
+            biases[j][k] -= learning_rate * db[k]
+
+
+@njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
+def conv_adadelta_update_layers(E_g2, E_delta_x2, indices, weights, biases, dWs, dbs,
+                               learning_rate, rho, epsilon, reg_lambda):
+    n = len(indices)
+    for j in prange(n):
+        i = indices[j]       # original index into E_g2 and E_delta_x2
+        dW = dWs[j]
+        db = dbs[j]
+        rows = int(dW.shape[0])
+        cols = int(dW.shape[1])
         
-        # Update weights and biases
-        if layer.layer_type == 'dense':
-            layer.dense_weights[:rows, :cols] += delta_x - learning_rate * reg_lambda * layer.dense_weights[:rows, :cols]
-            layer.dense_biases[:db.shape[0]] -= learning_rate * db
-        elif layer.layer_type == 'conv':
-            layer.conv_weights[:rows, :cols] += delta_x - learning_rate * reg_lambda * layer.conv_weights[:rows, :cols]
-            layer.conv_biases[:db.shape[0]] -= learning_rate * db
+        # Update running average of squared gradients
+        for r in range(rows):
+            for c in range(cols):
+                E_g2[i, r, c] = rho * E_g2[i, r, c] + (1 - rho) * (dW[r, c] ** 2)
+        
+        # Compute parameter updates and update running average of squared updates
+        delta_x = np.zeros((rows, cols))
+        for r in range(rows):
+            for c in range(cols):
+                # Compute parameter update
+                delta_x[r, c] = - (np.sqrt(E_delta_x2[i, r, c] + epsilon) / 
+                                  np.sqrt(E_g2[i, r, c] + epsilon)) * dW[r, c]
+                
+                # Update running average of squared parameter updates
+                E_delta_x2[i, r, c] = rho * E_delta_x2[i, r, c] + (1 - rho) * (delta_x[r, c] ** 2)
+                
+                # Apply update to weights
+                weights[j][r, c] += delta_x[r, c] - learning_rate * reg_lambda * weights[j][r, c]
+        
+        # Update biases elementwise
+        for k in range(db.shape[0]):
+            biases[j][k] -= learning_rate * db[k]
