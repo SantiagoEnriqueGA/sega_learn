@@ -54,17 +54,95 @@ td.singlecolumn { width: 100%; }
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
 </dt><dd>
 <dl>
-<dt class="heading-text"><a href="sega_learn.neural_networks.layers.html#Layer">Layer</a>
+<dt class="heading-text"><a href="sega_learn.neural_networks.layers.html#ConvLayer">ConvLayer</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.layers.html#DenseLayer">DenseLayer</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.layers.html#FlattenLayer">FlattenLayer</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.layers.html#RNNLayer">RNNLayer</a>
 </dt></dl>
 </dd>
 </dl>
  <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><a name="Layer">class <strong>Layer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+<td class="section-title" colspan=3>&nbsp;<br><a name="ConvLayer">class <strong>ConvLayer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#Layer">Layer</a>(input_size,&nbsp;output_size,&nbsp;activation='relu')<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#ConvLayer">ConvLayer</a>(in_channels,&nbsp;out_channels,&nbsp;kernel_size,&nbsp;stride=1,&nbsp;padding=0,&nbsp;activation='relu')<br>
+&nbsp;<br>
+A&nbsp;convolutional&nbsp;layer&nbsp;implementation&nbsp;for&nbsp;neural&nbsp;networks.&nbsp;&nbsp;<br>
+&nbsp;<br>
+This&nbsp;layer&nbsp;performs&nbsp;2D&nbsp;convolution&nbsp;operations,&nbsp;commonly&nbsp;used&nbsp;in&nbsp;convolutional&nbsp;neural&nbsp;networks&nbsp;(CNNs).<br>
+The&nbsp;implementation&nbsp;uses&nbsp;the&nbsp;im2col&nbsp;technique&nbsp;for&nbsp;efficient&nbsp;computation,&nbsp;transforming&nbsp;the&nbsp;convolution&nbsp;operation&nbsp;into&nbsp;matrix&nbsp;multiplication.<br>
+An&nbsp;optional&nbsp;activation&nbsp;function&nbsp;is&nbsp;applied&nbsp;element-wise&nbsp;to&nbsp;the&nbsp;output.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;in_channels&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;input&nbsp;channels&nbsp;(depth&nbsp;of&nbsp;input&nbsp;volume).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;out_channels&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;output&nbsp;channels&nbsp;(number&nbsp;of&nbsp;filters).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kernel_size&nbsp;(int):&nbsp;Size&nbsp;of&nbsp;the&nbsp;convolutional&nbsp;kernel&nbsp;(square&nbsp;kernel&nbsp;assumed).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;stride&nbsp;(int,&nbsp;optional):&nbsp;Stride&nbsp;of&nbsp;the&nbsp;convolution.&nbsp;Default:&nbsp;1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;padding&nbsp;(int,&nbsp;optional):&nbsp;Zero-padding&nbsp;added&nbsp;to&nbsp;both&nbsp;sides&nbsp;of&nbsp;the&nbsp;input.&nbsp;Default:&nbsp;0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activation&nbsp;(str,&nbsp;optional):&nbsp;Activation&nbsp;function&nbsp;to&nbsp;use.&nbsp;Options&nbsp;are&nbsp;"relu",&nbsp;"sigmoid",&nbsp;"tanh",&nbsp;or&nbsp;None.&nbsp;Default:&nbsp;"relu".<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;in_channels&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;input&nbsp;channels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;out_channels&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;output&nbsp;channels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kernel_size&nbsp;(int):&nbsp;Size&nbsp;of&nbsp;the&nbsp;square&nbsp;convolutional&nbsp;kernel.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;stride&nbsp;(int):&nbsp;Stride&nbsp;of&nbsp;the&nbsp;convolution.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;padding&nbsp;(int):&nbsp;Zero-padding&nbsp;added&nbsp;to&nbsp;both&nbsp;sides&nbsp;of&nbsp;the&nbsp;input.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weights&nbsp;(numpy.ndarray):&nbsp;Learnable&nbsp;weights&nbsp;of&nbsp;shape&nbsp;(out_channels,&nbsp;in_channels,&nbsp;kernel_size,&nbsp;kernel_size).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;biases&nbsp;(numpy.ndarray):&nbsp;Learnable&nbsp;biases&nbsp;of&nbsp;shape&nbsp;(out_channels,&nbsp;1).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activation&nbsp;(str):&nbsp;Type&nbsp;of&nbsp;activation&nbsp;function.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weight_gradients&nbsp;(numpy.ndarray):&nbsp;Gradients&nbsp;with&nbsp;respect&nbsp;to&nbsp;weights.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bias_gradients&nbsp;(numpy.ndarray):&nbsp;Gradients&nbsp;with&nbsp;respect&nbsp;to&nbsp;biases.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_cache&nbsp;(numpy.ndarray):&nbsp;Cached&nbsp;input&nbsp;for&nbsp;use&nbsp;in&nbsp;backward&nbsp;pass.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_cols&nbsp;(numpy.ndarray):&nbsp;Cached&nbsp;column-transformed&nbsp;input.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_padded&nbsp;(numpy.ndarray):&nbsp;Cached&nbsp;padded&nbsp;input.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;h_out&nbsp;(int):&nbsp;Height&nbsp;of&nbsp;output&nbsp;feature&nbsp;maps.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;w_out&nbsp;(int):&nbsp;Width&nbsp;of&nbsp;output&nbsp;feature&nbsp;maps.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_size&nbsp;(int):&nbsp;Size&nbsp;of&nbsp;input&nbsp;(same&nbsp;as&nbsp;in_channels).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_size&nbsp;(int):&nbsp;Size&nbsp;of&nbsp;output&nbsp;(same&nbsp;as&nbsp;out_channels).<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#ConvLayer-zero_grad">zero_grad</a>():&nbsp;Reset&nbsp;gradients&nbsp;to&nbsp;zero.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_im2col(x,&nbsp;h_out,&nbsp;w_out):&nbsp;Convert&nbsp;image&nbsp;regions&nbsp;to&nbsp;columns&nbsp;for&nbsp;efficient&nbsp;convolution.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#ConvLayer-forward">forward</a>(X):&nbsp;Perform&nbsp;forward&nbsp;pass&nbsp;of&nbsp;the&nbsp;convolutional&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_col2im(dcol,&nbsp;x_shape):&nbsp;Convert&nbsp;column&nbsp;back&nbsp;to&nbsp;image&nbsp;format&nbsp;for&nbsp;the&nbsp;backward&nbsp;pass.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#ConvLayer-backward">backward</a>(d_out,&nbsp;reg_lambda=0):&nbsp;Perform&nbsp;backward&nbsp;pass&nbsp;of&nbsp;the&nbsp;convolutional&nbsp;layer.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="ConvLayer-__init__"><strong>__init__</strong></a>(self, in_channels, out_channels, kernel_size, stride=1, padding=0, activation='relu')</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="ConvLayer-activate"><strong>activate</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;function.</span></dd></dl>
+
+<dl><dt><a name="ConvLayer-backward"><strong>backward</strong></a>(self, d_out, reg_lambda=0)</dt><dd><span class="code">Optimized&nbsp;backward&nbsp;pass&nbsp;using&nbsp;im2col&nbsp;technique.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;d_out&nbsp;(np.ndarray):&nbsp;Gradient&nbsp;of&nbsp;the&nbsp;loss&nbsp;with&nbsp;respect&nbsp;to&nbsp;the&nbsp;layer&nbsp;output,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shape&nbsp;(batch_size,&nbsp;out_channels,&nbsp;h_out,&nbsp;w_out)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;Regularization&nbsp;parameter.<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dX:&nbsp;Gradient&nbsp;with&nbsp;respect&nbsp;to&nbsp;the&nbsp;input&nbsp;X.</span></dd></dl>
+
+<dl><dt><a name="ConvLayer-forward"><strong>forward</strong></a>(self, X)</dt><dd><span class="code">X:&nbsp;numpy&nbsp;array&nbsp;with&nbsp;shape&nbsp;(batch_size,&nbsp;in_channels,&nbsp;height,&nbsp;width)<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Output&nbsp;feature&nbsp;maps&nbsp;after&nbsp;convolution&nbsp;and&nbsp;activation.</span></dd></dl>
+
+<dl><dt><a name="ConvLayer-zero_grad"><strong>zero_grad</strong></a>(self)</dt><dd><span class="code">Reset&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="DenseLayer">class <strong>DenseLayer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#DenseLayer">DenseLayer</a>(input_size,&nbsp;output_size,&nbsp;activation='relu')<br>
 &nbsp;<br>
 Initializes&nbsp;a&nbsp;fully&nbsp;connected&nbsp;layer&nbsp;<a href="builtins.html#object">object</a>,&nbsp;where&nbsp;each&nbsp;neuron&nbsp;is&nbsp;connected&nbsp;to&nbsp;all&nbsp;neurons&nbsp;in&nbsp;the&nbsp;previous&nbsp;layer.<br>
 Each&nbsp;layer&nbsp;consists&nbsp;of&nbsp;weights,&nbsp;biases,&nbsp;and&nbsp;an&nbsp;activation&nbsp;function.<br>
@@ -83,24 +161,91 @@ Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;output_cache&nbsp;(np.ndarray):&nbsp;Cached&nbsp;output&nbsp;for&nbsp;backpropagation.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
 Methods:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Layer-zero_grad">zero_grad</a>():&nbsp;Resets&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Layer-forward">forward</a>(X):&nbsp;Performs&nbsp;the&nbsp;forward&nbsp;pass&nbsp;of&nbsp;the&nbsp;layer.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Layer-backward">backward</a>(dA,&nbsp;reg_lambda):&nbsp;Performs&nbsp;the&nbsp;backward&nbsp;pass&nbsp;of&nbsp;the&nbsp;layer.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Layer-activate">activate</a>(Z):&nbsp;Applies&nbsp;the&nbsp;activation&nbsp;function.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Layer-activation_derivative">activation_derivative</a>(Z):&nbsp;Applies&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;activation&nbsp;function.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#DenseLayer-zero_grad">zero_grad</a>():&nbsp;Resets&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#DenseLayer-forward">forward</a>(X):&nbsp;Performs&nbsp;the&nbsp;forward&nbsp;pass&nbsp;of&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#DenseLayer-backward">backward</a>(dA,&nbsp;reg_lambda):&nbsp;Performs&nbsp;the&nbsp;backward&nbsp;pass&nbsp;of&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#DenseLayer-activate">activate</a>(Z):&nbsp;Applies&nbsp;the&nbsp;activation&nbsp;function.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#DenseLayer-activation_derivative">activation_derivative</a>(Z):&nbsp;Applies&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;activation&nbsp;function.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="Layer-__init__"><strong>__init__</strong></a>(self, input_size, output_size, activation='relu')</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="DenseLayer-__init__"><strong>__init__</strong></a>(self, input_size, output_size, activation='relu')</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
 
-<dl><dt><a name="Layer-activate"><strong>activate</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;function.</span></dd></dl>
+<dl><dt><a name="DenseLayer-activate"><strong>activate</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;function.</span></dd></dl>
 
-<dl><dt><a name="Layer-activation_derivative"><strong>activation_derivative</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;derivative.</span></dd></dl>
+<dl><dt><a name="DenseLayer-activation_derivative"><strong>activation_derivative</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;derivative.</span></dd></dl>
 
-<dl><dt><a name="Layer-backward"><strong>backward</strong></a>(self, dA, reg_lambda)</dt></dl>
+<dl><dt><a name="DenseLayer-backward"><strong>backward</strong></a>(self, dA, reg_lambda)</dt></dl>
 
-<dl><dt><a name="Layer-forward"><strong>forward</strong></a>(self, X)</dt></dl>
+<dl><dt><a name="DenseLayer-forward"><strong>forward</strong></a>(self, X)</dt></dl>
 
-<dl><dt><a name="Layer-zero_grad"><strong>zero_grad</strong></a>(self)</dt><dd><span class="code">Reset&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.</span></dd></dl>
+<dl><dt><a name="DenseLayer-zero_grad"><strong>zero_grad</strong></a>(self)</dt><dd><span class="code">Reset&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="FlattenLayer">class <strong>FlattenLayer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">A&nbsp;layer&nbsp;that&nbsp;flattens&nbsp;multi-dimensional&nbsp;input&nbsp;into&nbsp;a&nbsp;2D&nbsp;array&nbsp;(batch_size,&nbsp;flattened_size).<br>
+Useful&nbsp;for&nbsp;transitioning&nbsp;from&nbsp;convolutional&nbsp;layers&nbsp;to&nbsp;dense&nbsp;layers.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_shape&nbsp;(tuple):&nbsp;Shape&nbsp;of&nbsp;the&nbsp;input&nbsp;data&nbsp;(excluding&nbsp;batch&nbsp;size).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_size&nbsp;(int):&nbsp;Size&nbsp;of&nbsp;the&nbsp;flattened&nbsp;output&nbsp;vector.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_cache&nbsp;(np.ndarray):&nbsp;Cached&nbsp;input&nbsp;for&nbsp;backpropagation.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_size&nbsp;(int):&nbsp;Size&nbsp;of&nbsp;the&nbsp;input&nbsp;(same&nbsp;as&nbsp;input_shape).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_size&nbsp;(int):&nbsp;Size&nbsp;of&nbsp;the&nbsp;output&nbsp;(same&nbsp;as&nbsp;output_size).<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="FlattenLayer-__init__"><strong>__init__</strong></a>(self)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="FlattenLayer-backward"><strong>backward</strong></a>(self, dA, reg_lambda=0)</dt><dd><span class="code">Reshapes&nbsp;the&nbsp;gradient&nbsp;back&nbsp;to&nbsp;the&nbsp;original&nbsp;input&nbsp;shape.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dA&nbsp;(np.ndarray):&nbsp;Gradient&nbsp;of&nbsp;the&nbsp;loss&nbsp;with&nbsp;respect&nbsp;to&nbsp;the&nbsp;layer's&nbsp;output,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shape&nbsp;(batch_size,&nbsp;flattened_size)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float):&nbsp;Regularization&nbsp;parameter&nbsp;(unused&nbsp;in&nbsp;<a href="#FlattenLayer">FlattenLayer</a>).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;np.ndarray:&nbsp;Gradient&nbsp;with&nbsp;respect&nbsp;to&nbsp;the&nbsp;input,&nbsp;reshaped&nbsp;to&nbsp;original&nbsp;input&nbsp;shape.</span></dd></dl>
+
+<dl><dt><a name="FlattenLayer-forward"><strong>forward</strong></a>(self, X)</dt><dd><span class="code">Flattens&nbsp;the&nbsp;input&nbsp;tensor.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(np.ndarray):&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;channels,&nbsp;height,&nbsp;width)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or&nbsp;any&nbsp;multi-dimensional&nbsp;shape&nbsp;after&nbsp;batch&nbsp;dimension.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;np.ndarray:&nbsp;Flattened&nbsp;output&nbsp;of&nbsp;shape&nbsp;(batch_size,&nbsp;flattened_size)</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="RNNLayer">class <strong>RNNLayer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RNNLayer">RNNLayer</a>(input_size,&nbsp;hidden_size,&nbsp;activation='tanh')<br>
+&nbsp;<br>
+<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="RNNLayer-__init__"><strong>__init__</strong></a>(self, input_size, hidden_size, activation='tanh')</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
