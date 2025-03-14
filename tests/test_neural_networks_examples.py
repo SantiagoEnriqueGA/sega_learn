@@ -33,7 +33,7 @@ class TestExampleExceptions(unittest.TestCase):
         
         # Skip ConvLayers example files for now, takes too long to run
         # TODO: Fix ConvLayers example files, add main() function with test cases
-        if example_file in ['neuralNetwork_layers_conv_cifar.py', 'neuralNetwork_layers_conv.py', 'neuralNetwork_layers_conv_numba.py', 'neuralNetwork_layers_numba_new.py']:
+        if example_file in ['neuralNetwork_layers_conv_cifar.py', 'neuralNetwork_layers_conv.py', 'neuralNetwork_metrics_anim.py']:
             pass
 
 class TestExamplesNeuralNetworks(unittest.TestCase):
@@ -76,9 +76,10 @@ def load_tests(loader, tests, pattern):
         
         # Dynamically add the test function to the TestExamples class.
         # If example file runs in __main__, use a lambda function to call the test function.
-        test_exeptions = ['neuralNetwork_hyper.py', 'neuralNetwork_classifier_hyper.py', 
-                          'neuralNetwork_layers_conv_cifar.py', 'neuralNetwork_layers_conv.py', 'neuralNetwork_layers_conv_numba.py',
-                          'neuralNetwork_layers_numba_new.py']
+        test_exeptions = ['neuralNetwork_hyper.py', 'neuralNetwork_classifier_hyper.py',        # Suppress prints in these example files
+                          'neuralNetwork_layers_conv_cifar.py', 'neuralNetwork_layers_conv.py', # These take too long to run
+                          'neuralNetwork_metrics_anim.py'
+                          ]
         test_exeptions = [f'test_{name}' for name in test_exeptions]
         if test_name in test_exeptions:
             setattr(TestExamplesNeuralNetworks, test_name, lambda self, example_file=example_file: TestExampleExceptions().test_main(example_file))

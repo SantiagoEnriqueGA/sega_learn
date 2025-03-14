@@ -166,7 +166,7 @@ class TrainingAnimator:
             return artists
         
         # Create animation
-        anim = FuncAnimation(
+        self.anim = FuncAnimation(
             self.fig, update, frames=max_epochs,
             init_func=init, blit=blit, interval=interval
         )
@@ -179,19 +179,19 @@ class TrainingAnimator:
                 except:
                     raise ImportError("FFmpeg writer not available. Install ffmpeg or use a different writer.")
                 writer = FFMpegWriter(fps=fps, metadata=dict(artist='TrainingAnimator'), bitrate=1800)
-                anim.save(save_path, writer=writer, dpi=dpi)
+                self.anim.save(save_path, writer=writer, dpi=dpi)
             elif save_format == 'gif':
                 try:
                     from matplotlib.animation import PillowWriter
                 except:
                     raise ImportError("Pillow writer not available. Install Pillow or use a different writer.")
                 writer = PillowWriter(fps=fps)
-                anim.save(save_path, writer=writer, dpi=dpi)
+                self.anim.save(save_path, writer=writer, dpi=dpi)
             else:
                 raise ValueError(f"Unsupported save format: {save_format}")
             print(f"Animation saved to {save_path}")
         
-        return anim
+        return self.anim
     
     def setup_training_video(self, filepath, fps=10, dpi=None):
         """

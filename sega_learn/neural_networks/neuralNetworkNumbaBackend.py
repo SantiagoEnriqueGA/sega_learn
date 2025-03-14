@@ -467,15 +467,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
                     print(f"Static metrics plot saved to {static_plot_path} instead")
                 except Exception:
                     pass
-        else:
-            # Generate static plot as fallback
-            try:
-                static_plot_path = save_path.rsplit('.', 1)[0] + '.png'
-                self.plot_metrics(save_dir=static_plot_path)
-                print(f"Static metrics plot saved to {static_plot_path}")
-            except Exception as e:
-                print(f"Failed to save static plot: {str(e)}")
-
+        
         # Return the animator for further use if needed
         return animator if save_animation else None
 
