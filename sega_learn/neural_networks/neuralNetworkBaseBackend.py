@@ -96,7 +96,9 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
               optimizer=None, epochs=100, batch_size=32, 
               early_stopping_threshold=10, lr_scheduler=None, 
               p=True, use_tqdm=True, n_jobs=1, 
-              track_metrics=False, track_adv_metrics=False):
+              track_metrics=False, track_adv_metrics=False, 
+              save_animation=False, save_path='training_animation.mp4', 
+              fps=1, dpi=100, frame_every=1):
         """
         Trains the neural network model.
         Parameters:
@@ -114,11 +116,58 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             - n_jobs (int): Number of jobs for parallel processing (default: 1).
             - track_metrics (bool): Whether to track training metrics (default: False).
             - track_adv_metrics (bool): Whether to track advanced metrics (default: False).
+            - save_animation (bool): Whether to save the animation of metrics (default: False).
+            - save_path (str): Path to save the animation file. File extension must be .mp4 or .gif (default: 'training_animation.mp4').
+            - fps (int): Frames per second for the saved animation (default: 1).
+            - dpi (int): DPI for the saved animation (default: 100).
+            - frame_every (int): Capture frame every N epochs (to reduce file size) (default: 1).
         """
         if use_tqdm and not TQDM_AVAILABLE:
             warnings.warn("TQDM is not available. Disabling progress bar.", UserWarning, stacklevel=2)
             use_tqdm = False
         
+        # If track_adv_metrics is True, X_val and y_val must be provided
+        if track_adv_metrics and (X_val is None or y_val is None):
+            track_adv_metrics = False
+            warnings.warn("track_adv_metrics is True but X_val and y_val are not provided. Disabling track_adv_metrics.", UserWarning, stacklevel=2)
+
+        # If track_adv_metrics is True, set track_metrics to True
+        if track_adv_metrics: track_metrics = True
+    
+        # If save_animation is True but track_metrics is False, set track_metrics to True, try to set track_adv_metrics to True
+        if save_animation and not track_metrics:
+            track_metrics = True
+            if (X_val is not None) and (y_val is not None):
+                track_adv_metrics = True        
+
+        if save_animation:
+            import os
+            from .animation import TrainingAnimator
+
+            # Animation metrics to track
+            metrics = ['loss', 'accuracy', 'precision', 'recall', 'f1']
+            if lr_scheduler:
+                metrics.append('learning_rate')
+
+            # Initialize the animator
+            animator = TrainingAnimator(figure_size=(18, 10), dpi=dpi)
+
+            # Initialize animator with metrics
+            animator.initialize(metrics, has_validation=(X_val is not None))
+            
+            # Setup the training video capture with error handling
+            try:
+                # Ensure directory exists
+                directory = os.path.dirname(save_path)
+                if directory and not os.path.exists(directory):
+                    os.makedirs(directory)
+                    
+                animator.setup_training_video(save_path, fps=fps, dpi=dpi)
+            except Exception as e:
+                print(f"Failed to setup animation: {str(e)}")
+                print("Training will continue without animation capture.")
+                save_animation = False
+
         # Default optimizer if not provided
         if optimizer is None:
             optimizer = AdamOptimizer(learning_rate=0.0001)
@@ -249,19 +298,57 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             if lr_scheduler:
                 if isinstance(lr_scheduler, lr_scheduler_plateau):
                     msg = lr_scheduler.step(epoch, train_loss if X_val is None else val_loss)
+                    lr = optimizer.learning_rate
                     if use_tqdm and p and msg:
                         tqdm.write(msg)
                     elif p and msg:
                         print(msg)
                 else:
                     msg = lr_scheduler.step(epoch)
+                    lr = optimizer.learning_rate
                     if use_tqdm and p and msg:
                         tqdm.write(msg)
                     elif p and msg:
                         print(msg)                    
             
+            # Update animator with metrics
+            if save_animation:
+                train_metrics = {
+                    'loss': train_loss,
+                    'accuracy': train_accuracy,
+                    'precision': train_precision,
+                    'recall': train_recall,
+                    'f1': train_f1
+                }
+                if lr: train_metrics['learning_rate'] = lr
+                animator.update_metrics(train_metrics, validation=False)
+                val_metrics = {
+                    'loss': val_loss,
+                    'accuracy': val_accuracy,
+                    'precision': val_precision,
+                    'recall': val_recall,
+                    'f1': val_f1
+                }
+                animator.update_metrics(val_metrics, validation=True)
+
+                # Add frame to the animation if needed
+                if epoch % frame_every == 0 or epoch == epochs - 1:
+                    try:
+                        animator.add_training_frame()
+                    except Exception as e:
+                        print(f"Failed to add animation frame: {str(e)}")
+                        save_animation = False
+
             # Early stopping
             if patience_counter >= early_stopping_threshold:
+                # Capture final frame if not already captured and if animation is enabled
+                if save_animation and epoch % frame_every != 0:
+                    try:
+                        animator.add_training_frame()
+                    except Exception:
+                        pass
+                
+                # Stop training
                 if p and use_tqdm:
                     tqdm.write(f"Early stopping at epoch {epoch+1}")
                 elif p:
@@ -273,6 +360,33 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         for i, layer in enumerate(trainable_layers):
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
+
+        # Finish and save the animation if enabled
+        if save_animation:
+            try:
+                animator.finish_training_video()
+                print(f"Animation saved to {save_path}")
+            except Exception as e:
+                print(f"Failed to finish animation: {str(e)}")
+
+                # Alternative: generate static plot
+                try:
+                    static_plot_path = save_path.rsplit('.', 1)[0] + '.png'
+                    self.plot_metrics(save_dir=static_plot_path)
+                    print(f"Static metrics plot saved to {static_plot_path} instead")
+                except Exception:
+                    pass
+        else:
+            # Generate static plot as fallback
+            try:
+                static_plot_path = save_path.rsplit('.', 1)[0] + '.png'
+                self.plot_metrics(save_dir=static_plot_path)
+                print(f"Static metrics plot saved to {static_plot_path}")
+            except Exception as e:
+                print(f"Failed to save static plot: {str(e)}")
+
+        # Return the animator for further use if needed
+        return animator if save_animation else None
 
     def evaluate(self, X, y):
         y_hat = self.forward(X, training=False)
@@ -442,3 +556,252 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         best_params['optimizer'] = best_optimizer_type
         
         return best_params, best_accuracy
+        
+    def train_with_animation_capture(self, X_train, y_train, X_val=None, y_val=None, 
+                                optimizer=None, epochs=100, batch_size=32, 
+                                early_stopping_threshold=10, lr_scheduler=None,
+                                save_path='training_animation.mp4', fps=1, dpi=100, frame_every=1):
+        """
+        Trains the neural network model while capturing training metrics in real-time animation.
+        
+        Parameters:
+            - X_train, y_train: Training data
+            - X_val, y_val: Validation data (optional)
+            - optimizer: Optimizer for updating parameters
+            - epochs: Number of training epochs
+            - batch_size: Batch size for mini-batch gradient descent
+            - early_stopping_threshold: Patience for early stopping
+            - lr_scheduler: Learning rate scheduler
+            - save_path: Path to save the animation file
+            - fps: Frames per second for the saved animation
+            - dpi: DPI for the saved animation
+            - writer: Animation writer ('ffmpeg', 'pillow', etc.)
+            - frame_every: Capture frame every N epochs (to reduce file size)
+            
+        Returns:
+            - None
+        """
+        import os
+        from .animation import TrainingAnimator
+        
+        # Initialize the animator
+        animator = TrainingAnimator(figure_size=(18, 10), dpi=dpi)
+        
+        # Define metrics to track
+        metrics = ['loss', 'accuracy', 'precision', 'recall', 'f1']
+        if lr_scheduler:
+            metrics.append('learning_rate')
+        
+        # Initialize animator with metrics
+        animator.initialize(metrics, has_validation=(X_val is not None))
+        
+        # Setup the training video capture with error handling
+        try:
+            # Ensure directory exists
+            directory = os.path.dirname(save_path)
+            if directory and not os.path.exists(directory):
+                os.makedirs(directory)
+                
+            animator.setup_training_video(save_path, fps=fps, dpi=dpi)
+            animation_enabled = True
+        except Exception as e:
+            print(f"Failed to setup animation: {str(e)}")
+            print("Training will continue without animation capture.")
+            animation_enabled = False
+                
+        # Initialize metrics storage
+        self.train_loss = []
+        self.train_accuracy = []
+        self.learning_rates = []
+        self.train_precision = []
+        self.train_recall = []
+        self.train_f1 = []
+        
+        if X_val is not None:
+            self.val_loss = []
+            self.val_accuracy = []
+            self.val_precision = []
+            self.val_recall = []
+            self.val_f1 = []
+        
+        # Default optimizer if not provided
+        if optimizer is None:
+            optimizer = AdamOptimizer(learning_rate=0.0001)
+        
+        # Initialize optimizer
+        optimizer.initialize(self.layers)
+        
+        # Track best model for early stopping
+        best_loss = float('inf')
+        patience_counter = 0
+        best_weights = [layer.weights.copy() for layer in self.layers if hasattr(layer, 'weights')]
+        best_biases = [layer.biases.copy() for layer in self.layers if hasattr(layer, 'biases')]
+        
+        def process_batch(start_idx, X_shuffled, y_shuffled):
+            X_batch = X_shuffled[start_idx:start_idx+batch_size]
+            y_batch = y_shuffled[start_idx:start_idx+batch_size]
+            
+            # Forward and backward passes
+            self.forward(X_batch, training=True)
+            self.backward(y_batch)
+            
+            # Update weights and biases
+            trainable_idx = 0  # Separate index for trainable layers
+            for layer in self.layers:
+                if hasattr(layer, 'weight_gradients') and layer.weight_gradients is not None:
+                    dW = layer.weight_gradients
+                    db = layer.bias_gradients
+                    optimizer.update(layer, dW, db, trainable_idx)
+                    trainable_idx += 1
+        
+        # Training loop
+        for epoch in range(epochs):
+            # Reset gradients
+            for layer in self.layers:
+                if hasattr(layer, 'zero_grad'):
+                    layer.zero_grad()
+            
+            # Shuffle training data
+            indices = np.arange(X_train.shape[0])
+            np.random.shuffle(indices)
+            X_shuffled = X_train[indices]
+            y_shuffled = y_train[indices]
+            
+            # Process all batches
+            for i in range(0, X_train.shape[0], batch_size):
+                process_batch(i, X_shuffled, y_shuffled)
+            
+            # Calculate metrics
+            train_loss = self.calculate_loss(X_train, y_train)
+            train_accuracy, _ = self.evaluate(X_train, y_train)
+            train_precision, train_recall, train_f1 = self.calculate_precision_recall_f1(X_train, y_train)
+            
+            # Store metrics
+            self.train_loss.append(train_loss)
+            self.train_accuracy.append(train_accuracy)
+            self.train_precision.append(train_precision)
+            self.train_recall.append(train_recall)
+            self.train_f1.append(train_f1)
+            
+            # Prepare metrics for animator
+            train_metrics = {
+                'loss': train_loss,
+                'accuracy': train_accuracy,
+                'precision': train_precision,
+                'recall': train_recall,
+                'f1': train_f1
+            }           
+            
+            # Validation metrics
+            val_metrics_str = ""
+            if X_val is not None:
+                val_loss = self.calculate_loss(X_val, y_val)
+                val_accuracy, _ = self.evaluate(X_val, y_val)
+                val_precision, val_recall, val_f1 = self.calculate_precision_recall_f1(X_val, y_val)
+                
+                # Store validation metrics
+                self.val_loss.append(val_loss)
+                self.val_accuracy.append(val_accuracy)
+                self.val_precision.append(val_precision)
+                self.val_recall.append(val_recall)
+                self.val_f1.append(val_f1)
+                
+                val_metrics_str = f", Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.4f}"
+                
+                # Update animator with validation metrics
+                val_metrics = {
+                    'loss': val_loss,
+                    'accuracy': val_accuracy,
+                    'precision': val_precision,
+                    'recall': val_recall,
+                    'f1': val_f1
+                }
+                animator.update_metrics(val_metrics, validation=True)
+                
+                # Early stopping check
+                if val_loss < best_loss:
+                    best_loss = val_loss
+                    patience_counter = 0
+                    # Save best weights
+                    best_weights = [layer.weights.copy() for layer in self.layers if hasattr(layer, 'weights')]
+                    best_biases = [layer.biases.copy() for layer in self.layers if hasattr(layer, 'biases')]
+                else:
+                    patience_counter += 1
+            else:
+                # Use training loss for early stopping if no validation set
+                if train_loss < best_loss:
+                    best_loss = train_loss
+                    patience_counter = 0
+                    best_weights = [layer.weights.copy() for layer in self.layers if hasattr(layer, 'weights')]
+                    best_biases = [layer.biases.copy() for layer in self.layers if hasattr(layer, 'biases')]
+                else:
+                    patience_counter += 1
+
+            # Update learning rate if scheduler is provided
+            if lr_scheduler:
+                if isinstance(lr_scheduler, lr_scheduler_plateau):
+                    msg = lr_scheduler.step(epoch, train_loss if X_val is None else val_loss)
+                    if msg: print(msg)
+                else:
+                    msg = lr_scheduler.step(epoch)
+                    if msg: print(msg)
+
+                self.learning_rates.append(optimizer.learning_rate)
+                train_metrics['learning_rate'] = optimizer.learning_rate
+            
+            # Update animator with training metrics
+            animator.update_metrics(train_metrics, validation=False)
+
+            # Print progress
+            print(f"Epoch {epoch+1}/{epochs} - Loss: {train_loss:.4f}, Acc: {train_accuracy:.4f}{val_metrics_str}")
+            
+            # Add frame to the animation if needed and if animation is enabled
+            if animation_enabled and (epoch % frame_every == 0 or epoch == epochs - 1):
+                try:
+                    animator.add_training_frame()
+                except Exception as e:
+                    print(f"Failed to add animation frame: {str(e)}")
+                    animation_enabled = False
+            
+            # Early stopping
+            if patience_counter >= early_stopping_threshold:
+                print(f"Early stopping at epoch {epoch+1}")
+                # Capture final frame if not already captured and if animation is enabled
+                if animation_enabled and epoch % frame_every != 0:
+                    try:
+                        animator.add_training_frame()
+                    except Exception:
+                        pass
+                break
+        
+        # Restore best weights
+        trainable_layers = [l for l in self.layers if hasattr(l, 'weights')]
+        for i, layer in enumerate(trainable_layers):
+            layer.weights = best_weights[i]
+            layer.biases = best_biases[i]
+        
+        # Finish and save the animation if enabled
+        if animation_enabled:
+            try:
+                animator.finish_training_video()
+                print(f"Animation saved to {save_path}")
+            except Exception as e:
+                print(f"Failed to finish animation: {str(e)}")
+                
+                # Alternative: generate static plot
+                try:
+                    static_plot_path = save_path.rsplit('.', 1)[0] + '.png'
+                    self.plot_metrics(save_dir=static_plot_path)
+                    print(f"Static metrics plot saved to {static_plot_path} instead")
+                except Exception:
+                    pass
+        else:
+            # Generate static plot as fallback
+            try:
+                static_plot_path = save_path.rsplit('.', 1)[0] + '.png'
+                self.plot_metrics(save_dir=static_plot_path)
+                print(f"Static metrics plot saved to {static_plot_path}")
+            except Exception as e:
+                print(f"Failed to save static plot: {str(e)}")
+        
+        
