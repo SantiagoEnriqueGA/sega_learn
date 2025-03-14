@@ -78,9 +78,6 @@ class TrainingAnimator:
         
         self.fig.tight_layout()
         
-        # Close figure to prevent display but keep it in memory
-        plt.close()  
-        
         # For blitting - store the background
         self.bg_cache = None
     
@@ -262,6 +259,8 @@ class TrainingAnimator:
             raise
     
     def add_training_frame(self):
+        import matplotlib.pyplot as plt
+
         if self.writer is None:
             raise ValueError("Video writer not initialized. Call setup_training_video() first.")
         
@@ -280,8 +279,9 @@ class TrainingAnimator:
         
         # Redraw the entire canvas to reflect changes
         self.fig.canvas.draw()
+        plt.pause(0.001)
         
-        # Capture the frame
+        # Capture the frame for video
         self.writer.grab_frame()
         self.frame_count += 1
     
