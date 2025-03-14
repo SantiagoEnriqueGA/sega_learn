@@ -2,9 +2,11 @@ from sklearn.metrics import classification_report
 import numpy as np
 import random
 
+import numba
+numba.config.DISABLE_JIT = True  # Disable JIT compilation for debugging purposes
+
 import sys
 import os
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.utils import train_test_split
@@ -19,9 +21,9 @@ output_size = 3  # Number of classes
 batch_size = 32
 epochs = 10 # Reduced for demonstration, can increase.
 input_channels = 1  # Grayscale images
-image_height = 28
-image_width = 28
-num_samples = 100  # Total number of dummy images
+image_height = 10
+image_width = 10
+num_samples = 10  # Total number of dummy images
 
 # Generate Sample Data 
 # ---------------------------------------------------------------------------------------
@@ -37,11 +39,16 @@ scheduler1 = lr_scheduler_plateau(sub_scheduler1, patience=5, threshold=0.001)
 
 # Layers
 # ---------------------------------------------------------------------------------------
+# Each ConvLayer will reduce the spatial dimensions by 4 pixels (2 pixels on each side)
+# This is because the kernel size is 3 and padding is 0, so the output size is (input_size - kernel_size + 1)
+#   For example, if input size is 28x28, after two ConvLayers with kernel_size=3 and padding=0,
+#   the output size will be (28 - 3 + 1) = 26, and then (26 - 3 + 1) = 24.
+#   After two ConvLayers, the output size will be 24x24.
 layers = [
     JITLayer("conv", input_size=input_channels, output_size=32, kernel_size=3, stride=1, padding=0, activation="relu"),
     JITLayer("conv", input_size=32, output_size=64, kernel_size=3, stride=1, padding=0, activation="relu"),
     JITLayer("flatten", input_size=0, output_size=0, activation="none"),
-    JITLayer("dense", 64 * 24 * 24, 256, activation="relu"),  # Corrected input size: 64 * 24 * 24 = 1728
+    JITLayer("dense", 64 * (image_height - 4) * (image_width - 4), 256, activation="relu"),
     JITLayer("dense", 256, output_size, activation="softmax"),  # Added output layer for 3 classes
 ]
 

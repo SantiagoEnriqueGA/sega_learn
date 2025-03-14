@@ -37,11 +37,16 @@ scheduler1 = lr_scheduler_plateau(sub_scheduler1, patience=5, threshold=0.001)
 
 # Layers
 # ---------------------------------------------------------------------------------------
+# Each ConvLayer will reduce the spatial dimensions by 4 pixels (2 pixels on each side)
+# This is because the kernel size is 3 and padding is 0, so the output size is (input_size - kernel_size + 1)
+#   For example, if input size is 28x28, after two ConvLayers with kernel_size=3 and padding=0,
+#   the output size will be (28 - 3 + 1) = 26, and then (26 - 3 + 1) = 24.
+#   After two ConvLayers, the output size will be 24x24.
 layers = [
     ConvLayer(in_channels=input_channels, out_channels=32, kernel_size=3, stride=1, padding=0, activation="relu"),
     ConvLayer(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=0, activation="relu"),
     FlattenLayer(),
-    DenseLayer(64 * 24 * 24, 256, activation="relu"),  # Corrected input size: 64 * 24 * 24 = 1728
+    DenseLayer(64 * (image_height - 4) * (image_width - 4), 256, activation="relu"),  # Adjusted input size
     DenseLayer(256, output_size, activation="softmax"),  # Added output layer for 3 classes
 ]
 

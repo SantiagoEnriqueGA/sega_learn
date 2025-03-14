@@ -112,17 +112,30 @@ class JITAdamOptimizer:
         conv_dWs = List()
         conv_dbs = List()
         
-        for i in range(len(layers)):
-            if layers[i].layer_type == 'dense':
+        # for i in range(len(layers)):
+        #     if layers[i].layer_type == 'dense':
+        #         dense_indices.append(i)
+        #         dense_weights.append(layers[i].dense_weights)
+        #         dense_biases.append(layers[i].dense_biases)
+        #         dense_dWs.append(dWs[i])
+        #         dense_dbs.append(dbs[i])
+        #     else:
+        #         conv_indices.append(i)
+        #         conv_weights.append(layers[i].conv_weights)
+        #         conv_biases.append(layers[i].conv_biases)
+        #         conv_dWs.append(dWs[i])
+        #         conv_dbs.append(dbs[i])
+        for i, layer in enumerate(layers):
+            if layer.layer_type == 'dense':
                 dense_indices.append(i)
-                dense_weights.append(layers[i].dense_weights)
-                dense_biases.append(layers[i].dense_biases)
+                dense_weights.append(layer.dense_weights)
+                dense_biases.append(layer.dense_biases)
                 dense_dWs.append(dWs[i])
                 dense_dbs.append(dbs[i])
             else:
                 conv_indices.append(i)
-                conv_weights.append(layers[i].conv_weights)
-                conv_biases.append(layers[i].conv_biases)
+                conv_weights.append(layer.conv_weights)
+                conv_biases.append(layer.conv_biases)
                 conv_dWs.append(dWs[i])
                 conv_dbs.append(dbs[i])
         
@@ -163,7 +176,6 @@ def dense_adam_update_layers(m, v, t, indices, weights, biases, dWs, dbs,
         # Update biases elementwise
         for k in range(db.shape[0]):
             biases[j][k] = biases[j][k] - learning_rate * db[k]
-            
 
 @njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
 def conv_adam_update_layers(m, v, t, indices, weights, biases, dWs, dbs,
