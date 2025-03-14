@@ -50,13 +50,44 @@ def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
     print("Classification Report:")
     print(classification_report(y_test, y_pred, zero_division=0))
 
+def train_and_evaluate_numba(optimizer, lr_scheduler, optimizer_name):
+    print(f"\n--- Training Numba NN with {optimizer_name} ---")
+
+    layers_list = [
+        JITDenseLayer(input_size, layers[0], activation="relu"),
+        JITDenseLayer(layers[0], layers[1], activation="relu"),
+        JITDenseLayer(layers[1], layers[2], activation="relu"),
+        JITDenseLayer(layers[2], output_size, activation="softmax" if output_size > 2 else "sigmoid"),
+    ]
+
+    nn = NumbaBackendNeuralNetwork(layers=layers_list, dropout_rate=dropout, reg_lambda=reg_lambda, compile_numba=True)
+
+    nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=lr_scheduler, 
+             epochs=100, batch_size=32, early_stopping_threshold=10, 
+             track_metrics=True, track_adv_metrics=True,
+             save_animation=True, save_path=f"examples/neural_networks/plots/neuralNetwork_classifier_{optimizer_name}_numba.mp4",
+             fps=1, dpi=100, frame_every=1,
+             )
+
+    test_accuracy, y_pred = nn.evaluate(X_test, y_test)
+    print(f"Test Accuracy: {test_accuracy:.4f}")
+
+    print("Classification Report:")
+    print(classification_report(y_test, y_pred, zero_division=0))
 
 # AdamOptimizer
 # --------------------------------------------------------------------------------------------------------------------------
-optimizer_adam = AdamOptimizer(learning_rate=lr)
-sub_scheduler_adam = lr_scheduler_step(optimizer_adam, lr_decay=0.1, lr_decay_epoch=10)
-scheduler_adam = lr_scheduler_plateau(sub_scheduler_adam, patience=5, threshold=0.001)
-train_and_evaluate(optimizer_adam, scheduler_adam, "AdamOptimizer")
+# Base backend
+# optimizer_adam = AdamOptimizer(learning_rate=lr)
+# sub_scheduler_adam = lr_scheduler_step(optimizer_adam, lr_decay=0.1, lr_decay_epoch=10)
+# scheduler_adam = lr_scheduler_plateau(sub_scheduler_adam, patience=5, threshold=0.001)
+# train_and_evaluate(optimizer_adam, scheduler_adam, "AdamOptimizer")
+
+# Numba backend
+nb_optimizer_adam = JITAdamOptimizer(learning_rate=lr)
+nb_sub_scheduler_adam = lr_scheduler_step(nb_optimizer_adam, lr_decay=0.1, lr_decay_epoch=10)
+nb_scheduler_adam = lr_scheduler_plateau(nb_sub_scheduler_adam, patience=5, threshold=0.001)
+train_and_evaluate_numba(nb_optimizer_adam, nb_scheduler_adam, "AdamOptimizer")
 
 # # SGDOptimizer
 # # --------------------------------------------------------------------------------------------------------------------------
@@ -65,9 +96,21 @@ train_and_evaluate(optimizer_adam, scheduler_adam, "AdamOptimizer")
 # scheduler_sgd = lr_scheduler_plateau(sub_scheduler_sgd, patience=5, threshold=0.001)
 # train_and_evaluate(optimizer_sgd, scheduler_sgd, "SGDOptimizer")
 
+# Numba backend
+nb_optimizer_sgd = JITSGDOptimizer(learning_rate=lr)
+nb_sub_scheduler_sgd = lr_scheduler_step(nb_optimizer_sgd, lr_decay=0.1, lr_decay_epoch=10)
+nb_scheduler_sgd = lr_scheduler_plateau(nb_sub_scheduler_sgd, patience=5, threshold=0.001)
+train_and_evaluate_numba(nb_optimizer_sgd, nb_scheduler_sgd, "SGDOptimizer")
+
 # # AdadeltaOptimizer
 # # --------------------------------------------------------------------------------------------------------------------------
 # optimizer_adadelta = AdadeltaOptimizer(learning_rate=lr)
 # sub_scheduler_adadelta = lr_scheduler_step(optimizer_adadelta, lr_decay=0.1, lr_decay_epoch=10)
 # scheduler_adadelta = lr_scheduler_plateau(sub_scheduler_adadelta, patience=5, threshold=0.001)
 # train_and_evaluate(optimizer_adadelta, scheduler_adadelta, "AdadeltaOptimizer")
+
+# Numba backend
+nb_optimizer_adadelta = JITAdadeltaOptimizer(learning_rate=lr)
+nb_sub_scheduler_adadelta = lr_scheduler_step(nb_optimizer_adadelta, lr_decay=0.1, lr_decay_epoch=10)
+nb_scheduler_adadelta = lr_scheduler_plateau(nb_sub_scheduler_adadelta, patience=5, threshold=0.001)
+train_and_evaluate_numba(nb_optimizer_adadelta, nb_scheduler_adadelta, "AdadeltaOptimizer")
