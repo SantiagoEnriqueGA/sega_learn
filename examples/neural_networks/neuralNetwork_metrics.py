@@ -78,16 +78,16 @@ def train_and_evaluate_numba(optimizer, lr_scheduler, optimizer_name):
 # AdamOptimizer
 # --------------------------------------------------------------------------------------------------------------------------
 # Base backend
-# optimizer_adam = AdamOptimizer(learning_rate=lr)
-# sub_scheduler_adam = lr_scheduler_step(optimizer_adam, lr_decay=0.1, lr_decay_epoch=10)
-# scheduler_adam = lr_scheduler_plateau(sub_scheduler_adam, patience=5, threshold=0.001)
-# train_and_evaluate(optimizer_adam, scheduler_adam, "AdamOptimizer")
+optimizer_adam = AdamOptimizer(learning_rate=lr)
+sub_scheduler_adam = lr_scheduler_step(optimizer_adam, lr_decay=0.1, lr_decay_epoch=10)
+scheduler_adam = lr_scheduler_plateau(sub_scheduler_adam, patience=5, threshold=0.001)
+train_and_evaluate(optimizer_adam, scheduler_adam, "AdamOptimizer")
 
 # Numba backend
-nb_optimizer_adam = JITAdamOptimizer(learning_rate=lr)
-nb_sub_scheduler_adam = lr_scheduler_step(nb_optimizer_adam, lr_decay=0.1, lr_decay_epoch=10)
-nb_scheduler_adam = lr_scheduler_plateau(nb_sub_scheduler_adam, patience=5, threshold=0.001)
-train_and_evaluate_numba(nb_optimizer_adam, nb_scheduler_adam, "AdamOptimizer")
+# nb_optimizer_adam = JITAdamOptimizer(learning_rate=lr)
+# nb_sub_scheduler_adam = lr_scheduler_step(nb_optimizer_adam, lr_decay=0.1, lr_decay_epoch=10)
+# nb_scheduler_adam = lr_scheduler_plateau(nb_sub_scheduler_adam, patience=5, threshold=0.001)
+# train_and_evaluate_numba(nb_optimizer_adam, nb_scheduler_adam, "AdamOptimizer")
 
 # # SGDOptimizer
 # # --------------------------------------------------------------------------------------------------------------------------
@@ -97,10 +97,10 @@ train_and_evaluate_numba(nb_optimizer_adam, nb_scheduler_adam, "AdamOptimizer")
 # train_and_evaluate(optimizer_sgd, scheduler_sgd, "SGDOptimizer")
 
 # Numba backend
-nb_optimizer_sgd = JITSGDOptimizer(learning_rate=lr)
-nb_sub_scheduler_sgd = lr_scheduler_step(nb_optimizer_sgd, lr_decay=0.1, lr_decay_epoch=10)
-nb_scheduler_sgd = lr_scheduler_plateau(nb_sub_scheduler_sgd, patience=5, threshold=0.001)
-train_and_evaluate_numba(nb_optimizer_sgd, nb_scheduler_sgd, "SGDOptimizer")
+# nb_optimizer_sgd = JITSGDOptimizer(learning_rate=lr)
+# nb_sub_scheduler_sgd = lr_scheduler_step(nb_optimizer_sgd, lr_decay=0.1, lr_decay_epoch=10)
+# nb_scheduler_sgd = lr_scheduler_plateau(nb_sub_scheduler_sgd, patience=5, threshold=0.001)
+# train_and_evaluate_numba(nb_optimizer_sgd, nb_scheduler_sgd, "SGDOptimizer")
 
 # # AdadeltaOptimizer
 # # --------------------------------------------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ train_and_evaluate_numba(nb_optimizer_sgd, nb_scheduler_sgd, "SGDOptimizer")
 # train_and_evaluate(optimizer_adadelta, scheduler_adadelta, "AdadeltaOptimizer")
 
 # Numba backend
-nb_optimizer_adadelta = JITAdadeltaOptimizer(learning_rate=lr)
-nb_sub_scheduler_adadelta = lr_scheduler_step(nb_optimizer_adadelta, lr_decay=0.1, lr_decay_epoch=10)
-nb_scheduler_adadelta = lr_scheduler_plateau(nb_sub_scheduler_adadelta, patience=5, threshold=0.001)
-train_and_evaluate_numba(nb_optimizer_adadelta, nb_scheduler_adadelta, "AdadeltaOptimizer")
+# nb_optimizer_adadelta = JITAdadeltaOptimizer(learning_rate=lr)
+# nb_sub_scheduler_adadelta = lr_scheduler_step(nb_optimizer_adadelta, lr_decay=0.1, lr_decay_epoch=10)
+# nb_scheduler_adadelta = lr_scheduler_plateau(nb_sub_scheduler_adadelta, patience=5, threshold=0.001)
+# train_and_evaluate_numba(nb_optimizer_adadelta, nb_scheduler_adadelta, "AdadeltaOptimizer")
