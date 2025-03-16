@@ -7,13 +7,17 @@ try:
     from .layers_jit import *
 except:
     JITDenseLayer = None
-
+try:
+    from .layers_cupy import *
+except:
+    CuPyDenseLayer = None
 
 class NeuralNetworkBase:
     def __init__(self, layers, dropout_rate=0.0, reg_lambda=0.0, activations=None):
         _layers = [DenseLayer, FlattenLayer, ConvLayer, RNNLayer]
         _layers_jit = [JITDenseLayer, JITFlattenLayer, JITConvLayer, JITRNNLayer]
-        available_layers = tuple(_layers + _layers_jit)
+        _cupy_layers = [CuPyDenseLayer]
+        available_layers = tuple(_layers + _layers_jit + _cupy_layers)
         
         # iF all layers are integers, initialize the layers as DenseLayers
         if all(isinstance(layer, int) for layer in layers):

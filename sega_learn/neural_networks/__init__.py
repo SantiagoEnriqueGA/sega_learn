@@ -19,7 +19,7 @@ __all__ = [
     'FlattenLayer',
     'ConvLayer',
     'RNNLayer',
-    'Activation',
+    'CuPyActivation',
     'NeuralNetworkBase',
     'BaseBackendNeuralNetwork',
 ]
@@ -46,3 +46,22 @@ try:
 except:
     pass
 
+try:
+    from .neuralNetworkCuPyBackend import CuPyBackendNeuralNetwork
+    from .layers_cupy import CuPyActivation, CuPyDenseLayer
+    from .optimizers_cupy import CuPyAdamOptimizer, CuPySGDOptimizer, CuPyAdadeltaOptimizer
+    from .loss_cupy import CuPyBCEWithLogitsLoss, CuPyCrossEntropyLoss
+
+    __all__.extend([
+        'CuPyBackendNeuralNetwork',
+        'CuPyActivation',
+        'CuPyDenseLayer',
+        'CuPyAdamOptimizer',
+        'CuPySGDOptimizer',
+        'CuPyAdadeltaOptimizer',
+        'CuPyBCEWithLogitsLoss',        
+        'CuPyCrossEntropyLoss', 
+        'CuPyDenseLayer',
+    ])
+except:
+    pass
