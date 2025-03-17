@@ -1,4 +1,4 @@
-    import unittest
+import unittest
 import warnings
 import sys
 import os
@@ -109,6 +109,7 @@ class TestIsolationForest(unittest.TestCase):
         sample = np.random.randn(2)
         prediction = self.forest.predict(sample)
         self.assertIn(prediction, [0, 1])
+
 
 if __name__ == '__main__':
     unittest.main()
