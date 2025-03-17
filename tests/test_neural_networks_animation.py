@@ -110,7 +110,10 @@ class TestTrainingAnimator(unittest.TestCase):
         self.assertEqual(self.animator.metrics["val_accuracy"], [0.85])
 
     def test_animate_training_metrics(self):
-        """Test that animate_training_metrics creates a FuncAnimation correctly and saves it to a temp file."""
+        """
+        Test that animate_training_metrics creates a FuncAnimation correctly and saves it to a temp file.
+        If ffmpeg is not available, it should fall back to PillowWriter and save the animation as a .gif file.
+        """
         metrics = ["loss", "accuracy"]
         self.animator.initialize(metrics_to_track=metrics, has_validation=False)
         # Simulate training data for 3 epochs.
@@ -124,10 +127,13 @@ class TestTrainingAnimator(unittest.TestCase):
         xlim = ax.get_xlim()
         self.assertEqual(xlim, (0, 4))
         # Save animation to a temporary file
-        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp_file:
+        with tempfile.NamedTemporaryFile(suffix=".gif", delete=False) as tmp_file:
             tmp_path = tmp_file.name
         try:
-            anim.save(tmp_path, fps=10, dpi=100, writer="ffmpeg")
+            try:
+                anim.save(tmp_path, fps=10, dpi=100, writer="ffmpeg")
+            except ValueError:
+                anim.save(tmp_path, fps=10, dpi=100, writer="pillow")
             self.assertTrue(os.path.exists(tmp_path))  # Ensure the file is created
         finally:
             os.remove(tmp_path)  # Clean up after test

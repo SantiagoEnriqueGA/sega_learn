@@ -19,7 +19,7 @@ __all__ = [
     'FlattenLayer',
     'ConvLayer',
     'RNNLayer',
-    'CuPyActivation',
+    'Activation',
     'NeuralNetworkBase',
     'BaseBackendNeuralNetwork',
 ]
