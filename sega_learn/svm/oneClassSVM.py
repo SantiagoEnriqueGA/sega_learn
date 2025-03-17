@@ -20,19 +20,8 @@ class OneClassSVM(BaseSVM):
         self.w = np.zeros(n_features)
         self.b = 0.0
         
-        # Placeholder optimization loop; real implementation would require a different approach.
-        for iteration in range(self.max_iter):
-            predictions = np.dot(X, self.w) + self.b
-            # Update self.w and self.b based on some outlier detection criterion.
-            # This is a stub for illustration.
-            learning_rate = 0.001
-            grad_w = np.random.randn(n_features) * 0.01  # Dummy gradient
-            grad_b = 0.01  # Dummy gradient
-            self.w -= learning_rate * grad_w
-            self.b -= learning_rate * grad_b
-            # Convergence check placeholder
-            if np.linalg.norm(learning_rate * grad_w) < self.tol:
-                break
+        # TODO: Implement fitting procedure for OneClassSVM
+        pass
 
     def predict(self, X):
         """

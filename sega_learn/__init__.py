@@ -70,6 +70,14 @@ from .nearest_neighbors import (
     KNeighborsRegressor,
 )
     
+from .svm import (
+    BaseSVM,
+    LinearSVC,
+    LinearSVR,
+    OneClassSVM,
+)
+
+
 __all__ = [
     # Utils
     "PolynomialTransform",
@@ -138,6 +146,12 @@ __all__ = [
     # Nearest Neighbors
     "KNeighborsClassifier",
     "KNeighborsRegressor",
+    
+    # SVM
+    'BaseSVM', 
+    'LinearSVC', 
+    'LinearSVR', 
+    'OneClassSVM',
 ]
 
 try:
