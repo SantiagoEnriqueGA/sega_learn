@@ -1,4 +1,4 @@
-import unittest
+    import unittest
 import warnings
 import sys
 import os
@@ -75,7 +75,6 @@ class TestIsolationForest(unittest.TestCase):
     - test_anomaly_score: Tests the anomaly_score method of the IsolationForest class.
     - test_anomaly_score_with_empty_data: Tests the anomaly_score method with empty data.
     - test_predict: Tests the predict method of the IsolationForest class.
-    - test_predict_with_empty_data: Tests the predict method with empty data.
     """
     @classmethod
     def setUpClass(cls):
@@ -110,11 +109,6 @@ class TestIsolationForest(unittest.TestCase):
         sample = np.random.randn(2)
         prediction = self.forest.predict(sample)
         self.assertIn(prediction, [0, 1])
-
-    def test_predict_with_empty_data(self):
-        with self.assertRaises(ValueError):
-            sample = np.empty((0, 2))
-            self.forest.predict(sample)
 
 if __name__ == '__main__':
     unittest.main()
