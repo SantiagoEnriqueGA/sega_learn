@@ -1,4 +1,3 @@
-
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -27,22 +26,37 @@ isolation_forest.fit(X)
 anomaly_scores = np.array([isolation_forest.anomaly_score(x) for x in X])
 
 # Predict anomalies based on the anomaly scores
-threshold = 0.5
+threshold = 0.65
 predictions = np.array([isolation_forest.predict(x, threshold) for x in X])
 
 # Plot the Isolation Forest anomaly results
-plt.figure(figsize=(8,8))
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 12))
 
 # Scatter plot of the data points colored by their anomaly score
-plt.scatter(X, y, c=anomaly_scores, s=50, cmap='viridis')
-plt.title(f'Isolation Forest Anomaly Detection')
-plt.xlabel('Feature 1')
-plt.ylabel('Target Variable')
-plt.colorbar(label='Anomaly Score')
+scatter = ax1.scatter(X, y, c=anomaly_scores, s=50, cmap='viridis')
+ax1.set_title('Isolation Forest Anomaly Detection')
+ax1.set_xlabel('Feature 1')
+ax1.set_ylabel('Target Variable')
+fig.colorbar(scatter, ax=ax1, label='Anomaly Score')
+
+# Histogram of the anomaly scores with colored bins
+n_bins = 50
+hist, bins = np.histogram(anomaly_scores, bins=n_bins)
+bin_centers = 0.5 * (bins[:-1] + bins[1:])
+colormap = plt.cm.viridis
+norm = plt.Normalize(vmin=min(anomaly_scores), vmax=max(anomaly_scores))
+colors = colormap(norm(bin_centers))
+
+ax2.bar(bin_centers, hist, width=(bins[1] - bins[0]), color=colors, alpha=0.7)
+ax2.set_title('Anomaly Scores Distribution')
+ax2.set_xlabel('Anomaly Score')
+ax2.set_ylabel('Frequency')
+ax2.axvline(threshold, color='red', linestyle='dashed', linewidth=1, label='Threshold')
+ax2.legend()
+
+plt.tight_layout()
 # plt.show()
 plt.savefig('examples/trees/plots/isolation_forest_reg.png', dpi=300)
-
-
 
 
 

@@ -5,6 +5,7 @@ import ast
 from datetime import datetime
 from math import log, floor, ceil
 import random
+import joblib
 
 # Here's a high-level overview:
 # Random Subsampling: 
@@ -120,12 +121,19 @@ class IsolationTree(object):
 class IsolationForest(object):
     """Isolation Forest for anomaly detection."""
 
-    def __init__(self, n_trees=100, max_samples=None, max_depth=10, force_true_length=False):
+    def __init__(self, n_trees=100, max_samples=None, max_depth=10, n_jobs=1, force_true_length=False):
         self.n_trees = n_trees
         self.max_samples = max_samples
         self.max_depth = max_depth
         self.force_true_length = force_true_length
         self.trees = []
+        self.n_jobs = n_jobs
+        if self.n_jobs == 0:
+            raise ValueError("n_jobs must be greater than 0. Set to -1 for all available cores.")
+        if self.n_jobs == -1:
+            self.n_jobs = joblib.cpu_count()
+        if self.n_jobs > joblib.cpu_count():
+            raise ValueError(f"n_jobs cannot be greater than the number of available cores: {joblib.cpu_count()}")
 
     def fit(self, X):
         """
@@ -137,18 +145,19 @@ class IsolationForest(object):
         if self.max_samples is None:
             self.max_samples = min(256, len(X))
         
-        self.trees = []
-        for _ in range(self.n_trees):
-            # Randomly sample the data
-            if len(X) > self.max_samples:
-                X_sample = X[np.random.choice(len(X), self.max_samples, replace=False)]
-            else:
-                X_sample = X
+        self.trees = joblib.Parallel(n_jobs=self.n_jobs)(
+            joblib.delayed(self._fit_tree)(X) for _ in range(self.n_trees)
+        )
 
-            # Fit an isolation tree to the sample
-            tree = IsolationTree(max_depth=self.max_depth, force_true_length=self.force_true_length)
-            tree.fit(X_sample)
-            self.trees.append(tree)
+    def _fit_tree(self, X):
+        if len(X) > self.max_samples:
+            X_sample = X[np.random.choice(len(X), self.max_samples, replace=False)]
+        else:
+            X_sample = X
+
+        tree = IsolationTree(max_depth=self.max_depth, force_true_length=self.force_true_length)
+        tree.fit(X_sample)
+        return tree
 
     def anomaly_score(self, X):
         """
@@ -177,18 +186,36 @@ class IsolationForest(object):
         score = self.anomaly_score(X)
         return 1 if score > threshold else 0
             
-# Example usage
-if __name__ == "__main__":
-    # Generate some sample data
-    X = np.random.randn(1000, 2)
+# # Example usage
+# if __name__ == "__main__":
+#     # Generate some sample data
+#     X = np.random.randn(1000, 2)
 
-    # Fit the isolation forest
-    iso_forest = IsolationForest(n_trees=100, max_samples=256, max_depth=10)
-    iso_forest.fit(X)
+#     # Fit the isolation forest
+#     iso_forest = IsolationForest(n_trees=100, max_samples=256, max_depth=10)
+#     iso_forest.fit(X)
 
-    # Predict anomaly scores for new samples
-    new_samples = np.random.randn(10, 2)
-    for sample in new_samples:
-        score = iso_forest.anomaly_score(sample)
-        prediction = iso_forest.predict(sample)
-        print(f"Sample: {sample}, Anomaly Score: {score}, Prediction: {'Anomaly' if prediction == 1 else 'Normal'}")
+#     # Predict anomaly scores for new samples
+#     new_samples = np.random.randn(10, 2)
+#     for sample in new_samples:
+#         score = iso_forest.anomaly_score(sample)
+#         prediction = iso_forest.predict(sample)
+#         print(f"Sample: {sample}, Anomaly Score: {score}, Prediction: {'Anomaly' if prediction == 1 else 'Normal'}")
+
+# # Compare training time for n_jobs
+# if __name__ == "__main__":
+#     import time
+    
+#     # Generate synthetic data for testing
+#     X = np.random.randn(1_000_000, 10)
+    
+#     def fit_and_time(num_jobs):
+#         model = IsolationForest(n_jobs=num_jobs)
+#         start_time = time.time()
+#         model.fit(X)
+#         end_time = time.time()
+#         return end_time - start_time
+    
+#     for num_jobs in [1, 2, 4, 8, -1]:
+#         elapsed_time = fit_and_time(num_jobs)
+#         print(f"Training time with n_jobs={num_jobs}: {elapsed_time:.2f} seconds")
