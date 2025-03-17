@@ -8,6 +8,8 @@ from .randomForestRegressor import RandomForestRegressor
 
 from .gradientBoostedRegressor import GradientBoostedRegressor
 
+from .isolationForest import IsolationForest, IsolationTree, IsolationUtils
+
 __all__ = [
     "ClassifierTreeUtility",
     "ClassifierTree",
@@ -19,5 +21,9 @@ __all__ = [
         
     "RandomForestRegressor",
     
-    "GradientBoostedRegressor"
+    "GradientBoostedRegressor",
+    
+    "IsolationForest",
+    "IsolationTree",
+    "IsolationUtils",
 ]

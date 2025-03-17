@@ -41,7 +41,10 @@ from .trees import (
     RegressorTree,
     RandomForestClassifier,
     RandomForestRegressor,
-    GradientBoostedRegressor
+    GradientBoostedRegressor,
+    IsolationTree,
+    IsolationForest,    
+    IsolationUtils,
 )
 
 from .neural_networks import (
@@ -110,6 +113,9 @@ __all__ = [
     "RandomForestClassifier",
     "RandomForestRegressor",
     "GradientBoostedRegressor",
+    "IsolationTree",
+    "IsolationForest",
+    "IsolationUtils",
     
     # Neural Networks
     'AdamOptimizer',

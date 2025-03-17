@@ -1,0 +1,194 @@
+# Importing the required libraries
+import csv
+import numpy as np
+import ast
+from datetime import datetime
+from math import log, floor, ceil
+import random
+
+# Here's a high-level overview:
+# Random Subsampling: 
+#   The algorithm starts by randomly selecting a subset of the data. 
+#   This helps in reducing the computational complexity and ensures that the algorithm can handle large datasets efficiently.
+# Building Isolation Trees:     
+#   For each subset, the algorithm builds an isolation tree. 
+#   A binary tree where each node splits the data based on a randomly selected feature and a randomly selected split value between the minimum and maximum values of that feature.
+# Isolation Path Length: 
+#   The path length from the root of the tree to a given observation is recorded. 
+#   The idea is that anomalies, being few and different, will have shorter paths on average because they are easier to isolate.
+# Averaging Path Lengths: 
+#   The average path length of an observation across all trees is calculated. 
+#   This average path length is then used to compute an anomaly score.
+# Anomaly Score: 
+#   The anomaly score is derived from the average path length. 
+#   Observations with shorter average path lengths are considered anomalies. 
+#   The score is typically normalized to a range between 0 and 1, where a score close to 1 indicates a high likelihood of being an anomaly.
+
+class IsolationUtils(object):
+    """Utility functions for the Isolation Forest algorithm."""
+    @staticmethod
+    def compute_avg_path_length(size):
+        """
+        Computes the average path length of unsuccessful searches in a binary search tree.
+
+        Parameters:
+        - size (int): The size of the tree.
+
+        Returns:
+        - float: The average path length.
+        """
+        # If the size is less than or equal to 1, return 0
+        # This is because a tree with 0 or 1 nodes has no path to traverse
+        if size <= 1:
+            return 0
+        # Else, calculate the average path length using the formula:
+        # 2 * (log(size - 1) + Euler's constant) - (2 * (size - 1) / size)
+        return 2 * (np.log(size - 1) + 0.5772156649) - (2 * (size - 1) / size)
+
+class IsolationTree(object):
+    """An isolation tree for anomaly detection."""
+
+    def __init__(self, max_depth=10, force_true_length=False):
+        self.max_depth = max_depth
+        self.tree = None
+        self.force_true_length = force_true_length  # If true, use the true path length for scoring
+
+    def fit(self, X, depth=0):
+        """
+        Fits the isolation tree to the data.
+
+        Parameters:
+        - X (array-like): The input features.
+        - depth (int): The current depth of the tree (default: 0).
+
+        Returns:
+        - dict: The learned isolation tree.
+        """
+        if len(X) == 0:
+            raise ValueError("Input data X cannot be empty.")
+        
+        if len(X) <= 1 or depth >= self.max_depth:
+            return {'size': len(X)}
+
+        # Randomly select a feature and a split value
+        feature = np.random.randint(0, X.shape[1])
+        split_val = np.random.uniform(np.min(X[:, feature]), np.max(X[:, feature]))
+
+        # Partition the data
+        X_left = X[X[:, feature] <= split_val]
+        X_right = X[X[:, feature] > split_val]
+
+        # Recursively build the left and right subtrees
+        left_tree = self.fit(X_left, depth + 1)
+        right_tree = self.fit(X_right, depth + 1)
+
+        self.tree = {'feature': feature, 'split_val': split_val, 'left': left_tree, 'right': right_tree}
+        return self.tree
+
+    def path_length(self, X, tree=None, depth=0):
+        """
+        Computes the path length for a given sample.
+
+        Parameters:
+        - X (array-like): The input sample.
+        - tree (dict): The current node of the tree (default: None).
+        - depth (int): The current depth of the tree (default: 0).
+
+        Returns:
+        - int: The path length.
+        """
+        if len(X) == 0:
+            raise ValueError("Input data X cannot be empty.")
+        
+        if tree is None:
+            tree = self.tree
+
+        if 'size' in tree:
+            if self.force_true_length:
+                return depth  # Return the true path length
+            else:
+                return depth + IsolationUtils.compute_avg_path_length(tree['size'])  # Return the average path length for the size
+
+        feature = tree['feature']
+        split_val = tree['split_val']
+
+        if X[feature] <= split_val:
+            return self.path_length(X, tree['left'], depth + 1)
+        else:
+            return self.path_length(X, tree['right'], depth + 1)
+
+class IsolationForest(object):
+    """Isolation Forest for anomaly detection."""
+
+    def __init__(self, n_trees=100, max_samples=None, max_depth=10, force_true_length=False):
+        self.n_trees = n_trees
+        self.max_samples = max_samples
+        self.max_depth = max_depth
+        self.force_true_length = force_true_length
+        self.trees = []
+
+    def fit(self, X):
+        """
+        Fits the isolation forest to the data.
+
+        Parameters:
+        - X (array-like): The input features.
+        """
+        if self.max_samples is None:
+            self.max_samples = min(256, len(X))
+        
+        self.trees = []
+        for _ in range(self.n_trees):
+            # Randomly sample the data
+            if len(X) > self.max_samples:
+                X_sample = X[np.random.choice(len(X), self.max_samples, replace=False)]
+            else:
+                X_sample = X
+
+            # Fit an isolation tree to the sample
+            tree = IsolationTree(max_depth=self.max_depth, force_true_length=self.force_true_length)
+            tree.fit(X_sample)
+            self.trees.append(tree)
+
+    def anomaly_score(self, X):
+        """
+        Computes the anomaly score for a given sample.
+
+        Parameters:
+        - X (array-like): The input sample.
+
+        Returns:
+        - float: The anomaly score.
+        """
+        path_lengths = np.array([tree.path_length(X) for tree in self.trees])
+        avg_path_length = np.mean(path_lengths)
+        return 2 ** (-avg_path_length / IsolationUtils.compute_avg_path_length(self.max_samples))
+
+    def predict(self, X, threshold=0.5):
+        """
+        Predicts whether a sample is an anomaly.
+
+        Parameters:
+        - X (array-like): The input sample.
+
+        Returns:
+        - int: 1 if the sample is an anomaly, 0 otherwise.
+        """
+        score = self.anomaly_score(X)
+        return 1 if score > threshold else 0
+            
+# Example usage
+if __name__ == "__main__":
+    # Generate some sample data
+    X = np.random.randn(1000, 2)
+
+    # Fit the isolation forest
+    iso_forest = IsolationForest(n_trees=100, max_samples=256, max_depth=10)
+    iso_forest.fit(X)
+
+    # Predict anomaly scores for new samples
+    new_samples = np.random.randn(10, 2)
+    for sample in new_samples:
+        score = iso_forest.anomaly_score(sample)
+        prediction = iso_forest.predict(sample)
+        print(f"Sample: {sample}, Anomaly Score: {score}, Prediction: {'Anomaly' if prediction == 1 else 'Normal'}")
