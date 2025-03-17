@@ -192,7 +192,7 @@ class TestTrainingAnimator(unittest.TestCase):
         dummy_writer = DummyWriter()
         self.animator.writer = dummy_writer
         self.animator.frame_count = 5
-        self.animator.finish_training_video()
+        self.animator.finish_training_video(print_message=False)
         self.assertTrue(dummy_writer.finish_called)
         self.assertIsNone(self.animator.writer)
         self.assertEqual(self.animator.frame_count, 0)

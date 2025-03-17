@@ -285,7 +285,7 @@ class TrainingAnimator:
         self.writer.grab_frame()
         self.frame_count += 1
     
-    def finish_training_video(self):
+    def finish_training_video(self, print_message=True):
         """
         Finish and save the training video.
         """
@@ -293,6 +293,6 @@ class TrainingAnimator:
             raise ValueError("Video writer not initialized. Call setup_training_video() first.")
         
         self.writer.finish()
-        print(f"Training video saved with {self.frame_count} frames.")
+        if print_message: print(f"Training video saved with {self.frame_count} frames.")
         self.writer = None
         self.frame_count = 0
