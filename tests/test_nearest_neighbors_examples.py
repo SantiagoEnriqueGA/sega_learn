@@ -47,7 +47,7 @@ def load_tests(loader, tests, pattern):
         
         def test_func(self, example_file=example_file):
             """Tests the functionality of a given example file by importing it as a module and executing it."""
-            print(f"Testing example file: {strip_file_path(example_file)}")
+            print(f"\nTesting example file: {strip_file_path(example_file)}", end="", flush=True)
             
             # Import the example file as a module and execute it.
             spec = importlib.util.spec_from_file_location("module.name", example_file)

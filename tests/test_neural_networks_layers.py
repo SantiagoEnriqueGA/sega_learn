@@ -17,7 +17,7 @@ class TestDenseLayer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("Testing DenseLayer class")
+        print("\nTesting DenseLayer class", end="", flush=True)
 
     def setUp(self):
         """Initialize test fixtures."""
@@ -78,7 +78,7 @@ class TestFlattenLayer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("Testing FlattenLayer class")
+        print("\nTesting FlattenLayer class", end="", flush=True)
 
     def setUp(self):
         """Initialize test fixtures."""
@@ -116,7 +116,7 @@ class TestConvLayer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("Testing ConvLayer class")
+        print("\nTesting ConvLayer class", end="", flush=True)
 
     def setUp(self):
         """Initialize test fixtures."""

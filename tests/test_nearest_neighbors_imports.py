@@ -20,7 +20,7 @@ class TestImportsNearestNeighbors(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Imports - Nearest Neighbors")
+        print("\nTesting Imports - Nearest Neighbors", end="", flush=True)
     
     def test_individual_imports(self):
         assert knc is not None

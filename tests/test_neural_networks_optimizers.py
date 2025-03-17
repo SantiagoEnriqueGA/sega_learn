@@ -27,7 +27,7 @@ class TestAdamOptimizer(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing the AdamOptimizer Class")
+        print("\nTesting the AdamOptimizer Class", end="", flush=True)
 
     def setUp(self):
         self.optimizer = AdamOptimizer()
@@ -62,7 +62,7 @@ class TestSGDOptimizer(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing the SGDOptimizer Class")
+        print("\nTesting the SGDOptimizer Class", end="", flush=True)
 
     def setUp(self):
         self.optimizer = SGDOptimizer()
@@ -97,7 +97,7 @@ class TestAdadeltaOptimizer(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing the AdadeltaOptimizer Class")
+        print("\nTesting the AdadeltaOptimizer Class", end="", flush=True)
 
     def setUp(self):
         self.optimizer = AdadeltaOptimizer()

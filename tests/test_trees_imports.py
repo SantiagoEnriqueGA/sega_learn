@@ -25,7 +25,7 @@ class TestImportsLinear(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Imports - Trees")
+        print("\nTesting Imports - Trees", end="", flush=True)
     
     def test_individual_imports(self):
         assert ctu is not None

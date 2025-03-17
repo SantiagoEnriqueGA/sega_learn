@@ -25,7 +25,7 @@ class TestClassifierTreeUtility(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Classifier Tree Utility")
+        print("\nTesting Classifier Tree Utility", end="", flush=True)
     
     def setUp(self):
         self.utility = ClassifierTreeUtility()
@@ -90,7 +90,7 @@ class TestClassifierTree(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Classifier Tree")
+        print("\nTesting Classifier Tree", end="", flush=True)
         
     def setUp(self):
         self.tree = ClassifierTree(max_depth=5)
@@ -137,7 +137,7 @@ class TestRandomForestClassifier(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Random Forest Classifier")
+        print("\nTesting Random Forest Classifier", end="", flush=True)
         
     def setUp(self):
         X, y = make_classification(n_samples=100, n_features=5, n_classes=2)

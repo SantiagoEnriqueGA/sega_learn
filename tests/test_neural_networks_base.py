@@ -17,7 +17,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("Testing NeuralNetwork class with base backend")
+        print("\nTesting NeuralNetwork class with base backend", end="", flush=True)
 
     def setUp(self):
         """Initialize test fixtures."""

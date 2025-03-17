@@ -35,7 +35,7 @@ class TestRegressorTreeUtility(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Regressor Tree Utility")
+        print("\nTesting Regressor Tree Utility", end="", flush=True)
     
     def setUp(self):
         self.utility = RegressorTreeUtility()
@@ -197,7 +197,7 @@ class TestRegressorTree(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Regressor Tree")
+        print("\nTesting Regressor Tree", end="", flush=True)
         
     def setUp(self):
         self.tree = RegressorTree()
@@ -254,7 +254,7 @@ class TestRandomForestRegressor(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Random Forest Regressor")
+        print("\nTesting Random Forest Regressor", end="", flush=True)
         
     def setUp(self):
         X, y = synthetic_data_regression(n_samples=100, n_features=3)
@@ -391,7 +391,7 @@ class TestGradientBoostedRegressor(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Gradient Boosted Regressor")
+        print("\nTesting Gradient Boosted Regressor", end="", flush=True)
         
     def setUp(self):
         X, y = synthetic_data_regression(n_samples=100, n_features=3)

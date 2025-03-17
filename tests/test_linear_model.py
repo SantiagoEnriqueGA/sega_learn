@@ -27,7 +27,7 @@ class TestOrdinaryLeastSquares(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Ordinary Least Squares Model")
+        print("\nTesting Ordinary Least Squares Model", end="", flush=True)
     
     def setUp(self):
         self.model = OrdinaryLeastSquares()
@@ -89,7 +89,7 @@ class TestRidge(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Ridge Regression Model")
+        print("\nTesting Ridge Regression Model", end="", flush=True)
     
     def setUp(self):
         self.model = Ridge()      
@@ -162,7 +162,7 @@ class TestLasso(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Lasso Regression Model")
+        print("\nTesting Lasso Regression Model", end="", flush=True)
     
     def setUp(self):
         self.model = Lasso()
@@ -237,7 +237,7 @@ class TestBayesian(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Bayesian Regression Model")
+        print("\nTesting Bayesian Regression Model", end="", flush=True)
     
     def setUp(self):
         self.model = Bayesian()
@@ -321,7 +321,7 @@ class TestRANSAC(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing RANSAC Regression Model")
+        print("\nTesting RANSAC Regression Model", end="", flush=True)
     
     def setUp(self):
         self.model = RANSAC()
@@ -409,7 +409,7 @@ class TestPassiveAggressiveRegressor(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Passive Aggressive Regressor Model")
+        print("\nTesting Passive Aggressive Regressor Model", end="", flush=True)
     
     def setUp(self):
         self.model = PassiveAggressiveRegressor()
@@ -494,7 +494,7 @@ class TestLinearDiscriminantAnalysis(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Linear Discriminant Analysis")
+        print("\nTesting Linear Discriminant Analysis", end="", flush=True)
         
     def setUp(self):
         self.cov_class_1 = np.array([[0.0, -1.0], [2.5, 0.7]]) * 2.0    # Covariance matrix for class 1, scaled by 2.0
@@ -561,7 +561,7 @@ class TestQuadraticDiscriminantAnalysis(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Quadratic Discriminant Analysis")
+        print("\nTesting Quadratic Discriminant Analysis", end="", flush=True)
         
     def setUp(self):
         self.cov_class_1 = np.array([[0.0, -1.0], [2.5, 0.7]]) * 2.0    # Covariance matrix for class 1, scaled by 2.0

@@ -27,7 +27,7 @@ class TestPolynomialTransform(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Polynomial Transform")
+        print("\nTesting Polynomial Transform", end="", flush=True)
     
     def setUp(self):
         self.transform = PolynomialTransform(degree=2)
@@ -64,7 +64,7 @@ class TestDataPrep(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Data Prep")
+        print("\nTesting Data Prep", end="", flush=True)
         
     def test_one_hot_encode(self):
         # DF with one categorical column (col 3)
@@ -170,7 +170,7 @@ class TestVotingRegressor(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Voting Regressor")
+        print("\nTesting Voting Regressor", end="", flush=True)
     
     def setUp(self):
         self.X, self.y = make_regression(n_samples=1000, n_features=5, noise=25, random_state=42)
@@ -217,7 +217,7 @@ class TestModelSelectionUtils(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Model Selection Utils")
+        print("\nTesting Model Selection Utils", end="", flush=True)
         
     def setUp(self):
         self.X, self.y = make_regression(n_samples=100, n_features=5, noise=25, random_state=42)
@@ -289,7 +289,7 @@ class TestGridSearchCV(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing GridSearchCV")
+        print("\nTesting GridSearchCV", end="", flush=True)
     
     def setUp(self):
         self.X_reg, self.y_reg = make_regression(n_samples=100, n_features=5, noise=25, random_state=42)
@@ -378,7 +378,7 @@ class TestRandomSearchCV(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing RandomSearchCV")
+        print("\nTesting RandomSearchCV", end="", flush=True)
     
     def setUp(self):
         self.X_reg, self.y_reg = make_regression(n_samples=100, n_features=5, noise=25, random_state=42)
@@ -482,7 +482,7 @@ class TestMetrics(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Metrics")
+        print("\nTesting Metrics", end="", flush=True)
         cls.num_tests = 100  # Define the variable for the number of tests
     
     def setUp(self):
@@ -638,7 +638,7 @@ class TestDataAugmentation(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Data Augmentation")
+        print("\nTesting Data Augmentation", end="", flush=True)
     
     def setUp(self):
         self.X, self.y = make_classification(n_samples=1000, n_features=20, n_classes=2, weights=[0.7, 0.3], random_state=42, class_sep=.5)
@@ -786,7 +786,7 @@ class TestDataDecomposition(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Decomposition")
+        print("\nTesting Decomposition", end="", flush=True)
     
     def setUp(self):
         self.X = np.random.rand(100, 5)

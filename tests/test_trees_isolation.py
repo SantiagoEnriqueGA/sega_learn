@@ -18,7 +18,7 @@ class TestIsolationUtils(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Isolation Tree Utility")
+        print("\nTesting Isolation Tree Utility", end="", flush=True)
     
     def test_compute_avg_path_length(self):
         self.assertAlmostEqual(IsolationUtils.compute_avg_path_length(1), 0)
@@ -38,7 +38,7 @@ class TestIsolationTree(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Isolation Tree")
+        print("\nTesting Isolation Tree", end="", flush=True)
         
     def setUp(self):
         self.X = np.random.randn(100, 2)
@@ -79,7 +79,7 @@ class TestIsolationForest(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Isolation Forest")
+        print("\nTesting Isolation Forest", end="", flush=True)
         
     def setUp(self):
         self.X = np.random.randn(100, 2)

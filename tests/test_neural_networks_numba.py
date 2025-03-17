@@ -22,7 +22,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("Testing NeuralNetwork class with Numba backend")
+        print("\nTesting NeuralNetwork class with Numba backend", end="", flush=True)
 
     def setUp(self):
         """Initialize test fixtures."""

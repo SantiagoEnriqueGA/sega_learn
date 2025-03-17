@@ -17,7 +17,7 @@ class TestMakeData(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing makeData utilities")
+        print("\nTesting makeData Utilities", end="", flush=True)
     
     def setUp(self):
         self.random_state = 42  # Fixed random state for reproducibility

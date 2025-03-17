@@ -29,7 +29,7 @@ class TestKMeans(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing KMeans")
+        print("\nTesting KMeans", end="", flush=True)
     
     def setUp(self):
         # Generate synthetic data for testing
@@ -199,7 +199,7 @@ class TestDBSCAN(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
-        print("Testing DBSCAN")
+        print("\nTesting DBSCAN", end="", flush=True)
         
     def setUp(self):
         # Generate synthetic data for testing

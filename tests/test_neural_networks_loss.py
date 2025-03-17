@@ -19,7 +19,7 @@ class TestCrossEntropyLoss(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing the CrossEntropyLoss class")
+        print("\nTesting the CrossEntropyLoss class", end="", flush=True)
     
     def test_cross_entropy_loss_single_class(self):
         loss_fn = CrossEntropyLoss()
@@ -57,7 +57,7 @@ class TestBCEWithLogitsLoss(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing the BCEWithLogitsLoss class")
+        print("\nTesting the BCEWithLogitsLoss class", end="", flush=True)
         
     def test_bce_with_logits_loss(self):
         loss_fn = BCEWithLogitsLoss()

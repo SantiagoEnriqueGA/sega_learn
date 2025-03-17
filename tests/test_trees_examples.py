@@ -21,19 +21,19 @@ class TestExampleExceptions(unittest.TestCase):
     def test_main(self, example_file):
         if 'gradientBoostedRegressor.py' in example_file:
             from examples.trees.gradientBoostedRegressor import basic_example
-            print(f"Testing example file: {strip_file_path(example_file)}")
+            print(f"\nTesting example file: {strip_file_path(example_file)}", end="", flush=True)
             with suppress_print():
                 basic_example(num_trees=5, max_depth=3)
         
         elif 'randomForestClassifier.py' in example_file:
             from examples.trees.randomForestClassifier import basic_example
-            print(f"Testing example file: {strip_file_path(example_file)}")
+            print(f"\nTesting example file: {strip_file_path(example_file)}", end="", flush=True)
             with suppress_print():
                 basic_example(num_trees=5, max_depth=3)
                 
         elif 'randomForestRegressor.py' in example_file:
             from examples.trees.randomForestRegressor import basic_example
-            print(f"Testing example file: {strip_file_path(example_file)}")
+            print(f"\nTesting example file: {strip_file_path(example_file)}", end="", flush=True)
             with suppress_print():
                 basic_example(num_trees=5, max_depth=3)
 
@@ -65,7 +65,7 @@ def load_tests(loader, tests, pattern):
         
         def test_func(self, example_file=example_file):
             """Tests the functionality of a given example file by importing it as a module and executing it."""
-            print(f"Testing example file: {strip_file_path(example_file)}")
+            print(f"\nTesting example file: {strip_file_path(example_file)}", end="", flush=True)
             
             # Import the example file as a module and execute it.
             spec = importlib.util.spec_from_file_location("module.name", example_file)

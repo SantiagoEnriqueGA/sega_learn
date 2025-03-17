@@ -1,6 +1,7 @@
 import unittest
 import sys
 import os
+import io
 import tempfile
 import warnings
 import numpy as np
@@ -47,7 +48,7 @@ class TestTrainingAnimator(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing the TrainingAnimator Class")
+        print("\nTesting the TrainingAnimator Class", end="", flush=True)
 
     def setUp(self):
         # Create an instance with specific figure size and dpi for testing.
@@ -113,7 +114,7 @@ class TestTrainingAnimator(unittest.TestCase):
         """
         Test that animate_training_metrics creates a FuncAnimation correctly and saves it to a temp file.
         If ffmpeg is not available, it should fall back to PillowWriter and save the animation as a .gif file.
-        """
+        """                
         metrics = ["loss", "accuracy"]
         self.animator.initialize(metrics_to_track=metrics, has_validation=False)
         # Simulate training data for 3 epochs.
@@ -137,6 +138,7 @@ class TestTrainingAnimator(unittest.TestCase):
             self.assertTrue(os.path.exists(tmp_path))  # Ensure the file is created
         finally:
             os.remove(tmp_path)  # Clean up after test
+            
 
     def test_animate_training_metrics_no_initialize(self):
         """Test that animate_training_metrics raises an error if initialize() wasn't called."""

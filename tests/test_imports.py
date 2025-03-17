@@ -16,7 +16,7 @@ from sega_learn import nearest_neighbors
 class TestImports(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        print("Testing Imports - Main Package")
+        print("\nTesting Imports - Main Package", end="", flush=True)
         
     def test_all_imports(self):
         assert sega_learn is not None

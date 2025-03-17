@@ -39,7 +39,7 @@ class TestImportsNeuralNetworks(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Imports - Neural Networks")
+        print("\nTesting Imports - Neural Networks", end="", flush=True)
     
     def test_base_method_imports(self):
         assert lrExp is not None

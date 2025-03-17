@@ -29,7 +29,7 @@ class TestTrainTestSplit(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
-        print("Testing train_test_split function")
+        print("\nTesting train_test_split function", end="", flush=True)
     
     def setUp(self):
         # Create sample data for tests

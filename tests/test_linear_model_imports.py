@@ -27,7 +27,7 @@ class TestImportsLinear(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Imports - Linear Models")
+        print("\nTesting Imports - Linear Models", end="", flush=True)
     
     def test_individual_imports(self):
         assert ols is not None

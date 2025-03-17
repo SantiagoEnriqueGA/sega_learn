@@ -20,7 +20,7 @@ class TestImportsClustering(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing Imports - Clustering")
+        print("\nTesting Imports - Clustering", end="", flush=True)
     
     def test_individual_imports(self):
         assert dbs is not None

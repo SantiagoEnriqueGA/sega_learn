@@ -29,7 +29,7 @@ class TestKNeighborsClassifier(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing KNeighborsClassifierKNeighborsBase Class")
+        print("\nTesting KNeighborsClassifierKNeighborsBase Class", end="", flush=True)
     
     def setUp(self):
         pass    
@@ -137,7 +137,7 @@ class TestKNeighborsRegressor(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("Testing KNeighborsRegressor Class")
+        print("\nTesting KNeighborsRegressor Class", end="", flush=True)
     
     def setUp(self):
         pass    
