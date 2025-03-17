@@ -51,6 +51,7 @@ ax2.bar(bin_centers, hist, width=(bins[1] - bins[0]), color=colors, alpha=0.7)
 ax2.set_title('Anomaly Scores Distribution')
 ax2.set_xlabel('Anomaly Score')
 ax2.set_ylabel('Frequency')
+ax2.grid(axis='y', linestyle='--', alpha=0.5)
 ax2.axvline(threshold, color='red', linestyle='dashed', linewidth=1, label='Threshold')
 ax2.legend()
 

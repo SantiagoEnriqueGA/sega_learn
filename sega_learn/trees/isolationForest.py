@@ -135,6 +135,8 @@ class IsolationForest(object):
         if self.n_jobs > joblib.cpu_count():
             raise ValueError(f"n_jobs cannot be greater than the number of available cores: {joblib.cpu_count()}")
 
+        self.classes_ = np.array([0, 1])  # Add this line to define the classes attribute
+
     def fit(self, X):
         """
         Fits the isolation forest to the data.
@@ -161,30 +163,38 @@ class IsolationForest(object):
 
     def anomaly_score(self, X):
         """
-        Computes the anomaly score for a given sample.
+        Computes the anomaly scores for given samples.
 
         Parameters:
-        - X (array-like): The input sample.
+        - X (array-like): The input samples.
 
         Returns:
-        - float: The anomaly score.
+        - array: An array of anomaly scores.
         """
-        path_lengths = np.array([tree.path_length(X) for tree in self.trees])
-        avg_path_length = np.mean(path_lengths)
-        return 2 ** (-avg_path_length / IsolationUtils.compute_avg_path_length(self.max_samples))
+        if X.ndim == 1:
+            X = X.reshape(1, -1)
+        path_lengths = np.array([[tree.path_length(x) for tree in self.trees] for x in X])
+        avg_path_lengths = np.mean(path_lengths, axis=1)
+        return 2 ** (-avg_path_lengths / IsolationUtils.compute_avg_path_length(self.max_samples))
 
     def predict(self, X, threshold=0.5):
         """
-        Predicts whether a sample is an anomaly.
+        Predicts whether samples are anomalies.
 
         Parameters:
-        - X (array-like): The input sample.
+        - X (array-like): The input samples.
+        - threshold (float): The threshold for classifying anomalies (default: 0.5).
 
         Returns:
-        - int: 1 if the sample is an anomaly, 0 otherwise.
+        - array: An array of predictions (1 if the sample is an anomaly, 0 otherwise).
         """
-        score = self.anomaly_score(X)
-        return 1 if score > threshold else 0
+        if X.ndim == 1:
+            X = X.reshape(1, -1)
+        scores = np.array([self.anomaly_score(x) for x in X])
+        return (scores > threshold).astype(int)
+    
+    def __sklearn_is_fitted__(self):
+        return len(self.trees) > 0
             
 # # Example usage
 # if __name__ == "__main__":
