@@ -2,7 +2,8 @@ import numpy as np
 
 class BaseSVM:
     def __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01,
-                 kernel='linear', degree=3, gamma='scale', coef0=0.0):
+                 kernel='linear', degree=3, gamma='scale', coef0=0.0,
+                 regression=False):
         """
         Initialize the BaseSVM class with kernel support.
         
@@ -15,6 +16,7 @@ class BaseSVM:
         - degree: int, degree for polynomial kernel
         - gamma: str or float, kernel coefficient ('scale', 'auto', or float)
         - coef0: float, independent term in poly and sigmoid kernels
+        - regression: bool, whether to use regression (SVR) or classification (SVC) (default: False)
         """
         self.C = C
         self.tol = tol
@@ -24,6 +26,7 @@ class BaseSVM:
         self.degree = degree
         self.gamma = gamma
         self.coef0 = coef0
+        self.regression = regression
         self.w = None  # Weight vector for linear kernel
         self.b = None  # Bias term
         self.support_vectors_ = None
@@ -55,7 +58,17 @@ class BaseSVM:
         elif not isinstance(self.gamma, (int, float)):
             raise ValueError("gamma must be 'scale', 'auto', or a numeric value")
         
-        self._fit(X, y)
+        # Handle multi-class classification using one-vs-rest strategy
+        self.classes_ = np.unique(y)
+        if len(self.classes_) > 2 and not self.regression:
+            self.models_ = []
+            for cls in self.classes_:
+                y_binary = np.where(y == cls, 1, -1)
+                model = self.__class__(C=self.C, tol=self.tol, max_iter=self.max_iter, learning_rate=self.learning_rate)
+                model._fit(X, y_binary)
+                self.models_.append(model)
+        else:
+            self._fit(X, y)
         return self
 
     def _fit(self, X, y):
@@ -121,7 +134,10 @@ class BaseSVM:
         Returns:
         - Predicted labels of shape (n_samples,)
         """
-        return np.sign(self.decision_function(X))
+        if len(self.classes_) > 2:
+            return self._predict_multiclass(X)
+        else:
+            return self._predict_binary(X)
 
     def score(self, X, y):
         """
@@ -137,7 +153,10 @@ class BaseSVM:
         Raises:
             NotImplementedError: If the method is not overridden by subclasses.
         """
-        raise NotImplementedError("Subclasses should implement this!")
+        if len(self.classes_) > 2:
+            return self._score_multiclass(X, y)
+        else:
+            return self._score_binary(X, y)
         
     def get_params(self, deep=True):
         """

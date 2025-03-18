@@ -66,18 +66,32 @@ class LinearSVC(BaseSVM):
                 break
                 
         return self
-
-    def predict(self, X):
+   
+    def _predict_binary(self, X):
         """
-        Predict class labels for input samples.
+        Predict class labels for binary classification.
         
         Parameters:
             X (array-like of shape (n_samples, n_features)): Input samples.
-            
+        
         Returns:
             y_pred (array of shape (n_samples,)): Predicted class labels {-1, 1}.
         """
-        return super().predict(X)
+        return np.sign(self.decision_function(X))
+    
+    def _predict_multiclass(self, X):
+        """
+        Predict class labels for multi-class classification using one-vs-rest strategy.
+        
+        Parameters:
+            X (array-like of shape (n_samples, n_features)): Input samples.
+        
+        Returns:
+            predicted_labels (array of shape (n_samples,)): Predicted class labels.    
+        """
+        decision_values = np.array([model.decision_function(X) for model in self.models_]).T
+        return self.classes_[np.argmax(decision_values, axis=1)]
+        
     
     def decision_function(self, X):
         """
@@ -91,9 +105,9 @@ class LinearSVC(BaseSVM):
         """
         return super().decision_function(X)
     
-    def score(self, X, y):
+    def _score_binary(self, X, y):
         """
-        Compute the mean accuracy of predictions.
+        Compute the mean accuracy of predictions for binary classification.
         
         Parameters:
             X (array-like of shape (n_samples, n_features)): Test samples.
@@ -105,11 +119,25 @@ class LinearSVC(BaseSVM):
         y_true = np.where(y <= 0, -1, 1)
         y_pred = self.predict(X)
         return np.mean(y_true == y_pred)
+    
+    def _score_multiclass(self, X, y):
+        """
+        Compute the mean accuracy of predictions for multi-class classification.
+        
+        Parameters:
+            X (array-like of shape (n_samples, n_features)): Test samples.
+            y (array-like of shape (n_samples,)): True labels.
+            
+        Returns:
+            score (float): Mean accuracy of predictions.
+        """
+        y_pred = self.predict(X)
+        return np.mean(y == y_pred)
 
 
 class LinearSVR(BaseSVM):
     def __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, epsilon=0.1):
-        super().__init__(C, tol, max_iter, learning_rate)
+        super().__init__(C, tol, max_iter, learning_rate, regression=True)
         self.epsilon = epsilon
         
     def _fit(self, X, y):
