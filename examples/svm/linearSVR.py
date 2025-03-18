@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.datasets import make_regression
 from sklearn.preprocessing import StandardScaler
 
 import sys
@@ -8,16 +7,17 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.svm import *
+from sega_learn.utils import make_regression
 
 # Set random seed for reproducibility
 np.random.seed(42)
 
 # Generate a regression dataset
-X, y = make_regression(n_samples=200, n_features=1, n_informative=1, noise=10, random_state=42)
+X, y = make_regression(n_samples=200, n_features=1, n_informative=1, noise=.1, random_state=42)
 
-# Add some outliers
+# # Add some outliers
 outlier_indices = np.random.choice(len(X), size=10, replace=False)
-y[outlier_indices] += np.random.normal(0, 100, size=10)
+y[outlier_indices] += np.random.normal(-3, 3, size=10)
 
 # Scale features
 scaler_X = StandardScaler()

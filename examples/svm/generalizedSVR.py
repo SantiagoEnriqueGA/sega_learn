@@ -1,3 +1,7 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
+
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -6,10 +10,8 @@ from sega_learn.svm import *
 from sega_learn.utils import Metrics
 r2_score = Metrics.r_squared
 
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.gridspec import GridSpec
-np.random.seed(42)  # Random seed for reproducibility
+# Random seed for reproducibility
+np.random.seed(42)
 
 # Generate data
 pnts = 300
@@ -88,7 +90,3 @@ ax_combined.grid(True, alpha=0.3)
 plt.tight_layout()
 # plt.show()
 plt.savefig('examples/svm/plots/generalizedSVR_kernels.png', dpi=300)
-
-# Print R² scores for comparison
-# for kernel, score in zip(kernels, r2_scores):
-#     print(f"{kernel.upper()} Kernel R² Score: {score:.4f}")

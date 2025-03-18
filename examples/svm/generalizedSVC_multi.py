@@ -1,13 +1,16 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.utils.makeData import make_blobs
 from sega_learn.svm import *
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
-np.random.seed(42)  # Random seed for reproducibility
+
+# Random seed for reproducibility
+np.random.seed(42)
 
 # Generate classification data
 X, y, _ = make_blobs(n_samples=1000, n_features=2, centers=3, random_state=42, cluster_std=3.0, center_box=(-15.0, 15.0))

@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.datasets import make_classification
 from sklearn.preprocessing import StandardScaler
 
 import sys
@@ -8,13 +7,14 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.svm import *
+from sega_learn.utils import make_classification
 
 # Set random seed for reproducibility
 np.random.seed(42)
 
 # Generate a binary classification dataset
 X, y = make_classification(n_samples=300, n_features=2, n_redundant=0, n_informative=2,
-                         random_state=42, n_clusters_per_class=1)
+                         random_state=42, n_clusters_per_class=1, class_sep=1.5)
 
 # Convert labels to -1 and 1
 y = np.where(y == 0, -1, 1)

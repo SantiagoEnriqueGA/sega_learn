@@ -11,7 +11,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from sega_learn.svm import *
 from sega_learn.utils.makeData import make_blobs
 
-
 # Set random seed for reproducibility
 np.random.seed(42)
 

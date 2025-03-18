@@ -1,14 +1,15 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-
-from sega_learn.linear_models import make_sample_data
-from sklearn.svm import OneClassSVM
 import numpy as np
 from math import floor, ceil
 from scipy import linalg
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+from sega_learn.linear_models import make_sample_data
+from sega_learn.svm import OneClassSVM
 
 def plot_ellipse(mean, cov, color, ax, label):
     """Plot an ellipse representing the class conditional density."""
@@ -59,7 +60,6 @@ def fig_add_one_class_svm(X, y, ocsvm, ax):
     ax.legend()
     
 
-
 # ---------------------------------------------------------------------
 # OneClassSVM with Different Kernels
 # ---------------------------------------------------------------------
@@ -77,19 +77,19 @@ y_min, y_max = floor(np.min(X[:, 1])), ceil(np.max(X[:, 1]))
 fig, axes = plt.subplots(1, 3, figsize=(18, 6))
 
 # Fit and plot OneClassSVM with RBF kernel
-ocsvm_rbf = OneClassSVM(kernel='rbf', nu=0.1)
+ocsvm_rbf = OneClassSVM(kernel='rbf', gamma='scale', learning_rate=1e-4)
 fig_add_one_class_svm(X, y, ocsvm_rbf, axes[0])
 axes[0].set_title(f'RBF Kernel')
 
 # Fit and plot OneClassSVM with Polynomial kernel
-ocsvm_poly = OneClassSVM(kernel='poly', degree=3, nu=0.1)
+ocsvm_poly = OneClassSVM(kernel='poly', degree=7, gamma='scale')
 poly_acc = fig_add_one_class_svm(X, y, ocsvm_poly, axes[1])
 axes[1].set_title(f'Polynomial Kernel')
 
-# Fit and plot OneClassSVM with Linear kernel
-ocsvm_linear = OneClassSVM(kernel='linear', nu=0.1)
+# Fit and plot OneClassSVM with Sigmoid kernel
+ocsvm_linear = OneClassSVM(kernel='sigmoid')
 linear_acc = fig_add_one_class_svm(X, y, ocsvm_linear, axes[2])
-axes[2].set_title(f'Linear Kernel')
+axes[2].set_title(f'Sigmoid Kernel')
 
 # Add overall title
 plt.suptitle('OneClassSVM Decision Boundary Comparison per Kernel', fontsize=16)
