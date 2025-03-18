@@ -26,7 +26,8 @@ $otherTodos = @"
 Planned/Ideas:
 Time Series Analysis - ARIMA, Moving Average, Exponential Smoothing
 Anomaly Detection - Isolation Forest, One-Class SVM
-Data Preprocessing - Normalization, Standardization, Missing Value Imputation
+Data Preprocessing - Normalization, Standardization, Missing Value Imputation, StandardScaler
+OneClassSVM - fix/check implementation
 Deep Learning Enhancements
     - Implement Flatten Layer, Conv Layer:Base Done, Numba: TODO
     - Implement Recurrent Layers
