@@ -75,6 +75,7 @@ from .svm import (
     LinearSVC,
     LinearSVR,
     OneClassSVM,
+    GeneralizedSVR,
 )
 
 
@@ -152,6 +153,7 @@ __all__ = [
     'LinearSVC', 
     'LinearSVR', 
     'OneClassSVM',
+    'GeneralizedSVR',
 ]
 
 try:

@@ -102,6 +102,7 @@ class BaseSVM:
         elif self.kernel == 'rbf':
             # Compute squared Euclidean distances
             dist = np.sum(X1**2, axis=1)[:, np.newaxis] + np.sum(X2**2, axis=1) - 2 * np.dot(X1, X2.T)
+            dist = np.clip(dist, 0, 1e6)  # Clip to avoid overflow
             return np.exp(-self.gamma * dist)
         elif self.kernel == 'sigmoid':
             return np.tanh(self.gamma * np.dot(X1, X2.T) + self.coef0)
