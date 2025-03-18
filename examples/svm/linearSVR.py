@@ -27,6 +27,11 @@ y_scaled = scaler_y.fit_transform(y.reshape(-1, 1)).ravel()
 
 # Create and fit our LinearSVR model
 svr = LinearSVR(C=0.01, epsilon=0.2, max_iter=1000, learning_rate=0.01)
+
+# Can also use GeneralizedSVR with linear kernel
+# svr = GeneralizedSVR(C=0.01, epsilon=0.2, max_iter=1000, learning_rate=0.01 ,kernel='linear')
+
+# Fit the model
 svr.fit(X_scaled, y_scaled)
 
 # Evaluate the model

@@ -1,7 +1,7 @@
 from .baseSVM import BaseSVM
 from .linerarSVM import LinearSVC, LinearSVR
 from .oneClassSVM import OneClassSVM
-from .generalizedSVR import GeneralizedSVR
+from .generalizedSVM import GeneralizedSVR, GeneralizedSVC
 
 __all__ = [
     'BaseSVM', 
@@ -9,4 +9,5 @@ __all__ = [
     'LinearSVR', 
     'OneClassSVM',
     'GeneralizedSVR',
+    'GeneralizedSVC',
 ]
