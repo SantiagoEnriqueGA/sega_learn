@@ -7,8 +7,15 @@ class LinearSVC(BaseSVM):
         
     def _fit(self, X, y):
         """
-        Implement the fitting procedure for LinearSVC.
+        Implement the fitting procedure for LinearSVC using gradient descent.
         
+        Parameters:
+            X (array-like of shape (n_samples, n_features)): Training vectors.
+            y (array-like of shape (n_samples,)): Target labels in {-1, 1}.
+            
+        Returns:
+            self (LinearSVC): The fitted instance.
+
         Algorithm:
             Initialize Parameters: Initialize the weight vector w and bias b.
             Set Hyperparameters: Define the learning rate and the number of iterations.
@@ -17,47 +24,88 @@ class LinearSVC(BaseSVM):
             Update Parameters: Update the weights and bias using the gradients.
             Stopping Criteria: Check for convergence based on the tolerance level
         """
+        if self.kernel != 'linear':
+            raise ValueError("LinearSVC only supports linear kernel")
+
         # Initialize parameters
         n_samples, n_features = X.shape
         self.w = np.zeros(n_features)
         self.b = 0.0
+        
+        # Convert y to {-1, 1} if not already
+        y = np.where(y <= 0, -1, 1)
                 
         # Gradient Descent Loop
-        for i in range(self.max_iter):
+        for _ in range(self.max_iter):
             # Compute the margin
             margin = y * (np.dot(X, self.w) + self.b)
             
             # Compute the hinge loss and its gradient
-            loss = np.maximum(0, 1 - margin)
-            dw = np.zeros(n_features)
+            violated_indices = margin < 1
+            
+            # Initialize gradients
+            dw = self.C * self.w  # L2 regularization gradient
             db = 0.0
             
-            # For each sample, update the gradient
-            for j in range(n_samples):
-                if loss[j] > 0:
-                    dw -= y[j] * X[j]
-                    db -= y[j]
-            
-            # Average the gradients
-            dw = dw / n_samples + self.C * self.w
-            db = db / n_samples
+            # Update gradients based on violated constraints
+            if np.any(violated_indices):
+                X_violated = X[violated_indices]
+                y_violated = y[violated_indices]
+                dw -= np.sum(X_violated * y_violated[:, np.newaxis], axis=0) / n_samples
+                db -= np.sum(y_violated) / n_samples
             
             # Update the weights and bias
             self.w -= self.learning_rate * dw
             self.b -= self.learning_rate * db
             
-            # Check for convergence
+            # Calculate current loss for convergence check
+            loss = self.C * 0.5 * np.dot(self.w, self.w) + np.sum(np.maximum(0, 1 - margin)) / n_samples
+            
+            # Check for convergence based on gradient norm
             if np.linalg.norm(dw) < self.tol and abs(db) < self.tol:
                 break
+                
+        return self
 
     def predict(self, X):
         """
-        Predict class labels for samples in X.
+        Predict class labels for input samples.
+        
+        Parameters:
+            X (array-like of shape (n_samples, n_features)): Input samples.
+            
+        Returns:
+            y_pred (array of shape (n_samples,)): Predicted class labels {-1, 1}.
         """
         return super().predict(X)
     
-    def __sklearn_is_fitted__(self):
-        return self.w is not None
+    def decision_function(self, X):
+        """
+        Compute raw decision function values before thresholding.
+        
+        Parameters:
+            X (array-like of shape (n_samples, n_features)): Input samples.
+            
+        Returns:
+            scores (array of shape (n_samples,)): Decision function values.
+        """
+        return super().decision_function(X)
+    
+    def score(self, X, y):
+        """
+        Compute the mean accuracy of predictions.
+        
+        Parameters:
+            X (array-like of shape (n_samples, n_features)): Test samples.
+            y (array-like of shape (n_samples,)): True labels.
+            
+        Returns:
+            score (float): Mean accuracy of predictions.
+        """
+        y_true = np.where(y <= 0, -1, 1)
+        y_pred = self.predict(X)
+        return np.mean(y_true == y_pred)
+
 
 class LinearSVR(BaseSVM):
     def __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, epsilon=0.1):
@@ -68,6 +116,13 @@ class LinearSVR(BaseSVM):
         """
         Implement the fitting procedure for LinearSVR using the epsilon-insensitive loss.
         
+        Parameters:
+            X (array-like of shape (n_samples, n_features)): Training vectors.
+            y (array-like of shape (n_samples,)): Target values.
+            
+        Returns:
+            self (LinearSVR): The fitted instance.
+        
         Algorithm:
             Initialize Parameters: Initialize the weight vector w and bias b.
             Set Hyperparameters: Define the learning rate and the number of iterations.
@@ -76,11 +131,17 @@ class LinearSVR(BaseSVM):
             Update Parameters: Update the weights and bias using the gradients.
             Stopping Criteria: Check for convergence based on the tolerance level
         """
+        if self.kernel != 'linear':
+            raise ValueError("LinearSVR only supports linear kernel")
+        
         # Initialize parameters
         n_samples, n_features = X.shape
         self.w = np.zeros(n_features)
         self.b = 0.0
-        epsilon = self.epsilon
+        
+        # Store for prediction
+        self.X_train = X
+        self.y_train = y
                 
         # Gradient Descent Loop
         for i in range(self.max_iter):
@@ -88,37 +149,77 @@ class LinearSVR(BaseSVM):
             prediction = np.dot(X, self.w) + self.b
             
             # Compute the epsilon-insensitive loss and its gradient
-            loss = np.maximum(0, np.abs(y - prediction) - epsilon)
-            dw = np.zeros(n_features)
+            errors = y - prediction
+            abs_errors = np.abs(errors)
+            
+            # Initialize gradients with regularization term
+            dw = self.C * self.w
             db = 0.0
             
-            # For each sample, update the gradient
-            for j in range(n_samples):
-                if loss[j] > 0:
-                    if y[j] > prediction[j] + epsilon:
-                        dw -= X[j]
-                        db -= 1
-                    elif y[j] < prediction[j] - epsilon:
-                        dw += X[j]
-                        db += 1
+            # Samples outside the epsilon tube (positive errors)
+            pos_idx = errors > self.epsilon
+            if np.any(pos_idx):
+                dw -= np.sum(X[pos_idx], axis=0) / n_samples
+                db -= np.sum(np.ones(np.sum(pos_idx))) / n_samples
             
-            # Average the gradients
-            dw = dw / n_samples + self.C * self.w
-            db = db / n_samples
+            # Samples outside the epsilon tube (negative errors)
+            neg_idx = errors < -self.epsilon
+            if np.any(neg_idx):
+                dw += np.sum(X[neg_idx], axis=0) / n_samples
+                db += np.sum(np.ones(np.sum(neg_idx))) / n_samples
             
             # Update the weights and bias
             self.w -= self.learning_rate * dw
             self.b -= self.learning_rate * db
             
-            # Check for convergence
+            # Calculate current loss for convergence check
+            epsilon_loss = np.sum(np.maximum(0, abs_errors - self.epsilon)) / n_samples
+            reg_loss = self.C * 0.5 * np.dot(self.w, self.w)
+            total_loss = epsilon_loss + reg_loss
+            
+            # Check for convergence based on gradient norm
             if np.linalg.norm(dw) < self.tol and abs(db) < self.tol:
                 break
+                
+        return self
 
     def predict(self, X):
         """
-        Predict continuous values for samples in X.
+        Predict continuous target values for input samples.
+        
+        Parameters:
+            X (array-like of shape (n_samples, n_features)): Input samples.
+            
+        Returns:
+            y_pred (array of shape (n_samples,)): Predicted values.
         """
         return self.decision_function(X)
+    
+    def decision_function(self, X):
+        """
+        Compute raw decision function values.
+        
+        Parameters:
+            X (array-like of shape (n_samples, n_features)): Input samples.
+            
+        Returns:
+            scores (array of shape (n_samples,)): Predicted values.
+        """
+        return super().decision_function(X)
+    
+    def score(self, X, y):
+        """
+        Compute the coefficient of determination (R² score).
+        
+        Parameters:
+            X (array-like of shape (n_samples, n_features)): Test samples.
+            y (array-like of shape (n_samples,)): True target values.
+            
+        Returns:
+            score (float): R² score of predictions.
+        """
+        y_pred = self.predict(X)
+        u = ((y - y_pred) ** 2).sum()
+        v = ((y - y.mean()) ** 2).sum()
+        return 1 - u/v if v > 0 else 0
 
-    def __sklearn_is_fitted__(self):
-        return self.w is not None
