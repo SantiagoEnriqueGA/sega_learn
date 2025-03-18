@@ -2,8 +2,11 @@ import unittest
 import os
 import sys
 import warnings
-
 warnings.filterwarnings("ignore")
+
+from tqdm import tqdm
+from functools import partialmethod
+tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 
 # Change the working directory to the parent directory to allow importing the package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -32,4 +35,4 @@ if __name__ == '__main__':
     ordered_suite = unittest.TestSuite(ordered_tests)
     
     testRunner = unittest.TextTestRunner()
-    testRunner.run(ordered_suite)
+    testRunner.run(ordered_suite)   

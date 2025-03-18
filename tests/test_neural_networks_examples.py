@@ -7,7 +7,9 @@ import importlib.util
 import contextlib
 import io
 
-from matplotlib.pylab import f
+from tqdm import tqdm
+from functools import partialmethod
+tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 
 from utils import suppress_print, strip_file_path
 
