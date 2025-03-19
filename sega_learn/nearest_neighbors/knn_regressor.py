@@ -27,10 +27,15 @@ class KNeighborsRegressor(KNeighborsBase):
         # Compute the distances between all training samples and the input data
         distances = self._compute_distances(X)
         
-        # Find the indices of the k nearest neighbors, sort them, and select the top k
-        nearest_neighbors = np.argsort(distances, axis=1)[:, :self.n_neighbors]
-        top_k_y = self.y_train[nearest_neighbors]
+        if self.numba:
+            from ._nearest_neighbors_jit_utils import _numba_predict_regressor
+            predictions = _numba_predict_regressor(distances, self.y_train, self.n_neighbors)
+        else:
+            # Find the indices of the k nearest neighbors, sort them, and select the top k
+            nearest_neighbors = np.argsort(distances, axis=1)[:, :self.n_neighbors]
+            top_k_y = self.y_train[nearest_neighbors]
+            
+            # For each sample, find the mean of the k nearest neighbors
+            predictions = np.mean(top_k_y, axis=1)
         
-        # For each sample, find the mean of the k nearest neighbors
-        predictions = np.mean(top_k_y, axis=1)
         return predictions

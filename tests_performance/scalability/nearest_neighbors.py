@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import numba
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -10,18 +11,15 @@ import seaborn as sns
 # warnings.filterwarnings("ignore")
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from utils import suppress_print
+
 
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from sega_learn.nearest_neighbors import *
-from utils import suppress_print
 
 from sklearn.datasets import make_regression, make_classification
 from sklearn import neighbors
 
-
-MAX_ITER = 100
 
 class TestTime():
     def __init__(self, X, y, num_samples, num_runs):
@@ -32,9 +30,13 @@ class TestTime():
         
     def measure_performance(self, model_class_sklearn, model_class_sega, neighbors_to_test):
         def model_performance(model_class):
-            start_time = time.time()
+            
+            if model_class == KNeighborsRegressor or model_class == KNeighborsClassifier:
+                model = model_class(n_neighbors=neighbors_to_test, numba=True)
+            else:
+                model = model_class(n_neighbors=neighbors_to_test)
 
-            model = model_class(n_neighbors=neighbors_to_test)
+            start_time = time.time()
             model.fit(self.X, self.y)
             y_pred = model.predict(self.X)
 

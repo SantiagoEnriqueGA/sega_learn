@@ -6,7 +6,7 @@ from sega_learn.utils import DataPrep
 # Used here to define a base class for KNN algorithms.
 # This allows us to create a common interface for KNN classifiers and regressors.
 class KNeighborsBase(ABC):
-    def __init__(self, n_neighbors=5, distance_metric='euclidean', one_hot_encode=False, fp_precision=np.float64):
+    def __init__(self, n_neighbors=5, distance_metric='euclidean', one_hot_encode=False, fp_precision=np.float64, numba=False):
         """
         Initialize the KNeighborsBase class.
         Parameters:
@@ -14,7 +14,30 @@ class KNeighborsBase(ABC):
         - distance_metric: str, default='euclidean'. The distance metric to use for calculating distances.
         - one_hot_encode: bool, default=False. Whether to apply one-hot encoding to the categorical columns.
         - fp_precision: data type, default=np.float64. The floating point precision to use for the calculations.
+        - numba: bool, default=True. Whether to use numba for speeding up the calculations.
         """
+        if numba:
+            try:
+                from ._nearest_neighbors_jit_utils import _jit_compute_distances_euclidean, _jit_compute_distances_manhattan, _jit_compute_distances_minkowski
+                from ._nearest_neighbors_jit_utils import _numba_predict_regressor, _numba_predict_classifier
+                # Precompile the numba functions
+                _jit_compute_distances_euclidean(np.array([[0.0, 0.0]]), np.array([[0.0, 0.0]]))
+                _jit_compute_distances_manhattan(np.array([[0.0, 0.0]]), np.array([[0.0, 0.0]]))
+                _jit_compute_distances_minkowski(np.array([[0.0, 0.0]]), np.array([[0.0, 0.0]]), p=3)
+                
+                _numba_predict_regressor(np.array([[0.0, 0.0]]), np.array([0.0, 0.0]), 1)
+                _numba_predict_classifier(np.array([[0.0, 0.0]]), np.array([0.0, 0.0]), 1)
+                
+                self.numba = True
+            except ImportError:
+                self.numba = False
+                raise ImportError("Numba is not installed. Please install numba to use the numba optimized version of the KNN algorithm.")
+            except Exception as e:
+                self.numba = False
+                print(f"Error compiling numba functions: {e}")
+        else:
+            self.numba = False
+
         if n_neighbors <= 0:
             raise ValueError("n_neighbors must be a positive integer.")
         if one_hot_encode and not isinstance(one_hot_encode, bool):
@@ -126,12 +149,23 @@ class KNeighborsBase(ABC):
         # Check if the distance metric is valid
         if self.distance_metric not in ['euclidean', 'manhattan', 'minkowski']:
             raise ValueError(f"Unsupported distance metric: {self.distance_metric}")
-        if self.distance_metric == 'euclidean':
-            return self._compute_distances_euclidean(X)
-        elif self.distance_metric == 'manhattan':
-            return self._compute_distances_manhattan(X)
-        elif self.distance_metric == 'minkowski':
-            return self._compute_distances_minkowski(X)
+        
+        if self.numba:
+            from ._nearest_neighbors_jit_utils import _jit_compute_distances_euclidean, _jit_compute_distances_manhattan, _jit_compute_distances_minkowski
+            if self.distance_metric == 'euclidean':
+                return _jit_compute_distances_euclidean(X, self.X_train)
+            elif self.distance_metric == 'manhattan':
+                return _jit_compute_distances_manhattan(X, self.X_train)
+            elif self.distance_metric == 'minkowski':
+                return _jit_compute_distances_minkowski(X, self.X_train, p=3)
+        
+        else:
+            if self.distance_metric == 'euclidean':
+                return self._compute_distances_euclidean(X)
+            elif self.distance_metric == 'manhattan':
+                return self._compute_distances_manhattan(X)
+            elif self.distance_metric == 'minkowski':
+                return self._compute_distances_minkowski(X)
         
     def _compute_distances_euclidean(self, X):
         """
