@@ -145,6 +145,27 @@ class TestRidge(unittest.TestCase):
         self.model.fit(X, y)
         self.assertEqual(len(self.model.coef_), 5)
         
+    def test_fit_predict_numba(self):
+        """Test the fit and predict methods with numba implementation."""
+        X, y = synthetic_data_regression(n_samples=1000, n_features=5, noise=0.1)
+        self.model = Ridge(alpha=1.0, fit_intercept=True, max_iter=1000, tol=1e-4)
+        self.model.fit(X, y, numba=True)
+        y_pred = self.model.predict(X)
+        self.assertGreater(r2_score(y, y_pred), 0.5)
+
+    def test_fit_no_intercept_numba(self):
+        """Test the fit method with numba implementation and no intercept."""
+        X, y = synthetic_data_regression(n_samples=1000, n_features=5, noise=0.1)
+        self.model = Ridge(alpha=1.0, fit_intercept=False, max_iter=1000, tol=1e-4)
+        self.model.fit(X, y, numba=True)
+        self.assertEqual(self.model.intercept_, 0.0)
+
+    def test_invalid_fit_numba(self):
+        """Test the fit method with invalid input using numba implementation."""
+        self.model = Ridge(alpha=1.0, fit_intercept=True, max_iter=1000, tol=1e-4)
+        with self.assertRaises(Exception):
+            self.model.fit(None, None, numba=True)
+
 class TestLasso(unittest.TestCase):
     """
     Unit test for the Lasso regression class.

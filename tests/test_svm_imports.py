@@ -14,9 +14,9 @@ from sega_learn.svm import GeneralizedSVC as gsvc
 
 from sega_learn.svm import *
 
-class TestImportsNearestNeighbors(unittest.TestCase):
+class TestImportsSVM(unittest.TestCase):
     """
-    Tests that the clustering subpackage can be imported correctly.
+    Tests that the SVM subpackage can be imported correctly.
     Methods:
     - setUpClass: Initializes a new instance of the Index class before each test method is run.
     - test_individual_imports: Tests that each module in the segadb package can be imported individually.
@@ -24,7 +24,7 @@ class TestImportsNearestNeighbors(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        print("\nTesting Imports - Nearest Neighbors", end="", flush=True)
+        print("\nTesting Imports - SVM", end="", flush=True)
     
     def test_individual_imports(self):
         assert bsvm is not None

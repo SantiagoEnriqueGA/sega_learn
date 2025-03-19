@@ -141,14 +141,40 @@ class Ridge(object):
     def __str__(self):
         return "Ridge Regression"
     
-    def fit(self, X, y):
+    def fit(self, X, y, numba=False):
         """
         Fit the model to the data using coordinate descent.
         
         Parameters:
-        - X : array-like of shape (n_samples, n_features): Training data.
-        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
+            - X : array-like of shape (n_samples, n_features): Training data.
+            - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
+            - numba : Whether to use numba for faster computation. Default is False.
         """
+        # if numba:
+        #     # Try to use numba for faster computation
+        #     try:
+        #         from ._ridge_jit_utils import _fit_numba_no_intercept, _fit_numba_intercept
+        
+        #         if self.fit_intercept:
+        #             self.coef_, self.intercept_ = _fit_numba_intercept(X, y, self.alpha, self.max_iter, self.tol)
+        #         else:
+        #             self.coef_ = _fit_numba_no_intercept(X, y, self.alpha, self.max_iter, self.tol)
+        #             self.intercept_ = 0.0
+                            
+        #     # Else if numba is not available, try to use the compiled version (not as optimized)
+        #     except:
+        #         try:
+        #             from .compiled_ridge_jit_utils import compiled_fit_numba_no_intercept, compiled_fit_numba_intercept
+        #             if self.fit_intercept:
+        #                 self.coef_, self.intercept_ = compiled_fit_numba_intercept(X, y, self.alpha, self.max_iter, self.tol)
+        #             else:
+        #                 self.coef_ = compiled_fit_numba_no_intercept(X, y, self.alpha, self.max_iter, self.tol)
+        #                 self.intercept_ = 0.0
+        #         except ImportError:
+        #             raise ImportError("Numba is not installed. Please install numba to use this feature.")
+        #     return 
+            
+        
         if self.fit_intercept:                                  # If fit_intercept is True
             X = np.hstack([np.ones((X.shape[0], 1)), X])        # Add a column of ones to X, for the intercept
         
@@ -204,6 +230,8 @@ class Ridge(object):
         if self.fit_intercept:                                                  # If fit_intercept is True
             formula = f"{self.intercept_:.2f} + " + formula                     # Add the intercept to the formula
         return f"y = {formula}" 
+
+
     
 
 class Lasso(object):
