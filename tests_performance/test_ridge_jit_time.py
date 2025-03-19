@@ -9,13 +9,25 @@ r2_score = Metrics.r_squared
 
 import time
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.linear_model import Ridge as SklearnRidge
 
 num_zeros = 8
 sample_sizes = [10**i for i in range(1, num_zeros)]
 
-def run_ridge_jit(X, y):
+def run_ridge(X, y):
     reg = Ridge(alpha=1.0, fit_intercept=True)
+    
+    start_time = time.time()
+    # reg.fit(X, y)
+    end_time = time.time()
+    
+    return end_time - start_time
+
+def run_ridge_jit(X, y):
+    # Force numba to pre-compile the function
+    reg = Ridge(alpha=1.0, fit_intercept=True, compile_numba=True)
     
     start_time = time.time()
     reg.fit(X, y, numba=True)
@@ -34,28 +46,55 @@ def run_ridge_sk(X, y):
     
     return end_time - start_time
 
-
 # Create list to store results
 results = []
 for sample_size in sample_sizes:
     X, y = make_regression(n_samples=sample_size, n_features=5, noise=.5, random_state=42)
     
     # Average the time over multiple runs
-    n_runs = 5
-    jit_time_total = non_jit_time_total = 0
+    n_runs = 1
+    base_time_total = jit_time_total = skl_time_total = 0
     for i in range(n_runs):
+        base_time_total += run_ridge(X, y)
         jit_time_total += run_ridge_jit(X, y)
-        non_jit_time_total += run_ridge_sk(X, y)
-    
+        skl_time_total += run_ridge_sk(X, y)
+        
+    base_time = base_time_total / n_runs
     jit_time = jit_time_total / n_runs
-    non_jit_time = non_jit_time_total / n_runs
+    skl_time = skl_time_total / n_runs
     
     # Append the results to the DataFrame
-    results.append((sample_size, jit_time, non_jit_time))
+    results.append((sample_size, base_time, jit_time, skl_time))
     
     
 print("Numba vs Non-Numba Ridge Regression Times")
 print("-"*80)
 # Convert the results to a DataFrame
-df = pd.DataFrame(results, columns=['Sample Size', 'Numba Time', 'Sklearn Time'])
+df = pd.DataFrame(results, columns=['Sample Size', 'Base Time', 'JIT Time', 'Sklearn Time'])
 print(df)
+
+
+
+def plot_results(results, title):
+    # Set the style of seaborn
+    sns.set_theme(style="whitegrid")
+
+    # Create a line plot for the results
+    plt.figure(figsize=(12, 6))
+
+    # Plot mean times
+    sns.lineplot(x="Sample Size", y="Sklearn Time", markers=True, dashes=False, data=results, label="sklearn", color="blue")
+    sns.lineplot(x="Sample Size", y="JIT Time", markers=True, dashes=False, data=results, label="sega_learn", color="orange")
+    # sns.lineplot(x="Sample Size", y="Base Time", markers=True, dashes=False, data=results, label="sega_learn (no jit)", color="green")    
+
+    plt.xscale("log")
+    plt.title(title)
+    plt.xlabel("Sample Size (log scale)")
+    plt.ylabel("Time (s)")
+    plt.legend(title="Legend", title_fontproperties={'weight': 'bold'})
+    plt.tight_layout()
+    plt.grid(True)
+    # plt.savefig(f"tests_performance/scalability/plots/linear_models_{title.replace(' ', '_')}.png")
+    plt.show()
+
+plot_results(df, "Ridge Regression Performance Comparison")

@@ -116,7 +116,7 @@ class Ridge(object):
     - predict(X): Predict using the linear model.
     - get_formula(): Returns the formula of the model as a string.
     """
-    def __init__(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=1e-4):
+    def __init__(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=1e-4, compile_numba=False):
         """
         This class implements Ridge Regression using Coordinate Descent.
         Ridge regression implements L2 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
@@ -130,6 +130,9 @@ class Ridge(object):
             Maximum number of iterations for the coordinate descent solver.
         - tol : float, default=1e-4
             Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance.
+        - compile_numba : bool, default=False
+            Whether to precompile the numba functions. If True, the numba fitting functions will be compiled before use. 
+            If not compiled, the first call to the numba fitting function will take longer, but subsequent calls will be faster.
         """
         self.alpha = alpha
         self.fit_intercept = fit_intercept
@@ -137,6 +140,17 @@ class Ridge(object):
         self.tol = tol
         self.coef_ = None
         self.intercept_ = None
+        
+        if compile_numba:
+            # Try to compile the numba functions
+            try:
+                from ._ridge_jit_utils import _fit_numba_no_intercept, _fit_numba_intercept
+                _fit_numba_no_intercept(np.zeros((1, 1)), np.zeros((1,)), self.alpha, self.max_iter, self.tol)
+                _fit_numba_intercept(np.zeros((1, 1)), np.zeros((1,)), self.alpha, self.max_iter, self.tol)
+            except ImportError:
+                raise ImportError("Numba is not installed. Please install numba to use this feature.")
+            except Exception as e:
+                print(f"Error compiling numba functions: {e}")
     
     def __str__(self):
         return "Ridge Regression"
@@ -150,31 +164,30 @@ class Ridge(object):
             - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
             - numba : Whether to use numba for faster computation. Default is False.
         """
-        # if numba:
-        #     # Try to use numba for faster computation
-        #     try:
-        #         from ._ridge_jit_utils import _fit_numba_no_intercept, _fit_numba_intercept
+        if numba:
+            # Try to use numba for faster computation
+            try:
+                from ._ridge_jit_utils import _fit_numba_no_intercept, _fit_numba_intercept
         
-        #         if self.fit_intercept:
-        #             self.coef_, self.intercept_ = _fit_numba_intercept(X, y, self.alpha, self.max_iter, self.tol)
-        #         else:
-        #             self.coef_ = _fit_numba_no_intercept(X, y, self.alpha, self.max_iter, self.tol)
-        #             self.intercept_ = 0.0
+                if self.fit_intercept:
+                    self.coef_, self.intercept_ = _fit_numba_intercept(X, y, self.alpha, self.max_iter, self.tol)
+                else:
+                    self.coef_ = _fit_numba_no_intercept(X, y, self.alpha, self.max_iter, self.tol)
+                    self.intercept_ = 0.0
                             
-        #     # Else if numba is not available, try to use the compiled version (not as optimized)
-        #     except:
-        #         try:
-        #             from .compiled_ridge_jit_utils import compiled_fit_numba_no_intercept, compiled_fit_numba_intercept
-        #             if self.fit_intercept:
-        #                 self.coef_, self.intercept_ = compiled_fit_numba_intercept(X, y, self.alpha, self.max_iter, self.tol)
-        #             else:
-        #                 self.coef_ = compiled_fit_numba_no_intercept(X, y, self.alpha, self.max_iter, self.tol)
-        #                 self.intercept_ = 0.0
-        #         except ImportError:
-        #             raise ImportError("Numba is not installed. Please install numba to use this feature.")
-        #     return 
+            # Else if numba is not available, try to use the compiled version (not as optimized)
+            except:
+                try:
+                    from .compiled_ridge_jit_utils import compiled_fit_numba_no_intercept, compiled_fit_numba_intercept
+                    if self.fit_intercept:
+                        self.coef_, self.intercept_ = compiled_fit_numba_intercept(X, y, self.alpha, self.max_iter, self.tol)
+                    else:
+                        self.coef_ = compiled_fit_numba_no_intercept(X, y, self.alpha, self.max_iter, self.tol)
+                        self.intercept_ = 0.0
+                except ImportError:
+                    raise ImportError("Numba is not installed. Please install numba to use this feature.")
+            return 
             
-        
         if self.fit_intercept:                                  # If fit_intercept is True
             X = np.hstack([np.ones((X.shape[0], 1)), X])        # Add a column of ones to X, for the intercept
         
@@ -255,7 +268,7 @@ class Lasso(object):
     - intercept_ : float
         Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.    
     """
-    def __init__(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=1e-4):
+    def __init__(self, alpha=1.0, fit_intercept=True, max_iter=10000, tol=1e-4, compile_numba=False):
         """
         This class implements Lasso Regression using Coordinate Descent.
         Lasso regression implements L1 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
@@ -269,6 +282,9 @@ class Lasso(object):
             Maximum number of iterations for the coordinate descent solver.
         - tol : float, default=1e-4
             Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance.
+        - compile_numba : bool, default=False
+            Whether to precompile the numba functions. If True, the numba fitting functions will be compiled before use. 
+            If not compiled, the first call to the numba fitting function will take longer, but subsequent calls will be faster.
         """
         self.alpha = alpha
         self.fit_intercept = fit_intercept
@@ -276,18 +292,54 @@ class Lasso(object):
         self.tol = tol
         self.coef_ = None
         self.intercept_ = None
+        
+        if compile_numba:
+            # Try to compile the numba functions
+            try:
+                from ._lasso_jit_utils import _fit_numba_no_intercept, _fit_numba_intercept
+                _fit_numba_no_intercept(np.zeros((1, 1)), np.zeros((1,)), self.alpha, self.max_iter, self.tol)
+                _fit_numba_intercept(np.zeros((1, 1)), np.zeros((1,)), self.alpha, self.max_iter, self.tol)
+            except ImportError:
+                raise ImportError("Numba is not installed. Please install numba to use this feature.")
+            except Exception as e:
+                print(f"Error compiling numba functions: {e}")
     
     def __str__(self):
-        return "Lasoo Regression"
+        return "Lasso Regression"
     
-    def fit(self, X, y):
+    def fit(self, X, y, numba=False):
         """
         Fit the model to the data using coordinate descent.
         
         Parameters:
-        - X : array-like of shape (n_samples, n_features): Training data.
-        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
+            - X : array-like of shape (n_samples, n_features): Training data.
+            - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
+            - numba : Whether to use numba for faster computation. Default is False.
         """
+        if numba:
+            # Try to use numba for faster computation
+            try:
+                from ._lasso_jit_utils import _fit_numba_no_intercept, _fit_numba_intercept
+        
+                if self.fit_intercept:
+                    self.coef_, self.intercept_ = _fit_numba_intercept(X, y, self.alpha, self.max_iter, self.tol)
+                else:
+                    self.coef_ = _fit_numba_no_intercept(X, y, self.alpha, self.max_iter, self.tol)
+                    self.intercept_ = 0.0
+                            
+            # Else if numba is not available, try to use the compiled version (not as optimized)
+            except:
+                try:
+                    from .compiled_lasso_jit_utils import compiled_fit_numba_no_intercept, compiled_fit_numba_intercept
+                    if self.fit_intercept:
+                        self.coef_, self.intercept_ = compiled_fit_numba_intercept(X, y, self.alpha, self.max_iter, self.tol)
+                    else:
+                        self.coef_ = compiled_fit_numba_no_intercept(X, y, self.alpha, self.max_iter, self.tol)
+                        self.intercept_ = 0.0
+                except ImportError:
+                    raise ImportError("Numba is not installed. Please install numba to use this feature.")
+            return 
+
         if self.fit_intercept:                              # If fit_intercept is True
             X = np.hstack([np.ones((X.shape[0], 1)), X])    # Add a column of ones to X, for the intercept
         
