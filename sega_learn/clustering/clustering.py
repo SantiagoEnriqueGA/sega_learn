@@ -1,3 +1,4 @@
+from math import e
 import numpy as np
 import pandas as pd
 from heapq import heappush, heappop
@@ -443,7 +444,7 @@ class DBSCAN:
     - _convert_to_ndarray: Converts input data to a NumPy ndarray and handles categorical columns.
     - _custom_distance_matrix: Calculates the pairwise distance matrix using a custom distance calculation method.
     """
-    def __init__(self, X, eps=0.5, min_samples=5):
+    def __init__(self, X, eps=0.5, min_samples=5, compile_numba=False):
         """
         Initialize the DBSCAN object.
 
@@ -451,11 +452,29 @@ class DBSCAN:
         - X: The data matrix (numpy array).
         - eps: The maximum distance between two samples for one to be considered as in the neighborhood of the other.
         - min_samples: The number of samples in a neighborhood for a point to be considered as a core point.
+        - compile_numba: Whether to compile the distance calculations using Numba for performance.
+            If not compiled, the first call to the numba fitting function will take longer, but subsequent calls will be faster.        
         """
+        # Validate input parameters
+        if not isinstance(eps, (int, float)) or eps <= 0:
+            raise ValueError("eps must be a positive number.")
+        if not isinstance(min_samples, int) or min_samples < 1:
+            raise ValueError("min_samples must be a positive integer.")       
+        
         self.X = self._convert_to_ndarray(X).astype(float)  # Convert input data to ndarray
         self.eps = eps                                      # Maximum distance between samples
         self.min_samples = min_samples                      # Minimum number of samples for core
         self.labels = None                                  # Cluster labels for each data point
+        
+        if compile_numba:
+            try:
+                from ._dbscan_jit_utils import _identify_core_points, _assign_clusters
+                _identify_core_points(np.zeros((1, 1)), 1, 1)   # Compile the numba functions
+                _assign_clusters(np.zeros((1, 1)), np.zeros(1), 1)   # Compile the numba functions
+            except ImportError:
+                raise ImportError("Numba is required for faster computation. Please install numba first.")
+            except Exception as e:
+                raise RuntimeError(f"An error occurred while importing Numba: {e}")
 
     def _handle_categorical(self, X):
         """
@@ -526,7 +545,7 @@ class DBSCAN:
         
         return dist_matrix  
 
-    def fit(self, metric='euclidean'):
+    def fit(self, metric='euclidean', numba=False):
         """
         Fit the DBSCAN model to the data.
 
@@ -537,37 +556,48 @@ class DBSCAN:
 
         Parameters:
         - metric: The distance metric to use ('euclidean', 'manhattan', or 'cosine').
+        - numba: Whether to use numba for faster computation.
         
         Returns:
         - labels: The cluster labels for each data point.
-        """       
+        """ 
+        if numba:
+            try:
+                from ._dbscan_jit_utils import _identify_core_points, _assign_clusters
+            except ImportError:
+                raise ImportError("Numba is required for faster computation. Please install numba first.")
+        
         dist_matrix = self._custom_distance_matrix(self.X,self.X, metric)   # Calculate pairwise distance matrix
 
         core_points = np.zeros(self.X.shape[0], dtype=bool)     # Initialize core points
         labels = -1 * np.ones(self.X.shape[0], dtype=int)       # Initialize labels
         cluster_id = 0                                          # Initialize cluster ID
-
-        for i in range(self.X.shape[0]):                        # For each data point
-            neighbors = np.where(dist_matrix[i] < self.eps)[0]  # Find neighbors within eps distance
-            
-            if len(neighbors) >= self.min_samples:  
-                core_points[i] = True               # If core point, mark as True
-
-        for i in range(self.X.shape[0]):            # For each data point
-            if labels[i] == -1 and core_points[i]:  # If core point and unassigned
-                labels[i] = cluster_id              # Assign cluster ID
-                stack = [i]                         # Initialize stack with core point
+        
+        if numba:
+            core_points = _identify_core_points(dist_matrix, self.eps, self.min_samples)
+            labels = _assign_clusters(dist_matrix, core_points, self.eps)
+        else:
+            for i in range(self.X.shape[0]):                        # For each data point
+                neighbors = np.where(dist_matrix[i] < self.eps)[0]  # Find neighbors within eps distance
                 
-                while stack:                                                # Depth-first search (DFS)
-                    point = stack.pop()                                     # Pop the top element
-                    neighbors = np.where(dist_matrix[point] < self.eps)[0]  # Find neighbors within eps distance
+                if len(neighbors) >= self.min_samples:  
+                    core_points[i] = True               # If core point, mark as True
+
+            for i in range(self.X.shape[0]):            # For each data point
+                if labels[i] == -1 and core_points[i]:  # If core point and unassigned
+                    labels[i] = cluster_id              # Assign cluster ID
+                    stack = [i]                         # Initialize stack with core point
                     
-                    if len(neighbors) >= self.min_samples:                  # If core point    
-                        for neighbor in neighbors:                          # For each neighbor
-                            if labels[neighbor] == -1:                      # If unassigned
-                                labels[neighbor] = cluster_id               # Assign cluster ID
-                                stack.append(neighbor)                      # Add to stack
-                cluster_id += 1     # Increment cluster ID
+                    while stack:                                                # Depth-first search (DFS)
+                        point = stack.pop()                                     # Pop the top element
+                        neighbors = np.where(dist_matrix[point] < self.eps)[0]  # Find neighbors within eps distance
+                        
+                        if len(neighbors) >= self.min_samples:                  # If core point    
+                            for neighbor in neighbors:                          # For each neighbor
+                                if labels[neighbor] == -1:                      # If unassigned
+                                    labels[neighbor] = cluster_id               # Assign cluster ID
+                                    stack.append(neighbor)                      # Add to stack
+                    cluster_id += 1     # Increment cluster ID
 
         self.labels = labels        # Store cluster labels
         return labels               
@@ -583,6 +613,14 @@ class DBSCAN:
         Returns:
         - labels: The predicted cluster labels (-1 for noise).
         """
+        # Validate input parameters
+        if not isinstance(new_X, (np.ndarray, list, pd.DataFrame)):  # Check if input is a valid type
+            raise ValueError("Unsupported input type. Input must be a list, NumPy array, or DataFrame.")
+        if new_X.shape[1] != self.X.shape[1]:                       # Check if number of features match
+            raise ValueError(f"Number of features in new_X ({new_X.shape[1]}) does not match the model ({self.X.shape[1]}).")
+        if self.labels is None:                                     # Check if model has been fitted
+            raise ValueError("Fit the model before predicting.")
+        
         new_X = self._convert_to_ndarray(new_X).astype(float)       # Convert input data to ndarray        
         dist_matrix = self._custom_distance_matrix(new_X, self.X)   # Calculate distance matrix
         labels = -1 * np.ones(new_X.shape[0], dtype=int)            # Initialize labels for new data points as noise (-1)
@@ -595,14 +633,14 @@ class DBSCAN:
 
         return labels
 
-    def fit_predict(self):
+    def fit_predict(self, numba=False):
         """
         Fit the DBSCAN model to the data and return the cluster labels.
 
         Returns:
         - labels: The cluster labels for the data.
         """
-        return self.fit()   # Fits the DBSCAN model and return cluster labels
+        return self.fit(numba=numba)   # Fits the DBSCAN model and return cluster labels
 
     def silhouette_score(self):
         """
@@ -654,6 +692,14 @@ class DBSCAN:
         - eps: The optimal eps value.
         - scores_dict (optional): A dictionary of (eps, score) pairs if return_scores is True.
         """
+        # Validate input parameters
+        if not isinstance(min, (int, float)) or min <= 0:
+            raise ValueError("min must be a positive number.")
+        if not isinstance(max, (int, float)) or max <= 0:
+            raise ValueError("max must be a positive number.")
+        if not isinstance(precision, (int, float)) or precision <= 0:
+            raise ValueError("precision must be a positive number.")
+        
         best_eps = 0.1
         best_score = -1
         step = 0.1

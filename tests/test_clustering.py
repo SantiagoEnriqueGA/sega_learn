@@ -8,6 +8,7 @@ import warnings
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from sega_learn.clustering import *
+from sega_learn.clustering._dbscan_jit_utils import _identify_core_points, _assign_clusters
 from tests.utils import suppress_print
 
 class TestKMeans(unittest.TestCase):
@@ -215,6 +216,46 @@ class TestDBSCAN(unittest.TestCase):
         self.assertEqual(self.dbscan.min_samples, 2)
         self.assertIsNone(self.dbscan.labels)
 
+    def test_initialization_fail_eps_zero(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=0)
+
+    def test_initialization_fail_eps_negative(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=-1)
+
+    def test_initialization_fail_eps_string(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps="1.5")
+
+    def test_initialization_fail_eps_none(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=None)
+
+    def test_initialization_fail_min_samples_zero(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=1.5, min_samples=0)
+
+    def test_initialization_fail_min_samples_negative(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=1.5, min_samples=-1)
+
+    def test_initialization_fail_min_samples_string(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=1.5, min_samples="2")
+
+    def test_initialization_fail_min_samples_none(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=1.5, min_samples=None)
+
+    def test_initialization_fail_min_samples_list(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=1.5, min_samples=[2])
+
+    def test_initialization_fail_min_samples_tuple(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=1.5, min_samples=(2,))
+
     def test_fit(self):
         labels = self.dbscan.fit()
         self.assertEqual(len(labels), len(self.X))
@@ -237,5 +278,97 @@ class TestDBSCAN(unittest.TestCase):
         self.assertTrue(0.1 <= best_eps <= 1.1)
         self.assertTrue(all(-1 <= score <= 1 for score in scores_dict.values()))
 
+class TestDBSCANNumba(unittest.TestCase):
+    """
+    Unit test for the DBSCAN clustering class using Numba.
+    Methods:
+    - setUpClass: Initializes a new instance of the Index class before each test method is run.
+    - test_initialization: Tests the initialization of the DBSCAN class.
+    - test_fit: Tests the fit method of the DBSCAN class.
+    - test_predict: Tests the predict method of the DBSCAN class.
+    - test_silhouette_score: Tests the silhouette score method for evaluating clustering performance.
+    - test_auto_eps: Tests the auto_eps method for automatically determining the optimal epsilon value.
+    """
+    
+    @classmethod
+    def setUpClass(cls):
+        print("\nTesting DBSCAN Numba", end="", flush=True)
+        
+    def setUp(self):
+        # Generate synthetic data for testing
+        self.X = np.array([
+            [1.0, 2.0], [1.5, 1.8], [5.0, 8.0],
+            [8.0, 8.0], [1.0, 0.6], [9.0, 11.0],
+            [8.0, 2.0], [10.0, 2.0], [9.0, 3.0]
+        ])
+        self.dbscan = DBSCAN(self.X, eps=1.5, min_samples=2, compile_numba=True)
+
+    def test_initialization(self):
+        self.assertEqual(self.dbscan.eps, 1.5)
+        self.assertEqual(self.dbscan.min_samples, 2)
+        self.assertIsNone(self.dbscan.labels)
+
+    def test_initialization_fail_eps_zero(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=0)
+
+    def test_initialization_fail_eps_negative(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=-1)
+
+    def test_initialization_fail_eps_string(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps="1.5")
+
+    def test_initialization_fail_eps_none(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=None)
+
+    def test_initialization_fail_min_samples_zero(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=1.5, min_samples=0)
+
+    def test_initialization_fail_min_samples_negative(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=1.5, min_samples=-1)
+
+    def test_initialization_fail_min_samples_string(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=1.5, min_samples="2")
+
+    def test_initialization_fail_min_samples_none(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=1.5, min_samples=None)
+
+    def test_initialization_fail_min_samples_list(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=1.5, min_samples=[2])
+
+    def test_initialization_fail_min_samples_tuple(self):
+        with self.assertRaises(ValueError):
+            DBSCAN(self.X, eps=1.5, min_samples=(2,))
+
+    def test_fit(self):
+        labels = self.dbscan.fit(numba=True)
+        self.assertEqual(len(labels), len(self.X))
+        self.assertTrue(all(label >= -1 for label in labels))
+
+    def test_predict(self):
+        self.dbscan.fit(numba=True)
+        new_X = np.array([[0.0, 0.0], [12.0, 3.0]])
+        labels = self.dbscan.predict(new_X)
+        self.assertEqual(len(labels), len(new_X))
+        self.assertTrue(all(label >= -1 for label in labels))
+
+    def test_silhouette_score(self):
+        self.dbscan.fit(numba=True)
+        score = self.dbscan.silhouette_score()
+        self.assertTrue(-1 <= score <= 1)
+
+    def test_auto_eps(self):
+        best_eps, scores_dict = self.dbscan.auto_eps(return_scores=True)
+        self.assertTrue(0.1 <= best_eps <= 1.1)
+        self.assertTrue(all(-1 <= score <= 1 for score in scores_dict.values()))
+        
 if __name__ == '__main__':
     unittest.main()

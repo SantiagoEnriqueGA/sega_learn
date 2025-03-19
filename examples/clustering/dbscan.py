@@ -26,6 +26,15 @@ labels = dbscan.fit_predict()
 silhouette_score = dbscan.silhouette_score()
 print(f'Silhouette Score: {silhouette_score}')
 
+# # Can also use numba for faster computation (incurs overhead for compilation)
+# dbscan = DBSCAN(X, eps=eps, min_samples=min_samples, compile_numba=True)
+
+# # Fit the DBSCAN model to the data
+# labels = dbscan.fit_predict()
+
+# silhouette_score = dbscan.silhouette_score()
+# print(f'Silhouette Score: {silhouette_score}')
+
 # Plot the DBSCAN results
 plt.figure(figsize=(8, 8))
 
