@@ -6,7 +6,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from sega_learn.neural_networks import *
-
+from sega_learn.utils import Scaler
 
 def test_model(load_data_func, nn_layers, dropout_rate, reg_lambda, test_size=0.2):
     """Generic function to test the neural network model on a given dataset."""
@@ -15,7 +15,6 @@ def test_model(load_data_func, nn_layers, dropout_rate, reg_lambda, test_size=0.
     random.seed(42)
     
     from sega_learn.utils import train_test_split
-    from sklearn.preprocessing import StandardScaler
     from sklearn.metrics import classification_report
 
     # Load the dataset
@@ -31,7 +30,7 @@ def test_model(load_data_func, nn_layers, dropout_rate, reg_lambda, test_size=0.
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
     # Standardize the dataset
-    scaler = StandardScaler()
+    scaler = Scaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
     

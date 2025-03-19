@@ -15,6 +15,10 @@ from .utils import (
     make_blobs,
     make_regression,
     make_classification,
+    train_test_split,
+    one_hot_encode,
+    normalize,
+    Scaler,
 )
 
 from .clustering import (
@@ -99,6 +103,9 @@ __all__ = [
     "make_regression",
     "make_classification",
     "train_test_split",
+    "one_hot_encode",
+    "normalize",
+    "Scaler",
     
     # Clustering
     "KMeans",

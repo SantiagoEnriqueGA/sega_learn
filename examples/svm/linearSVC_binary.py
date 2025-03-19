@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler
 
 import sys
 import os
@@ -8,6 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 from sega_learn.svm import *
 from sega_learn.utils import make_classification
+from sega_learn.utils import Scaler
 
 # Set random seed for reproducibility
 np.random.seed(42)
@@ -25,7 +25,7 @@ except:
 y = np.where(y == 0, -1, 1)
 
 # Scale features
-scaler = StandardScaler()
+scaler = Scaler()
 X_scaled = scaler.fit_transform(X)
 
 # Create and fit our LinearSVC model
@@ -60,8 +60,8 @@ w_original = svc.w
 b_original = svc.b
 
 # Transform w back to the original feature space
-w = scaler.scale_ * w_original
-b = b_original - np.dot(scaler.mean_, w_original)
+w = scaler.std * w_original
+b = b_original - np.dot(scaler.mean, w_original)
 
 # Plot the decision boundary line
 slope = -w[0] / w[1]

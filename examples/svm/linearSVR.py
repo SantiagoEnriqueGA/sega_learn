@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler
 
 import sys
 import os
@@ -8,6 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 from sega_learn.svm import *
 from sega_learn.utils import make_regression
+from sega_learn.utils import Scaler
 
 # Set random seed for reproducibility
 np.random.seed(42)
@@ -20,8 +20,8 @@ outlier_indices = np.random.choice(len(X), size=10, replace=False)
 y[outlier_indices] += np.random.normal(-3, 3, size=10)
 
 # Scale features
-scaler_X = StandardScaler()
-scaler_y = StandardScaler()
+scaler_X = Scaler()
+scaler_y = Scaler()
 X_scaled = scaler_X.fit_transform(X)
 y_scaled = scaler_y.fit_transform(y.reshape(-1, 1)).ravel()
 
@@ -48,7 +48,7 @@ y_mesh_scaled = svr.predict(x_mesh_scaled)
 y_mesh = scaler_y.inverse_transform(y_mesh_scaled.reshape(-1, 1)).ravel()
 
 # Get epsilon bounds
-epsilon = svr.epsilon * scaler_y.scale_[0]  # Convert scaled epsilon back to original scale
+epsilon = svr.epsilon * scaler_y.std[0]  # Convert scaled epsilon back to original scale
 
 # Create plot
 plt.figure(figsize=(10, 8))

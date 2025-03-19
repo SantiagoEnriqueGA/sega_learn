@@ -13,6 +13,11 @@ from .dataAugmentation import (
     SMOTE,
     Augmenter,
  )
+from .dataPreprocessing import (
+    one_hot_encode,
+    normalize,
+    Scaler,
+)
 
 __all__ = [
     "PolynomialTransform",
@@ -31,4 +36,8 @@ __all__ = [
     "make_regression",
     "make_classification",
     "make_blobs",
+    "train_test_split",
+    "one_hot_encode",
+    "normalize",
+    "Scaler",
 ]

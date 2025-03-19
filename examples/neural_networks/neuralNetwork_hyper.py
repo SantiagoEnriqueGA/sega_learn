@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report
 
 import sys
@@ -9,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 from sega_learn.utils import train_test_split
 from sega_learn.neural_networks import *
+from sega_learn.utils import Scaler
 
 def load_pima_diabetes_data(file_path):
     """Function to load and preprocess Pima Indians Diabetes dataset"""
@@ -20,7 +20,7 @@ def load_pima_diabetes_data(file_path):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=1)
     
     # Standardize the features
-    scaler = StandardScaler()
+    scaler = Scaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
     
@@ -36,7 +36,7 @@ def load_breast_prognostic_data(file_path):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=1)
     
     # Standardize the features
-    scaler = StandardScaler()
+    scaler = Scaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
     

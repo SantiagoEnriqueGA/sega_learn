@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler
 
 import sys
 import os
@@ -8,6 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 from sega_learn.svm import *
 from sega_learn.utils import make_classification
+from sega_learn.utils import Scaler
 
 # Set random seed for reproducibility
 np.random.seed(42)
@@ -20,7 +20,7 @@ X, y = make_classification(n_samples=300, n_features=2, n_redundant=0, n_informa
 y = np.where(y == 0, -1, 1)
 
 # Scale features
-scaler = StandardScaler()
+scaler = Scaler()
 X_scaled = scaler.fit_transform(X)
 
 # Define kernel parameters
