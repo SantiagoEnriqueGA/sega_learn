@@ -117,6 +117,9 @@ class Scaler:
         Parameters:
             - method (str): The scaling method to use. Options are 'standard', 'minmax', or 'normalize'.
         """
+        if method not in ['standard', 'minmax', 'normalize']:
+            raise ValueError(f"Unsupported method: {method}")
+                
         self.method = method
         self.mean = None
         self.std = None
@@ -124,6 +127,7 @@ class Scaler:
         self.max = None
         self.norm = None
         
+
     def fit(self, X):
         """
         Fits the scaler to the data.
@@ -141,6 +145,8 @@ class Scaler:
             norms = np.linalg.norm(X, axis=1)
             norms[norms == 0] = 1  # Avoid division by zero
             self.norm = norms
+        else:
+            raise ValueError(f"Unsupported method: {self.method}")
     def transform(self, X):
         """
         Transforms the data using the fitted scaler.
