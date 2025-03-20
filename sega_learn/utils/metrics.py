@@ -187,8 +187,14 @@ class Metrics(object):
         """
         y_true = np.array(y_true)
         y_pred = np.array(y_pred)
+        
+        # Clip y_pred to avoid log(0) and log(1)
+        epsilon = 1e-15
+        y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
+        
         if y_pred.ndim == 1:
             y_pred = np.vstack([1 - y_pred, y_pred]).T
+        
         y_true_one_hot = np.eye(y_pred.shape[1])[y_true]
         return -np.mean(np.sum(y_true_one_hot * np.log(y_pred), axis=1))
 
