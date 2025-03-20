@@ -1,8 +1,9 @@
 """
-This module contains the implementation of a Random Forest Regressor.
+This module contains the implementation of a Random Forest Classifier.
 
 The module includes the following classes:
 - RandomForest: A class representing a Random Forest model.
+- RandomForestWithInfoGain: A class representing a Random Forest model that returns information gain for vis.
 - runRandomForest: A class that runs the Random Forest algorithm.
 """
 
@@ -16,7 +17,8 @@ import random
 import multiprocessing
 from joblib import Parallel, delayed
 
-from .treeRegressor import RegressorTreeUtility, RegressorTree
+from .treeClassifier import ClassifierTreeUtility, ClassifierTree
+from ..utils.metrics import Metrics
 
 def _fit_tree(X, y, max_depth):
     """
@@ -28,7 +30,7 @@ def _fit_tree(X, y, max_depth):
         max_depth (int): The maximum depth of the tree.
     
     Returns:
-        RegressorTree: A fitted tree object.
+        ClassifierTree: A fitted tree object.
     """
     # Create bootstrapped sample
     indices = np.random.choice(len(X), size=len(X), replace=True)
@@ -36,12 +38,12 @@ def _fit_tree(X, y, max_depth):
     y_sample = y[indices]
     
     # Fit tree on bootstrapped sample
-    tree = RegressorTree(max_depth=max_depth)
+    tree = ClassifierTree(max_depth=max_depth)
     return tree.learn(X_sample, y_sample)
 
-def _predict_oob(X, trees, bootstraps):
+def _classify_oob(X, trees, bootstraps):
     """
-    Helper function for parallel out-of-bag predictions. Predicts using out-of-bag samples.
+    Helper function for parallel out-of-bag predictions. Classifies using out-of-bag samples.
     
     Args:
         X (array-like): The input features.
@@ -51,44 +53,31 @@ def _predict_oob(X, trees, bootstraps):
     Returns:
         list: The list of out-of-bag predictions. 
     """
-    all_predictions = []
+    all_classifications = []
     
     for i, record in enumerate(X):
-        predictions = []
+        classifications = []
         for j, (tree, bootstrap) in enumerate(zip(trees, bootstraps)):
             # Check if record is out-of-bag for this tree
             if i not in bootstrap:
-                predictions.append(RegressorTree.predict(tree, record))
-        
-        if predictions:
-            all_predictions.append(np.mean(predictions))
+                classifications.append(ClassifierTree.classify(tree, record))
+        # Determine the majority vote
+        if len(classifications) > 0:
+            counts = np.bincount(classifications)
+            majority_class = np.argmax(counts)
+            all_classifications.append(majority_class)
         else:
-            # If not out-of-bag for any tree, use all trees
-            all_predictions.append(np.mean([RegressorTree.predict(tree, record) for tree in trees]))
-    
-    return all_predictions
+            all_classifications.append(np.random.choice([0, 1]))
+            
+    return all_classifications
 
-class RandomForestRegressor(object):
+class RandomForestClassifier(object):
     """
-    A class representing a Random Forest model for regression.
-    
-    Atributes:
-        forest_size (int): The number of trees in the forest.
-        max_depth (int): The maximum depth of each tree.
-        n_jobs (int): The number of jobs to run in parallel.
-        random_seed (int): Seed for random number generation.
-        X (array-like): The input features.
-        y (array-like): The target labels.
-        
-    Methods:
-        fit(X=None, y=None, verbose=False): Fits the random forest to the data.
-        calculate_metrics(y_true, y_pred): Calculates the evaluation metrics.
-        predict(X): Predicts the target values for the input features.
-        get_stats(verbose=False): Returns the evaluation metrics.
-    """
-    
+    """   
     def __init__(self, forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None):
-        """Initialize the Random Forest Regressor with optimized parameters."""
+        """
+        Initializes the RandomForest object.
+        """
         self.n_estimators = forest_size
         self.max_depth = max_depth
         self.n_jobs = n_jobs if n_jobs > 0 else max(1, multiprocessing.cpu_count())
@@ -98,8 +87,7 @@ class RandomForestRegressor(object):
         
         self.X = X
         self.y = y
-        
-        
+    
     def fit(self, X=None, y=None, verbose=False):
         """Fit the random forest with parallel processing."""
         if X is None and self.X is None:
@@ -135,67 +123,62 @@ class RandomForestRegressor(object):
         # Compute OOB predictions
         if verbose:
             print("Computing OOB predictions...")
-        
-        y_pred = _predict_oob(X, self.trees, self.bootstraps)
+                    
+        y_pred = _classify_oob(X, self.trees, self.bootstraps)
         
         # Calculate evaluation metrics
         self.calculate_metrics(y, y_pred)
         
         if verbose:
             print(f"Execution time: {datetime.now() - start_time}")
-            print(f"MSE:  {self.mse:.4f}")
-            print(f"R^2:  {self.r2:.4f}")
-            print(f"MAPE: {self.mape:.4f}%")
-            print(f"MAE:  {self.mae:.4f}")
-            print(f"RMSE: {self.rmse:.4f}")
-        
+            print(f"Accuracy:  {self.accuracy:.4f}")
+            print(f"Precision: {self.precision:.4f}")
+            print(f"Recall:    {self.recall:.4f}")
+            print(f"F1 Score:  {self.f1_score:.4f}")
+            print(f"Log Loss:  {self.log_loss:.4f}")
+            
         return self
     
     def calculate_metrics(self, y_true, y_pred):
-        """Calculate evaluation metrics."""
-        y_true = np.asarray(y_true)
-        y_pred = np.asarray(y_pred)
+        """Calculate evaluation metrics for classification."""
+        y_true = np.array(y_true)
+        y_pred = np.array(y_pred)
         
-        self.mse = np.mean((y_true - y_pred) ** 2)
-        self.ssr = np.sum((y_true - y_pred) ** 2)
-        self.sst = np.sum((y_true - np.mean(y_true)) ** 2)
-        self.r2 = 1 - (self.ssr / self.sst) if self.sst != 0 else 0
+        self.accuracy = Metrics.accuracy(y_true, y_pred)
+        self.precision = Metrics.precision(y_true, y_pred)
+        self.recall = Metrics.recall(y_true, y_pred)
+        self.f1_score = Metrics.f1_score(y_true, y_pred)
+        self.log_loss = Metrics.log_loss(y_true, y_pred)
         
-        # Handle zero values in y_true for MAPE
-        mask = y_true != 0
-        if np.any(mask):
-            self.mape = np.mean(np.abs((y_true[mask] - y_pred[mask]) / y_true[mask])) * 100
-        else:
-            self.mape = np.nan
-            
-        self.mae = np.mean(np.abs(y_true - y_pred))
-        self.rmse = np.sqrt(self.mse)
-    
     def predict(self, X):
-        """Predict using the trained random forest."""
+        """Predict class labels for the provided data."""
         X = np.asarray(X)
-        
-        # Make predictions for each tree
         predictions = []
-        for tree in self.trees:
-            tree_predictions = [RegressorTree.predict(tree, record) for record in X]
-            predictions.append(tree_predictions)
-        
-        # Average predictions across trees
-        return np.mean(predictions, axis=0)
-    
+
+        for record in X:
+            classifications = []
+            for tree in self.trees:
+                classifications.append(ClassifierTree.classify(tree, record))
+            # Determine the majority vote
+            counts = np.bincount(classifications)
+            majority_class = np.argmax(counts)
+            predictions.append(majority_class)
+
+        return predictions
+
     def get_stats(self, verbose=False):
-        """Return the evaluation metrics."""
+        """Return the evaluation metrics"""
         stats = {
-            "MSE": self.mse,
-            "R^2": self.r2,
-            "MAPE": self.mape,
-            "MAE": self.mae,
-            "RMSE": self.rmse
+            "Accuracy": self.accuracy,
+            "Precision": self.precision,
+            "Recall": self.recall,
+            "F1 Score": self.f1_score,
+            "Log Loss": self.log_loss
         }
         
         if verbose:
             for metric, value in stats.items():
                 print(f"{metric}: {value:.4f}")
-                
+        
         return stats
+    
