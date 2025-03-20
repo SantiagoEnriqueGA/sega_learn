@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.neural_networks.cupy_utils</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.neural_networks.html" class="white">neural_networks</a>.cupy_utils</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="cupy.html">cupy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-apply_dropout"><strong>apply_dropout</strong></a>(X, dropout_rate)</dt></dl>
+ <dl><dt><a name="-backward_cupy"><strong>backward_cupy</strong></a>(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs)</dt><dd><span class="code">#&nbsp;Backward&nbsp;pass&nbsp;remains&nbsp;similar;&nbsp;note&nbsp;that&nbsp;you&nbsp;can&nbsp;also&nbsp;consider&nbsp;fusing&nbsp;derivative&nbsp;computations.</span></dd></dl>
+ <dl><dt><a name="-calculate_bce_with_logits_loss"><strong>calculate_bce_with_logits_loss</strong></a>(logits, targets)</dt></dl>
+ <dl><dt><a name="-calculate_cross_entropy_loss"><strong>calculate_cross_entropy_loss</strong></a>(logits, targets)</dt></dl>
+ <dl><dt><a name="-calculate_loss_from_outputs_binary"><strong>calculate_loss_from_outputs_binary</strong></a>(outputs, y, weights, reg_lambda)</dt></dl>
+ <dl><dt><a name="-calculate_loss_from_outputs_multi"><strong>calculate_loss_from_outputs_multi</strong></a>(outputs, y, weights, reg_lambda)</dt></dl>
+ <dl><dt><a name="-evaluate_batch"><strong>evaluate_batch</strong></a>(y_hat, y_true, is_binary)</dt></dl>
+ <dl><dt><a name="-forward_cupy"><strong>forward_cupy</strong></a>(X, weights, biases, activations, dropout_rate, training, is_binary)</dt><dd><span class="code">#&nbsp;Optimized&nbsp;forward&nbsp;pass&nbsp;with&nbsp;in-place&nbsp;operations&nbsp;and&nbsp;fused&nbsp;kernels.</span></dd></dl>
+ <dl><dt><a name="-fuse"><strong>fuse</strong></a>(...)</dt><dd><span class="code"><a href="#-fuse">fuse</a>(*args,&nbsp;**kwargs)<br>
+Decorator&nbsp;that&nbsp;fuses&nbsp;a&nbsp;function.<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;This&nbsp;decorator&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;define&nbsp;an&nbsp;elementwise&nbsp;or&nbsp;reduction&nbsp;kernel<br>
+&nbsp;&nbsp;&nbsp;&nbsp;more&nbsp;easily&nbsp;than&nbsp;:class:`~cupy.ElementwiseKernel`&nbsp;or<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:class:`~cupy.ReductionKernel`.<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Since&nbsp;the&nbsp;fused&nbsp;kernels&nbsp;are&nbsp;cached&nbsp;and&nbsp;reused,&nbsp;it&nbsp;is&nbsp;recommended&nbsp;to&nbsp;reuse<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;same&nbsp;decorated&nbsp;functions&nbsp;instead&nbsp;of&nbsp;e.g.&nbsp;decorating&nbsp;local&nbsp;functions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;that&nbsp;are&nbsp;defined&nbsp;multiple&nbsp;times.<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;kernel_name&nbsp;(str):&nbsp;Name&nbsp;of&nbsp;the&nbsp;fused&nbsp;kernel&nbsp;function.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;omitted,&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;decorated&nbsp;function&nbsp;is&nbsp;used.<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Example:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;@cupy.<a href="#-fuse">fuse</a>(kernel_name='squared_diff')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;def&nbsp;squared_diff(x,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;(x&nbsp;-&nbsp;y)&nbsp;*&nbsp;(x&nbsp;-&nbsp;y)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;x&nbsp;=&nbsp;cupy.arange(10)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;y&nbsp;=&nbsp;cupy.arange(10)[::-1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;squared_diff(x,&nbsp;y)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;array([81,&nbsp;49,&nbsp;25,&nbsp;&nbsp;9,&nbsp;&nbsp;1,&nbsp;&nbsp;1,&nbsp;&nbsp;9,&nbsp;25,&nbsp;49,&nbsp;81])</span></dd></dl>
+ <dl><dt><a name="-logsumexp"><strong>logsumexp</strong></a>(a, axis=None, keepdims=False)</dt><dd><span class="code">#&nbsp;Optimized&nbsp;loss&nbsp;functions.</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>fused_dropout</strong> = &lt;Fusion 'fused_dropout'&gt;<br>
+<strong>fused_leaky_relu</strong> = &lt;Fusion 'fused_leaky_relu'&gt;<br>
+<strong>fused_relu</strong> = &lt;Fusion 'fused_relu'&gt;<br>
+<strong>fused_sigmoid</strong> = &lt;Fusion 'fused_sigmoid'&gt;</td></tr></table>
+</body></html>

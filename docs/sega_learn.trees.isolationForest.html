@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.trees.isolationForest</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.trees.html" class="white">trees</a>.isolationForest</strong></td>
+</tr></table>
+    <p><span class="code">#&nbsp;Importing&nbsp;the&nbsp;required&nbsp;libraries</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="ast.html">ast</a><br>
+<a href="csv.html">csv</a><br>
+</td><td class="multicolumn"><a href="joblib.html">joblib</a><br>
+<a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"><a href="random.html">random</a><br>
+</td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.trees.isolationForest.html#IsolationForest">IsolationForest</a>
+</dt><dt class="heading-text"><a href="sega_learn.trees.isolationForest.html#IsolationTree">IsolationTree</a>
+</dt><dt class="heading-text"><a href="sega_learn.trees.isolationForest.html#IsolationUtils">IsolationUtils</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="IsolationForest">class <strong>IsolationForest</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#IsolationForest">IsolationForest</a>(n_trees=100,&nbsp;max_samples=None,&nbsp;max_depth=10,&nbsp;n_jobs=1,&nbsp;force_true_length=False)<br>
+&nbsp;<br>
+Isolation&nbsp;Forest&nbsp;for&nbsp;anomaly&nbsp;detection.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="IsolationForest-__init__"><strong>__init__</strong></a>(self, n_trees=100, max_samples=None, max_depth=10, n_jobs=1, force_true_length=False)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="IsolationForest-__sklearn_is_fitted__"><strong>__sklearn_is_fitted__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="IsolationForest-anomaly_score"><strong>anomaly_score</strong></a>(self, X)</dt><dd><span class="code">Computes&nbsp;the&nbsp;anomaly&nbsp;scores&nbsp;for&nbsp;given&nbsp;samples.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;array:&nbsp;An&nbsp;array&nbsp;of&nbsp;anomaly&nbsp;scores.</span></dd></dl>
+
+<dl><dt><a name="IsolationForest-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fits&nbsp;the&nbsp;isolation&nbsp;forest&nbsp;to&nbsp;the&nbsp;data.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.</span></dd></dl>
+
+<dl><dt><a name="IsolationForest-predict"><strong>predict</strong></a>(self, X, threshold=0.5)</dt><dd><span class="code">Predicts&nbsp;whether&nbsp;samples&nbsp;are&nbsp;anomalies.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;samples.<br>
+-&nbsp;threshold&nbsp;(float):&nbsp;The&nbsp;threshold&nbsp;for&nbsp;classifying&nbsp;anomalies&nbsp;(default:&nbsp;0.5).<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;array:&nbsp;An&nbsp;array&nbsp;of&nbsp;predictions&nbsp;(1&nbsp;if&nbsp;the&nbsp;sample&nbsp;is&nbsp;an&nbsp;anomaly,&nbsp;0&nbsp;otherwise).</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="IsolationTree">class <strong>IsolationTree</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#IsolationTree">IsolationTree</a>(max_depth=10,&nbsp;force_true_length=False)<br>
+&nbsp;<br>
+An&nbsp;isolation&nbsp;tree&nbsp;for&nbsp;anomaly&nbsp;detection.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="IsolationTree-__init__"><strong>__init__</strong></a>(self, max_depth=10, force_true_length=False)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="IsolationTree-fit"><strong>fit</strong></a>(self, X, depth=0)</dt><dd><span class="code">Fits&nbsp;the&nbsp;isolation&nbsp;tree&nbsp;to&nbsp;the&nbsp;data.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
+-&nbsp;depth&nbsp;(int):&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default:&nbsp;0).<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;isolation&nbsp;tree.</span></dd></dl>
+
+<dl><dt><a name="IsolationTree-path_length"><strong>path_length</strong></a>(self, X, tree=None, depth=0)</dt><dd><span class="code">Computes&nbsp;the&nbsp;path&nbsp;length&nbsp;for&nbsp;a&nbsp;given&nbsp;sample.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;sample.<br>
+-&nbsp;tree&nbsp;(dict):&nbsp;The&nbsp;current&nbsp;node&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default:&nbsp;None).<br>
+-&nbsp;depth&nbsp;(int):&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default:&nbsp;0).<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;int:&nbsp;The&nbsp;path&nbsp;length.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="IsolationUtils">class <strong>IsolationUtils</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Utility&nbsp;functions&nbsp;for&nbsp;the&nbsp;Isolation&nbsp;Forest&nbsp;algorithm.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Static methods defined here:<br>
+<dl><dt><a name="IsolationUtils-compute_avg_path_length"><strong>compute_avg_path_length</strong></a>(size)</dt><dd><span class="code">Computes&nbsp;the&nbsp;average&nbsp;path&nbsp;length&nbsp;of&nbsp;unsuccessful&nbsp;searches&nbsp;in&nbsp;a&nbsp;binary&nbsp;search&nbsp;tree.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;tree.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;float:&nbsp;The&nbsp;average&nbsp;path&nbsp;length.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-ceil"><strong>ceil</strong></a>(x, /)</dt><dd><span class="code">Return&nbsp;the&nbsp;ceiling&nbsp;of&nbsp;x&nbsp;as&nbsp;an&nbsp;Integral.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;the&nbsp;smallest&nbsp;integer&nbsp;&gt;=&nbsp;x.</span></dd></dl>
+ <dl><dt><a name="-floor"><strong>floor</strong></a>(x, /)</dt><dd><span class="code">Return&nbsp;the&nbsp;floor&nbsp;of&nbsp;x&nbsp;as&nbsp;an&nbsp;Integral.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;the&nbsp;largest&nbsp;integer&nbsp;&lt;=&nbsp;x.</span></dd></dl>
+ <dl><dt><a name="-log"><strong>log</strong></a>(...)</dt><dd><span class="code"><a href="#-log">log</a>(x,&nbsp;[base=math.e])<br>
+Return&nbsp;the&nbsp;logarithm&nbsp;of&nbsp;x&nbsp;to&nbsp;the&nbsp;given&nbsp;base.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;base&nbsp;not&nbsp;specified,&nbsp;returns&nbsp;the&nbsp;natural&nbsp;logarithm&nbsp;(base&nbsp;e)&nbsp;of&nbsp;x.</span></dd></dl>
+</td></tr></table>
+</body></html>

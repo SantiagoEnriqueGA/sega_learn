@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.neural_networks.layers_cupy</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.neural_networks.html" class="white">neural_networks</a>.layers_cupy</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="cupy.html">cupy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.neural_networks.layers_cupy.html#CuPyActivation">CuPyActivation</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.layers_cupy.html#CuPyDenseLayer">CuPyDenseLayer</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="CuPyActivation">class <strong>CuPyActivation</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn">Static methods defined here:<br>
+<dl><dt><a name="CuPyActivation-leaky_relu"><strong>leaky_relu</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Leaky&nbsp;ReLU&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;z&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;alpha&nbsp;*&nbsp;z<br>
+Allows&nbsp;a&nbsp;small,&nbsp;non-zero&nbsp;gradient&nbsp;when&nbsp;the&nbsp;input&nbsp;is&nbsp;negative&nbsp;to&nbsp;address&nbsp;the&nbsp;dying&nbsp;ReLU&nbsp;problem.</span></dd></dl>
+
+<dl><dt><a name="CuPyActivation-leaky_relu_derivative"><strong>leaky_relu_derivative</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;Leaky&nbsp;ReLU&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;alpha<br>
+Returns&nbsp;1&nbsp;for&nbsp;positive&nbsp;input,&nbsp;and&nbsp;alpha&nbsp;for&nbsp;negative&nbsp;input.</span></dd></dl>
+
+<dl><dt><a name="CuPyActivation-relu"><strong>relu</strong></a>(z)</dt><dd><span class="code">ReLU&nbsp;(Rectified&nbsp;Linear&nbsp;Unit)&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;max(0,&nbsp;z)<br>
+Returns&nbsp;the&nbsp;input&nbsp;directly&nbsp;if&nbsp;it's&nbsp;positive,&nbsp;otherwise&nbsp;returns&nbsp;0.</span></dd></dl>
+
+<dl><dt><a name="CuPyActivation-relu_derivative"><strong>relu_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;ReLU&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;0<br>
+Returns&nbsp;1&nbsp;for&nbsp;positive&nbsp;input,&nbsp;and&nbsp;0&nbsp;for&nbsp;negative&nbsp;input.</span></dd></dl>
+
+<dl><dt><a name="CuPyActivation-sigmoid"><strong>sigmoid</strong></a>(z)</dt><dd><span class="code">Sigmoid&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;1&nbsp;/&nbsp;(1&nbsp;+&nbsp;exp(-z))<br>
+Maps&nbsp;input&nbsp;to&nbsp;the&nbsp;range&nbsp;[0,&nbsp;1],&nbsp;commonly&nbsp;used&nbsp;for&nbsp;binary&nbsp;classification.</span></dd></dl>
+
+<dl><dt><a name="CuPyActivation-sigmoid_derivative"><strong>sigmoid_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;sigmoid&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;<a href="#CuPyActivation-sigmoid">sigmoid</a>(z)&nbsp;*&nbsp;(1&nbsp;-&nbsp;<a href="#CuPyActivation-sigmoid">sigmoid</a>(z))<br>
+Used&nbsp;for&nbsp;backpropagation&nbsp;through&nbsp;the&nbsp;sigmoid&nbsp;activation.</span></dd></dl>
+
+<dl><dt><a name="CuPyActivation-softmax"><strong>softmax</strong></a>(z)</dt><dd><span class="code">Softmax&nbsp;activation&nbsp;function:&nbsp;f(z)_i&nbsp;=&nbsp;exp(z_i)&nbsp;/&nbsp;sum(exp(z_j))&nbsp;for&nbsp;all&nbsp;j<br>
+Maps&nbsp;input&nbsp;into&nbsp;a&nbsp;probability&nbsp;distribution&nbsp;over&nbsp;multiple&nbsp;classes.&nbsp;Used&nbsp;for&nbsp;multiclass&nbsp;classification.</span></dd></dl>
+
+<dl><dt><a name="CuPyActivation-tanh"><strong>tanh</strong></a>(z)</dt><dd><span class="code">Hyperbolic&nbsp;tangent&nbsp;(tanh)&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;(exp(z)&nbsp;-&nbsp;exp(-z))&nbsp;/&nbsp;(exp(z)&nbsp;+&nbsp;exp(-z))<br>
+Maps&nbsp;input&nbsp;to&nbsp;the&nbsp;range&nbsp;[-1,&nbsp;1],&nbsp;typically&nbsp;used&nbsp;for&nbsp;normalized&nbsp;input.</span></dd></dl>
+
+<dl><dt><a name="CuPyActivation-tanh_derivative"><strong>tanh_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;tanh&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;-&nbsp;<a href="#CuPyActivation-tanh">tanh</a>(z)^2<br>
+Used&nbsp;for&nbsp;backpropagation&nbsp;through&nbsp;the&nbsp;tanh&nbsp;activation.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="CuPyDenseLayer">class <strong>CuPyDenseLayer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#CuPyDenseLayer">CuPyDenseLayer</a>(input_size,&nbsp;output_size,&nbsp;activation='relu')<br>
+&nbsp;<br>
+Initializes&nbsp;a&nbsp;Layer&nbsp;<a href="builtins.html#object">object</a>.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;input&nbsp;to&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;output&nbsp;from&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activation&nbsp;(str):&nbsp;The&nbsp;activation&nbsp;function&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;the&nbsp;layer.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="CuPyDenseLayer-__init__"><strong>__init__</strong></a>(self, input_size, output_size, activation='relu')</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="CuPyDenseLayer-activate"><strong>activate</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;function.</span></dd></dl>
+
+<dl><dt><a name="CuPyDenseLayer-activation_derivative"><strong>activation_derivative</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;derivative.</span></dd></dl>
+
+<dl><dt><a name="CuPyDenseLayer-zero_grad"><strong>zero_grad</strong></a>(self)</dt><dd><span class="code">Reset&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>

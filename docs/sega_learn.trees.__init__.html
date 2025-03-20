@@ -48,6 +48,9 @@ td.singlecolumn { width: 100%; }
 </dt><dd>
 <dl>
 <dt class="heading-text"><a href="sega_learn.trees.gradientBoostedRegressor.html#GradientBoostedRegressor">sega_learn.trees.gradientBoostedRegressor.GradientBoostedRegressor</a>
+</dt><dt class="heading-text"><a href="sega_learn.trees.isolationForest.html#IsolationForest">sega_learn.trees.isolationForest.IsolationForest</a>
+</dt><dt class="heading-text"><a href="sega_learn.trees.isolationForest.html#IsolationTree">sega_learn.trees.isolationForest.IsolationTree</a>
+</dt><dt class="heading-text"><a href="sega_learn.trees.isolationForest.html#IsolationUtils">sega_learn.trees.isolationForest.IsolationUtils</a>
 </dt><dt class="heading-text"><a href="sega_learn.trees.randomForestClassifier.html#RandomForestClassifier">sega_learn.trees.randomForestClassifier.RandomForestClassifier</a>
 </dt><dt class="heading-text"><a href="sega_learn.trees.randomForestRegressor.html#RandomForestRegressor">sega_learn.trees.randomForestRegressor.RandomForestRegressor</a>
 </dt><dt class="heading-text"><a href="sega_learn.trees.treeClassifier.html#ClassifierTree">sega_learn.trees.treeClassifier.ClassifierTree</a>
@@ -228,6 +231,116 @@ Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;predictions&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;predicted&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
 
 <dl><dt><a name="GradientBoostedRegressor-reset"><strong>reset</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="IsolationForest">class <strong>IsolationForest</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#IsolationForest">IsolationForest</a>(n_trees=100,&nbsp;max_samples=None,&nbsp;max_depth=10,&nbsp;n_jobs=1,&nbsp;force_true_length=False)<br>
+&nbsp;<br>
+Isolation&nbsp;Forest&nbsp;for&nbsp;anomaly&nbsp;detection.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="IsolationForest-__init__"><strong>__init__</strong></a>(self, n_trees=100, max_samples=None, max_depth=10, n_jobs=1, force_true_length=False)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="IsolationForest-__sklearn_is_fitted__"><strong>__sklearn_is_fitted__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="IsolationForest-anomaly_score"><strong>anomaly_score</strong></a>(self, X)</dt><dd><span class="code">Computes&nbsp;the&nbsp;anomaly&nbsp;scores&nbsp;for&nbsp;given&nbsp;samples.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;array:&nbsp;An&nbsp;array&nbsp;of&nbsp;anomaly&nbsp;scores.</span></dd></dl>
+
+<dl><dt><a name="IsolationForest-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fits&nbsp;the&nbsp;isolation&nbsp;forest&nbsp;to&nbsp;the&nbsp;data.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.</span></dd></dl>
+
+<dl><dt><a name="IsolationForest-predict"><strong>predict</strong></a>(self, X, threshold=0.5)</dt><dd><span class="code">Predicts&nbsp;whether&nbsp;samples&nbsp;are&nbsp;anomalies.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;samples.<br>
+-&nbsp;threshold&nbsp;(float):&nbsp;The&nbsp;threshold&nbsp;for&nbsp;classifying&nbsp;anomalies&nbsp;(default:&nbsp;0.5).<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;array:&nbsp;An&nbsp;array&nbsp;of&nbsp;predictions&nbsp;(1&nbsp;if&nbsp;the&nbsp;sample&nbsp;is&nbsp;an&nbsp;anomaly,&nbsp;0&nbsp;otherwise).</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="IsolationTree">class <strong>IsolationTree</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#IsolationTree">IsolationTree</a>(max_depth=10,&nbsp;force_true_length=False)<br>
+&nbsp;<br>
+An&nbsp;isolation&nbsp;tree&nbsp;for&nbsp;anomaly&nbsp;detection.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="IsolationTree-__init__"><strong>__init__</strong></a>(self, max_depth=10, force_true_length=False)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="IsolationTree-fit"><strong>fit</strong></a>(self, X, depth=0)</dt><dd><span class="code">Fits&nbsp;the&nbsp;isolation&nbsp;tree&nbsp;to&nbsp;the&nbsp;data.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
+-&nbsp;depth&nbsp;(int):&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default:&nbsp;0).<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;isolation&nbsp;tree.</span></dd></dl>
+
+<dl><dt><a name="IsolationTree-path_length"><strong>path_length</strong></a>(self, X, tree=None, depth=0)</dt><dd><span class="code">Computes&nbsp;the&nbsp;path&nbsp;length&nbsp;for&nbsp;a&nbsp;given&nbsp;sample.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;sample.<br>
+-&nbsp;tree&nbsp;(dict):&nbsp;The&nbsp;current&nbsp;node&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default:&nbsp;None).<br>
+-&nbsp;depth&nbsp;(int):&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default:&nbsp;0).<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;int:&nbsp;The&nbsp;path&nbsp;length.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="IsolationUtils">class <strong>IsolationUtils</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Utility&nbsp;functions&nbsp;for&nbsp;the&nbsp;Isolation&nbsp;Forest&nbsp;algorithm.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Static methods defined here:<br>
+<dl><dt><a name="IsolationUtils-compute_avg_path_length"><strong>compute_avg_path_length</strong></a>(size)</dt><dd><span class="code">Computes&nbsp;the&nbsp;average&nbsp;path&nbsp;length&nbsp;of&nbsp;unsuccessful&nbsp;searches&nbsp;in&nbsp;a&nbsp;binary&nbsp;search&nbsp;tree.<br>
+&nbsp;<br>
+Parameters:<br>
+-&nbsp;size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;tree.<br>
+&nbsp;<br>
+Returns:<br>
+-&nbsp;float:&nbsp;The&nbsp;average&nbsp;path&nbsp;length.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -534,5 +647,5 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
     
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>__all__</strong> = ['ClassifierTreeUtility', 'ClassifierTree', 'RegressorTreeUtility', 'RegressorTree', 'RandomForestClassifier', 'RandomForestRegressor', 'GradientBoostedRegressor']</td></tr></table>
+<td class="singlecolumn"><strong>__all__</strong> = ['ClassifierTreeUtility', 'ClassifierTree', 'RegressorTreeUtility', 'RegressorTree', 'RandomForestClassifier', 'RandomForestRegressor', 'GradientBoostedRegressor', 'IsolationForest', 'IsolationTree', 'IsolationUtils']</td></tr></table>
 </body></html>

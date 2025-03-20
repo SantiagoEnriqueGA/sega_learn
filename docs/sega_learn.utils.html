@@ -45,14 +45,15 @@ td.singlecolumn { width: 100%; }
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="sega_learn.utils.dataAugmentation.html">dataAugmentation</a><br>
 <a href="sega_learn.utils.dataPrep.html">dataPrep</a><br>
-<a href="sega_learn.utils.dataSplitting.html">dataSplitting</a><br>
-</td><td class="multicolumn"><a href="sega_learn.utils.decomposition.html">decomposition</a><br>
+<a href="sega_learn.utils.dataPreprocessing.html">dataPreprocessing</a><br>
+</td><td class="multicolumn"><a href="sega_learn.utils.dataSplitting.html">dataSplitting</a><br>
+<a href="sega_learn.utils.decomposition.html">decomposition</a><br>
 <a href="sega_learn.utils.makeData.html">makeData</a><br>
-<a href="sega_learn.utils.metrics.html">metrics</a><br>
-</td><td class="multicolumn"><a href="sega_learn.utils.modelSelection.html">modelSelection</a><br>
+</td><td class="multicolumn"><a href="sega_learn.utils.metrics.html">metrics</a><br>
+<a href="sega_learn.utils.modelSelection.html">modelSelection</a><br>
 <a href="sega_learn.utils.polynomialTransform.html">polynomialTransform</a><br>
-<a href="sega_learn.utils.voting.html">voting</a><br>
-</td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+</td><td class="multicolumn"><a href="sega_learn.utils.voting.html">voting</a><br>
+</td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
@@ -67,6 +68,7 @@ td.singlecolumn { width: 100%; }
 </dt><dt class="heading-text"><a href="sega_learn.utils.dataAugmentation.html#RandomUnderSampler">sega_learn.utils.dataAugmentation.RandomUnderSampler</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.dataAugmentation.html#SMOTE">sega_learn.utils.dataAugmentation.SMOTE</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.dataPrep.html#DataPrep">sega_learn.utils.dataPrep.DataPrep</a>
+</dt><dt class="heading-text"><a href="sega_learn.utils.dataPreprocessing.html#Scaler">sega_learn.utils.dataPreprocessing.Scaler</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.decomposition.html#PCA">sega_learn.utils.decomposition.PCA</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.decomposition.html#SVD">sega_learn.utils.decomposition.SVD</a>
 </dt><dt class="heading-text"><a href="sega_learn.utils.metrics.html#Metrics">sega_learn.utils.metrics.Metrics</a>
@@ -719,6 +721,59 @@ Data descriptors defined here:<br>
 </td></tr></table> <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Scaler">class <strong>Scaler</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Scaler">Scaler</a>(method='standard')<br>
+&nbsp;<br>
+A&nbsp;class&nbsp;for&nbsp;scaling&nbsp;data&nbsp;by&nbsp;standardization&nbsp;and&nbsp;normalization.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Scaler-__init__"><strong>__init__</strong></a>(self, method='standard')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;scaler&nbsp;with&nbsp;the&nbsp;specified&nbsp;method.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;method&nbsp;(str):&nbsp;The&nbsp;scaling&nbsp;method&nbsp;to&nbsp;use.&nbsp;Options&nbsp;are&nbsp;'standard',&nbsp;'minmax',&nbsp;or&nbsp;'normalize'.</span></dd></dl>
+
+<dl><dt><a name="Scaler-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fits&nbsp;the&nbsp;scaler&nbsp;to&nbsp;the&nbsp;data.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;scaler&nbsp;to.</span></dd></dl>
+
+<dl><dt><a name="Scaler-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fits&nbsp;the&nbsp;scaler&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;then&nbsp;transforms&nbsp;it.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;and&nbsp;transform.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_transformed&nbsp;(numpy.ndarray):&nbsp;The&nbsp;transformed&nbsp;data.</span></dd></dl>
+
+<dl><dt><a name="Scaler-inverse_transform"><strong>inverse_transform</strong></a>(self, X)</dt><dd><span class="code">Inverse&nbsp;transforms&nbsp;the&nbsp;data&nbsp;using&nbsp;the&nbsp;fitted&nbsp;scaler.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;inverse&nbsp;transform.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_inverse&nbsp;(numpy.ndarray):&nbsp;The&nbsp;inverse&nbsp;transformed&nbsp;data.</span></dd></dl>
+
+<dl><dt><a name="Scaler-transform"><strong>transform</strong></a>(self, X)</dt><dd><span class="code">Transforms&nbsp;the&nbsp;data&nbsp;using&nbsp;the&nbsp;fitted&nbsp;scaler.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;transform.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_transformed&nbsp;(numpy.ndarray):&nbsp;The&nbsp;transformed&nbsp;data.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="VotingRegressor">class <strong>VotingRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
@@ -874,11 +929,69 @@ y&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_sampl
 coef&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_features,)&nbsp;or&nbsp;(n_features,&nbsp;n_targets)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;coefficient&nbsp;of&nbsp;the&nbsp;underlying&nbsp;linear&nbsp;model.&nbsp;Only&nbsp;returned&nbsp;if<br>
 &nbsp;&nbsp;&nbsp;&nbsp;coef=True.</span></dd></dl>
+ <dl><dt><a name="-normalize"><strong>normalize</strong></a>(X, norm='l2')</dt><dd><span class="code">Normalizes&nbsp;the&nbsp;input&nbsp;data&nbsp;using&nbsp;the&nbsp;specified&nbsp;norm.<br>
+Uses&nbsp;L2&nbsp;normalization&nbsp;by&nbsp;default.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;input&nbsp;data&nbsp;to&nbsp;be&nbsp;normalized.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;norm&nbsp;(str):&nbsp;The&nbsp;type&nbsp;of&nbsp;norm&nbsp;to&nbsp;use&nbsp;for&nbsp;normalization.&nbsp;Default&nbsp;is&nbsp;'l2'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'l2':&nbsp;L2&nbsp;normalization&nbsp;(Euclidean&nbsp;norm).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'l1':&nbsp;L1&nbsp;normalization&nbsp;(Manhattan&nbsp;norm).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'max':&nbsp;Max&nbsp;normalization&nbsp;(divides&nbsp;by&nbsp;the&nbsp;maximum&nbsp;absolute&nbsp;value).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'minmax':&nbsp;Min-max&nbsp;normalization&nbsp;(scales&nbsp;to&nbsp;[0,&nbsp;1]).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;normalized&nbsp;data.</span></dd></dl>
+ <dl><dt><a name="-one_hot_encode"><strong>one_hot_encode</strong></a>(X, cols=None)</dt><dd><span class="code">One-hot&nbsp;encodes&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame&nbsp;or&nbsp;numpy&nbsp;array.<br>
+Drops&nbsp;the&nbsp;original&nbsp;columns&nbsp;after&nbsp;encoding.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;encoded.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;cols&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;column&nbsp;indices&nbsp;to&nbsp;be&nbsp;encoded.&nbsp;Defaults&nbsp;to&nbsp;None,&nbsp;which&nbsp;means&nbsp;all&nbsp;non-numerical&nbsp;columns&nbsp;will&nbsp;be&nbsp;encoded.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;None,&nbsp;the&nbsp;function&nbsp;will&nbsp;automatically&nbsp;detect&nbsp;non-numerical&nbsp;columns.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;with&nbsp;one-hot&nbsp;encoded&nbsp;columns.</span></dd></dl>
+ <dl><dt><a name="-train_test_split"><strong>train_test_split</strong></a>(*arrays, test_size=None, train_size=None, random_state=None, shuffle=True, stratify=None)</dt><dd><span class="code">Split&nbsp;arrays&nbsp;or&nbsp;matrices&nbsp;into&nbsp;random&nbsp;train&nbsp;and&nbsp;test&nbsp;subsets.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+*arrays&nbsp;:&nbsp;sequence&nbsp;of&nbsp;arrays<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Allowed&nbsp;inputs&nbsp;are&nbsp;lists,&nbsp;numpy&nbsp;arrays,&nbsp;scipy-sparse&nbsp;matrices&nbsp;or&nbsp;pandas&nbsp;DataFrames.<br>
+&nbsp;<br>
+test_size&nbsp;:&nbsp;float&nbsp;or&nbsp;int,&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;float,&nbsp;should&nbsp;be&nbsp;between&nbsp;0.0&nbsp;and&nbsp;1.0&nbsp;and&nbsp;represent&nbsp;the&nbsp;proportion<br>
+&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;the&nbsp;dataset&nbsp;to&nbsp;include&nbsp;in&nbsp;the&nbsp;test&nbsp;split.&nbsp;If&nbsp;int,&nbsp;represents&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;absolute&nbsp;number&nbsp;of&nbsp;test&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+train_size&nbsp;:&nbsp;float&nbsp;or&nbsp;int,&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;float,&nbsp;should&nbsp;be&nbsp;between&nbsp;0.0&nbsp;and&nbsp;1.0&nbsp;and&nbsp;represent&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;proportion&nbsp;of&nbsp;the&nbsp;dataset&nbsp;to&nbsp;include&nbsp;in&nbsp;the&nbsp;train&nbsp;split.&nbsp;If&nbsp;int,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;represents&nbsp;the&nbsp;absolute&nbsp;number&nbsp;of&nbsp;train&nbsp;samples.&nbsp;If&nbsp;None,&nbsp;the&nbsp;value&nbsp;is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;automatically&nbsp;computed&nbsp;as&nbsp;the&nbsp;complement&nbsp;of&nbsp;the&nbsp;test&nbsp;size&nbsp;(unless&nbsp;both<br>
+&nbsp;&nbsp;&nbsp;&nbsp;are&nbsp;None,&nbsp;in&nbsp;which&nbsp;case&nbsp;test_size&nbsp;defaults&nbsp;to&nbsp;0.25).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+random_state&nbsp;:&nbsp;int,&nbsp;RandomState&nbsp;instance&nbsp;or&nbsp;None,&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Controls&nbsp;the&nbsp;shuffling&nbsp;applied&nbsp;to&nbsp;the&nbsp;data&nbsp;before&nbsp;applying&nbsp;the&nbsp;split.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Pass&nbsp;an&nbsp;int&nbsp;for&nbsp;reproducible&nbsp;output&nbsp;across&nbsp;multiple&nbsp;function&nbsp;calls.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+shuffle&nbsp;:&nbsp;bool,&nbsp;default=True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;or&nbsp;not&nbsp;to&nbsp;shuffle&nbsp;the&nbsp;data&nbsp;before&nbsp;splitting.&nbsp;If&nbsp;shuffle=False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;then&nbsp;stratify&nbsp;must&nbsp;be&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+stratify&nbsp;:&nbsp;array-like,&nbsp;default=None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;not&nbsp;None,&nbsp;data&nbsp;is&nbsp;split&nbsp;in&nbsp;a&nbsp;stratified&nbsp;fashion,&nbsp;using&nbsp;this&nbsp;as<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;class&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Returns<br>
+-------<br>
+splitting&nbsp;:&nbsp;list,&nbsp;length=2&nbsp;*&nbsp;len(arrays)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;List&nbsp;containing&nbsp;train-test&nbsp;split&nbsp;of&nbsp;inputs.</span></dd></dl>
 </td></tr></table><p>
 <table class="section">
 <tr class="decor data-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
     
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'ModelSelectionUtility', 'GridSearchCV', 'RandomSearchCV', 'Metrics', 'RandomOverSampler', 'RandomUnderSampler', 'SMOTE', 'Augmenter', 'PCA', 'SVD', 'make_regression', 'make_classification', 'make_blobs']</td></tr></table>
+<td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'ModelSelectionUtility', 'GridSearchCV', 'RandomSearchCV', 'Metrics', 'RandomOverSampler', 'RandomUnderSampler', 'SMOTE', 'Augmenter', 'PCA', 'SVD', 'make_regression', 'make_classification', 'make_blobs', 'train_test_split', 'one_hot_encode', 'normalize', 'Scaler']</td></tr></table>
 </body></html>

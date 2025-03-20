@@ -108,7 +108,7 @@ Each&nbsp;layer&nbsp;is&nbsp;created&nbsp;with&nbsp;the&nbsp;specified&nbsp;numb
 
 <dl><dt><a name="BaseBackendNeuralNetwork-predict"><strong>predict</strong></a>(self, X)</dt></dl>
 
-<dl><dt><a name="BaseBackendNeuralNetwork-train"><strong>train</strong></a>(self, X_train, y_train, X_val=None, y_val=None, optimizer=None, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1, track_metrics=False, track_adv_metrics=False)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
+<dl><dt><a name="BaseBackendNeuralNetwork-train"><strong>train</strong></a>(self, X_train, y_train, X_val=None, y_val=None, optimizer=None, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1, track_metrics=False, track_adv_metrics=False, save_animation=False, save_path='training_animation.mp4', fps=1, dpi=100, frame_every=1)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model.<br>
 Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_train&nbsp;(ndarray):&nbsp;Training&nbsp;data&nbsp;features.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;y_train&nbsp;(ndarray):&nbsp;Training&nbsp;data&nbsp;labels.<br>
@@ -123,7 +123,31 @@ Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;use_tqdm&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;use&nbsp;tqdm&nbsp;for&nbsp;progress&nbsp;bar&nbsp;(default:&nbsp;True).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;n_jobs&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;jobs&nbsp;for&nbsp;parallel&nbsp;processing&nbsp;(default:&nbsp;1).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;track_metrics&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;track&nbsp;training&nbsp;metrics&nbsp;(default:&nbsp;False).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;track_adv_metrics&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;track&nbsp;advanced&nbsp;metrics&nbsp;(default:&nbsp;False).</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;track_adv_metrics&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;track&nbsp;advanced&nbsp;metrics&nbsp;(default:&nbsp;False).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;save_animation&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;save&nbsp;the&nbsp;animation&nbsp;of&nbsp;metrics&nbsp;(default:&nbsp;False).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;save_path&nbsp;(str):&nbsp;Path&nbsp;to&nbsp;save&nbsp;the&nbsp;animation&nbsp;file.&nbsp;File&nbsp;extension&nbsp;must&nbsp;be&nbsp;.mp4&nbsp;or&nbsp;.gif&nbsp;(default:&nbsp;'training_animation.mp4').<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;fps&nbsp;(int):&nbsp;Frames&nbsp;per&nbsp;second&nbsp;for&nbsp;the&nbsp;saved&nbsp;animation&nbsp;(default:&nbsp;1).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;dpi&nbsp;(int):&nbsp;DPI&nbsp;for&nbsp;the&nbsp;saved&nbsp;animation&nbsp;(default:&nbsp;100).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;frame_every&nbsp;(int):&nbsp;Capture&nbsp;frame&nbsp;every&nbsp;N&nbsp;epochs&nbsp;(to&nbsp;reduce&nbsp;file&nbsp;size)&nbsp;(default:&nbsp;1).</span></dd></dl>
+
+<dl><dt><a name="BaseBackendNeuralNetwork-train_with_animation_capture"><strong>train_with_animation_capture</strong></a>(self, X_train, y_train, X_val=None, y_val=None, optimizer=None, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, save_path='training_animation.mp4', fps=1, dpi=100, frame_every=1)</dt><dd><span class="code">Trains&nbsp;the&nbsp;neural&nbsp;network&nbsp;model&nbsp;while&nbsp;capturing&nbsp;training&nbsp;metrics&nbsp;in&nbsp;real-time&nbsp;animation.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_train,&nbsp;y_train:&nbsp;Training&nbsp;data<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_val,&nbsp;y_val:&nbsp;Validation&nbsp;data&nbsp;(optional)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;optimizer:&nbsp;Optimizer&nbsp;for&nbsp;updating&nbsp;parameters<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;epochs:&nbsp;Number&nbsp;of&nbsp;training&nbsp;epochs<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;batch_size:&nbsp;Batch&nbsp;size&nbsp;for&nbsp;mini-batch&nbsp;gradient&nbsp;descent<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;early_stopping_threshold:&nbsp;Patience&nbsp;for&nbsp;early&nbsp;stopping<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;lr_scheduler:&nbsp;Learning&nbsp;rate&nbsp;scheduler<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;save_path:&nbsp;Path&nbsp;to&nbsp;save&nbsp;the&nbsp;animation&nbsp;file<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;fps:&nbsp;Frames&nbsp;per&nbsp;second&nbsp;for&nbsp;the&nbsp;saved&nbsp;animation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;dpi:&nbsp;DPI&nbsp;for&nbsp;the&nbsp;saved&nbsp;animation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;writer:&nbsp;Animation&nbsp;writer&nbsp;('ffmpeg',&nbsp;'pillow',&nbsp;etc.)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;frame_every:&nbsp;Capture&nbsp;frame&nbsp;every&nbsp;N&nbsp;epochs&nbsp;(to&nbsp;reduce&nbsp;file&nbsp;size)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;None</span></dd></dl>
 
 <dl><dt><a name="BaseBackendNeuralNetwork-tune_hyperparameters"><strong>tune_hyperparameters</strong></a>(self, X_train, y_train, X_val, y_val, param_grid, layer_configs=None, optimizer_types=None, lr_range=(0.0001, 0.01, 5), epochs=30, batch_size=32)</dt><dd><span class="code">Performs&nbsp;hyperparameter&nbsp;tuning&nbsp;using&nbsp;grid&nbsp;search.<br>
 Parameters:<br>

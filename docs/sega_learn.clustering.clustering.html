@@ -66,7 +66,7 @@ td.singlecolumn { width: 100%; }
 <td class="section-title" colspan=3>&nbsp;<br><a name="DBSCAN">class <strong>DBSCAN</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#DBSCAN">DBSCAN</a>(X,&nbsp;eps=0.5,&nbsp;min_samples=5)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#DBSCAN">DBSCAN</a>(X,&nbsp;eps=0.5,&nbsp;min_samples=5,&nbsp;compile_numba=False)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;the&nbsp;Density-Based&nbsp;Spatial&nbsp;Clustering&nbsp;of&nbsp;Applications&nbsp;with&nbsp;Noise&nbsp;(<a href="#DBSCAN">DBSCAN</a>)&nbsp;algorithm.<br>
 &nbsp;<br>
@@ -86,12 +86,14 @@ Methods:<br>
 -&nbsp;_custom_distance_matrix:&nbsp;Calculates&nbsp;the&nbsp;pairwise&nbsp;distance&nbsp;matrix&nbsp;using&nbsp;a&nbsp;custom&nbsp;distance&nbsp;calculation&nbsp;method.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="DBSCAN-__init__"><strong>__init__</strong></a>(self, X, eps=0.5, min_samples=5)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+<dl><dt><a name="DBSCAN-__init__"><strong>__init__</strong></a>(self, X, eps=0.5, min_samples=5, compile_numba=False)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
 Parameters:<br>
 -&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
 -&nbsp;eps:&nbsp;The&nbsp;maximum&nbsp;distance&nbsp;between&nbsp;two&nbsp;samples&nbsp;for&nbsp;one&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;in&nbsp;the&nbsp;neighborhood&nbsp;of&nbsp;the&nbsp;other.<br>
--&nbsp;min_samples:&nbsp;The&nbsp;number&nbsp;of&nbsp;samples&nbsp;in&nbsp;a&nbsp;neighborhood&nbsp;for&nbsp;a&nbsp;point&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;a&nbsp;core&nbsp;point.</span></dd></dl>
+-&nbsp;min_samples:&nbsp;The&nbsp;number&nbsp;of&nbsp;samples&nbsp;in&nbsp;a&nbsp;neighborhood&nbsp;for&nbsp;a&nbsp;point&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;a&nbsp;core&nbsp;point.<br>
+-&nbsp;compile_numba:&nbsp;Whether&nbsp;to&nbsp;compile&nbsp;the&nbsp;distance&nbsp;calculations&nbsp;using&nbsp;Numba&nbsp;for&nbsp;performance.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;not&nbsp;compiled,&nbsp;the&nbsp;first&nbsp;call&nbsp;to&nbsp;the&nbsp;numba&nbsp;fitting&nbsp;function&nbsp;will&nbsp;take&nbsp;longer,&nbsp;but&nbsp;subsequent&nbsp;calls&nbsp;will&nbsp;be&nbsp;faster.</span></dd></dl>
 
 <dl><dt><a name="DBSCAN-auto_eps"><strong>auto_eps</strong></a>(self, min=0.1, max=1.1, precision=0.01, return_scores=False, verbose=False)</dt><dd><span class="code">Find&nbsp;the&nbsp;optimal&nbsp;eps&nbsp;value&nbsp;for&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;based&nbsp;on&nbsp;silhouette&nbsp;score.<br>
 &nbsp;<br>
@@ -106,7 +108,7 @@ Returns:<br>
 -&nbsp;eps:&nbsp;The&nbsp;optimal&nbsp;eps&nbsp;value.<br>
 -&nbsp;scores_dict&nbsp;(optional):&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;(eps,&nbsp;score)&nbsp;pairs&nbsp;if&nbsp;return_scores&nbsp;is&nbsp;True.</span></dd></dl>
 
-<dl><dt><a name="DBSCAN-fit"><strong>fit</strong></a>(self, metric='euclidean')</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
+<dl><dt><a name="DBSCAN-fit"><strong>fit</strong></a>(self, metric='euclidean', numba=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
 Algorithm&nbsp;Steps:<br>
 1.&nbsp;Calculate&nbsp;the&nbsp;distance&nbsp;matrix&nbsp;between&nbsp;all&nbsp;points&nbsp;in&nbsp;the&nbsp;dataset.<br>
@@ -115,11 +117,12 @@ Algorithm&nbsp;Steps:<br>
 &nbsp;<br>
 Parameters:<br>
 -&nbsp;metric:&nbsp;The&nbsp;distance&nbsp;metric&nbsp;to&nbsp;use&nbsp;('euclidean',&nbsp;'manhattan',&nbsp;or&nbsp;'cosine').<br>
+-&nbsp;numba:&nbsp;Whether&nbsp;to&nbsp;use&nbsp;numba&nbsp;for&nbsp;faster&nbsp;computation.<br>
 &nbsp;<br>
 Returns:<br>
 -&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.</span></dd></dl>
 
-<dl><dt><a name="DBSCAN-fit_predict"><strong>fit_predict</strong></a>(self)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;return&nbsp;the&nbsp;cluster&nbsp;labels.<br>
+<dl><dt><a name="DBSCAN-fit_predict"><strong>fit_predict</strong></a>(self, numba=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;return&nbsp;the&nbsp;cluster&nbsp;labels.<br>
 &nbsp;<br>
 Returns:<br>
 -&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;the&nbsp;data.</span></dd></dl>
@@ -284,5 +287,11 @@ Data descriptors defined here:<br>
 <tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl><dt><a name="-heappop"><strong>heappop</strong></a>(heap, /)</dt><dd><span class="code">Pop&nbsp;the&nbsp;smallest&nbsp;item&nbsp;off&nbsp;the&nbsp;heap,&nbsp;maintaining&nbsp;the&nbsp;heap&nbsp;invariant.</span></dd></dl>
  <dl><dt><a name="-heappush"><strong>heappush</strong></a>(heap, item, /)</dt><dd><span class="code">Push&nbsp;item&nbsp;onto&nbsp;heap,&nbsp;maintaining&nbsp;the&nbsp;heap&nbsp;invariant.</span></dd></dl>
-</td></tr></table>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>e</strong> = 2.718281828459045</td></tr></table>
 </body></html>

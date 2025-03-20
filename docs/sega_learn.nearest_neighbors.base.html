@@ -64,7 +64,7 @@ td.singlecolumn { width: 100%; }
 <td class="section-title" colspan=3>&nbsp;<br><a name="KNeighborsBase">class <strong>KNeighborsBase</strong></a>(<a href="abc.html#ABC">abc.ABC</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#KNeighborsBase">KNeighborsBase</a>(n_neighbors=5,&nbsp;distance_metric='euclidean',&nbsp;one_hot_encode=False,&nbsp;fp_precision=&amp;lt;class&nbsp;'numpy.float64'&amp;gt;)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#KNeighborsBase">KNeighborsBase</a>(n_neighbors=5,&nbsp;distance_metric='euclidean',&nbsp;one_hot_encode=False,&nbsp;fp_precision=&amp;lt;class&nbsp;'numpy.float64'&amp;gt;,&nbsp;numba=False)<br>
 &nbsp;<br>
 #&nbsp;<a href="abc.html#ABC">ABC</a>&nbsp;is&nbsp;a&nbsp;module&nbsp;that&nbsp;provides&nbsp;tools&nbsp;for&nbsp;defining&nbsp;abstract&nbsp;base&nbsp;classes&nbsp;in&nbsp;Python.<br>
 #&nbsp;Used&nbsp;here&nbsp;to&nbsp;define&nbsp;a&nbsp;base&nbsp;class&nbsp;for&nbsp;KNN&nbsp;algorithms.<br>
@@ -77,12 +77,13 @@ td.singlecolumn { width: 100%; }
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="KNeighborsBase-__init__"><strong>__init__</strong></a>(self, n_neighbors=5, distance_metric='euclidean', one_hot_encode=False, fp_precision=&lt;class 'numpy.float64'&gt;)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#KNeighborsBase">KNeighborsBase</a>&nbsp;class.<br>
+<dl><dt><a name="KNeighborsBase-__init__"><strong>__init__</strong></a>(self, n_neighbors=5, distance_metric='euclidean', one_hot_encode=False, fp_precision=&lt;class 'numpy.float64'&gt;, numba=False)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#KNeighborsBase">KNeighborsBase</a>&nbsp;class.<br>
 Parameters:<br>
 -&nbsp;n_neighbors:&nbsp;int,&nbsp;default=5.&nbsp;The&nbsp;number&nbsp;of&nbsp;neighbors&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;KNN&nbsp;algorithm.<br>
 -&nbsp;distance_metric:&nbsp;str,&nbsp;default='euclidean'.&nbsp;The&nbsp;distance&nbsp;metric&nbsp;to&nbsp;use&nbsp;for&nbsp;calculating&nbsp;distances.<br>
 -&nbsp;one_hot_encode:&nbsp;bool,&nbsp;default=False.&nbsp;Whether&nbsp;to&nbsp;apply&nbsp;one-hot&nbsp;encoding&nbsp;to&nbsp;the&nbsp;categorical&nbsp;columns.<br>
--&nbsp;fp_precision:&nbsp;data&nbsp;type,&nbsp;default=np.float64.&nbsp;The&nbsp;floating&nbsp;point&nbsp;precision&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;calculations.</span></dd></dl>
+-&nbsp;fp_precision:&nbsp;data&nbsp;type,&nbsp;default=np.float64.&nbsp;The&nbsp;floating&nbsp;point&nbsp;precision&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;calculations.<br>
+-&nbsp;numba:&nbsp;bool,&nbsp;default=True.&nbsp;Whether&nbsp;to&nbsp;use&nbsp;numba&nbsp;for&nbsp;speeding&nbsp;up&nbsp;the&nbsp;calculations.</span></dd></dl>
 
 <dl><dt><a name="KNeighborsBase-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;using&nbsp;the&nbsp;training&nbsp;data.<br>
 Parameters:<br>

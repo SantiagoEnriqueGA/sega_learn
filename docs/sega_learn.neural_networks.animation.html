@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.neural_networks.animation</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.neural_networks.html" class="white">neural_networks</a>.animation</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.neural_networks.animation.html#TrainingAnimator">TrainingAnimator</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="TrainingAnimator">class <strong>TrainingAnimator</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#TrainingAnimator">TrainingAnimator</a>(figure_size=(18,&nbsp;10),&nbsp;dpi=100)<br>
+&nbsp;<br>
+A&nbsp;utility&nbsp;class&nbsp;to&nbsp;create&nbsp;and&nbsp;manage&nbsp;training&nbsp;animations.<br>
+This&nbsp;class&nbsp;provides&nbsp;callback&nbsp;functions&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;during&nbsp;model&nbsp;training.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="TrainingAnimator-__init__"><strong>__init__</strong></a>(self, figure_size=(18, 10), dpi=100)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;animator&nbsp;with&nbsp;given&nbsp;figure&nbsp;size&nbsp;and&nbsp;DPI.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;figure_size&nbsp;(tuple):&nbsp;Size&nbsp;of&nbsp;the&nbsp;figure&nbsp;(width,&nbsp;height)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dpi&nbsp;(int):&nbsp;DPI&nbsp;for&nbsp;rendering</span></dd></dl>
+
+<dl><dt><a name="TrainingAnimator-add_training_frame"><strong>add_training_frame</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TrainingAnimator-animate_training_metrics"><strong>animate_training_metrics</strong></a>(self, interval=200, blit=True, save_path=None, save_format='mp4', fps=10, dpi=300)</dt><dd><span class="code">Create&nbsp;an&nbsp;animation&nbsp;of&nbsp;the&nbsp;training&nbsp;metrics.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;interval&nbsp;(int):&nbsp;Delay&nbsp;between&nbsp;frames&nbsp;in&nbsp;milliseconds<br>
+&nbsp;&nbsp;&nbsp;&nbsp;blit&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;use&nbsp;blitting&nbsp;for&nbsp;efficient&nbsp;animation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;save_path&nbsp;(str,&nbsp;optional):&nbsp;Path&nbsp;to&nbsp;save&nbsp;the&nbsp;animation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;save_format&nbsp;(str):&nbsp;Format&nbsp;to&nbsp;save&nbsp;animation&nbsp;('mp4',&nbsp;'gif',&nbsp;etc.)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fps&nbsp;(int):&nbsp;Frames&nbsp;per&nbsp;second&nbsp;for&nbsp;the&nbsp;saved&nbsp;video<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dpi&nbsp;(int):&nbsp;DPI&nbsp;for&nbsp;the&nbsp;saved&nbsp;animation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;animation.FuncAnimation:&nbsp;Animation&nbsp;<a href="builtins.html#object">object</a></span></dd></dl>
+
+<dl><dt><a name="TrainingAnimator-finish_training_video"><strong>finish_training_video</strong></a>(self, print_message=True)</dt><dd><span class="code">Finish&nbsp;and&nbsp;save&nbsp;the&nbsp;training&nbsp;video.</span></dd></dl>
+
+<dl><dt><a name="TrainingAnimator-initialize"><strong>initialize</strong></a>(self, metrics_to_track, has_validation=False)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;animation&nbsp;with&nbsp;specified&nbsp;metrics.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;metrics_to_track&nbsp;(list):&nbsp;List&nbsp;of&nbsp;metrics&nbsp;to&nbsp;track<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has_validation&nbsp;(bool):&nbsp;Whether&nbsp;validation&nbsp;metrics&nbsp;are&nbsp;available</span></dd></dl>
+
+<dl><dt><a name="TrainingAnimator-setup_training_video"><strong>setup_training_video</strong></a>(self, filepath, fps=10, dpi=None)</dt><dd><span class="code">Set&nbsp;up&nbsp;a&nbsp;video&nbsp;writer&nbsp;to&nbsp;capture&nbsp;training&nbsp;progress&nbsp;in&nbsp;real-time.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filepath&nbsp;(str):&nbsp;Path&nbsp;to&nbsp;save&nbsp;the&nbsp;video<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fps&nbsp;(int):&nbsp;Frames&nbsp;per&nbsp;second<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dpi&nbsp;(int,&nbsp;optional):&nbsp;DPI&nbsp;for&nbsp;rendering</span></dd></dl>
+
+<dl><dt><a name="TrainingAnimator-update_metrics"><strong>update_metrics</strong></a>(self, epoch_metrics, validation=False)</dt><dd><span class="code">Update&nbsp;the&nbsp;stored&nbsp;metrics&nbsp;with&nbsp;new&nbsp;values.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch_metrics&nbsp;(dict):&nbsp;Dictionary&nbsp;containing&nbsp;metric&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;validation&nbsp;(bool):&nbsp;Whether&nbsp;these&nbsp;are&nbsp;validation&nbsp;metrics</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>
