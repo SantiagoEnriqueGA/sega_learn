@@ -26,12 +26,12 @@ def basic_example(num_trees=10, max_depth=5):
     X, y = make_classification(n_samples=1000, n_features=5, n_classes=2, random_state=42)
         
     # Initialize random forest object
-    rfObjBreastCancer = rfc.RandomForestClassifier(X, y, max_depth=max_depth, forest_size=num_trees, display=False, random_seed=0)
+    rfObj = rfc.RandomForestClassifier(X=X, y=y, max_depth=max_depth, forest_size=num_trees, random_seed=0)
     
     # Train random forest model
-    rfObjBreastCancer.fit()
+    rfObj.fit()
 
-    print(f"Accuracy: {Metrics.accuracy(y, rfObjBreastCancer.predict(X))}")
+    print(f"Accuracy: {Metrics.accuracy(y, rfObj.predict(X))}")
     
 
 def cancer_example(num_trees=10, max_depth=5):
@@ -41,12 +41,12 @@ def cancer_example(num_trees=10, max_depth=5):
     print("\n\nRandom Forest Classifier on Wisconsin Breast Prognostic dataset\n")
 
     # Initialize random forest object
-    rfObjBreastCancer = rfc.RandomForestClassifier(X, y, max_depth=max_depth, forest_size=num_trees, display=False, random_seed=0)
+    rfObj = rfc.RandomForestClassifier(X=X, y=y, max_depth=max_depth, forest_size=num_trees, random_seed=0)
     
     # Train random forest model
-    rfObjBreastCancer.fit()
+    rfObj.fit()
 
-    print(f"Accuracy: {Metrics.accuracy(y, rfObjBreastCancer.predict(X))}")
+    print(f"Accuracy: {Metrics.accuracy(y, rfObj.predict(X))}")
 
 
 def grid_search():
@@ -66,13 +66,13 @@ def grid_search():
     for i, forest_size in enumerate(forest_sizes):
         for j, max_depth in enumerate(max_depths):
             # Initialize random forest object
-            rfObjBreastCancer = rfc.RandomForestClassifier(X, y, max_depth=max_depth, forest_size=forest_size, display=False, random_seed=0)
+            rfObj = rfc.RandomForestClassifier(X=X, y=y, max_depth=max_depth, forest_size=forest_size, random_seed=0)
             
             # Train random forest model and get accuracy
-            rfObjBreastCancer.fit()
-            results[i, j] = rfObjBreastCancer.accuracy
+            rfObj.fit()
+            results[i, j] = rfObj.accuracy
 
-            print(f"Forest Size: {forest_size}, Max Depth: {max_depth}, Accuracy: {rfObjBreastCancer.accuracy}\n")
+            print(f"Forest Size: {forest_size}, Max Depth: {max_depth}, Accuracy: {rfObj.accuracy}\n")
 
     # Plot the results
     plt.figure(figsize=(12, 6))

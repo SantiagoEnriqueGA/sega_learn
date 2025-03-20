@@ -14,261 +14,183 @@ import ast
 from datetime import datetime
 from math import log, floor, ceil
 import random
+import multiprocessing
+from joblib import Parallel, delayed
 
 from .treeClassifier import ClassifierTreeUtility, ClassifierTree
+from ..utils.metrics import Metrics
+
+def _fit_tree(X, y, max_depth):
+    """
+    Helper function for parallel tree fitting. Fits a single tree on a bootstrapped sample.
+    
+    Args:
+        X (array-like): The input features.
+        y (array-like): The target labels.
+        max_depth (int): The maximum depth of the tree.
+    
+    Returns:
+        ClassifierTree: A fitted tree object.
+    """
+    # Create bootstrapped sample
+    indices = np.random.choice(len(X), size=len(X), replace=True)
+    X_sample = X[indices]
+    y_sample = y[indices]
+    
+    # Fit tree on bootstrapped sample
+    tree = ClassifierTree(max_depth=max_depth)
+    return tree.learn(X_sample, y_sample)
+
+def _classify_oob(X, trees, bootstraps):
+    """
+    Helper function for parallel out-of-bag predictions. Classifies using out-of-bag samples.
+    
+    Args:
+        X (array-like): The input features.
+        trees (list): The list of fitted trees.
+        bootstraps (list): The list of bootstrapped indices for each tree.
+
+    Returns:
+        list: The list of out-of-bag predictions. 
+    """
+    all_classifications = []
+    
+    for i, record in enumerate(X):
+        classifications = []
+        for j, (tree, bootstrap) in enumerate(zip(trees, bootstraps)):
+            # Check if record is out-of-bag for this tree
+            if i not in bootstrap:
+                classifications.append(ClassifierTree.classify(tree, record))
+        # Determine the majority vote
+        if len(classifications) > 0:
+            counts = np.bincount(classifications)
+            majority_class = np.argmax(counts)
+            all_classifications.append(majority_class)
+        else:
+            all_classifications.append(np.random.choice([0, 1]))
+            
+    return all_classifications
 
 class RandomForestClassifier(object):
     """
-    Random Forest classifier.
-
-    Attributes:
-        num_trees (int): The number of decision trees in the random forest.
-        decision_trees (list): List of decision trees in the random forest.
-        bootstraps_datasets (list): List of bootstrapped datasets for each tree.
-        bootstraps_labels (list): List of true class labels corresponding to records in the bootstrapped datasets.
-        max_depth (int): The maximum depth of each decision tree.
-
-    Methods:
-        __init__(self, num_trees, max_depth): Initializes the RandomForest object.
-        _reset(self): Resets the RandomForest object.
-        _bootstrapping(self, XX, n): Performs bootstrapping on the dataset.
-        bootstrapping(self, XX): Initializes the bootstrapped datasets for each tree.
-        fitting(self): Fits the decision trees to the bootstrapped datasets.
-        voting(self, X): Performs voting to classify the input records.
-    """
-    # Initialize class variables
-    num_trees = 0               # Number of decision trees in the random forest
-    decision_trees = []         # List of decision trees in the random forest
-    bootstraps_datasets = []    # List of bootstrapped datasets for each tree
-    bootstraps_labels = []      # List of true class labels corresponding to records in the bootstrapped datasets
-    max_depth = 10              # Maximum depth of each decision tree
-
-    random_seed = 0     # Random seed for reproducibility
-    forest_size = 10    # Number of trees in the random forest
-    max_depth = 10      # Maximum depth of each decision tree
-    display = False     # Flag to display additional information about info gain
-    
-    X = list()          # Data features
-    y = list()          # Data labels
-    XX = list()         # Contains both data features and data labels
-    numerical_cols = 0  # Number of numeric attributes (columns)
-    
-    def __init__(self, X=None, y=None, max_depth=5, forest_size=5, display=False, random_seed=0):
+    """   
+    def __init__(self, forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None):
         """
         Initializes the RandomForest object.
-
-        Args:
-            num_trees (int): The number of decision trees in the random forest.
-            max_depth (int): The maximum depth of each decision tree.
         """
-        self.reset()    # Reset the random forest object
+        self.n_estimators = forest_size
+        self.max_depth = max_depth
+        self.n_jobs = n_jobs if n_jobs > 0 else max(1, multiprocessing.cpu_count())
+        self.random_state = random_seed
+        self.trees = []
+        self.bootstraps = []
         
-        self.random_seed = random_seed  # Set the random seed for reproducibility
-        np.random.seed(random_seed)     # Set the random seed for NumPy
-        
-        self.forest_size = forest_size  # Set the number of trees in the random forest
-        self.max_depth = max_depth      # Set the maximum depth of each decision tree
-        self.display = display          # Set the flag to display additional information about info gain
-        
-        if X is not None: self.X = X.tolist()             # Convert ndarray to list
-        if y is not None: self.y = y.tolist()             # Convert ndarray to list
-        if X is not None and y is not None: self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
-                
-        self.num_trees = forest_size    # Set the number of decision trees in the random forest
-        self.max_depth = max_depth      # Set the maximum depth of each decision tree
-
-        self.info_gains = []                    # Initialize the list to store the information gains of each decision tree
-        self.decision_trees = [ClassifierTree(max_depth) for i in range(forest_size)]   # Initialize the decision trees
-        
-        self.bootstraps_datasets = []   # Initialize the list of bootstrapped datasets for each tree
-        self.bootstraps_labels = []     # Initialize the list of true class labels corresponding to records in the bootstrapped datasets
-
-    def reset(self):
-        """
-        Resets the random forest object.
-        """
-        self.random_seed = 0
-        self.forest_size = 10
-        self.max_depth = 10
-        self.display = False
-        self.X = list()
-        self.y = list()
-        self.XX = list()
-        self.numerical_cols = 0
-    
-    def _bootstrapping(self, XX, n):
-        """
-        Performs bootstrapping on the dataset.
-
-        Args:
-            XX (list): The dataset.
-            n (int): The number of samples to be selected.
-
-        Returns:
-            tuple: A tuple containing the bootstrapped dataset and the corresponding labels.
-        """
-        sample_indices = np.random.choice(len(XX), size=n, replace=True)    # Randomly select indices with replacement
-
-        sample = [XX[i][:-1] for i in sample_indices]                       # Get the features of the selected samples
-        labels = [XX[i][-1] for i in sample_indices]                        # Get the labels of the selected samples
-        
-        return (sample, labels)
-
-    def bootstrapping(self, XX):
-        """
-        Initializes the bootstrapped datasets for each tree.
-
-        Args:
-            XX (list): The dataset.
-        """
-        if not isinstance(XX, list):
-            raise TypeError("XX must be a list")  # Raise an error if XX is not a list
-        
-        for i in range(self.num_trees):                                 # For each decision tree
-            data_sample, data_label = self._bootstrapping(XX, len(XX))  # Perform bootstrapping, using the entire dataset
-            self.bootstraps_datasets.append(data_sample)                # Append the bootstrapped dataset, excluding the class labels
-            self.bootstraps_labels.append(data_label)                   # Append the true class labels
-
-    def fitting(self):
-        """
-        Fits the decision trees to the bootstrapped datasets.
-        """
-        for i in range(self.num_trees):                 # For each decision tree
-            tree = self.decision_trees[i]               # Get the current tree        
-            dataset = self.bootstraps_datasets[i]       # Get the bootstrapped dataset
-            labels = self.bootstraps_labels[i]          # Get the true class labels
-            
-            self.decision_trees[i] = tree.learn(dataset, labels)    # Fit the tree to the bootstrapped dataset
-            self.info_gains.append(tree.info_gain)                  # Append the information gain to the list
-
-    def voting(self, X):
-        """
-        Performs voting to classify the input records.
-
-        Args:
-            X (list): The input records.
-
-        Returns:
-            list: The predicted class labels for the input records.
-        """
-        y = []
-        for record in X:    # For each record
-            votes = []      
-            for i, dataset in enumerate(self.bootstraps_datasets):  # For each bootstrapped dataset
-
-                # Records not in the dataset are considered out-of-bag (OOB) records, which can be used for voting
-                if not any(np.array_equal(record, data) for data in dataset):  # If the record is not in the dataset
-                # if record not in dataset:                           # If the record is not in the dataset
-                    OOB_tree = self.decision_trees[i]               # Get the decision tree corresponding to the dataset
-                    effective_vote = ClassifierTree.classify(OOB_tree,record) # Classify the record using the decision tree
-                    votes.append(effective_vote)                    # Append the classification to the votes list
-
-            # Determine the majority vote
-            if len(votes) > 0:                      # If there are votes
-                counts = np.bincount(votes)         # Count the votes
-                majority_vote = np.argmax(counts)   # Get the majority vote
-                y.append(majority_vote)             # Append the majority vote to the list
-            
-            else:   # Can occur if the record is in all bootstrapped datasets
-                y.append(np.random.choice([0, 1]))  # If there are no votes, randomly choose a class label
-
-        return y
+        if isinstance(X, tuple):
+            self.X = np.array([X])
+        else:
+            self.X = X
+        self.y = y
     
     def fit(self, X=None, y=None, verbose=False):
-        """
-        Runs the random forest algorithm.
-
-        Returns:
-            tuple: A tuple containing the random forest object and the accuracy of the random forest algorithm.
-
-        Raises:
-            FileNotFoundError: If the file specified by file_loc does not exist.
-        """
-        if X is not None: self.X = X.tolist()             # Convert ndarray to list
-        if y is not None: self.y = y.tolist()             # Convert ndarray to list
-        if X is not None and y is not None: self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
+        """Fit the random forest with parallel processing."""
+        if X is None and self.X is None:
+            raise ValueError("X must be provided either during initialization or fitting.")
+        if y is None and self.y is None:
+            raise ValueError("y must be provided either during initialization or fitting.")        
         
-        start = datetime.now()  # Start time
-
-        # if(self.display==False):    
-        #     randomForest = RandomForestClassifier(self.forest_size,self.max_depth)                # If display is false, use the normal random forest
-        # else:
-        #     randomForest = randomForestClassifierWtInfoGain(self.forest_size, self.max_depth)   # If display is true, use the random forest with information gain
-
-        if verbose: print("creating the bootstrap datasets")
-        self.bootstrapping(self.XX)         # Creating the bootstrapped datasets
-
-        if verbose: print("fitting the forest")
-        self.fitting()                      # Fitting the decision trees to the bootstrapped datasets
-        y_predicted = self.voting(self.X)   # Voting to classify the input records
-
-        results = [prediction == truth for prediction, truth in zip(y_predicted, self.y)]   # Comparing the predicted labels with the true labels
-
-        self.accuracy = float(results.count(True)) / float(len(results)) # Calculating the accuracy
+        start_time = datetime.now()
         
-        # Displaying the results
-        if verbose: print("accuracy:     %.4f" % self.accuracy)                          
-        if verbose: print("OOB estimate: %.4f" % (1 - self.accuracy))
-        if verbose: print("Execution time: " + str(datetime.now() - start))
-
-        # Displaying additional information about info gain
-        if(self.display==True):
-            self.display_info_gains()           # Display the information gains of each decision tree
-            self.plot_info_gains_together()     # Plot the information gains of all decision trees together
-            self.plot_info_gains()              # Plot the information gain of each decision tree separately
+        # Set random seed
+        if self.random_state is not None:
+            np.random.seed(self.random_state)
         
+        # Convert inputs to numpy arrays, use provided data if available
+        X = np.asarray((X if X is not None else self.X))
+        y = np.asarray((y if y is not None else self.y))
         
-    def display_info_gains(self):
-        """
-        Displays the information gains of each decision tree.
-        """
-        for i, info_gain in enumerate(self.info_gains): # For each decision tree
-            print(f"Information gain of tree {i+1}:")   # Print the information gain of the tree
+        # If X or y are empty, raise an error
+        if X.size == 0 or y.size == 0:
+            raise ValueError("X and y must not be empty.")
+        
+        if verbose:
+            print("Fitting trees in parallel...")
+        
+        # Fit trees in parallel
+        self.trees = Parallel(n_jobs=self.n_jobs)(
+            delayed(_fit_tree)(X, y, self.max_depth) 
+            for _ in range(self.n_estimators)
+        )
+        
+        # Generate bootstrapped indices for OOB scoring
+        self.bootstraps = [
+            np.random.choice(len(X), size=len(X), replace=True)
+            for _ in range(self.n_estimators)
+        ]
+        
+        # Compute OOB predictions
+        if verbose:
+            print("Computing OOB predictions...")
+                    
+        y_pred = _classify_oob(X, self.trees, self.bootstraps)
+        
+        # Calculate evaluation metrics
+        self.calculate_metrics(y, y_pred)
+        
+        if verbose:
+            print(f"Execution time: {datetime.now() - start_time}")
+            print(f"Accuracy:  {self.accuracy:.4f}")
+            print(f"Precision: {self.precision:.4f}")
+            print(f"Recall:    {self.recall:.4f}")
+            print(f"F1 Score:  {self.f1_score:.4f}")
+            print(f"Log Loss:  {self.log_loss:.4f}")
             
-            for j, gain in enumerate(info_gain):        # For each split
-                print(f"\tsplit {j}: {gain:.6f}")       # Print the information gain of the split
-
-    def plot_info_gains_together(self):
-        """
-        Plots the information gains of all decision trees together.
-        """
-        try:
-            import matplotlib.pyplot as plt
-        except ImportError:
-            raise ImportError("Matplotlib is required for plotting. Please install matplotlib first.")
+        return self
+    
+    def calculate_metrics(self, y_true, y_pred):
+        """Calculate evaluation metrics for classification."""
+        y_true = np.array(y_true)
+        y_pred = np.array(y_pred)
         
-        for i, info_gain in enumerate(self.info_gains):     # For each decision tree
-            plt.plot(info_gain, label=f"Tree {i+1}")        # Plot the information gain
-        plt.xlabel("Split")
-        plt.ylabel("Information Gain")
-        plt.title("Information Gain of Decision Trees")
-        plt.legend()
-        plt.show()
-
-    def plot_info_gains(self):
-        """
-        Plots the information gain of each decision tree separately.
-        """
-        try:
-            import matplotlib.pyplot as plt
-        except ImportError:
-            raise ImportError("Matplotlib is required for plotting. Please install matplotlib first.")
+        self.accuracy = Metrics.accuracy(y_true, y_pred)
+        self.precision = Metrics.precision(y_true, y_pred)
+        self.recall = Metrics.recall(y_true, y_pred)
+        self.f1_score = Metrics.f1_score(y_true, y_pred)
+        if len(np.unique(y_true)) == 2:
+            self.log_loss = Metrics.log_loss(y_true, y_pred)
         
-        for i, info_gain in enumerate(self.info_gains):     # For each decision tree, plot the information gain
-            plt.plot(info_gain)
-            plt.xlabel("Split")
-            plt.ylabel("Information Gain")
-            plt.title(f"Information Gain of Decision Tree {i+1}")
-            plt.show()
-
     def predict(self, X):
-        """
-        Predicts the class labels for the input records.
+        """Predict class labels for the provided data."""
+        X = np.asarray(X)       
+                       
+        # Validate input dimensions
+        if self.X is not None and X.shape[1] != self.X.shape[1]:
+            raise ValueError(f"Input data must have {self.X.shape[1]} features, but got {X.shape[1]}.")
+        
+        predictions = []
+        for record in X:
+            classifications = []
+            for tree in self.trees:
+                classifications.append(ClassifierTree.classify(tree, record))
+            # Determine the majority vote
+            counts = np.bincount(classifications)
+            majority_class = np.argmax(counts)
+            predictions.append(majority_class)
 
-        Args:
-            X (list): The input records.
+        return predictions
 
-        Returns:
-            list: The predicted class labels for the input records.
-        """
-        return self.voting(X)
+    def get_stats(self, verbose=False):
+        """Return the evaluation metrics"""
+        stats = {
+            "Accuracy": self.accuracy,
+            "Precision": self.precision,
+            "Recall": self.recall,
+            "F1 Score": self.f1_score,
+            "Log Loss": self.log_loss if len(np.unique(self.y)) == 2 else None
+        }
+        
+        if verbose:
+            for metric, value in stats.items():
+                print(f"{metric}: {value:.4f}")
+        
+        return stats
+    

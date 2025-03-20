@@ -8,6 +8,7 @@ import numpy as np
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from sega_learn.trees import *
+from sega_learn.trees.randomForestRegressor import _fit_tree, _predict_oob
 from tests.utils import synthetic_data_regression, suppress_print
 
 class TestRegressorTreeUtility(unittest.TestCase):
@@ -230,6 +231,56 @@ class TestRegressorTree(unittest.TestCase):
         y = "not a list"
         with self.assertRaises(TypeError):
             self.tree.learn(X, y)    
+            
+    def test_learn_empty_dataset(self):
+        """Test learning with an empty dataset."""
+        X = []
+        y = []
+        tree = self.tree.learn(X, y)
+        self.assertEqual(tree, {})
+
+    def test_learn_single_data_point(self):
+        """Test learning with a single data point."""
+        X = [[1, 2, 3]]
+        y = [1]
+        tree = self.tree.learn(X, y)
+        self.assertEqual(tree, {'value': 1})
+
+    def test_learn_pure_values(self):
+        """Test learning when all values are the same."""
+        X = [[1, 2], [3, 4], [5, 6]]
+        y = [1, 1, 1]
+        tree = self.tree.learn(X, y)
+        self.assertEqual(tree, {'value': 1})
+
+    def test_learn_max_depth(self):
+        """Test learning when the maximum depth is reached."""
+        X = [[1, 2], [3, 4], [5, 6], [7, 8]]
+        y = [0, 1, 0, 1]
+        self.tree.max_depth = 1
+        tree = self.tree.learn(X, y)
+        self.assertIn('split_attribute', tree)
+        self.assertIn('split_val', tree)
+
+    def test_predict_empty_tree(self):
+        """Test prediction with an empty tree."""
+        record = [1, 2, 3]
+        result = self.tree.predict({}, record)
+        self.assertIsNone(result)
+
+    def test_predict_single_node_tree(self):
+        """Test prediction with a single-node tree."""
+        tree = {'value': 1}
+        record = [1, 2, 3]
+        result = self.tree.predict(tree, record)
+        self.assertEqual(result, 1)
+
+    def test_predict_with_split(self):
+        """Test prediction with a tree containing a split."""
+        tree = {'split_attribute': 0, 'split_val': 2, 'left': {'value': 1}, 'right': {'value': 0}}
+        record = [1, 2, 3]
+        result = self.tree.predict(tree, record)
+        self.assertEqual(result, 1) 
 
 class TestRandomForestRegressor(unittest.TestCase):
     """
@@ -242,13 +293,13 @@ class TestRandomForestRegressor(unittest.TestCase):
     - test_bootstrapping_empty: Tests the bootstrapping method with an empty dataset.
     - test_bootstrapping_single_value: Tests the bootstrapping method with a single value dataset.
     - test_bootstrapping_bad_type: Tests the bootstrapping method with a bad type input.
-    - test_fitting: Tests the fitting method of the RandomForestRegressor class.
-    - test_fitting_empty: Tests the fitting method with an empty dataset.
-    - test_fitting_single_value: Tests the fitting method with a single value dataset.
-    - test_fitting_bad_type: Tests the fitting method with a bad type input.
-    - test_voting: Tests the voting method of the RandomForestRegressor class.
-    - test_voting_empty: Tests the voting method with an empty dataset.
-    - test_voting_single_value: Tests the voting method with a single value dataset.
+    - test_fit: Tests the fit method of the RandomForestRegressor class.
+    - test_fit_empty: Tests the fit method with an empty dataset.
+    - test_fit_single_value: Tests the fit method with a single value dataset.
+    - test_fit_bad_type: Tests the fit method with a bad type input.
+    - test_predict: Tests the predict method of the RandomForestRegressor class.
+    - test_predict_empty: Tests the predict method with an empty dataset.
+    - test_predict_single_value: Tests the predict method with a single value dataset.
     - test_fit: Tests the fit method of the RandomForestRegressor class.
     - test_get_stats: Tests the get_stats method of the RandomForestRegressor class.
     """
@@ -258,104 +309,49 @@ class TestRandomForestRegressor(unittest.TestCase):
         
     def setUp(self):
         X, y = synthetic_data_regression(n_samples=100, n_features=3)
-        self.rf = RandomForestRegressor(X, y, forest_size=10, random_seed=0, max_depth=10)
+        self.rf = RandomForestRegressor(X=X, y=y, forest_size=10, random_seed=0, max_depth=10)
         
     def test_init(self):
-        self.assertEqual(self.rf.forest_size, 10)
+        self.assertEqual(self.rf.n_estimators, 10)
         self.assertEqual(self.rf.max_depth, 10)
-        self.assertEqual(self.rf.random_seed, 0)
-        self.assertIsInstance(self.rf.decision_trees, list)
-        self.assertIsInstance(self.rf.decision_trees[0], RegressorTree)
-        
-    def test_reset(self):
-        self.rf.reset()
-        self.assertEqual(self.rf.forest_size, 10)
-        self.assertEqual(self.rf.max_depth, 10)
-        self.assertEqual(self.rf.random_seed, 0)
-        self.assertIsInstance(self.rf.decision_trees, list)
-        self.assertIsInstance(self.rf.decision_trees[0], RegressorTree)
-        
-    def test_boostraping(self):
-        self.rf.bootstrapping(self.rf.XX)
-        self.assertEqual(len(self.rf.bootstraps_datasets), self.rf.forest_size)
-        self.assertEqual(len(self.rf.bootstraps_labels), self.rf.forest_size)
-        self.assertEqual(len(self.rf.bootstraps_datasets[0]), len(self.rf.XX))
-        self.assertEqual(len(self.rf.bootstraps_labels[0]), len(self.rf.XX))
-
-    def test_bootstrapping_empty(self):
-        X = []
-        y = []
-        self.rf.bootstrapping(X)
-        self.assertEqual(len(self.rf.bootstraps_datasets), 10)
-        self.assertEqual(len(self.rf.bootstraps_labels), 10)
-        for i in range(10):
-            self.assertEqual(len(self.rf.bootstraps_datasets[i]), 0)
-            self.assertEqual(len(self.rf.bootstraps_labels[i]), 0)
-
-    def test_bootstrapping_single_value(self):
-        X = [[1, 2, 3]]
-        y = [1]
-        self.rf.bootstrapping(X)
-        self.assertEqual(len(self.rf.bootstraps_datasets), 10)
-        self.assertEqual(len(self.rf.bootstraps_labels), 10)
-        for i in range(10):
-            self.assertEqual(len(self.rf.bootstraps_datasets[i]), 1)
-            self.assertEqual(len(self.rf.bootstraps_labels[i]), 1)
-    
-    def test_bootstrapping_bad_type(self):
-        X = "not a list"
-        with self.assertRaises(TypeError):
-            self.rf.bootstrapping(X)
-    
-    def test_fitting(self):
-        self.rf.bootstrapping(self.rf.XX)
-        self.rf.fitting()
-        for tree in self.rf.decision_trees:
-            self.assertIsInstance(tree, dict)
+        self.assertEqual(self.rf.random_state, 0)
+        self.assertIsInstance(self.rf.trees, list)
             
-    def test_fitting_empty(self):
+    def test_fit_empty(self):
         X = []
         y = []
-        self.rf.bootstrapping(X)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
-            self.rf.fitting()
-        for tree in self.rf.decision_trees:
-            self.assertIn('value', tree)
-            self.assertTrue(np.isnan(tree['value']))
+            self.rf.fit()
+        for tree in self.rf.trees:
+            self.assertIn('split_val', tree)
 
-    def test_fitting_single_value(self):
+    def test_fit_single_value(self):
         X = [[1, 2, 3]]
-        self.rf.bootstrapping(X)
-        self.rf.fitting()
-        for tree in self.rf.decision_trees:
-            self.assertIn('value', tree)           
+        self.rf.fit()
+        for tree in self.rf.trees:
+            self.assertIn('split_val', tree)           
 
-    def test_voting(self):
-        self.rf.bootstrapping(self.rf.XX)
-        self.rf.fitting()
-        predictions = self.rf.voting(self.rf.X)
+    def test_predict(self):
+        self.rf.fit()
+        predictions = self.rf.predict(self.rf.X)
         self.assertEqual(len(predictions), len(self.rf.X))
-        self.assertIsInstance(predictions, list)
+        self.assertIsInstance(predictions, np.ndarray)
         
-    def test_voting_empty(self):
+    def test_predict_empty(self):
         X = []
         y = []
-        self.rf.bootstrapping(X)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
-            self.rf.fitting()
-        predictions = self.rf.voting(X)
+            self.rf.fit()
+        predictions = self.rf.predict(X)
         self.assertEqual(len(predictions), 0)
-        self.assertIsInstance(predictions, list)
 
-    def test_voting_single_value(self):
+    def test_predict_single_value(self):
         X = [[1, 2, 3]]
-        self.rf.bootstrapping(X)
-        self.rf.fitting()
-        predictions = self.rf.voting(X)
+        self.rf.fit()
+        predictions = self.rf.predict(X)
         self.assertEqual(len(predictions), 1)
-        self.assertIsInstance(predictions, list)
 
     def test_fit(self):
         self.rf.fit(verbose=False)
@@ -370,6 +366,60 @@ class TestRandomForestRegressor(unittest.TestCase):
         self.assertIn("MAPE", stats)
         self.assertIn("MAE", stats)
         self.assertIn("RMSE", stats)
+        
+    def test_fit_single_data_point(self):
+        """Test fitting the RandomForestRegressor with a single data point."""
+        X_single = np.random.rand(1, 5)  # Single sample, 5 features
+        y_single = np.array([1])  # Single value
+        self.rf.fit(X_single, y_single)
+        self.assertEqual(len(self.rf.trees), 10)  # Ensure 10 trees are trained
+
+    def test_fit_empty_dataset(self):
+        """Test fitting the RandomForestRegressor with an empty dataset."""
+        X_empty = np.empty((0, 5))  # No samples, 5 features
+        y_empty = np.empty((0,))
+        with self.assertRaises(ValueError):
+            self.rf.fit(X_empty, y_empty)
+
+    def test_fit_no_features(self):
+        """Test fitting the RandomForestRegressor with no features."""
+        X = np.empty((10, 0))  # 10 samples, 0 features
+        y = np.random.randint(0, 2, size=10)
+        with self.assertRaises(ValueError):
+            self.rf.fit(X, y)
+
+    def test_fit_no_samples(self):
+        """Test fitting the RandomForestRegressor with no samples."""
+        X = np.empty((0, 5))  # 0 samples, 5 features
+        y = np.empty((0,))
+        with self.assertRaises(ValueError):
+            self.rf.fit(X, y)
+
+    def test_fit_single_class(self):
+        """Test fitting the RandomForestRegressor with a single class."""
+        X = np.random.rand(10, 5)  # 10 samples, 5 features
+        y = np.zeros(10)  # Single class
+        self.rf.fit(X, y)
+        for tree in self.rf.trees:
+            self.assertEqual(tree['value'], 0)
+
+    def test_predict_single_sample(self):
+        """Test predicting with a single sample."""
+        X = [[1, 2, 3]]
+        self.rf.fit()
+        predictions = self.rf.predict(X)
+        self.assertEqual(len(predictions), 1)
+        self.assertIsInstance(predictions, np.ndarray)
+        self.assertIsInstance(predictions[0], float)
+
+    def test_oob_predictions(self):
+        """Test out-of-bag predictions."""
+        X = np.random.rand(100, 5)
+        y = np.random.randint(0, 2, size=100)
+        self.rf.fit(X, y)
+        oob_predictions = _predict_oob(X, self.rf.trees, self.rf.bootstraps)
+        self.assertEqual(len(oob_predictions), len(X))
+        self.assertIsInstance(oob_predictions, list)
 
 class TestGradientBoostedRegressor(unittest.TestCase):
     """

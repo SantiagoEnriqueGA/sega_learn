@@ -32,7 +32,7 @@ def basic_example(num_trees=10, max_depth=5):
     X, y = make_regression(n_samples=1000, n_features=3, noise=5, random_state=42)
     
     # Initialize random forest object
-    rfObj = rfg.RandomForestRegressor(X, y, forest_size=num_trees, random_seed=0, max_depth=max_depth)
+    rfObj = rfg.RandomForestRegressor(X=X, y=y, max_depth=max_depth, forest_size=num_trees, random_seed=0)
     
     # Train random forest model
     rfObj.fit()
@@ -44,7 +44,7 @@ def cars_example(num_trees=50, max_depth=5):
     print("\n\nRandom Forest Regressor on Cars.com dataset\n")
     
     # Initialize random forest object
-    rfObj = rfg.RandomForestRegressor(X, y, forest_size=num_trees, random_seed=0, max_depth=max_depth)
+    rfObj = rfg.RandomForestRegressor(X=X, y=y, max_depth=max_depth, forest_size=num_trees, random_seed=0)
     
     # Train random forest model
     rfObj.fit()
@@ -66,7 +66,7 @@ def grid_search():
     for i, forest_size in enumerate(forest_sizes):
         for j, max_depth in enumerate(max_depths):
             # Initialize random forest object
-            rfObj = rfg.RandomForestRegressor(X, y, forest_size=forest_size, random_seed=0, max_depth=max_depth)
+            rfObj = rfg.RandomForestRegressor(X=X, y=y, max_depth=max_depth, forest_size=forest_size, random_seed=0)
             
             # Train random forest model and get stats
             rfObj.fit()

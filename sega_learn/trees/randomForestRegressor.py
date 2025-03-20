@@ -13,214 +13,200 @@ import ast
 from datetime import datetime
 from math import log, floor, ceil
 import random
+import multiprocessing
+from joblib import Parallel, delayed
 
 from .treeRegressor import RegressorTreeUtility, RegressorTree
 
+def _fit_tree(X, y, max_depth):
+    """
+    Helper function for parallel tree fitting. Fits a single tree on a bootstrapped sample.
+    
+    Args:
+        X (array-like): The input features.
+        y (array-like): The target labels.
+        max_depth (int): The maximum depth of the tree.
+    
+    Returns:
+        RegressorTree: A fitted tree object.
+    """
+    # Create bootstrapped sample
+    indices = np.random.choice(len(X), size=len(X), replace=True)
+    X_sample = X[indices]
+    y_sample = y[indices]
+    
+    # Fit tree on bootstrapped sample
+    tree = RegressorTree(max_depth=max_depth)
+    return tree.learn(X_sample, y_sample)
+
+def _predict_oob(X, trees, bootstraps):
+    """
+    Helper function for parallel out-of-bag predictions. Predicts using out-of-bag samples.
+    
+    Args:
+        X (array-like): The input features.
+        trees (list): The list of fitted trees.
+        bootstraps (list): The list of bootstrapped indices for each tree.
+
+    Returns:
+        list: The list of out-of-bag predictions. 
+    """
+    all_predictions = []
+    
+    for i, record in enumerate(X):
+        predictions = []
+        for j, (tree, bootstrap) in enumerate(zip(trees, bootstraps)):
+            # Check if record is out-of-bag for this tree
+            if i not in bootstrap:
+                predictions.append(RegressorTree.predict(tree, record))
+        
+        if predictions:
+            all_predictions.append(np.mean(predictions))
+        else:
+            # If not out-of-bag for any tree, use all trees
+            all_predictions.append(np.mean([RegressorTree.predict(tree, record) for tree in trees]))
+    
+    return all_predictions
+
 class RandomForestRegressor(object):
     """
-    A class representing a Random Forest model.
-
-    Attributes:
-        num_trees (int): The number of decision trees in the random forest.
-        decision_trees (list): A list of decision trees in the random forest.
-        bootstraps_datasets (list): A list of bootstrapped datasets for each tree.
-        bootstraps_labels (list): A list of corresponding labels for each bootstrapped dataset.
-        max_depth (int): The maximum depth of each decision tree.
-
+    A class representing a Random Forest model for regression.
+    
+    Atributes:
+        forest_size (int): The number of trees in the forest.
+        max_depth (int): The maximum depth of each tree.
+        n_jobs (int): The number of jobs to run in parallel.
+        random_seed (int): Seed for random number generation.
+        X (array-like): The input features.
+        y (array-like): The target labels.
+        
     Methods:
-        __init__(num_trees, max_depth): Initializes the RandomForest object.
-        _bootstrapping(XX, n): Performs bootstrapping on the dataset.
-        bootstrapping(XX): Initializes the bootstrapped datasets for each tree.
-        fitting(): Fits the decision trees to the bootstrapped datasets.
-        voting(X): Performs voting to predict the target values for the input records.
-        user(): Returns the user's GTUsername.
+        fit(X=None, y=None, verbose=False): Fits the random forest to the data.
+        calculate_metrics(y_true, y_pred): Calculates the evaluation metrics.
+        predict(X): Predicts the target values for the input features.
+        get_stats(verbose=False): Returns the evaluation metrics.
     """
-    # Initialize class variables
-    num_trees = 0               # Number of decision trees in the random forest
-    decision_trees = []         # List of decision trees in the random forest
-    bootstraps_datasets = []    # List of bootstrapped datasets for each tree
-    bootstraps_labels = []      # List of true class labels corresponding to records in the bootstrapped datasets
-    max_depth = 10              # Maximum depth of each decision tree
-
-    random_seed = 0     # Random seed for reproducibility
-    forest_size = 10    # Number of trees in the random forest
-    max_depth = 10      # Maximum depth of each decision tree
-    display = False     # Flag to display additional information about info gain
     
-    X = list()          # Data features
-    y = list()          # Data labels
-    XX = list()         # Contains both data features and data labels
-    numerical_cols = 0  # Number of numeric attributes (columns)
-
-    def __init__(self, X=None, y=None, forest_size=10, random_seed=0, max_depth=10):
-        """
-        Initializes the RandomForest object.
-
-        Args:
-            X (ndarray): The input data features.
-            y (ndarray): The target values.
-            forest_size (int): The number of decision trees in the random forest.
-            random_seed (int): The random seed for reproducibility.
-            max_depth (int): The maximum depth of each decision tree.
-        """
-        self.reset()    # Reset the random forest object
-
-        self.random_seed = random_seed  # Set the random seed for reproducibility
-        np.random.seed(random_seed)     # Set the random seed for NumPy
-
-        self.forest_size = forest_size  # Set the number of trees in the random forest
-        self.max_depth = max_depth      # Set the maximum depth of each decision tree
-            
-        if X is not None: self.X = X.tolist()             # Convert ndarray to list
-        if y is not None: self.y = y.tolist()             # Convert ndarray to list
-        if X is not None and y is not None: self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
-
-        self.num_trees = forest_size    # Set the number of trees
-        self.max_depth = max_depth      # Set the maximum depth
-
-        self.decision_trees = [RegressorTree(max_depth) for i in range(forest_size)]  # Initialize the decision trees
+    def __init__(self, forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None):
+        """Initialize the Random Forest Regressor with optimized parameters."""
+        self.n_estimators = forest_size
+        self.max_depth = max_depth
+        self.n_jobs = n_jobs if n_jobs > 0 else max(1, multiprocessing.cpu_count())
+        self.random_state = random_seed
+        self.trees = []
+        self.bootstraps = []
         
-        self.bootstraps_datasets = []   # Initialize the list of bootstrapped datasets
-        self.bootstraps_labels = []     # Initialize the list of corresponding labels
-
-    def reset(self):
-        """
-        Resets the random forest object.
-        """
-        # Reset the random forest object
-        self.random_seed = 0
-        self.forest_size = 10
-        self.max_depth = 10
-        self.display = False
-        self.X = list()
-        self.y = list()
-        self.XX = list()
-        self.numerical_cols = 0
-    
-    def _bootstrapping(self, XX, n):
-        """
-        Performs bootstrapping on the dataset.
-
-        Args:
-            XX (list): The dataset.
-            n (int): The number of samples to be selected.
-
-        Returns:
-            tuple: A tuple containing the bootstrapped dataset and the corresponding labels.
-        """
-        sample_indices = np.random.choice(len(XX), size=n, replace=True)    # Randomly select indices with replacement
+        self.X = X
+        self.y = y
         
-        sample = [XX[i][:-1] for i in sample_indices]   # Get the features of the selected samples
-        labels = [XX[i][-1] for i in sample_indices]    # Get the labels of the selected samples
         
-        return (sample, labels)
-
-    def bootstrapping(self, XX):
-        """
-        Initializes the bootstrapped datasets for each tree.
-
-        Args:
-            XX (list): The dataset.
-        """
-        if not isinstance(XX, list):
-            raise TypeError("XX must be a list")  # Raise an error if XX is not a list
-        
-        for i in range(self.num_trees):                                 # For each tree
-            data_sample, data_label = self._bootstrapping(XX, len(XX))  # Perform bootstrapping on the dataset
-            self.bootstraps_datasets.append(data_sample)                # Add the bootstrapped dataset to the list
-            self.bootstraps_labels.append(data_label)                   # Add the corresponding labels to the list
-
-    def fitting(self):
-        """
-        Fits the decision trees to the bootstrapped datasets.
-        """
-        for i in range(self.num_trees):             # For each tree
-            tree = self.decision_trees[i]           # Get the current tree
-            dataset = self.bootstraps_datasets[i]   # Get the bootstrapped dataset
-            labels = self.bootstraps_labels[i]      # Get the corresponding labels
-            
-            self.decision_trees[i] = tree.learn(dataset, labels)    # Fit the tree to the bootstrapped dataset
-
-    def voting(self, X):
-        """
-        Performs voting to predict the target values for the input records.
-
-        Args:
-            X (list): The input records.
-
-        Returns:
-            list: The predicted target values for the input records.
-        """
-        y = []
-        for record in X:        # For each record
-            predictions = []
-            for i, dataset in enumerate(self.bootstraps_datasets):  # For each bootstrapped dataset
-                
-                # Records not in the dataset are considered out-of-bag (OOB) records, which can be used for voting
-                if record not in dataset:               # If the record is not in the dataset
-                    OOB_tree = self.decision_trees[i]   # Get the decision tree corresponding to the dataset
-                    prediction = RegressorTree.predict(OOB_tree, record)    # Predict the target value for the record
-                    predictions.append(prediction)      # Add the prediction to the votes list
-
-            # Calculate the mean prediction for the record
-            if len(predictions) > 0:                    # If there are predictions
-                mean_prediction = np.mean(predictions)  # Calculate the mean prediction
-                y.append(mean_prediction)               # Add the mean prediction to the list
-            
-            else:   # If the record is not out-of-bag (OOB), use all trees for prediction
-                for i in range(self.num_trees):     # For each tree
-                    tree = self.decision_trees[i]   # Get the current tree
-                    predictions.append(RegressorTree.predict(tree, record)) # Predict the target value for the record
-                    
-                y.append(np.mean(predictions))      # Add the mean prediction to the list
-
-        return y
-
     def fit(self, X=None, y=None, verbose=False):
-        """
-        Runs the random forest algorithm.
-        """
-        if X is not None: self.X = X.tolist()
-        if y is not None: self.y = y.tolist()
-        if X is not None and y is not None: self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
+        """Fit the random forest with parallel processing."""
+        if X is None and self.X is None:
+            raise ValueError("X must be provided either during initialization or fitting.")
+        if y is None and self.y is None:
+            raise ValueError("y must be provided either during initialization or fitting.")        
         
-        start = datetime.now()  # Start time
- 
-        if verbose: print("creating the bootstrap datasets")
-        self.bootstrapping(self.XX)         # Create the bootstrapped datasets
-
-        if verbose: print("fitting the forest")
-        self.fitting()                      # Fit the decision trees to the bootstrapped datasets
-        y_predicted = self.voting(self.X)   # Predict the target values for the input records
+        start_time = datetime.now()
         
-        if verbose: print("Execution time: " + str(datetime.now() - start))
-
+        # Set random seed
+        if self.random_state is not None:
+            np.random.seed(self.random_state)
+        
+        # Convert inputs to numpy arrays
+        X = np.asarray((X if X is not None else self.X))
+        y = np.asarray((y if y is not None else self.y))
+        
+        #  If X or y are empty, raise an error
+        if X.size == 0 or y.size == 0:
+            raise ValueError("X and y must not be empty.")
+        
+        if verbose:
+            print("Fitting trees in parallel...")
+        
+        # Fit trees in parallel
+        self.trees = Parallel(n_jobs=self.n_jobs)(
+            delayed(_fit_tree)(X, y, self.max_depth) 
+            for _ in range(self.n_estimators)
+        )
+        
+        # Generate bootstrapped indices for OOB scoring
+        self.bootstraps = [
+            np.random.choice(len(X), size=len(X), replace=True)
+            for _ in range(self.n_estimators)
+        ]
+        
+        # Compute OOB predictions
+        if verbose:
+            print("Computing OOB predictions...")
+        
+        y_pred = _predict_oob(X, self.trees, self.bootstraps)
+        
         # Calculate evaluation metrics
-        self.mse = np.mean((np.array(y_predicted) - np.array(self.y)) ** 2)  # Calculate the mean squared error (MSE): mean((y_true - y_pred)^2)
-        self.ssr = np.sum((np.array(y_predicted) - np.array(self.y)) ** 2)   # Calculate the sum of squared residuals (SSR): sum((y_true - y_pred)^2)
-        self.sst = np.sum((np.array(self.y) - np.mean(self.y)) ** 2)         # Calculate the total sum of squares (SST): sum((y_true - mean(y_true))^2)
-        self.r2 = 1 - (self.ssr / self.sst)                                            # Calculate the R^2 score: 1 - (SSR / SST)
-        self.mape = np.mean(np.abs((np.array(self.y) - 
-                               np.array(y_predicted)) / np.array(self.y))) * 100    # Calculate the mean absolute percentage error (MAPE): mean(abs((y_true - y_pred) / y_true)) * 100
-        self.mae = np.mean(np.abs(np.array(self.y) - np.array(y_predicted)))             # Mean Absolute Error (MAE): mean(abs(y_true - y_pred))
-        self.rmse = np.sqrt(np.mean((np.array(y_predicted) - np.array(self.y)) ** 2))    # Root Mean Squared Error (RMSE): sqrt(mean((y_true - y_pred)^2))
-
-        # Print the evaluation metrics
-        if verbose: print("MSE:  %.4f" % self.mse)
-        if verbose: print("R^2:  %.4f" % self.r2)
-        if verbose: print("MAPE: %.4f%%" % self.mape)
-        if verbose: print("MAE:  %.4f" % self.mae)
-        if verbose: print("RMSE: %.4f" % self.rmse)
-
-    def get_stats(self, verbose=True):
-        """
-        Returns the evaluation metrics.
-        """
-        return {"MSE": self.mse,"R^2": self.r2,"MAPE": self.mape,"MAE": self.mae,"RMSE": self.rmse}
+        self.calculate_metrics(y, y_pred)
+        
+        if verbose:
+            print(f"Execution time: {datetime.now() - start_time}")
+            print(f"MSE:  {self.mse:.4f}")
+            print(f"R^2:  {self.r2:.4f}")
+            print(f"MAPE: {self.mape:.4f}%")
+            print(f"MAE:  {self.mae:.4f}")
+            print(f"RMSE: {self.rmse:.4f}")
+        
+        return self
     
-    def predict(self, X=None):
-        """
-        Predicts the target values for the input data.
-        """
-        if X is not None: self.X = X.tolist()
-        return self.voting(self.X)
+    def calculate_metrics(self, y_true, y_pred):
+        """Calculate evaluation metrics."""
+        y_true = np.asarray(y_true)
+        y_pred = np.asarray(y_pred)
+        
+        self.mse = np.mean((y_true - y_pred) ** 2)
+        self.ssr = np.sum((y_true - y_pred) ** 2)
+        self.sst = np.sum((y_true - np.mean(y_true)) ** 2)
+        self.r2 = 1 - (self.ssr / self.sst) if self.sst != 0 else 0
+        
+        # Handle zero values in y_true for MAPE
+        mask = y_true != 0
+        if np.any(mask):
+            self.mape = np.mean(np.abs((y_true[mask] - y_pred[mask]) / y_true[mask])) * 100
+        else:
+            self.mape = np.nan
+            
+        self.mae = np.mean(np.abs(y_true - y_pred))
+        self.rmse = np.sqrt(self.mse)
+    
+    def predict(self, X):
+        """Predict using the trained random forest."""
+        X = np.asarray(X)
+        
+        if X.size == 0:
+            return np.array([])
+        
+        # Validate input dimensions
+        if self.X is not None and X.shape[1] != self.X.shape[1]:
+            raise ValueError(f"Input data must have {self.X.shape[1]} features, but got {X.shape[1]}.")
+        
+        # Make predictions for each tree
+        predictions = []
+        for tree in self.trees:
+            tree_predictions = [RegressorTree.predict(tree, record) for record in X]
+            predictions.append(tree_predictions)
+        
+        # Average predictions across trees
+        return np.mean(predictions, axis=0)
+    
+    def get_stats(self, verbose=False):
+        """Return the evaluation metrics."""
+        stats = {
+            "MSE": self.mse,
+            "R^2": self.r2,
+            "MAPE": self.mape,
+            "MAE": self.mae,
+            "RMSE": self.rmse
+        }
+        
+        if verbose:
+            for metric, value in stats.items():
+                print(f"{metric}: {value:.4f}")
+                
+        return stats

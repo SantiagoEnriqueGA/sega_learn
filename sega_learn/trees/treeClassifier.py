@@ -21,13 +21,20 @@ class ClassifierTreeUtility(object):
         Returns:
         - float: The entropy value.
         """
-        counts = np.bincount(class_y)                               # Count the occurrences of each class
-        probabilities = counts / float(len(class_y))                # Calculate the probabilities
-        probabilities = probabilities[probabilities > 0]            # Remove zero probabilities
-        entropy = -np.sum(probabilities * np.log2(probabilities))   # Calculate entropy, Σ(-p(x) * log2(p(x)))
+        # Handle empty arrays
+        if len(class_y) == 0:
+            return 0.0
         
-        return entropy
+        # Use NumPy's bincount to count occurrences of each class
+        counts = np.bincount(class_y, minlength=np.max(class_y) + 1)
+        total = len(class_y)
 
+        # Avoid division by zero and skip zero probabilities
+        probabilities = counts / total
+        non_zero_probs = probabilities[probabilities > 0]
+
+        # Use NumPy's dot product for efficient computation of entropy
+        return -np.dot(non_zero_probs, np.log2(non_zero_probs))
 
     def partition_classes(self, X, y, split_attribute, split_val):
         """
@@ -57,11 +64,12 @@ class ClassifierTreeUtility(object):
         # X_right contains rows where the split attribute is greater than the split value
         # y_left  contains target labels corresponding to X_left
         # y_right contains target labels corresponding to X_right
-        X_left = X[X[:, split_attribute] <= split_val]  
-        X_right = X[X[:, split_attribute] > split_val]
-        y_left = y[X[:, split_attribute] <= split_val]
-        y_right = y[X[:, split_attribute] > split_val]
-
+        mask = X[:, split_attribute] <= split_val
+        X_left = X[mask]
+        X_right = X[~mask]
+        y_left = y[mask]
+        y_right = y[~mask]        
+        
         return X_left, X_right, y_left, y_right     # Return the partitioned subsets
 
 
@@ -81,7 +89,9 @@ class ClassifierTreeUtility(object):
         
         # Compute the weighted entropy of the current y values
         # For each subset in current_y, calculate its entropy and multiply it by the proportion of the subset in the total count
-        entropy_current = np.sum([(len(subset) / total_count) * self.entropy(subset) for subset in current_y])
+        entropy_current = np.sum([
+            (len(subset) / total_count) * self.entropy(subset) for subset in current_y if len(subset) > 0
+        ])
         
         # Information gain is the difference between the entropy of the previous y values and the weighted entropy of the current y values
         info_gain = entropy_prev - entropy_current
@@ -91,51 +101,95 @@ class ClassifierTreeUtility(object):
     def best_split(self, X, y):
         """
         Finds the best attribute and value to split the data based on information gain.
-
+    
         Parameters:
         - X (array-like): The input features.
         - y (array-like): The target variable.
-
+    
         Returns:
         - dict: A dictionary containing the best split attribute, split value, left and right subsets of X and y,
                 and the information gain achieved by the split.
         """
-        # Convert X and y to numpy arrays
-        X = np.array(X)
-        y = np.array(y)
-
+        # Check type of X and y
+        if not isinstance(X, (list, np.ndarray)) or not isinstance(y, (list, np.ndarray)):
+            raise TypeError("X and y must be lists or NumPy arrays.")      
+        
+        # Convert X and y to NumPy arrays if they are not already
+        X = np.array(X) if not isinstance(X, np.ndarray) else X
+        y = np.array(y) if not isinstance(y, np.ndarray) else y
+    
+        if X.size == 0:  # If X is empty
+            return {
+                'split_attribute': None,
+                'split_val': None,
+                'X_left': np.empty((0, 1)),
+                'X_right': np.empty((0, 1)),
+                'y_left': np.empty((0,)),
+                'y_right': np.empty((0,)),
+                'info_gain': 0
+            }
+    
+        if X.shape[0] == 1:  # If X has a single value
+            return {
+                'split_attribute': None,
+                'split_val': None,
+                'X_left': np.empty((0, X.shape[1])),
+                'X_right': np.empty((0, X.shape[1])),
+                'y_left': np.empty((0,)),
+                'y_right': np.empty((0,)),
+                'info_gain': 0
+            }
+    
         # Randomly select a subset of attributes for splitting
         num_features = int(np.sqrt(X.shape[1]))                                                 # Square root of total attributes
         selected_attributes = np.random.choice(X.shape[1], size=num_features, replace=False)    # Randomly select attributes
-
+    
         # Initialize the best information gain to negative infinity, others to None
         best_info_gain = float('-inf')
-        best_split_attribute = None
-        best_split_val = None
-        best_X_left, best_X_right, best_y_left, best_y_right = None, None, None, None
-
-        for split_attribute in selected_attributes:     # For each selected attribute
-            values = np.unique(X[:, split_attribute])   # Get the unique values of the attribute
-            
-            for split_val in values:                    # For each unique value
-                X_left, X_right, y_left, y_right = self.partition_classes(X, y, split_attribute, split_val)     # Partition the data
-                
-                info_gain = self.information_gain(y, [y_left, y_right])     # Calculate information gain
-
-                if info_gain > best_info_gain:              # If the information gain is better than the current best
-                    best_info_gain = info_gain              # Update the best information gain
-                    best_split_attribute = split_attribute  # Update the best split attribute
-                    best_split_val = split_val              # Update the best split value
-                    best_X_left, best_X_right, best_y_left, best_y_right = X_left, X_right, y_left, y_right  # Update the best subsets
-
-        # Return the best split
-        return {'split_attribute': best_split_attribute,
-                'split_val': best_split_val,
-                'X_left': best_X_left,
-                'X_right': best_X_right,
-                'y_left': best_y_left,
-                'y_right': best_y_right,
-                'info_gain': best_info_gain}
+        best_split = None
+    
+        # Use numpy's percentile function to reduce split points
+        for split_attribute in selected_attributes:
+            # Instead of trying all values, sample a subset of potential split points
+            feature_values = X[:, split_attribute]
+    
+            # Use percentiles to get a representative sample of split points
+            percentiles = np.percentile(feature_values, [25, 50, 75])
+    
+            for split_val in percentiles:
+                X_left, X_right, y_left, y_right = self.partition_classes(X, y, split_attribute, split_val)
+    
+                # Skip if split doesn't divide the data
+                if len(y_left) == 0 or len(y_right) == 0:
+                    continue
+    
+                info_gain = self.information_gain(y, [y_left, y_right])
+    
+                if info_gain > best_info_gain:
+                    best_info_gain = info_gain
+                    best_split = {
+                        'split_attribute': split_attribute,
+                        'split_val': split_val,
+                        'X_left': X_left,
+                        'X_right': X_right,
+                        'y_left': y_left,
+                        'y_right': y_right,
+                        'info_gain': info_gain
+                    }
+    
+        if best_split is None:
+            # If no good split found, return a default split
+            return {
+                'split_attribute': None,
+                'split_val': None,
+                'X_left': np.empty((0, X.shape[1])),
+                'X_right': np.empty((0, X.shape[1])),
+                'y_left': np.empty(0),
+                'y_right': np.empty(0),
+                'info_gain': 0
+            }
+    
+        return best_split
 
 class ClassifierTree(object):
     """
@@ -167,7 +221,6 @@ class ClassifierTree(object):
 
         Returns:
         - dict: The learned decision tree.
-
         """
         # Check type of X and y
         if not isinstance(X, (list, np.ndarray)) or not isinstance(y, (list, np.ndarray)):
@@ -179,54 +232,59 @@ class ClassifierTree(object):
         X = np.array(X)
         y = np.array(y, dtype=int)
         
+        # If X and Y are empty, return an empty dictionary
+        if X.size == 0 and y.size == 0:
+            return {}
+        
+        # If X is empty, return the most common label in y
+        if X.size == 0:
+            return {'label': max(set(y), key=list(y).count)}
+        
+        # Base cases
         if len(set(y)) == 1:        # If the node is pure (all labels are the same)
-            return {'label': y[0]}  # Return the label of the node
+            return {'label': y[0]}  # Return the label as the value of the leaf node
 
         if depth >= self.max_depth:                     # If maximum depth is reached
             return {'label': np.argmax(np.bincount(y))} # Return the most common label
 
-        # Get the best split using utility function
-        best_split = ClassifierTreeUtility().best_split(X, y)
-        split_attribute = best_split['split_attribute']
-        split_val = best_split['split_val']
-        X_left = best_split['X_left']
-        X_right = best_split['X_right']
-        y_left = best_split['y_left']
-        y_right = best_split['y_right']
+        # Find best split
+        utility = ClassifierTreeUtility()
+        best_split = utility.best_split(X, y)
         
-        self.info_gain.append(best_split['info_gain'])  # Append the information gain to the list
+        if best_split['split_attribute'] is None or best_split['info_gain'] <= 0:
+            return {'label': max(set(y), key=list(y).count)}  # Return the most common label
 
-        if best_split['info_gain'] == 0:                        # If there is no further information gain
-            return {'label': max(set(y), key=list(y).count)}    # Return the most common label
+        # Build subtrees
+        left_tree = self.learn(best_split['X_left'], best_split['y_left'], depth=depth+1)
+        right_tree = self.learn(best_split['X_right'], best_split['y_right'], depth=depth+1)
+        
+        return {
+            'split_attribute': best_split['split_attribute'],
+            'split_val': best_split['split_val'],
+            'left': left_tree,
+            'right': right_tree
+        }
 
-        # Recursively build the left and right subtrees
-        par_node = {'split_attribute': split_attribute, 'split_val': split_val} # Set the split attribute and value
-        par_node['left'] = self.learn(X_left, y_left, depth=depth + 1)          # Build the left subtree
-        par_node['right'] = self.learn(X_right, y_right, depth=depth + 1)       # Build the right subtree
-
-        return par_node 
-
-    def classify(self, record):
+    @staticmethod
+    def classify(tree, record):
         """
         Classifies a given record using the decision tree.
 
         Parameters:
-        - record: A dictionary representing the record to be classified.
+        - tree (dict): The decision tree.
+        - record (dict): A dictionary representing the record to be classified.
 
         Returns:
         - The label assigned to the record based on the decision tree.
         """
-        tree = self     # Get the decision tree
-
-        while 'label' not in tree:                      # While the current node is not a leaf node
-            split_attribute = tree['split_attribute']   # Get the split attribute
-            split_val = tree['split_val']               # Get the split value
-            
-            if record[split_attribute] <= split_val:    # If the record's attribute value is less than or equal to the split value
-                tree = tree['left']                     # Go to the left child
-            
-            else:                                       # If the record's attribute value is greater than the split value
-                tree = tree['right']                    # Go to the right child
+        # If tree is empty return None
+        if tree is None or tree == {}:
+            return None
         
-        return tree['label']    # Return the label assigned to the record
-    
+        if 'label' in tree:
+            return tree['label']
+        
+        if record[tree['split_attribute']] <= tree['split_val']:
+            return ClassifierTree.classify(tree['left'], record)
+        else:
+            return ClassifierTree.classify(tree['right'], record)
