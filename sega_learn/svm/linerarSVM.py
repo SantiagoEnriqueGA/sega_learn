@@ -2,8 +2,22 @@ from .baseSVM import BaseSVM
 import numpy as np
 
 class LinearSVC(BaseSVM):
-    def __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01):
+    def __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, numba=True):
         super().__init__(C, tol, max_iter, learning_rate)
+        
+        if numba:
+            try:
+                from numba import njit, prange
+                from ._LinearSVM_jit_utils import _linearSVC_minibatches
+                
+                # Run once to compile
+                _linearSVC_minibatches(np.zeros((2, 2)), np.zeros(2), np.zeros(2), 0.0, 1.0, 0.9, 0.01, 2)
+                
+                self._linearSVC_minibatches = _linearSVC_minibatches
+                self.numba_available = True
+            except Exception as e:
+                print(f"Numba not available: {e}")
+                self.numba_available = False
         
     def _fit(self, X, y):
         """
@@ -31,40 +45,63 @@ class LinearSVC(BaseSVM):
         n_samples, n_features = X.shape
         self.w = np.zeros(n_features)
         self.b = 0.0
-        
+        momentum_w = np.zeros(n_features)
+        momentum_b = 0.0
+        beta = 0.9  # Momentum factor
+
         # Convert y to {-1, 1} if not already
         y = np.where(y <= 0, -1, 1)
-                
-        # Gradient Descent Loop
-        for _ in range(self.max_iter):
-            # Compute the margin
-            margin = y * (np.dot(X, self.w) + self.b)
+
+        # Mini-batch size
+        batch_size = min(64, n_samples)
+
+        for iteration in range(self.max_iter):
+            # Shuffle data for mini-batch
+            indices = np.random.permutation(n_samples)
+            X_shuffled = X[indices]
+            y_shuffled = y[indices]
             
-            # Compute the hinge loss and its gradient
-            violated_indices = margin < 1
-            
-            # Initialize gradients
-            dw = self.C * self.w  # L2 regularization gradient
-            db = 0.0
-            
-            # Update gradients based on violated constraints
-            if np.any(violated_indices):
-                X_violated = X[violated_indices]
-                y_violated = y[violated_indices]
-                dw -= np.sum(X_violated * y_violated[:, np.newaxis], axis=0) / n_samples
-                db -= np.sum(y_violated) / n_samples
-            
-            # Update the weights and bias
-            self.w -= self.learning_rate * dw
-            self.b -= self.learning_rate * db
-            
+            if self.numba_available:
+                self.w, self.b, dw, db = self._linearSVC_minibatches(X_shuffled, y_shuffled, self.w, self.b, self.C, beta, self.learning_rate, batch_size)
+            else:
+                # Mini-batch gradient descent
+                for start in range(0, n_samples, batch_size):
+                    end = start + batch_size
+                    X_batch = X_shuffled[start:end]
+                    y_batch = y_shuffled[start:end]
+
+                    # Compute the margin
+                    margin = y_batch * (np.dot(X_batch, self.w) + self.b)
+
+                    # Compute the hinge loss gradient
+                    violated_indices = margin < 1
+                    dw = self.C * self.w  # L2 regularization gradient
+                    db = 0.0
+
+                    if np.any(violated_indices):
+                        X_violated = X_batch[violated_indices]
+                        y_violated = y_batch[violated_indices]
+                        dw -= np.sum(X_violated * y_violated[:, np.newaxis], axis=0) / batch_size
+                        db -= np.sum(y_violated) / batch_size
+
+                    # Apply momentum
+                    momentum_w = beta * momentum_w + (1 - beta) * dw
+                    momentum_b = beta * momentum_b + (1 - beta) * db
+
+                    # Update weights and bias
+                    self.w -= self.learning_rate * momentum_w
+                    self.b -= self.learning_rate * momentum_b
+
+            # NOT USED: using gradient norm for convergence check
             # Calculate current loss for convergence check
-            loss = self.C * 0.5 * np.dot(self.w, self.w) + np.sum(np.maximum(0, 1 - margin)) / n_samples
-            
-            # Check for convergence based on gradient norm
+            # margin_full = y * (np.dot(X, self.w) + self.b)
+            # loss = self.C * 0.5 * np.dot(self.w, self.w) + np.sum(np.maximum(0, 1 - margin_full)) / n_samples
+            # print(f"Iteration {iteration + 1}, Loss: {loss}")
+
+            # Check for convergence
             if np.linalg.norm(dw) < self.tol and abs(db) < self.tol:
                 break
-                
+
         return self
    
     def _predict_binary(self, X):
@@ -136,9 +173,24 @@ class LinearSVC(BaseSVM):
 
 
 class LinearSVR(BaseSVM):
-    def __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, epsilon=0.1):
+    def __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, epsilon=0.1, numba=True):
         super().__init__(C, tol, max_iter, learning_rate, regression=True)
         self.epsilon = epsilon
+        
+        if numba:
+            try:
+                from numba import njit, prange
+                from ._LinearSVM_jit_utils import _linearSVR_minibatches
+                
+                # Run once to compile
+                _linearSVR_minibatches(np.zeros((2, 2)), np.zeros(2), np.zeros(2), 0.0, 1.0, 0.9, 0.01, 2, 0.1)
+                self._linearSVC_minibatches = _linearSVR_minibatches
+                self.numba_available = True
+            except Exception as e:
+                print(f"Numba not available: {e}")
+                self.numba_available = False
+        else:
+            self.numba_available = False
         
     def _fit(self, X, y):
         """
@@ -166,44 +218,67 @@ class LinearSVR(BaseSVM):
         n_samples, n_features = X.shape
         self.w = np.zeros(n_features)
         self.b = 0.0
+        momentum_w = np.zeros(n_features)
+        momentum_b = 0.0
+        beta = 0.9  # Momentum factor
         
         # Store for prediction
         self.X_train = X
         self.y_train = y
                 
-        # Gradient Descent Loop
-        for i in range(self.max_iter):
-            # Compute the prediction
-            prediction = np.dot(X, self.w) + self.b
+        # Mini-batch size
+        batch_size = min(64, n_samples)
+
+        for iteration in range(self.max_iter):
+            # Shuffle data for mini-batch
+            indices = np.random.permutation(n_samples)
+            X_shuffled = X[indices]
+            y_shuffled = y[indices]
+
+            if self.numba_available:
+                self.w, self.b, dw, db = self._linearSVC_minibatches(
+                    X_shuffled, y_shuffled, self.w, self.b, self.C, beta, self.learning_rate, batch_size, self.epsilon
+                )
+            else:
+                # Mini-batch gradient descent
+                for start in range(0, n_samples, batch_size):
+                    end = start + batch_size
+                    X_batch = X_shuffled[start:end]
+                    y_batch = y_shuffled[start:end]
+
+                    # Compute the prediction
+                    prediction = np.dot(X_batch, self.w) + self.b
+
+                    # Compute the epsilon-insensitive loss and its gradient
+                    errors = y_batch - prediction
+                    dw = self.C * self.w  # Regularization gradient
+                    db = 0.0
+
+                    # Samples outside the epsilon tube (positive errors)
+                    pos_idx = errors > self.epsilon
+                    if np.any(pos_idx):
+                        dw -= np.sum(X_batch[pos_idx], axis=0) / batch_size
+                        db -= np.sum(np.ones(np.sum(pos_idx))) / batch_size
+
+                    # Samples outside the epsilon tube (negative errors)
+                    neg_idx = errors < -self.epsilon
+                    if np.any(neg_idx):
+                        dw += np.sum(X_batch[neg_idx], axis=0) / batch_size
+                        db += np.sum(np.ones(np.sum(neg_idx))) / batch_size
+
+                    # Apply momentum
+                    momentum_w = beta * momentum_w + (1 - beta) * dw
+                    momentum_b = beta * momentum_b + (1 - beta) * db
+
+                    # Update weights and bias
+                    self.w -= self.learning_rate * momentum_w
+                    self.b -= self.learning_rate * momentum_b
             
-            # Compute the epsilon-insensitive loss and its gradient
-            errors = y - prediction
-            abs_errors = np.abs(errors)
-            
-            # Initialize gradients with regularization term
-            dw = self.C * self.w
-            db = 0.0
-            
-            # Samples outside the epsilon tube (positive errors)
-            pos_idx = errors > self.epsilon
-            if np.any(pos_idx):
-                dw -= np.sum(X[pos_idx], axis=0) / n_samples
-                db -= np.sum(np.ones(np.sum(pos_idx))) / n_samples
-            
-            # Samples outside the epsilon tube (negative errors)
-            neg_idx = errors < -self.epsilon
-            if np.any(neg_idx):
-                dw += np.sum(X[neg_idx], axis=0) / n_samples
-                db += np.sum(np.ones(np.sum(neg_idx))) / n_samples
-            
-            # Update the weights and bias
-            self.w -= self.learning_rate * dw
-            self.b -= self.learning_rate * db
-            
+            # NOT USED: using gradient norm for convergence check
             # Calculate current loss for convergence check
-            epsilon_loss = np.sum(np.maximum(0, abs_errors - self.epsilon)) / n_samples
-            reg_loss = self.C * 0.5 * np.dot(self.w, self.w)
-            total_loss = epsilon_loss + reg_loss
+            # epsilon_loss = np.sum(np.maximum(0, abs_errors - self.epsilon)) / n_samples
+            # reg_loss = self.C * 0.5 * np.dot(self.w, self.w)
+            # total_loss = epsilon_loss + reg_loss
             
             # Check for convergence based on gradient norm
             if np.linalg.norm(dw) < self.tol and abs(db) < self.tol:
