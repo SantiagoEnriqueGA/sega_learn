@@ -12,29 +12,19 @@ from sega_learn.nearest_neighbors.knn_regressor import KNeighborsRegressor
 
 class TestKNeighborsClassifier(unittest.TestCase):
     """
-    Unit test for the KNeighborsClassifier class.
-    Methods:
-    - setUpClass: Initializes a new instance of the Index class before each test method is run.
-    - test_fit: Tests the fit method of the KNeighborsClassifier class.
-    - test_predict: Tests the predict method of the KNeighborsClassifier class.
-    - test_invalid_n_neighbors: Tests the behavior when an invalid number of neighbors is provided.
-    - test_invalid_n_neighbors_greater_than_samples: Tests the behavior when n_neighbors is greater than the number of samples.
-    - test_distance_metric: Tests the behavior when an invalid distance metric is provided.
-    - test_invalid_distance_metric: Tests the behavior when an invalid distance metric is provided.
-    - test_data_precision: Tests the behavior when an invalid floating point precision is provided.
-    - test_invalid_fp_precision: Tests the behavior when an invalid floating point precision is provided.
-    - test_one_hot_encoding: Tests the behavior when one-hot encoding is applied to the input data.
-    - test_invalid_one_hot_encoding: Tests the behavior when an invalid one-hot encoding is provided.
-    - test_predict_with_one_hot_encoding: Tests the behavior when one-hot encoding is applied to the input data during prediction.
+    Unit tests for the KNeighborsClassifier class.
     """
     @classmethod
     def setUpClass(cls):
+        """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting KNeighborsClassifierKNeighborsBase Class", end="", flush=True)
     
     def setUp(self):
+        """Sets up the test environment before each test."""
         pass    
 
     def test_fit(self):
+        """Tests the fit method of the KNeighborsClassifier class."""
         X_train = np.array([[1, 2], [2, 3], [3, 4], [4, 5]])
         y_train = np.array([0, 1, 0, 1])
         knn = KNeighborsClassifier(n_neighbors=3)
@@ -46,6 +36,7 @@ class TestKNeighborsClassifier(unittest.TestCase):
         np.testing.assert_array_equal(knn.y_train, y_train)
 
     def test_predict(self):
+        """Tests the predict method of the KNeighborsClassifier class."""
         X_train = np.array([[1, 2], [2, 3], [3, 4], [4, 5]])
         y_train = np.array([0, 1, 0, 1])
         X_test = np.array([[1, 2], [2, 2], [3, 3]])
@@ -56,10 +47,12 @@ class TestKNeighborsClassifier(unittest.TestCase):
         np.testing.assert_array_equal(predictions, expected_predictions)
 
     def test_invalid_n_neighbors(self):
+        """Tests the behavior when an invalid number of neighbors is provided."""
         with self.assertRaises(ValueError):
             KNeighborsClassifier(n_neighbors=0)
             
     def test_invalid_n_neighbors_greater_than_samples(self):
+        """Tests the behavior when n_neighbors is greater than the number of samples."""
         X_train = np.array([[1, 2], [2, 3], [3, 4]])
         y_train = np.array([0, 1, 0])
         knn = KNeighborsClassifier(n_neighbors=4)
@@ -67,6 +60,7 @@ class TestKNeighborsClassifier(unittest.TestCase):
             knn.fit(X_train, y_train)
             
     def test_distance_metric(self):
+        """Tests the behavior when a valid distance metric is provided."""
         X_train = np.array([[1, 2], [2, 3], [3, 4], [4, 5]])
         y_train = np.array([0, 1, 0, 1])
         X_test = np.array([[1, 2], [2, 2], [3, 3]])
@@ -77,11 +71,13 @@ class TestKNeighborsClassifier(unittest.TestCase):
         np.testing.assert_array_equal(predictions, expected_predictions)
 
     def test_invalid_distance_metric(self):
+        """Tests the behavior when an invalid distance metric is provided."""
         knn = KNeighborsClassifier(distance_metric='invalid_metric')
         with self.assertRaises(ValueError):
             knn._compute_distances(np.array([[1, 2], [2, 3]]))
             
     def test_data_precision(self):
+        """Tests the behavior when a valid floating point precision is provided."""
         knn = KNeighborsClassifier(n_neighbors=3, fp_precision=np.float32)
         X_train = np.array([[1, 2], [2, 3], [3, 4], [4, 5]], dtype=np.float64)
         y_train = np.array([0, 1, 0, 1], dtype=np.float64)
@@ -90,10 +86,12 @@ class TestKNeighborsClassifier(unittest.TestCase):
         self.assertEqual(knn.y_train.dtype, np.float32)
     
     def test_invalid_fp_precision(self):
+        """Tests the behavior when an invalid floating point precision is provided."""
         with self.assertRaises(ValueError):
             KNeighborsClassifier(fp_precision=int)       
 
     def test_one_hot_encoding(self):
+        """Tests the behavior when one-hot encoding is applied to the input data."""
         X_train = np.array([[1, 'a'], [2, 'b'], [3, 'a'], [4, 'b']])
         y_train = np.array([0, 1, 0, 1])
         knn = KNeighborsClassifier(n_neighbors=3, one_hot_encode=True)
@@ -102,10 +100,12 @@ class TestKNeighborsClassifier(unittest.TestCase):
         self.assertIsNotNone(knn.y_train)
         
     def test_invalid_one_hot_encoding(self):
+        """Tests the behavior when an invalid one-hot encoding is provided."""
         with self.assertRaises(ValueError):
             KNeighborsClassifier(one_hot_encode='invalid_value')
     
     def test_predict_with_one_hot_encoding(self):
+        """Tests the behavior when one-hot encoding is applied to the input data during prediction."""
         X_train = np.array([[1, 'a'], [2, 'b'], [3, 'a'], [4, 'b']])
         y_train = np.array([0, 1, 0, 1])
         X_test = np.array([[1, 'a'], [2, 'b'], [3, 'a']])
@@ -114,35 +114,26 @@ class TestKNeighborsClassifier(unittest.TestCase):
         predictions = knn.predict(X_test)
     
     def test_predict_with_invalid_one_hot_encoding(self):
+        """Tests the behavior when an invalid one-hot encoding is provided during prediction."""
         with self.assertRaises(ValueError):
             knn = KNeighborsClassifier(n_neighbors=3, one_hot_encode='invalid_value')
         
 
 class TestKNeighborsRegressor(unittest.TestCase):
     """
-    Unit test for the KNeighborsRegressor class.
-    Methods:
-    - setUpClass: Initializes a new instance of the Index class before each test method is run.
-    - test_fit: Tests the fit method of the KNeighborsClassifier class.
-    - test_predict: Tests the predict method of the KNeighborsClassifier class.
-    - test_invalid_n_neighbors: Tests the behavior when an invalid number of neighbors is provided.
-    - test_invalid_n_neighbors_greater_than_samples: Tests the behavior when n_neighbors is greater than the number of samples.
-    - test_distance_metric: Tests the behavior when an invalid distance metric is provided.
-    - test_invalid_distance_metric: Tests the behavior when an invalid distance metric is provided.
-    - test_data_precision: Tests the behavior when an invalid floating point precision is provided.
-    - test_invalid_fp_precision: Tests the behavior when an invalid floating point precision is provided.
-    - test_one_hot_encoding: Tests the behavior when one-hot encoding is applied to the input data.
-    - test_invalid_one_hot_encoding: Tests the behavior when an invalid one-hot encoding is provided.
-    - test_predict_with_one_hot_encoding: Tests the behavior when one-hot encoding is applied to the input data during prediction.
+    Unit tests for the KNeighborsRegressor class.
     """
     @classmethod
     def setUpClass(cls):
+        """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting KNeighborsRegressor Class", end="", flush=True)
     
     def setUp(self):
+        """Sets up the test environment before each test."""
         pass    
 
     def test_fit(self):
+        """Tests the fit method of the KNeighborsRegressor class."""
         X_train = np.array([[1, 2], [2, 3], [3, 4], [4, 5]])
         y_train = np.array([0.5, 1.5, 0.5, 1.5])
         knn = KNeighborsRegressor(n_neighbors=3)
@@ -154,6 +145,7 @@ class TestKNeighborsRegressor(unittest.TestCase):
         np.testing.assert_array_equal(knn.y_train, y_train)
 
     def test_predict(self):
+        """Tests the predict method of the KNeighborsRegressor class."""
         X_train = np.array([[1, 2], [2, 3], [3, 4], [4, 5]])
         y_train = np.array([0.5, 1.5, 0.5, 1.5])
         X_test = np.array([[1, 2], [2, 2], [3, 3]])
@@ -164,10 +156,12 @@ class TestKNeighborsRegressor(unittest.TestCase):
         np.testing.assert_array_almost_equal(predictions, expected_predictions)
 
     def test_invalid_n_neighbors(self):
+        """Tests the behavior when an invalid number of neighbors is provided."""
         with self.assertRaises(ValueError):
             KNeighborsRegressor(n_neighbors=0)
             
     def test_invalid_n_neighbors_greater_than_samples(self):
+        """Tests the behavior when n_neighbors is greater than the number of samples."""
         X_train = np.array([[1, 2], [2, 3], [3, 4]])
         y_train = np.array([0.5, 1.5, 0.5])
         knn = KNeighborsRegressor(n_neighbors=4)
@@ -175,6 +169,7 @@ class TestKNeighborsRegressor(unittest.TestCase):
             knn.fit(X_train, y_train)
             
     def test_distance_metric(self):
+        """Tests the behavior when a valid distance metric is provided."""
         X_train = np.array([[1, 2], [2, 3], [3, 4], [4, 5]])
         y_train = np.array([0.5, 1.5, 0.5, 1.5])
         X_test = np.array([[1, 2], [2, 2], [3, 3]])
@@ -185,11 +180,13 @@ class TestKNeighborsRegressor(unittest.TestCase):
         np.testing.assert_array_almost_equal(predictions, expected_predictions)
 
     def test_invalid_distance_metric(self):
+        """Tests the behavior when an invalid distance metric is provided."""
         knn = KNeighborsRegressor(distance_metric='invalid_metric')
         with self.assertRaises(ValueError):
             knn._compute_distances(np.array([[1, 2], [2, 3]]))
             
     def test_data_precision(self):
+        """Tests the behavior when a valid floating point precision is provided."""
         knn = KNeighborsRegressor(n_neighbors=3, fp_precision=np.float32)
         X_train = np.array([[1, 2], [2, 3], [3, 4], [4, 5]], dtype=np.float64)
         y_train = np.array([0.5, 1.5, 0.5, 1.5], dtype=np.float64)
@@ -198,10 +195,12 @@ class TestKNeighborsRegressor(unittest.TestCase):
         self.assertEqual(knn.y_train.dtype, np.float32)
     
     def test_invalid_fp_precision(self):
+        """Tests the behavior when an invalid floating point precision is provided."""
         with self.assertRaises(ValueError):
             KNeighborsRegressor(fp_precision=int)       
 
     def test_one_hot_encoding(self):
+        """Tests the behavior when one-hot encoding is applied to the input data."""
         X_train = np.array([[1, 'a'], [2, 'b'], [3, 'a'], [4, 'b']])
         y_train = np.array([0.5, 1.5, 0.5, 1.5])
         knn = KNeighborsRegressor(n_neighbors=3, one_hot_encode=True)
@@ -210,10 +209,12 @@ class TestKNeighborsRegressor(unittest.TestCase):
         self.assertIsNotNone(knn.y_train)
         
     def test_invalid_one_hot_encoding(self):
+        """Tests the behavior when an invalid one-hot encoding is provided."""
         with self.assertRaises(ValueError):
             KNeighborsRegressor(one_hot_encode='invalid_value')
     
     def test_predict_with_one_hot_encoding(self):
+        """Tests the behavior when one-hot encoding is applied to the input data during prediction."""
         X_train = np.array([[1, 'a'], [2, 'b'], [3, 'a'], [4, 'b']])
         y_train = np.array([0.5, 1.5, 0.5, 1.5])
         X_test = np.array([[1, 'a'], [2, 'b'], [3, 'a']])
@@ -222,6 +223,7 @@ class TestKNeighborsRegressor(unittest.TestCase):
         predictions = knn.predict(X_test)
     
     def test_predict_with_invalid_one_hot_encoding(self):
+        """Tests the behavior when an invalid one-hot encoding is provided during prediction."""
         with self.assertRaises(ValueError):
             knn = KNeighborsRegressor(n_neighbors=3, one_hot_encode='invalid_value')
         

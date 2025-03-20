@@ -11,27 +11,14 @@ from sega_learn.utils import train_test_split
 class TestTrainTestSplit(unittest.TestCase):
     """
     Unit test for the train_test_split function.
-    
-    Methods:
-    - setUpClass: Initializes the test suite
-    - setUp: Prepares data for each test
-    - test_basic_functionality: Tests basic splitting
-    - test_different_test_sizes: Tests various test_size values
-    - test_different_train_sizes: Tests various train_size values
-    - test_combined_sizes: Tests both train_size and test_size together
-    - test_random_state: Tests reproducibility with random_state
-    - test_stratification: Tests stratified splitting
-    - test_without_shuffling: Tests splitting without shuffling
-    - test_different_input_types: Tests with arrays, DataFrames, lists
-    - test_multiple_arrays: Tests splitting multiple arrays
-    - test_edge_cases: Tests edge cases and error handling
     """
-    
     @classmethod
     def setUpClass(cls):
+        """Initializes the test suite."""
         print("\nTesting train_test_split function", end="", flush=True)
     
     def setUp(self):
+        """Prepares data for each test."""
         # Create sample data for tests
         self.X = np.random.rand(100, 5)
         self.y = np.random.randint(0, 2, 100)
@@ -53,7 +40,7 @@ class TestTrainTestSplit(unittest.TestCase):
         self.y_list = self.y.tolist()
     
     def test_basic_functionality(self):
-        """Test basic train_test_split functionality"""
+        """Tests basic train_test_split functionality."""
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y)
         
         # Default test_size is 0.25
@@ -67,7 +54,7 @@ class TestTrainTestSplit(unittest.TestCase):
         self.assertEqual(len(y_train) + len(y_test), len(self.y))
     
     def test_different_test_sizes(self):
-        """Test with different test_size values"""
+        """Tests with different test_size values."""
         # Test with float
         X_train, X_test = train_test_split(self.X, test_size=0.4)
         self.assertEqual(len(X_train), 60)
@@ -89,7 +76,7 @@ class TestTrainTestSplit(unittest.TestCase):
         self.assertEqual(len(X_test), 10)
     
     def test_different_train_sizes(self):
-        """Test with different train_size values"""
+        """Tests with different train_size values."""
         # Test with float
         X_train, X_test = train_test_split(self.X, train_size=0.7)
         self.assertEqual(len(X_train), 70)
@@ -111,7 +98,7 @@ class TestTrainTestSplit(unittest.TestCase):
         self.assertEqual(len(X_test), 0)
     
     def test_combined_sizes(self):
-        """Test with both train_size and test_size specified"""
+        """Tests with both train_size and test_size specified."""
         # Both as float
         X_train, X_test = train_test_split(self.X, train_size=0.6, test_size=0.3)
         self.assertEqual(len(X_train), 60)
@@ -128,7 +115,7 @@ class TestTrainTestSplit(unittest.TestCase):
         self.assertEqual(len(X_test), 20)
     
     def test_random_state(self):
-        """Test reproducibility with random_state"""
+        """Tests reproducibility with random_state."""
         # First split with random_state=42
         X_train1, X_test1 = train_test_split(self.X, random_state=42)
         
@@ -147,7 +134,7 @@ class TestTrainTestSplit(unittest.TestCase):
             np.testing.assert_array_equal(X_train1, X_train3)
     
     def test_stratification(self):
-        """Test stratified splitting"""
+        """Tests stratified splitting."""
         # Set a fixed random state for reproducibility in this test
         random_state = 42
         
@@ -183,7 +170,7 @@ class TestTrainTestSplit(unittest.TestCase):
         self.assertAlmostEqual(orig_prop, test_prop, delta=0.05)
     
     def test_without_shuffling(self):
-        """Test splitting without shuffling"""
+        """Tests splitting without shuffling."""
         X_train, X_test = train_test_split(self.X_small, shuffle=False, test_size=0.3)
         
         # Check that the first 7 samples are in train and the last 3 in test
@@ -191,7 +178,7 @@ class TestTrainTestSplit(unittest.TestCase):
         np.testing.assert_array_equal(X_test, self.X_small[7:])
     
     def test_different_input_types(self):
-        """Test with different input types"""
+        """Tests with different input types."""
         # Test with NumPy arrays
         X_train, X_test = train_test_split(self.X, test_size=0.2)
         self.assertIsInstance(X_train, np.ndarray)
@@ -218,7 +205,7 @@ class TestTrainTestSplit(unittest.TestCase):
         self.assertEqual(X_train.shape[0], 80)
     
     def test_multiple_arrays(self):
-        """Test splitting multiple arrays"""
+        """Tests splitting multiple arrays."""
         # Split three arrays
         X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(
             self.X, self.y, np.ones(100), test_size=0.25
@@ -246,7 +233,7 @@ class TestTrainTestSplit(unittest.TestCase):
             self.assertTrue(found, f"Could not find matching X for y at index {i}")
     
     def test_edge_cases(self):
-        """Test edge cases and error handling"""
+        """Tests edge cases and error handling."""
         # Test input validation - arrays of different lengths
         with self.assertRaises(ValueError):
             train_test_split(self.X, self.y[:50])

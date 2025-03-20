@@ -12,16 +12,13 @@ from tests.utils import suppress_print
 class TestCrossEntropyLoss(unittest.TestCase):
     """
     Unit tests for the CrossEntropyLoss class.
-    Methods:
-    - setUpClass: Print message before running tests.
-    - test_cross_entropy_loss_single_class: Test the cross entropy loss for a single class.
-    - test_cross_entropy_loss_multi_class: Test the cross entropy loss for multiple classes.
     """
     @classmethod
     def setUpClass(cls):
         print("\nTesting the CrossEntropyLoss class", end="", flush=True)
     
     def test_cross_entropy_loss_single_class(self):
+        """Test the cross entropy loss for a single class."""
         loss_fn = CrossEntropyLoss()
         logits = np.array([[2.0, 1.0, 0.1]])
         targets = np.array([[1, 0, 0]])
@@ -35,6 +32,7 @@ class TestCrossEntropyLoss(unittest.TestCase):
         self.assertAlmostEqual(loss, expected_loss, places=5)
 
     def test_cross_entropy_loss_multi_class(self):
+        """Test the cross entropy loss for multiple classes."""
         loss_fn = CrossEntropyLoss()
         logits = np.array([[2.0, 1.0, 0.1], [0.5, 2.5, 1.0]])
         targets = np.array([[1, 0, 0], [0, 1, 0]])
@@ -50,16 +48,13 @@ class TestCrossEntropyLoss(unittest.TestCase):
 class TestBCEWithLogitsLoss(unittest.TestCase):
     """
     Unit tests for the BCEWithLogitsLoss class.
-    Methods:
-    - setUpClass: Print message before running tests.
-    - test_bce_with_logits_loss: Test the binary cross entropy loss with logits.
-    - test_bce_with_logits_loss_edge_cases: Test the binary cross entropy loss with logits for edge cases (large logits).
     """
     @classmethod
     def setUpClass(cls):
         print("\nTesting the BCEWithLogitsLoss class", end="", flush=True)
         
     def test_bce_with_logits_loss(self):
+        """Test the binary cross entropy loss with logits."""
         loss_fn = BCEWithLogitsLoss()
         logits = np.array([0.0, 2.0, -2.0])
         targets = np.array([0, 1, 0])
@@ -71,6 +66,7 @@ class TestBCEWithLogitsLoss(unittest.TestCase):
         self.assertAlmostEqual(loss, expected_loss, places=5)
 
     def test_bce_with_logits_loss_edge_cases(self):      
+        """Test the binary cross entropy loss with logits for edge cases (large logits)."""
         warnings.filterwarnings('ignore')       # Suppress warnings, large logits will trigger overflow warnings
         loss_fn = BCEWithLogitsLoss()
         logits = np.array([1000.0, -1000.0])

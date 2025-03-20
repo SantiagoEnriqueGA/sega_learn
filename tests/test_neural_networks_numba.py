@@ -19,7 +19,6 @@ class TestNeuralNetworkNumba(unittest.TestCase):
     Comprehensive test suite for NumbaBackendNeuralNetwork class.
     Tests all major functions and edge cases under Numba acceleration.
     """
-
     @classmethod
     def setUpClass(cls):
         print("\nTesting NeuralNetwork class with Numba backend", end="", flush=True)

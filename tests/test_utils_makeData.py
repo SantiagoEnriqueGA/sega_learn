@@ -9,11 +9,6 @@ from sega_learn.utils import make_regression, make_classification, make_blobs
 class TestMakeData(unittest.TestCase):
     """
     Unit test for the data generation utilities make_regression, make_classification, and make_blobs.
-    
-    Methods:
-    - setUpClass: Initializes the test suite
-    - setUp: Runs before each test
-    - Various test methods for each data generation function
     """
     @classmethod
     def setUpClass(cls):
