@@ -2,7 +2,26 @@
 import numpy as np
 from math import log, floor, ceil
 from scipy import linalg
+import warnings
 
+from .linear_models_cython import fit_ols
+
+def _validate_data(X, y):
+    """
+    Validate input data:
+        - array-like 
+        - same number of samples
+        - Not empty
+    """
+    if not isinstance(X, np.ndarray) or not isinstance(y, np.ndarray):
+        raise ValueError("X and y must be numpy arrays")
+
+    if X.shape[0] != y.shape[0]:
+        raise ValueError("X and y must have the same number of samples")
+
+    if X.shape[0] == 0 or y.shape[0] == 0:
+        raise ValueError("X and y must not be empty") 
+    
 class OrdinaryLeastSquares(object):
     """
     Ordinary Least Squares (OLS) linear regression model.
@@ -48,17 +67,31 @@ class OrdinaryLeastSquares(object):
         Returns:
         - self : object
         """
-        if self.fit_intercept:                              # If fit_intercept is True
-            X = np.hstack([np.ones((X.shape[0], 1)), X])    # Add a column of ones to X, for the intercept
+        _validate_data(X, y)
         
-        self.coef_ = np.linalg.inv(X.T @ X) @ X.T @ y       # Compute the coefficients using the normal equation, w = (X^T * X)^-1 * X^T * y
-        
-        if self.fit_intercept:                              # If fit_intercept is True
-            self.intercept_ = self.coef_[0]                 # Set the intercept to the first element of the coefficients
-            self.coef_ = self.coef_[1:]                     # Set the coefficients to the remaining elements
-        
-        else:                                               # Else if fit_intercept is False
-            self.intercept_ = 0.0                           # Set the intercept to 0.0
+        # Try to use C compiled code for faster computation
+        try:
+            self.coef_ = fit_ols(X, y, self.fit_intercept)
+            
+            if self.fit_intercept:
+                self.intercept_ = self.coef_[0]  # First element is the intercept
+                self.coef_ = self.coef_[1:]     # Remaining elements are the coefficients
+            else:
+                self.intercept_ = 0.0           # No intercept
+        except:
+            warnings.warn("Tried to use C compiled code, but failed. Using Python code instead.")
+            
+            if self.fit_intercept:                              # If fit_intercept is True
+                X = np.hstack([np.ones((X.shape[0], 1)), X])    # Add a column of ones to X, for the intercept
+            
+            self.coef_ = np.linalg.inv(X.T @ X) @ X.T @ y       # Compute the coefficients using the normal equation, w = (X^T * X)^-1 * X^T * y
+            
+            if self.fit_intercept:                              # If fit_intercept is True
+                self.intercept_ = self.coef_[0]                 # Set the intercept to the first element of the coefficients
+                self.coef_ = self.coef_[1:]                     # Set the coefficients to the remaining elements
+            
+            else:                                               # Else if fit_intercept is False
+                self.intercept_ = 0.0                           # Set the intercept to 0.0
                 
     def predict(self, X):
         """
@@ -164,6 +197,8 @@ class Ridge(object):
             - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
             - numba : Whether to use numba for faster computation. Default is False.
         """
+        _validate_data(X, y)
+        
         if numba:
             # Try to use numba for faster computation
             try:
@@ -316,6 +351,8 @@ class Lasso(object):
             - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
             - numba : Whether to use numba for faster computation. Default is False.
         """
+        _validate_data(X, y)
+        
         if numba:
             # Try to use numba for faster computation
             try:
@@ -473,6 +510,8 @@ class Bayesian(object):
         - X : array-like of shape (n_samples, n_features): Training data.
         - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
         """
+        _validate_data(X, y)
+        
         # Initialization of the values of the parameters
         eps = np.finfo(np.float64).eps      # Machine epsilon, the smallest number that can be added to 1.0 to get a larger number
 
@@ -526,7 +565,7 @@ class Bayesian(object):
         """
         Automatically tune the hyperparameters alpha_1, alpha_2, lambda_1, lambda_2.
         Loops through the parameter space, and returns the best hyperparameters based on the mean squared error.
-        Compues gradients using ADAM optimizer.
+        Computes gradients using ADAM optimizer.
         
         Parameters:
         - X : array-like of shape (n_samples, n_features): Training data.
@@ -593,7 +632,7 @@ class Bayesian(object):
             """Compute the gradient of the loss function with respect to lambda_2"""
             return -0.5 * (self.lambda_1 / self.lambda_2 ** 2)
         
-        # loop untill convergence
+        # loop until convergence
         while True:
             # Fit the model
             self.fit(X, y)
@@ -787,6 +826,8 @@ class RANSAC(object):
         - X : array-like of shape (n_samples, n_features): Training data.
         - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
         """
+        _validate_data(X, y)
+        
         for _ in range(self.k):
             # Randomly select n data points
             idx = np.random.choice(X.shape[0], self.n, replace=False)
@@ -904,6 +945,8 @@ class PassiveAggressiveRegressor(object):
         - save_steps: bool, default=False
         - verbose: bool, default=False
         """
+        _validate_data(X, y)
+        
         # Initialize the weights and the intercept
         self.coef_ = np.zeros(X.shape[1])
         self.intercept_ = 0.0
