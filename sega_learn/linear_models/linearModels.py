@@ -4,8 +4,6 @@ from math import log, floor, ceil
 from scipy import linalg
 import warnings
 
-from .linear_models_cython import fit_ols
-
 def _validate_data(X, y):
     """
     Validate input data:
@@ -71,6 +69,7 @@ class OrdinaryLeastSquares(object):
         
         # Try to use C compiled code for faster computation
         try:
+            from .linear_models_cython import fit_ols
             self.coef_ = fit_ols(X, y, self.fit_intercept)
             
             if self.fit_intercept:
@@ -198,6 +197,22 @@ class Ridge(object):
             - numba : Whether to use numba for faster computation. Default is False.
         """
         _validate_data(X, y)
+
+        if not numba:
+            # Try to use C compiled code for faster computation
+            try:
+                from .linear_models_cython import fit_ridge
+                self.coef_ = fit_ridge(X, y, self.alpha, self.fit_intercept, self.max_iter, self.tol)
+                
+                if self.fit_intercept:
+                    self.intercept_ = self.coef_[0]  # First element is the intercept
+                    self.coef_ = self.coef_[1:]       # Remaining elements are the coefficients
+                else:
+                    self.intercept_ = 0.0             # No intercept
+
+                return
+            except:
+                warnings.warn("Tried to use C compiled code, but failed. Using Python code instead.")
         
         if numba:
             # Try to use numba for faster computation
@@ -353,6 +368,22 @@ class Lasso(object):
         """
         _validate_data(X, y)
         
+        if not numba:
+            # Try to use C compiled code for faster computation
+            try:
+                from .linear_models_cython import fit_lasso
+                self.coef_ = fit_lasso(X, y, self.alpha, self.fit_intercept, self.max_iter, self.tol)
+                
+                if self.fit_intercept:
+                    self.intercept_ = self.coef_[0]  # First element is the intercept
+                    self.coef_ = self.coef_[1:]       # Remaining elements are the coefficients
+                else:
+                    self.intercept_ = 0.0             # No intercept
+
+                return
+            except:
+                warnings.warn("Tried to use C compiled code, but failed. Using Python code instead.")
+
         if numba:
             # Try to use numba for faster computation
             try:
