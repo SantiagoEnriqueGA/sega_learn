@@ -13,8 +13,9 @@ def fit_ols(np.ndarray[np.double_t, ndim=2] X, np.ndarray[np.double_t, ndim=1] y
     If fit_intercept is True, a column of ones is prepended to X.
     Returns a 1D array of coefficients (with the first element being the intercept, if applicable).
     """
-    cdef int n_samples = X.shape[0]
-    cdef int n_features = X.shape[1]
+    # Explicit cast to int
+    cdef int n_samples = <int>X.shape[0]
+    cdef int n_features = <int>X.shape[1]
     cdef np.ndarray[np.double_t, ndim=2] X_design
 
     if fit_intercept:
@@ -50,8 +51,9 @@ def fit_ridge(np.ndarray[np.double_t, ndim=2] X, np.ndarray[np.double_t, ndim=1]
     
     Returns a 1D array of coefficients (with intercept in position 0 if fit_intercept is True).
     """
-    cdef int n_samples = X.shape[0]
-    cdef int n_features = X.shape[1]
+    # Explicit cast to int
+    cdef int n_samples = <int>X.shape[0]
+    cdef int n_features = <int>X.shape[1]
     cdef np.ndarray[np.double_t, ndim=2] X_design
 
     if fit_intercept:
@@ -108,8 +110,9 @@ def fit_lasso(np.ndarray[np.double_t, ndim=2] X, np.ndarray[np.double_t, ndim=1]
     
     Returns a 1D array of coefficients (with intercept in position 0 if fit_intercept is True).
     """
-    cdef int n_samples = X.shape[0]
-    cdef int n_features = X.shape[1]
+    # Explicit cast to int
+    cdef int n_samples = <int>X.shape[0]
+    cdef int n_features = <int>X.shape[1]   
     cdef np.ndarray[np.double_t, ndim=2] X_design
 
     if fit_intercept:
