@@ -91,6 +91,23 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         # Backpropagation through the network in reverse order
         for i in reversed(range(len(self.layers))):
             dA = self.layers[i].backward(dA, self.reg_lambda)
+            
+    
+    def fit(self, X_train, y_train, X_val=None, y_val=None, 
+              optimizer=None, epochs=100, batch_size=32, 
+              early_stopping_threshold=10, lr_scheduler=None, 
+              p=False, use_tqdm=False, n_jobs=1, 
+              track_metrics=False, track_adv_metrics=False, 
+              save_animation=False, save_path='training_animation.mp4', 
+              fps=1, dpi=100, frame_every=1):
+        """
+        Fits the neural network to the training data.
+        """
+        # Call the train method
+        return self.train(X_train, y_train, X_val, y_val, optimizer, epochs, batch_size,
+                          early_stopping_threshold, lr_scheduler, p, use_tqdm, n_jobs,
+                          track_metrics, track_adv_metrics, save_animation, save_path,
+                          fps, dpi, frame_every)        
 
     def train(self, X_train, y_train, X_val=None, y_val=None, 
               optimizer=None, epochs=100, batch_size=32, 

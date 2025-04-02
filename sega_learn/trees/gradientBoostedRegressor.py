@@ -88,7 +88,7 @@ class GradientBoostedRegressor(object):
             tree = self.trees[i]                            # Get the current tree
             self.trees[i] = tree.learn(self.X, residuals)   # Fit the tree to the residuals
 
-            predictions = np.array([RegressorTree.predict(self.trees[i], record) for record in self.X]) # Predict the target values using the current tree
+            predictions = np.array([RegressorTree.evaluate_tree(self.trees[i], record) for record in self.X]) # Predict the target values using the current tree
         
             residuals = residuals - predictions     # Update the residuals by subtracting the predictions from the target values
 
@@ -116,7 +116,7 @@ class GradientBoostedRegressor(object):
             oneTree_predictions = np.zeros(len(self.X))     # Initialize an array of zeros for the predictions of the current tree
 
             for j in range(len(self.X)):                    # Loop over the indices of the input data
-                oneTree_predictions[j] += RegressorTree.predict(self.trees[i], self.X[j])   # Predict the target value for the current input data
+                oneTree_predictions[j] += RegressorTree.evaluate_tree(self.trees[i], self.X[j])   # Predict the target value for the current input data
 
             predictions += oneTree_predictions              # Add the predictions of the current tree to the overall predictions
             

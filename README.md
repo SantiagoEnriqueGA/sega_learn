@@ -33,6 +33,7 @@ For more detailed information on each module, see the following READMEs:
 - [Nearest Neighbors Module](sega_learn/nearest_neighbors/README.MD)
 - [Neural Networks Module](sega_learn/neural_networks/README.md)
 - [Utilities Module](sega_learn/utils/README.md)
+- [Automated Machine Learning Module](sega_learn/auto/README.md)
 
 ## Features
 The SEGA_LEARN library includes the following features:
@@ -77,6 +78,10 @@ The SEGA_LEARN library includes the following features:
 - **Evaluation Metrics**: Implements evaluation metrics like mean squared error, mean absolute error, and R-squared.
 - **Model Selection Algorithms**: Implements model selection algorithms like Grid Search Cross Validation and Random Search Cross Validation.
 - **Data Augmentation**: Implements data augmentation for imbalanced classification tasks using SMOTE (Synthetic Minority Over-sampling Technique), Under-sampling, Over-sampling, and/or a combination of each.
+
+### Automated Machine Learning
+*   **Automated ML (`auto`)**: Simplified `AutoClassifier` and `AutoRegressor` interfaces for automatically selecting and training suitable models from the Sega Learn library, providing quick baselines for classification and regression tasks.
+
 
 ### Planned Features - Future Work
 - Implement dimensionality reduction algorithms like Principal Component Analysis (PCA), truncated Singular Value Decomposition (t-SVD)
@@ -135,6 +140,10 @@ The SEGA_LEARN library includes the following features:
 - [`dataAugmentation_randUnder.py`](examples/utils/dataAugmentation_randUnder.py): Demonstrates Random Under Sampling for imbalanced classification tasks.
 - [`dataAugmentation_smote.py`](examples/utils/dataAugmentation_smote.py): Demonstrates SMOTE (Synthetic Minority Over-sampling Technique) for imbalanced classification tasks.
 - [`dataAugmentation_combined.py`](examples/utils/dataAugmentation_combined.py): Demonstrates a combination of Random Over Sampling and SMOTE for imbalanced classification tasks.
+
+### Automated Machine Learning
+- [`classifier.py`](examples/auto/classifier.py): Demonstrates the AutoClassifier on a simple classification problem.
+- [`regressor.py`](examples/auto/regressor.py): Demonstrates the AutoRegressor on a simple regression problem.
 
 ## Scripts
 The following PowerShell scripts are included in the `scripts/` folder to help with various tasks:

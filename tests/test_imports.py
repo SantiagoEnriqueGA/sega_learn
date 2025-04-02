@@ -12,7 +12,7 @@ from sega_learn import utils
 from sega_learn import trees
 from sega_learn import neural_networks
 from sega_learn import nearest_neighbors
-
+from sega_learn import auto
 class TestImports(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -26,6 +26,7 @@ class TestImports(unittest.TestCase):
         assert sega_learn.trees is not None
         assert sega_learn.neural_networks is not None
         assert sega_learn.nearest_neighbors is not None
+        assert sega_learn.auto is not None
     
     def test_module_imports(self):
         assert clustering is not None
@@ -34,6 +35,7 @@ class TestImports(unittest.TestCase):
         assert neural_networks is not None
         assert trees is not None
         assert nearest_neighbors is not None
+        assert auto is not None
     
 if __name__ == "__main__":
     unittest.main()

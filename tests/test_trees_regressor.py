@@ -259,21 +259,21 @@ class TestRegressorTree(unittest.TestCase):
     def test_predict_empty_tree(self):
         """Tests prediction with an empty tree."""
         record = [1, 2, 3]
-        result = self.tree.predict({}, record)
+        result = self.tree.evaluate_tree({}, record)
         self.assertIsNone(result)
 
     def test_predict_single_node_tree(self):
         """Tests prediction with a single-node tree."""
         tree = {'value': 1}
         record = [1, 2, 3]
-        result = self.tree.predict(tree, record)
+        result = self.tree.evaluate_tree(tree, record)
         self.assertEqual(result, 1)
 
     def test_predict_with_split(self):
         """Tests prediction with a tree containing a split."""
         tree = {'split_attribute': 0, 'split_val': 2, 'left': {'value': 1}, 'right': {'value': 0}}
         record = [1, 2, 3]
-        result = self.tree.predict(tree, record)
+        result = self.tree.evaluate_tree(tree, record)
         self.assertEqual(result, 1) 
 
 class TestRandomForestRegressor(unittest.TestCase):

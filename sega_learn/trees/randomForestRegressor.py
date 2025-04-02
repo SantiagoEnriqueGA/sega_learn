@@ -58,13 +58,13 @@ def _predict_oob(X, trees, bootstraps):
         for j, (tree, bootstrap) in enumerate(zip(trees, bootstraps)):
             # Check if record is out-of-bag for this tree
             if i not in bootstrap:
-                predictions.append(RegressorTree.predict(tree, record))
+                predictions.append(RegressorTree.evaluate_tree(tree, record))
         
         if predictions:
             all_predictions.append(np.mean(predictions))
         else:
             # If not out-of-bag for any tree, use all trees
-            all_predictions.append(np.mean([RegressorTree.predict(tree, record) for tree in trees]))
+            all_predictions.append(np.mean([RegressorTree.evaluate_tree(tree, record) for tree in trees]))
     
     return all_predictions
 
@@ -189,7 +189,7 @@ class RandomForestRegressor(object):
         # Make predictions for each tree
         predictions = []
         for tree in self.trees:
-            tree_predictions = [RegressorTree.predict(tree, record) for record in X]
+            tree_predictions = [RegressorTree.evaluate_tree(tree, record) for record in X]
             predictions.append(tree_predictions)
         
         # Average predictions across trees

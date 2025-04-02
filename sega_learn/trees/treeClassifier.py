@@ -208,6 +208,17 @@ class ClassifierTree(object):
         self.tree = {}              # Initialize the tree as an empty dictionary
         self.max_depth = max_depth  # Set the maximum depth of the tree
         self.info_gain = []             # Initialize the information gain list
+        
+    def fit(self, X, y):
+        """
+        Fits the decision tree to the training data.
+
+        Parameters:
+        - X (array-like): The input features.
+        - y (array-like): The target labels.
+        """
+        self.tree = self.learn(X, y)
+        return self.tree
 
     def learn(self, X, y, par_node={}, depth=0):
         """
@@ -288,3 +299,24 @@ class ClassifierTree(object):
             return ClassifierTree.classify(tree['left'], record)
         else:
             return ClassifierTree.classify(tree['right'], record)
+        
+    def predict(self, X):
+        """
+        Predicts the labels for a given set of records using the decision tree.
+
+        Parameters:
+        - X (array-like): The input features.
+
+        Returns:
+        - list: A list of predicted labels for each record.
+        """
+        if self.tree is None or self.tree == {}:
+            return None
+        
+        predictions = []
+        
+        for record in X:
+            prediction = ClassifierTree.classify(self.tree, record)
+            predictions.append(prediction)
+        
+        return predictions
