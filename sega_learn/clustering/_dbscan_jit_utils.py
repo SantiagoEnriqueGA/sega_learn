@@ -6,6 +6,7 @@ from numba import njit, prange
 # cc = CC('compiled_dbscan_jit_utils')
 # cc.verbose = True
 
+
 @njit(parallel=True, fastmath=True)
 def _identify_core_points(dist_matrix, eps, min_samples):
     """
@@ -66,6 +67,7 @@ def _assign_clusters(dist_matrix, core_points, eps):
             cluster_id += 1
 
     return labels
+
 
 # if __name__ == "__main__":
 #     cc.compile()

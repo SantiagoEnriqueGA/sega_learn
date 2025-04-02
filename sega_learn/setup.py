@@ -8,10 +8,12 @@
 # )
 
 # Automatically finds all cython files in the project and builds them
-from setuptools import setup, Extension
-from Cython.Build import cythonize
-import numpy as np
 import os
+
+import numpy as np
+from Cython.Build import cythonize
+from setuptools import setup
+
 
 def find_pyx_files(root_dir):
     pyx_files = []
@@ -21,12 +23,10 @@ def find_pyx_files(root_dir):
                 pyx_files.append(os.path.join(dirpath, filename))
     return pyx_files
 
+
 extensions = cythonize(find_pyx_files("sega_learn/"))
 
-setup(
-    ext_modules=extensions,
-    include_dirs=[np.get_include()]
-)
+setup(ext_modules=extensions, include_dirs=[np.get_include()])
 
 # To build the cython code, run the following command in the terminal:
 # The inplace flag is used to build the extension in the same directory as the source code.

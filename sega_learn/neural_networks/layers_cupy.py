@@ -1,5 +1,6 @@
 import cupy as cp
 
+
 class CuPyDenseLayer:
     """
     Initializes a Layer object.
@@ -8,23 +9,27 @@ class CuPyDenseLayer:
         output_size (int): The size of the output from the layer.
         activation (str): The activation function to be used in the layer.
     """
+
     def __init__(self, input_size, output_size, activation="relu"):
         # He initialization for weights
         if activation in ["relu", "leaky_relu"]:
             scale = cp.sqrt(2.0 / input_size)
         else:
             scale = cp.sqrt(1.0 / input_size)
-            
+
         self.weights = cp.random.randn(input_size, output_size) * scale
         self.biases = cp.zeros((1, output_size))
-        self.weight_gradients = cp.zeros((input_size, output_size))  # Initialize weight gradients to zeros
-        self.bias_gradients = cp.zeros((1, output_size))  # Initialize bias gradients to zeros
+        self.weight_gradients = cp.zeros(
+            (input_size, output_size)
+        )  # Initialize weight gradients to zeros
+        self.bias_gradients = cp.zeros(
+            (1, output_size)
+        )  # Initialize bias gradients to zeros
 
         self.input_size = input_size
         self.output_size = output_size
         self.activation = activation
-        
-        
+
     def zero_grad(self):
         """Reset the gradients of the weights and biases to zero."""
         self.weight_gradients = cp.zeros_like(self.weight_gradients)
@@ -37,9 +42,9 @@ class CuPyDenseLayer:
             "leaky_relu": CuPyActivation.leaky_relu,
             "tanh": CuPyActivation.tanh,
             "sigmoid": CuPyActivation.sigmoid,
-            "softmax": CuPyActivation.softmax
+            "softmax": CuPyActivation.softmax,
         }
-        
+
         if self.activation in activation_functions:
             return activation_functions[self.activation](Z)
         else:
@@ -60,9 +65,9 @@ class CuPyDenseLayer:
             return cp.ones_like(Z)  # Identity for compatibility
         else:
             raise ValueError(f"Unsupported activation: {self.activation}")
-        
 
-class CuPyActivation:   
+
+class CuPyActivation:
     @staticmethod
     def relu(z):
         """
@@ -77,7 +82,7 @@ class CuPyActivation:
         Derivative of the ReLU function: f'(z) = 1 if z > 0, else 0
         Returns 1 for positive input, and 0 for negative input.
         """
-        return (z > 0).astype(cp.float32)  
+        return (z > 0).astype(cp.float32)
 
     @staticmethod
     def leaky_relu(z, alpha=0.01):

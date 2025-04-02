@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "sega_learn"
 version = "0.1.0"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 dependencies = [
         "numpy",
         "pandas",
@@ -27,3 +27,82 @@ accelerators = [
 
 [tool.setuptools.packages]
 find = { include = ["sega_learn*"] }
+
+
+[tool.ruff]
+# python 3.12.7
+target-version = "py312"
+
+# Define directories/files to check ('.' means the current directory)
+# Add specific directories if you don't want to check everything from the root
+src = ["sega_learn", "tests", "examples"]
+
+# Exclude directories/files Ruff should ignore
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",          # Exclude the build directory
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+    "sega_learn.egg-info", # Exclude egg info
+    "docs/**/*.html",    # Exclude generated HTML docs
+    "_archive/",         # Exclude the archive directory
+    "__pycache__/",      # Exclude python cache
+    "*.pyc",
+    "*.pyo",
+    "*.pyd",
+    # You might want to exclude performance test logs/plots if they aren't Python
+    "tests_performance/CPython_vs_PyPy/logs_clustering/",
+    "tests_performance/CPython_vs_PyPy/logs_linear_models/",
+    "examples/**/plots/",
+    "tests_performance/**/plots/",
+]
+
+[tool.ruff.lint]
+# Start with a good baseline set of rules:
+# E = pycodestyle errors
+# F = Pyflakes errors
+# W = pycodestyle warnings
+# I = isort (import sorting)
+# UP = pyupgrade (suggests modern Python syntax)
+# B = flake8-bugbear (finds likely bugs)
+# C4 = flake8-comprehensions (helps write better comprehensions)
+# SIM = flake8-simplify (simplifies code)
+# TID = flake8-tidy-imports
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "TID"]
+
+# You might want to ignore specific rules project-wide if needed
+# ignore = ["F401"] # Example: ignore unused imports globally
+
+# Fixable rules will be auto-fixed when running `ruff check --fix`
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.format]
+# Enable the formatter (similar to Black)
+# Ruff's default formatter aims for Black compatibility.
+# You can add specific overrides if needed, e.g.:
+# line-ending = "lf"
+# quote-style = "double"
+# docstring-code-format = true

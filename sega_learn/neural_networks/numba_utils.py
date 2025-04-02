@@ -1,7 +1,8 @@
 import numpy as np
-from numba import njit, prange, float64
+from numba import njit, prange
 
 CACHE = False
+
 
 # -------------------------------------------------------------------------------------------------
 # Loss functions and accuracy
@@ -10,7 +11,7 @@ CACHE = False
 def calculate_loss_from_outputs_binary(outputs, y, weights, reg_lambda):
     # Apply loss function
     loss = calculate_bce_with_logits_loss(outputs, y)
-    
+
     # If weights is a list, compute L2 regularization for each weight matrix
     # If not a list, only one value, so no regularization needed
     if isinstance(weights, list):
@@ -18,14 +19,15 @@ def calculate_loss_from_outputs_binary(outputs, y, weights, reg_lambda):
         l2_reg = reg_lambda * _compute_l2_reg(weights)
         # Add L2 regularization to loss
         loss += l2_reg
-        
+
     return float(loss)
+
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def calculate_loss_from_outputs_multi(outputs, y, weights, reg_lambda):
     # Apply loss function
     loss = calculate_cross_entropy_loss(outputs, y)
-    
+
     # If weights is a list, compute L2 regularization for each weight matrix
     if isinstance(weights, list):
         # Add L2 regularization
@@ -34,7 +36,7 @@ def calculate_loss_from_outputs_multi(outputs, y, weights, reg_lambda):
         loss += l2_reg
 
     return float(loss)
-    
+
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def calculate_cross_entropy_loss(logits, targets):
@@ -50,10 +52,13 @@ def calculate_cross_entropy_loss(logits, targets):
         loss += -logits[i, c_i] + log_sum_exp
     return loss / n
 
+
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def calculate_bce_with_logits_loss(logits, targets):
     probs = 1 / (1 + np.exp(-logits))  # Apply sigmoid to logits to get probabilities
-    loss = -np.mean(targets * np.log(probs + 1e-15) + (1 - targets) * np.log(1 - probs + 1e-15))  # Binary cross-entropy loss
+    loss = -np.mean(
+        targets * np.log(probs + 1e-15) + (1 - targets) * np.log(1 - probs + 1e-15)
+    )  # Binary cross-entropy loss
     return loss
 
 
@@ -63,6 +68,7 @@ def _compute_l2_reg(weights):
     for i in prange(len(weights)):
         total += np.sum(weights[i] ** 2)
     return total
+
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def evaluate_batch(y_hat, y_true, is_binary):
@@ -75,7 +81,6 @@ def evaluate_batch(y_hat, y_true, is_binary):
     return accuracy
 
 
-
 # -------------------------------------------------------------------------------------------------
 # Activation functions
 # -------------------------------------------------------------------------------------------------
@@ -83,34 +88,42 @@ def evaluate_batch(y_hat, y_true, is_binary):
 def relu(z):
     return np.maximum(0, z)
 
+
 @njit(fastmath=True, cache=CACHE)
 def relu_derivative(z):
     return (z > 0).astype(np.float64)  # Ensure return type is float64
+
 
 @njit(fastmath=True, cache=CACHE)
 def leaky_relu(z, alpha=0.01):
     return np.where(z > 0, z, alpha * z)
 
+
 @njit(fastmath=True, cache=CACHE)
 def leaky_relu_derivative(z, alpha=0.01):
     return np.where(z > 0, 1, alpha).astype(np.float64)  # Ensure return type is float64
+
 
 @njit(fastmath=True, cache=CACHE)
 def tanh(z):
     return np.tanh(z)
 
+
 @njit(fastmath=True, cache=CACHE)
 def tanh_derivative(z):
     return 1 - np.tanh(z) ** 2
+
 
 @njit(fastmath=True, cache=CACHE)
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
+
 @njit(fastmath=True, cache=CACHE)
 def sigmoid_derivative(z):
     sig = sigmoid(z)
     return sig * (1 - sig)
+
 
 @njit(parallel=True, fastmath=True, cache=CACHE)
 def softmax(z):
@@ -125,7 +138,6 @@ def softmax(z):
     return out
 
 
-
 # -------------------------------------------------------------------------------------------------
 # Other utility functions
 # -------------------------------------------------------------------------------------------------
@@ -136,6 +148,7 @@ def sum_reduce(arr):
         sum_vals[i, 0] = np.sum(arr[i])
     return sum_vals
 
+
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def sum_axis0(arr):
     sum_vals = np.zeros((1, arr.shape[1]), dtype=arr.dtype)
@@ -143,7 +156,6 @@ def sum_axis0(arr):
         for i in range(arr.shape[0]):
             sum_vals[0, j] += arr[i, j]
     return sum_vals
-
 
 
 # -------------------------------------------------------------------------------------------------
@@ -163,12 +175,14 @@ def apply_dropout_jit(X, dropout_rate):
     mask = (np.random.random(X.shape) < (1 - dropout_rate)).astype(np.float64)
     return (X * mask) / (1 - dropout_rate)
 
+
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def compute_l2_reg(weights):
     total = 0.0
     for i in prange(len(weights)):
         total += np.sum(weights[i] ** 2)
-    return total     
+    return total
+
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def one_hot_encode(y, num_classes):
@@ -178,20 +192,31 @@ def one_hot_encode(y, num_classes):
         y_ohe[i, y[i]] = 1.0
     return y_ohe
 
+
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def process_batches_binary(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, dropout_layer_indices, reg_lambda, dWs_acc, dbs_acc):
+def process_batches_binary(
+    X_shuffled,
+    y_shuffled,
+    batch_size,
+    layers,
+    dropout_rate,
+    dropout_layer_indices,
+    reg_lambda,
+    dWs_acc,
+    dbs_acc,
+):
     num_samples = X_shuffled.shape[0]
     num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
     running_loss = 0.0
     running_accuracy = 0.0
-    
+
     for i in prange(num_batches):
         start_idx = i * batch_size
         end_idx = min(start_idx + batch_size, num_samples)
-        
+
         X_batch = X_shuffled[start_idx:end_idx]
         y_batch = y_shuffled[start_idx:end_idx]
-        
+
         # Forward pass
         layer_outputs = [X_batch]
         A = X_batch.astype(np.float64)
@@ -200,48 +225,61 @@ def process_batches_binary(X_shuffled, y_shuffled, batch_size, layers, dropout_r
             if dropout_rate > 0 and i in dropout_layer_indices:
                 A = apply_dropout_jit(A, dropout_rate)
             layer_outputs.append(A)
-        
+
         # Backward pass
         m = y_batch.shape[0]
         outputs = layer_outputs[-1]
         y_batch = y_batch.reshape(-1, 1).astype(np.float64)
         dA = -(y_batch / (outputs + 1e-15) - (1 - y_batch) / (1 - outputs + 1e-15))
-        
+
         for j in range(len(layers) - 1, -1, -1):
             dA = layers[j].backward(dA, reg_lambda)
-        
+
         # Calculate loss and accuracy for binary classification
-        running_loss += calculate_loss_from_outputs_binary(layer_outputs[-1], y_batch, reg_lambda, [layer.weights for layer in layers])
+        running_loss += calculate_loss_from_outputs_binary(
+            layer_outputs[-1], y_batch, reg_lambda, [layer.weights for layer in layers]
+        )
         running_accuracy += evaluate_batch(layer_outputs[-1], y_batch, True)
-        
+
         # Accumulate gradients
         for j in range(len(layers)):
             dWs_acc[j] += layers[j].weight_gradients
             dbs_acc[j] += layers[j].bias_gradients
-    
+
     # Average the accumulated gradients, loss, and accuracy
     for j in range(len(dWs_acc)):
         dWs_acc[j] /= num_batches
         dbs_acc[j] /= num_batches
     running_loss /= num_batches
     running_accuracy /= num_batches
-    
+
     return dWs_acc, dbs_acc, running_loss, running_accuracy
 
+
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def process_batches_multi(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, dropout_layer_indices, reg_lambda, dWs_acc, dbs_acc):
+def process_batches_multi(
+    X_shuffled,
+    y_shuffled,
+    batch_size,
+    layers,
+    dropout_rate,
+    dropout_layer_indices,
+    reg_lambda,
+    dWs_acc,
+    dbs_acc,
+):
     num_samples = X_shuffled.shape[0]
     num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
     running_loss = 0.0
     running_accuracy = 0.0
-    
+
     for i in prange(num_batches):
         start_idx = i * batch_size
         end_idx = min(start_idx + batch_size, num_samples)
-        
+
         X_batch = X_shuffled[start_idx:end_idx]
         y_batch = y_shuffled[start_idx:end_idx]
-        
+
         # Forward pass
         layer_outputs = [X_batch]
         A = X_batch.astype(np.float64)
@@ -250,35 +288,41 @@ def process_batches_multi(X_shuffled, y_shuffled, batch_size, layers, dropout_ra
             if dropout_rate > 0 and i in dropout_layer_indices:
                 A = apply_dropout_jit(A, dropout_rate)
             layer_outputs.append(A)
-        
+
         # Backward pass
         m = y_batch.shape[0]
         outputs = layer_outputs[-1]
         dA = outputs.copy()
         for k in range(m):
             dA[k, y_batch[k]] -= 1
-        
+
         for j in range(len(layers) - 1, -1, -1):
             dA = layers[j].backward(dA, reg_lambda)
-        
+
         # One-hot encode for multi-class loss
         y_batch_ohe = one_hot_encode(y_batch, layers[-1].weights.shape[1])
-        running_loss += calculate_loss_from_outputs_multi(layer_outputs[-1], y_batch_ohe, reg_lambda, [layer.weights for layer in layers])
+        running_loss += calculate_loss_from_outputs_multi(
+            layer_outputs[-1],
+            y_batch_ohe,
+            reg_lambda,
+            [layer.weights for layer in layers],
+        )
         running_accuracy += evaluate_batch(layer_outputs[-1], y_batch, False)
-        
+
         # Accumulate gradients
         for j in range(len(layers)):
             dWs_acc[j] += layers[j].weight_gradients
             dbs_acc[j] += layers[j].bias_gradients
-    
+
     # Average the accumulated gradients, loss, and accuracy
     for j in range(len(dWs_acc)):
         dWs_acc[j] /= num_batches
         dbs_acc[j] /= num_batches
     running_loss /= num_batches
     running_accuracy /= num_batches
-    
+
     return dWs_acc, dbs_acc, running_loss, running_accuracy
+
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def evaluate_jit(y_hat, y_true, is_binary):

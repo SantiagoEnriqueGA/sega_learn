@@ -1,19 +1,20 @@
 import numpy as np
-from numba import jit, njit, vectorize, float64, int32, prange
-from numba import types
-from numba.experimental import jitclass
+from numba import njit
 
 from .numba_utils import *
+
 CACHE = False
 
+
 @njit(fastmath=True, nogil=True, cache=CACHE)
-def forward_dense(X, weights, biases, activation_func): 
-        """Forward pass for dense layer."""
-        Z = np.dot(X, weights) + biases
-        input_cache = X
-        output_cache = activate(Z, activation_func)
-        return output_cache, input_cache
-    
+def forward_dense(X, weights, biases, activation_func):
+    """Forward pass for dense layer."""
+    Z = np.dot(X, weights) + biases
+    input_cache = X
+    output_cache = activate(Z, activation_func)
+    return output_cache, input_cache
+
+
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def backward_dense(dA, reg_lambda, weights, input_cache, output_cache, activation_func):
     """Backward pass for dense layer."""
@@ -22,7 +23,7 @@ def backward_dense(dA, reg_lambda, weights, input_cache, output_cache, activatio
     dW = np.dot(input_cache.T, dZ) / m + reg_lambda * weights
     db = sum_axis0(dZ) / m
     dA_prev = np.dot(dZ, weights.T)
-        
+
     return dA_prev, dW, db
 
 
@@ -41,7 +42,8 @@ def activate(Z, activation=None):
         return softmax(Z)
     else:
         raise ValueError(f"Unsupported activation: {activation}")
-        
+
+
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def activation_derivative(Z, activation=None):
     """Apply activation derivative."""
@@ -57,4 +59,3 @@ def activation_derivative(Z, activation=None):
         return np.ones_like(Z)  # Identity for compatibility
     else:
         raise ValueError(f"Unsupported activation: {activation}")
-    

@@ -1,16 +1,16 @@
-from sklearn.metrics import classification_report
-import numpy as np
-import random
-
 import numba
+import numpy as np
+from sklearn.metrics import classification_report
+
 numba.config.DISABLE_JIT = True  # Disable JIT compilation for debugging purposes
 
-import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+import sys
 
-from sega_learn.utils import train_test_split
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
 from sega_learn.neural_networks_numba_dev import *
+from sega_learn.utils import train_test_split
 
 # Hyperparameters
 # ---------------------------------------------------------------------------------------
@@ -19,17 +19,19 @@ reg_lambda = 0.0
 lr = 0.00001
 output_size = 3  # Number of classes
 batch_size = 32
-epochs = 10 # Reduced for demonstration, can increase.
+epochs = 10  # Reduced for demonstration, can increase.
 input_channels = 1  # Grayscale images
 image_height = 10
 image_width = 10
 num_samples = 10  # Total number of dummy images
 
-# Generate Sample Data 
+# Generate Sample Data
 # ---------------------------------------------------------------------------------------
 X = np.random.rand(num_samples, input_channels, image_height, image_width)
 y = np.random.randint(0, output_size, num_samples)  # Labels 0, 1, or 2
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
 
 # Optimizer and Scheduler
 # ---------------------------------------------------------------------------------------
@@ -45,25 +47,55 @@ scheduler1 = lr_scheduler_plateau(sub_scheduler1, patience=5, threshold=0.001)
 #   the output size will be (28 - 3 + 1) = 26, and then (26 - 3 + 1) = 24.
 #   After two ConvLayers, the output size will be 24x24.
 layers = [
-    JITLayer("conv", input_size=input_channels, output_size=32, kernel_size=3, stride=1, padding=0, activation="relu"),
-    JITLayer("conv", input_size=32, output_size=64, kernel_size=3, stride=1, padding=0, activation="relu"),
+    JITLayer(
+        "conv",
+        input_size=input_channels,
+        output_size=32,
+        kernel_size=3,
+        stride=1,
+        padding=0,
+        activation="relu",
+    ),
+    JITLayer(
+        "conv",
+        input_size=32,
+        output_size=64,
+        kernel_size=3,
+        stride=1,
+        padding=0,
+        activation="relu",
+    ),
     JITLayer("flatten", input_size=0, output_size=0, activation="none"),
-    JITLayer("dense", 64 * (image_height - 4) * (image_width - 4), 256, activation="relu"),
-    JITLayer("dense", 256, output_size, activation="softmax"),  # Added output layer for 3 classes
+    JITLayer(
+        "dense", 64 * (image_height - 4) * (image_width - 4), 256, activation="relu"
+    ),
+    JITLayer(
+        "dense", 256, output_size, activation="softmax"
+    ),  # Added output layer for 3 classes
 ]
 
-# Initialize and Train Neural Network 
+# Initialize and Train Neural Network
 # ---------------------------------------------------------------------------------------
-cnn = NumbaBackendNeuralNetwork(layers=layers, dropout_rate=dropout, reg_lambda=reg_lambda, compile_numba=False)
+cnn = NumbaBackendNeuralNetwork(
+    layers=layers, dropout_rate=dropout, reg_lambda=reg_lambda, compile_numba=False
+)
 
-cnn.train(X_train, y_train, X_test, y_test, optimizer=optimizer1, lr_scheduler=scheduler1,
-         epochs=epochs, batch_size=batch_size, early_stopping_threshold=10,
-         track_metrics=True, track_adv_metrics=True
-         )
+cnn.train(
+    X_train,
+    y_train,
+    X_test,
+    y_test,
+    optimizer=optimizer1,
+    lr_scheduler=scheduler1,
+    epochs=epochs,
+    batch_size=batch_size,
+    early_stopping_threshold=10,
+    track_metrics=True,
+    track_adv_metrics=True,
+)
 
 test_accuracy, y_pred = cnn.evaluate(X_test, y_test)
 print(f"Test Accuracy: {test_accuracy:.4f}")
 
 print("Classification Report:")
 print(classification_report(y_test, y_pred, zero_division=0))
-

@@ -1,32 +1,30 @@
 # Importing the required libraries
-import csv
-import numpy as np
-import ast
-from datetime import datetime
-from math import log, floor, ceil
-import random
+
 import joblib
+import numpy as np
 
 # Here's a high-level overview:
-# Random Subsampling: 
-#   The algorithm starts by randomly selecting a subset of the data. 
+# Random Subsampling:
+#   The algorithm starts by randomly selecting a subset of the data.
 #   This helps in reducing the computational complexity and ensures that the algorithm can handle large datasets efficiently.
-# Building Isolation Trees:     
-#   For each subset, the algorithm builds an isolation tree. 
+# Building Isolation Trees:
+#   For each subset, the algorithm builds an isolation tree.
 #   A binary tree where each node splits the data based on a randomly selected feature and a randomly selected split value between the minimum and maximum values of that feature.
-# Isolation Path Length: 
-#   The path length from the root of the tree to a given observation is recorded. 
+# Isolation Path Length:
+#   The path length from the root of the tree to a given observation is recorded.
 #   The idea is that anomalies, being few and different, will have shorter paths on average because they are easier to isolate.
-# Averaging Path Lengths: 
-#   The average path length of an observation across all trees is calculated. 
+# Averaging Path Lengths:
+#   The average path length of an observation across all trees is calculated.
 #   This average path length is then used to compute an anomaly score.
-# Anomaly Score: 
-#   The anomaly score is derived from the average path length. 
-#   Observations with shorter average path lengths are considered anomalies. 
+# Anomaly Score:
+#   The anomaly score is derived from the average path length.
+#   Observations with shorter average path lengths are considered anomalies.
 #   The score is typically normalized to a range between 0 and 1, where a score close to 1 indicates a high likelihood of being an anomaly.
 
-class IsolationUtils(object):
+
+class IsolationUtils:
     """Utility functions for the Isolation Forest algorithm."""
+
     @staticmethod
     def compute_avg_path_length(size):
         """
@@ -46,13 +44,16 @@ class IsolationUtils(object):
         # 2 * (log(size - 1) + Euler's constant) - (2 * (size - 1) / size)
         return 2 * (np.log(size - 1) + 0.5772156649) - (2 * (size - 1) / size)
 
-class IsolationTree(object):
+
+class IsolationTree:
     """An isolation tree for anomaly detection."""
 
     def __init__(self, max_depth=10, force_true_length=False):
         self.max_depth = max_depth
         self.tree = None
-        self.force_true_length = force_true_length  # If true, use the true path length for scoring
+        self.force_true_length = (
+            force_true_length  # If true, use the true path length for scoring
+        )
 
     def fit(self, X, depth=0):
         """
@@ -67,9 +68,9 @@ class IsolationTree(object):
         """
         if len(X) == 0:
             raise ValueError("Input data X cannot be empty.")
-        
+
         if len(X) <= 1 or depth >= self.max_depth:
-            return {'size': len(X)}
+            return {"size": len(X)}
 
         # Randomly select a feature and a split value
         feature = np.random.randint(0, X.shape[1])
@@ -83,7 +84,12 @@ class IsolationTree(object):
         left_tree = self.fit(X_left, depth + 1)
         right_tree = self.fit(X_right, depth + 1)
 
-        self.tree = {'feature': feature, 'split_val': split_val, 'left': left_tree, 'right': right_tree}
+        self.tree = {
+            "feature": feature,
+            "split_val": split_val,
+            "left": left_tree,
+            "right": right_tree,
+        }
         return self.tree
 
     def path_length(self, X, tree=None, depth=0):
@@ -100,28 +106,38 @@ class IsolationTree(object):
         """
         if len(X) == 0:
             raise ValueError("Input data X cannot be empty.")
-        
+
         if tree is None:
             tree = self.tree
 
-        if 'size' in tree:
+        if "size" in tree:
             if self.force_true_length:
                 return depth  # Return the true path length
             else:
-                return depth + IsolationUtils.compute_avg_path_length(tree['size'])  # Return the average path length for the size
+                return depth + IsolationUtils.compute_avg_path_length(
+                    tree["size"]
+                )  # Return the average path length for the size
 
-        feature = tree['feature']
-        split_val = tree['split_val']
+        feature = tree["feature"]
+        split_val = tree["split_val"]
 
         if X[feature] <= split_val:
-            return self.path_length(X, tree['left'], depth + 1)
+            return self.path_length(X, tree["left"], depth + 1)
         else:
-            return self.path_length(X, tree['right'], depth + 1)
+            return self.path_length(X, tree["right"], depth + 1)
 
-class IsolationForest(object):
+
+class IsolationForest:
     """Isolation Forest for anomaly detection."""
 
-    def __init__(self, n_trees=100, max_samples=None, max_depth=10, n_jobs=1, force_true_length=False):
+    def __init__(
+        self,
+        n_trees=100,
+        max_samples=None,
+        max_depth=10,
+        n_jobs=1,
+        force_true_length=False,
+    ):
         self.n_trees = n_trees
         self.max_samples = max_samples
         self.max_depth = max_depth
@@ -129,13 +145,19 @@ class IsolationForest(object):
         self.trees = []
         self.n_jobs = n_jobs
         if self.n_jobs == 0:
-            raise ValueError("n_jobs must be greater than 0. Set to -1 for all available cores.")
+            raise ValueError(
+                "n_jobs must be greater than 0. Set to -1 for all available cores."
+            )
         if self.n_jobs == -1:
             self.n_jobs = joblib.cpu_count()
         if self.n_jobs > joblib.cpu_count():
-            raise ValueError(f"n_jobs cannot be greater than the number of available cores: {joblib.cpu_count()}")
+            raise ValueError(
+                f"n_jobs cannot be greater than the number of available cores: {joblib.cpu_count()}"
+            )
 
-        self.classes_ = np.array([0, 1])  # Add this line to define the classes attribute
+        self.classes_ = np.array(
+            [0, 1]
+        )  # Add this line to define the classes attribute
 
     def fit(self, X):
         """
@@ -146,7 +168,7 @@ class IsolationForest(object):
         """
         if self.max_samples is None:
             self.max_samples = min(256, len(X))
-        
+
         self.trees = joblib.Parallel(n_jobs=self.n_jobs)(
             joblib.delayed(self._fit_tree)(X) for _ in range(self.n_trees)
         )
@@ -157,7 +179,9 @@ class IsolationForest(object):
         else:
             X_sample = X
 
-        tree = IsolationTree(max_depth=self.max_depth, force_true_length=self.force_true_length)
+        tree = IsolationTree(
+            max_depth=self.max_depth, force_true_length=self.force_true_length
+        )
         tree.fit(X_sample)
         return tree
 
@@ -173,9 +197,13 @@ class IsolationForest(object):
         """
         if X.ndim == 1:
             X = X.reshape(1, -1)
-        path_lengths = np.array([[tree.path_length(x) for tree in self.trees] for x in X])
+        path_lengths = np.array(
+            [[tree.path_length(x) for tree in self.trees] for x in X]
+        )
         avg_path_lengths = np.mean(path_lengths, axis=1)
-        return 2 ** (-avg_path_lengths / IsolationUtils.compute_avg_path_length(self.max_samples))
+        return 2 ** (
+            -avg_path_lengths / IsolationUtils.compute_avg_path_length(self.max_samples)
+        )
 
     def predict(self, X, threshold=0.5):
         """
@@ -192,10 +220,11 @@ class IsolationForest(object):
             X = X.reshape(1, -1)
         scores = np.array([self.anomaly_score(x) for x in X])
         return (scores > threshold).astype(int)
-    
+
     def __sklearn_is_fitted__(self):
         return len(self.trees) > 0
-            
+
+
 # # Example usage
 # if __name__ == "__main__":
 #     # Generate some sample data
@@ -215,17 +244,17 @@ class IsolationForest(object):
 # # Compare training time for n_jobs
 # if __name__ == "__main__":
 #     import time
-    
+
 #     # Generate synthetic data for testing
 #     X = np.random.randn(1_000_000, 10)
-    
+
 #     def fit_and_time(num_jobs):
 #         model = IsolationForest(n_jobs=num_jobs)
 #         start_time = time.time()
 #         model.fit(X)
 #         end_time = time.time()
 #         return end_time - start_time
-    
+
 #     for num_jobs in [1, 2, 4, 8, -1]:
 #         elapsed_time = fit_and_time(num_jobs)
 #         print(f"Training time with n_jobs={num_jobs}: {elapsed_time:.2f} seconds")

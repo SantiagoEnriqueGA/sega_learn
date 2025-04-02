@@ -1,16 +1,24 @@
-import unittest
-import sys
 import os
+import sys
+import unittest
+
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from sega_learn.utils.dataPreprocessing import one_hot_encode, _find_categorical_columns, normalize, Scaler
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from sega_learn.utils.dataPreprocessing import (
+    Scaler,
+    _find_categorical_columns,
+    normalize,
+    one_hot_encode,
+)
+
 
 class TestScaler(unittest.TestCase):
     """
     Unit test for the Scaler class in the data preprocessing module.
     """
+
     @classmethod
     def setUpClass(cls):
         print("\nTesting Scaler Class", end="", flush=True)
@@ -20,9 +28,9 @@ class TestScaler(unittest.TestCase):
         Set up test data and initialize Scaler instances for testing.
         """
         self.data = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-        self.scaler_standard = Scaler(method='standard')
-        self.scaler_minmax = Scaler(method='minmax')
-        self.scaler_normalize = Scaler(method='normalize')
+        self.scaler_standard = Scaler(method="standard")
+        self.scaler_minmax = Scaler(method="minmax")
+        self.scaler_normalize = Scaler(method="normalize")
 
     def test_standard_scaling(self):
         """
@@ -32,7 +40,7 @@ class TestScaler(unittest.TestCase):
         transformed = self.scaler_standard.transform(self.data)
         self.assertTrue(np.allclose(np.mean(transformed, axis=0), 0, atol=1e-7))
         self.assertTrue(np.allclose(np.std(transformed, axis=0), 1, atol=1e-7))
-    
+
     def test_standard_scaling_inverse(self):
         """
         Test inverse transformation of standard scaling to ensure it returns original data.
@@ -91,13 +99,13 @@ class TestScaler(unittest.TestCase):
         Test that an invalid scaling method raises a ValueError.
         """
         with self.assertRaises(ValueError):
-            Scaler(method='invalid')
+            Scaler(method="invalid")
 
     def test_transform_without_fit(self):
         """
         Test that calling transform without fitting raises a TypeError.
         """
-        scaler = Scaler(method='standard')
+        scaler = Scaler(method="standard")
         with self.assertRaises(TypeError):
             scaler.transform(self.data)
 
@@ -105,14 +113,16 @@ class TestScaler(unittest.TestCase):
         """
         Test that calling inverse_transform without fitting raises a TypeError.
         """
-        scaler = Scaler(method='standard')
+        scaler = Scaler(method="standard")
         with self.assertRaises(TypeError):
             scaler.inverse_transform(self.data)
+
 
 class TestCataPreprocessingFuncs(unittest.TestCase):
     """
     Unit test for categorical preprocessing functions in the data preprocessing module.
     """
+
     @classmethod
     def setUpClass(cls):
         print("\nTesting Categorical Preprocessing Functions", end="", flush=True)
@@ -121,35 +131,33 @@ class TestCataPreprocessingFuncs(unittest.TestCase):
         """
         Set up test data for categorical preprocessing functions.
         """
-        self.data_df = pd.DataFrame({
-            'A': ['cat', 'dog', 'cat'],
-            'B': [1, 2, 3],
-            'C': ['red', 'blue', 'red']
-        })
-        self.data_np = np.array([
-            ['cat', 1, 'red'],
-            ['dog', 2, 'blue'],
-            ['cat', 3, 'red']
-        ], dtype=object)
+        self.data_df = pd.DataFrame(
+            {"A": ["cat", "dog", "cat"], "B": [1, 2, 3], "C": ["red", "blue", "red"]}
+        )
+        self.data_np = np.array(
+            [["cat", 1, "red"], ["dog", 2, "blue"], ["cat", 3, "red"]], dtype=object
+        )
 
     def test_one_hot_encode_dataframe(self):
         """
         Test one-hot encoding on a pandas DataFrame.
         """
         encoded = one_hot_encode(self.data_df, cols=[0, 2])
-        self.assertIn('cat', encoded.columns)
-        self.assertIn('dog', encoded.columns)
-        self.assertIn('red', encoded.columns)
-        self.assertIn('blue', encoded.columns)
-        self.assertNotIn('A', encoded.columns)
-        self.assertNotIn('C', encoded.columns)
+        self.assertIn("cat", encoded.columns)
+        self.assertIn("dog", encoded.columns)
+        self.assertIn("red", encoded.columns)
+        self.assertIn("blue", encoded.columns)
+        self.assertNotIn("A", encoded.columns)
+        self.assertNotIn("C", encoded.columns)
 
     def test_one_hot_encode_numpy(self):
         """
         Test one-hot encoding on a numpy array.
         """
         encoded = one_hot_encode(self.data_np, cols=[0, 2])
-        self.assertEqual(encoded.shape[1], 5)  # 2 original columns dropped, 4 one-hot columns added
+        self.assertEqual(
+            encoded.shape[1], 5
+        )  # 2 original columns dropped, 4 one-hot columns added
 
     def test_find_categorical_columns_dataframe(self):
         """
@@ -170,7 +178,7 @@ class TestCataPreprocessingFuncs(unittest.TestCase):
         Test L2 normalization.
         """
         data = np.array([[1, 2], [3, 4]])
-        normalized = normalize(data, norm='l2')
+        normalized = normalize(data, norm="l2")
         norms = np.linalg.norm(normalized, axis=1)
         self.assertTrue(np.allclose(norms, 1, atol=1e-7))
 
@@ -179,7 +187,7 @@ class TestCataPreprocessingFuncs(unittest.TestCase):
         Test L1 normalization.
         """
         data = np.array([[1, 2], [3, 4]])
-        normalized = normalize(data, norm='l1')
+        normalized = normalize(data, norm="l1")
         norms = np.sum(np.abs(normalized), axis=1)
         self.assertTrue(np.allclose(norms, 1, atol=1e-7))
 
@@ -188,7 +196,7 @@ class TestCataPreprocessingFuncs(unittest.TestCase):
         Test max normalization.
         """
         data = np.array([[1, 2], [3, 4]])
-        normalized = normalize(data, norm='max')
+        normalized = normalize(data, norm="max")
         max_values = np.max(np.abs(normalized), axis=1)
         self.assertTrue(np.allclose(max_values, 1, atol=1e-7))
 
@@ -197,7 +205,7 @@ class TestCataPreprocessingFuncs(unittest.TestCase):
         Test min-max normalization.
         """
         data = np.array([[1, 2], [3, 4]])
-        normalized = normalize(data, norm='minmax')
+        normalized = normalize(data, norm="minmax")
         self.assertTrue(np.allclose(np.min(normalized, axis=1), 0, atol=1e-7))
         self.assertTrue(np.allclose(np.max(normalized, axis=1), 1, atol=1e-7))
 
@@ -207,7 +215,8 @@ class TestCataPreprocessingFuncs(unittest.TestCase):
         """
         data = np.array([[1, 2], [3, 4]])
         with self.assertRaises(ValueError):
-            normalize(data, norm='invalid')
+            normalize(data, norm="invalid")
+
 
 if __name__ == "__main__":
     unittest.main()

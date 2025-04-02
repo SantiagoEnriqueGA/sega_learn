@@ -1,23 +1,27 @@
+from sega_learn.utils.metrics import Metrics
+
+from ..linear_models.linearModels import *
+from ..nearest_neighbors import *
+from ..neural_networks import *
 from ..svm import *
 from ..trees import *
-from ..neural_networks import *
-from ..nearest_neighbors import *
-from ..linear_models.linearModels import *
 
-from sega_learn.utils.metrics import Metrics
 accuracy = Metrics.accuracy
 precision = Metrics.precision
 recall = Metrics.recall
 f1 = Metrics.f1_score
 
 import time
+
 import numpy as np
 
 try:
     from tqdm.auto import tqdm
+
     TQDM_AVAILABLE = True
 except:
     TQDM_AVAILABLE = False
+
 
 class AutoClassifier:
     """
@@ -33,20 +37,16 @@ class AutoClassifier:
             # Linear Models - Not yet implemented
             # "LogisticRegression": LogisticRegression(),
             # "SGDClassifier": SGDClassifier(),
-            
             # SVM
             "LinearSVC": LinearSVC(),
             "GeneralizedSVC": GeneralizedSVC(),
             # "OneClassSVM": OneClassSVM(), <- Will add in fit only if n_classes == 2
-            
             # Nearest Neighbors
             "KNeighborsClassifier": KNeighborsClassifier(),
-            
             # Trees
             "ClassifierTree": ClassifierTree(),
             "RandomForestClassifier": RandomForestClassifier(),
             # GradientBoostingClassifier: GradientBoostingClassifier(), <- Not implemented yet
-            
             # Neural Networks
             #   Cannot be initialized here as it requires layer size (input/output size)
             #   We can initialize it in the fit method and add it to the models dictionary
@@ -56,26 +56,30 @@ class AutoClassifier:
             # Linear Models - Not yet implemented
             "LogisticRegression": "Linear",
             "SGDClassifier": "Linear",
-            
             # SVM
             "LinearSVC": "SVM",
             "GeneralizedSVC": "SVM",
             "OneClassSVM": "SVM",
-            
             # Nearest Neighbors
             "KNeighborsClassifier": "Nearest Neighbors",
-            
             # Trees
             "ClassifierTree": "Trees",
-            "RandomForestClassifier": "Trees",            
-            
+            "RandomForestClassifier": "Trees",
             # Neural Networks
             "BaseBackendNeuralNetwork": "Neural Networks",
         }
         self.predictions = {}
         self.results = []
 
-    def fit(self, X_train, y_train, X_test=None, y_test=None, custom_metrics=None, verbose=False):
+    def fit(
+        self,
+        X_train,
+        y_train,
+        X_test=None,
+        y_test=None,
+        custom_metrics=None,
+        verbose=False,
+    ):
         """
         Fits the classification models to the training data and evaluates their performance.
 
@@ -97,7 +101,9 @@ class AutoClassifier:
         if X_train.size == 0 or y_train.size == 0:
             raise ValueError("X_train and y_train cannot be empty.")
         if len(X_train) != len(y_train):
-            raise ValueError("X_train and y_train must have the same number of samples.")
+            raise ValueError(
+                "X_train and y_train must have the same number of samples."
+            )
         if len(np.unique(y_train)) < 2:
             raise ValueError("y_train must contain at least two classes.")
         if np.any(np.isnan(X_train)) or np.any(np.isnan(y_train)):
@@ -109,27 +115,36 @@ class AutoClassifier:
         if self.models["BaseBackendNeuralNetwork"] is None:
             input_size = X_train.shape[1]
             output_size = len(np.unique(y_train))
-            layers = [128, 64, 32]    # Default hidden layers
+            layers = [128, 64, 32]  # Default hidden layers
             dropout_rate = 0.1
             reg_lambda = 0.0
-            activations = ['relu'] * len(layers) + ['softmax']
+            activations = ["relu"] * len(layers) + ["softmax"]
             self.models["BaseBackendNeuralNetwork"] = BaseBackendNeuralNetwork(
                 [input_size] + layers + [output_size],
                 dropout_rate=dropout_rate,
                 reg_lambda=reg_lambda,
-                activations=activations
+                activations=activations,
             )
-            
-        # Include one-class SVM if the dataset is binary            
+
+        # Include one-class SVM if the dataset is binary
         if len(np.unique(y_train)) == 2:
             self.models["OneClassSVM"] = OneClassSVM()
 
-        progress_bar = tqdm(self.models.items(), desc="Fitting Models", disable=not verbose or not TQDM_AVAILABLE) if TQDM_AVAILABLE else self.models.items()
+        progress_bar = (
+            tqdm(
+                self.models.items(),
+                desc="Fitting Models",
+                disable=not verbose or not TQDM_AVAILABLE,
+            )
+            if TQDM_AVAILABLE
+            else self.models.items()
+        )
 
         for name, model in progress_bar:
-            if TQDM_AVAILABLE: progress_bar.set_description(f"Fitting {name}")
+            if TQDM_AVAILABLE:
+                progress_bar.set_description(f"Fitting {name}")
             start_time = time.time()
-            
+
             if X_test is not None and y_test is not None:
                 try:
                     # Attempt to fit using both training and testing data if the model supports it
@@ -142,31 +157,40 @@ class AutoClassifier:
             else:
                 # Fit using only training data
                 model.fit(X_train, y_train)
-                
+
             try:
                 y_pred = model.predict(X_test if X_test is not None else X_train)
             except IndexError as e:
-                raise ValueError(f"Model '{name}' encountered an error during prediction: {e}")
+                raise ValueError(
+                    f"Model '{name}' encountered an error during prediction: {e}"
+                )
             elapsed_time = time.time() - start_time
 
             metrics = {}
             if custom_metrics:
                 for metric_name, metric_func in custom_metrics.items():
-                    metrics[metric_name] = metric_func(y_test if y_test is not None else y_train, y_pred)
+                    metrics[metric_name] = metric_func(
+                        y_test if y_test is not None else y_train, y_pred
+                    )
             else:
-                metrics["Accuracy"] = accuracy(y_test if y_test is not None else y_train, y_pred)
-                metrics["Precision"] = precision(y_test if y_test is not None else y_train, y_pred)
-                metrics["Recall"] = recall(y_test if y_test is not None else y_train, y_pred)
-                metrics["F1 Score"] = f1(y_test if y_test is not None else y_train, y_pred)
-                
-            self.predictions[name] = y_pred
-            self.results.append({
-                "Model": name,
-                **metrics,
-                "Time Taken": elapsed_time
-            })
+                metrics["Accuracy"] = accuracy(
+                    y_test if y_test is not None else y_train, y_pred
+                )
+                metrics["Precision"] = precision(
+                    y_test if y_test is not None else y_train, y_pred
+                )
+                metrics["Recall"] = recall(
+                    y_test if y_test is not None else y_train, y_pred
+                )
+                metrics["F1 Score"] = f1(
+                    y_test if y_test is not None else y_train, y_pred
+                )
 
-        if TQDM_AVAILABLE: progress_bar.set_description("Fitting Completed")
+            self.predictions[name] = y_pred
+            self.results.append({"Model": name, **metrics, "Time Taken": elapsed_time})
+
+        if TQDM_AVAILABLE:
+            progress_bar.set_description("Fitting Completed")
         return self.results, self.predictions
 
     def predict(self, X, model=None):
@@ -235,16 +259,20 @@ class AutoClassifier:
             return
 
         # Extract all metric keys dynamically from the results
-        metric_keys = [key for key in self.results[0].keys() if key not in ["Model", "Model Class", "Time Taken"]]
+        metric_keys = [
+            key
+            for key in self.results[0].keys()
+            if key not in ["Model", "Model Class", "Time Taken"]
+        ]
 
         # Sort results by Accuracy (if available), F1 Score (if available), and Time Taken
         sorted_results = sorted(
             self.results,
             key=lambda x: (
-                -x.get("Accuracy", float('-inf')),  # Descending Accuracy
-                -x.get("F1 Score", float('-inf')),  # Descending F1 Score
-                x["Time Taken"]                     # Ascending Time Taken
-            )
+                -x.get("Accuracy", float("-inf")),  # Descending Accuracy
+                -x.get("F1 Score", float("-inf")),  # Descending F1 Score
+                x["Time Taken"],  # Ascending Time Taken
+            ),
         )
 
         # Add model class to each result
@@ -253,6 +281,7 @@ class AutoClassifier:
 
         try:
             from tabulate import tabulate
+
             headers = ["Model Class", "Model"] + metric_keys + ["Time Taken"]
             table_data = []
             for result in sorted_results:
@@ -261,15 +290,27 @@ class AutoClassifier:
                 row.append(result["Time Taken"])
                 table_data.append(row)
             print(tabulate(table_data, headers=headers, tablefmt="rounded_outline"))
-        except Exception as e:
+        except Exception:
             # For environments where tabulate is not available, fallback to basic printing
             # Print header dynamically based on metrics
-            header = "| Model Class       | Model                 | " + " | ".join(metric_keys) + " | Time Taken |"
-            separator = "|:------------------|:----------------------|" + "|".join([":-----------" for _ in metric_keys]) + "|:------------|"
+            header = (
+                "| Model Class       | Model                 | "
+                + " | ".join(metric_keys)
+                + " | Time Taken |"
+            )
+            separator = (
+                "|:------------------|:----------------------|"
+                + "|".join([":-----------" for _ in metric_keys])
+                + "|:------------|"
+            )
             print(header)
             print(separator)
 
             # Print each result dynamically
             for result in sorted_results:
-                metrics_values = " | ".join(f"{result[key]:<9.6f}" for key in metric_keys)
-                print(f"| {result['Model Class']:<16} | {result['Model']:<22} | {metrics_values} | {result['Time Taken']:<10.6f} |")
+                metrics_values = " | ".join(
+                    f"{result[key]:<9.6f}" for key in metric_keys
+                )
+                print(
+                    f"| {result['Model Class']:<16} | {result['Model']:<22} | {metrics_values} | {result['Time Taken']:<10.6f} |"
+                )

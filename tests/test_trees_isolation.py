@@ -1,44 +1,51 @@
-import unittest
-import warnings
-import sys
 import os
-from matplotlib.pylab import f
+import sys
+import unittest
+
 import numpy as np
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.trees import *
+
 
 class TestIsolationUtils(unittest.TestCase):
     """
     Unit test for the IsolationTreeUtility class.
     """
+
     @classmethod
     def setUpClass(cls):
         """
         Initializes a new instance of the Index class before each test method is run.
         """
         print("\nTesting Isolation Tree Utility", end="", flush=True)
-    
+
     def test_compute_avg_path_length(self):
         """
         Tests the compute_avg_path_length method of the IsolationTreeUtility class.
         """
         self.assertAlmostEqual(IsolationUtils.compute_avg_path_length(1), 0)
-        self.assertAlmostEqual(IsolationUtils.compute_avg_path_length(2), 0.15443132979999996)
-        self.assertAlmostEqual(IsolationUtils.compute_avg_path_length(256), 10.244770920116851)
+        self.assertAlmostEqual(
+            IsolationUtils.compute_avg_path_length(2), 0.15443132979999996
+        )
+        self.assertAlmostEqual(
+            IsolationUtils.compute_avg_path_length(256), 10.244770920116851
+        )
+
 
 class TestIsolationTree(unittest.TestCase):
     """
     Unit test for the IsolationTree class.
     """
+
     @classmethod
     def setUpClass(cls):
         """
         Initializes a new instance of the class before each test method is run.
         """
         print("\nTesting Isolation Tree", end="", flush=True)
-        
+
     def setUp(self):
         """
         Sets up test data and initializes an IsolationTree instance.
@@ -46,13 +53,13 @@ class TestIsolationTree(unittest.TestCase):
         self.X = np.random.randn(100, 2)
         self.tree = IsolationTree(max_depth=10)
         self.tree.fit(self.X)
-        
+
     def test_fit(self):
         """
         Tests the fit method of the IsolationTree class.
         """
         self.assertIsNotNone(self.tree.tree)
-        
+
     def test_fit_with_empty_data(self):
         """
         Tests the fit method with empty data.
@@ -61,7 +68,7 @@ class TestIsolationTree(unittest.TestCase):
             empty_data = np.empty((0, 2))
             tree = IsolationTree(max_depth=10)
             tree.fit(empty_data)
-        
+
     def test_path_length(self):
         """
         Tests the path_length method of the IsolationTree class.
@@ -69,26 +76,28 @@ class TestIsolationTree(unittest.TestCase):
         sample = np.random.randn(2)
         path_length = self.tree.path_length(sample)
         self.assertGreaterEqual(path_length, 0)
-        
+
     def test_path_length_with_empty_data(self):
         """
         Tests the path_length method with empty data.
         """
         with self.assertRaises(ValueError):
             sample = np.empty((0, 2))
-            self.tree.path_length(sample)                     
-            
+            self.tree.path_length(sample)
+
+
 class TestIsolationForest(unittest.TestCase):
     """
     Unit test for the IsolationForest class.
     """
+
     @classmethod
     def setUpClass(cls):
         """
         Initializes a new instance of the class before each test method is run.
         """
         print("\nTesting Isolation Forest", end="", flush=True)
-        
+
     def setUp(self):
         """
         Sets up test data and initializes an IsolationForest instance.
@@ -96,13 +105,13 @@ class TestIsolationForest(unittest.TestCase):
         self.X = np.random.randn(100, 2)
         self.forest = IsolationForest(n_trees=10, max_samples=50, max_depth=10)
         self.forest.fit(self.X)
-        
+
     def test_fit(self):
         """
         Tests the fit method of the IsolationForest class.
         """
         self.assertEqual(len(self.forest.trees), 10)
-    
+
     def test_fit_with_empty_data(self):
         """
         Tests the fit method with empty data.
@@ -111,7 +120,7 @@ class TestIsolationForest(unittest.TestCase):
             empty_data = np.empty((0, 2))
             forest = IsolationForest(n_trees=10, max_samples=50, max_depth=10)
             forest.fit(empty_data)
-        
+
     def test_anomaly_score(self):
         """
         Tests the anomaly_score method of the IsolationForest class.
@@ -120,7 +129,7 @@ class TestIsolationForest(unittest.TestCase):
         score = self.forest.anomaly_score(sample)
         self.assertGreaterEqual(score, 0)
         self.assertLessEqual(score, 1)
-    
+
     def test_anomaly_score_with_empty_data(self):
         """
         Tests the anomaly_score method with empty data.
@@ -128,7 +137,7 @@ class TestIsolationForest(unittest.TestCase):
         with self.assertRaises(ValueError):
             sample = np.empty((0, 2))
             self.forest.anomaly_score(sample)
-        
+
     def test_predict(self):
         """
         Tests the predict method of the IsolationForest class.
@@ -138,5 +147,5 @@ class TestIsolationForest(unittest.TestCase):
         self.assertIn(prediction, [0, 1])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

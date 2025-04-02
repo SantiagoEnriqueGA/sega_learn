@@ -1,13 +1,13 @@
-import unittest
-import sys
 import os
-import numpy as np
-import warnings
+import sys
+import unittest
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import numpy as np
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.neural_networks import *
-from tests.utils import suppress_print
+
 
 class TestDenseLayer(unittest.TestCase):
     """
@@ -37,7 +37,9 @@ class TestDenseLayer(unittest.TestCase):
         self.assertTrue(np.all(weights < 3 * expected_scale))
         self.assertTrue(np.all(weights > -3 * expected_scale))
         # Verify biases are initialized to zeros
-        np.testing.assert_array_equal(self.layer.biases, np.zeros((1, self.output_size)))
+        np.testing.assert_array_equal(
+            self.layer.biases, np.zeros((1, self.output_size))
+        )
 
     ### Forward Pass Tests ###
     def test_forward(self):
@@ -125,8 +127,14 @@ class TestConvLayer(unittest.TestCase):
         self.kernel_size = 3
         self.stride = 1
         self.padding = 0
-        self.layer = ConvLayer(self.in_channels, self.out_channels, self.kernel_size, 
-                              self.stride, self.padding, activation="none")
+        self.layer = ConvLayer(
+            self.in_channels,
+            self.out_channels,
+            self.kernel_size,
+            self.stride,
+            self.padding,
+            activation="none",
+        )
         # Set predictable weights and biases
         self.layer.weights = np.ones((1, 1, 3, 3))  # All weights are 1
         self.layer.biases = np.zeros((1, 1))
@@ -135,8 +143,10 @@ class TestConvLayer(unittest.TestCase):
     ### Initialization Tests ###
     def test_initialization(self):
         """Test layer initialization with correct shapes."""
-        self.assertEqual(self.layer.weights.shape, (self.out_channels, self.in_channels, 
-                                                   self.kernel_size, self.kernel_size))
+        self.assertEqual(
+            self.layer.weights.shape,
+            (self.out_channels, self.in_channels, self.kernel_size, self.kernel_size),
+        )
         self.assertEqual(self.layer.biases.shape, (self.out_channels, 1))
 
     ### Forward Pass Tests ###
@@ -166,5 +176,6 @@ class TestConvLayer(unittest.TestCase):
         expected_db = np.array([[1]])
         np.testing.assert_array_equal(self.layer.bias_gradients, expected_db)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,6 @@
 from .clustering import (
-    KMeans,
     DBSCAN,
+    KMeans,
 )
 
 __all__ = [

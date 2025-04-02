@@ -1,23 +1,22 @@
-
-from .voting import VotingRegressor
-from .polynomialTransform import PolynomialTransform
-from .dataPrep import DataPrep
-from .modelSelection import ModelSelectionUtility, GridSearchCV, RandomSearchCV
-from .metrics import Metrics
-from .decomposition import PCA, SVD
-from .makeData import make_regression, make_classification, make_blobs
-from .dataSplitting import train_test_split
 from .dataAugmentation import (
-    RandomOverSampler,
-    RandomUnderSampler,
     SMOTE,
     Augmenter,
- )
-from .dataPreprocessing import (
-    one_hot_encode,
-    normalize,
-    Scaler,
+    RandomOverSampler,
+    RandomUnderSampler,
 )
+from .dataPrep import DataPrep
+from .dataPreprocessing import (
+    Scaler,
+    normalize,
+    one_hot_encode,
+)
+from .dataSplitting import train_test_split
+from .decomposition import PCA, SVD
+from .makeData import make_blobs, make_classification, make_regression
+from .metrics import Metrics
+from .modelSelection import GridSearchCV, ModelSelectionUtility, RandomSearchCV
+from .polynomialTransform import PolynomialTransform
+from .voting import VotingRegressor
 
 __all__ = [
     "PolynomialTransform",

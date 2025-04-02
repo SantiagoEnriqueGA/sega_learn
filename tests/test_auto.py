@@ -1,78 +1,91 @@
-import unittest
-import sys
 import os
-import numpy as np
+import sys
+import unittest
 import warnings
 
-# Suppress warnings
-warnings.filterwarnings("ignore", message="Tried to use C compiled code, but failed. Using Python code instead.")
+import numpy as np
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Suppress warnings
+warnings.filterwarnings(
+    "ignore",
+    message="Tried to use C compiled code, but failed. Using Python code instead.",
+)
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from sega_learn.utils import Metrics
+
 r2_score = Metrics.r_squared
 accuracy_score = Metrics.accuracy
 
-from sega_learn.auto import AutoRegressor, AutoClassifier
-from tests.utils import suppress_print
+from sega_learn.auto import AutoClassifier, AutoRegressor
 from sega_learn.utils import make_classification, make_regression
+from tests.utils import suppress_print
+
 
 class TestAutoRegressor(unittest.TestCase):
     """
     Unit test for the AutoRegressor class.
     """
+
     @classmethod
     def setUpClass(cls):
         """Initializes a new instance of the AutoRegressor class before each test method is run."""
         print("\nTesting AutoRegressor Model", end="", flush=True)
-    
+
     def setUp(self):
         self.model = AutoRegressor()
         self.X_train, self.y_train = make_regression(n_samples=100, n_features=5)
         self.X_test, self.y_test = make_regression(n_samples=50, n_features=5)
-    
+
     def test_initialization(self):
         """Test that the AutoRegressor initializes with the correct models."""
         self.assertIsInstance(self.model.models, dict)
         self.assertGreater(len(self.model.models), 0)
-    
+
     def test_fit(self):
         """Test the fit method of AutoRegressor."""
-        results, predictions = self.model.fit(self.X_train, self.y_train, self.X_test, self.y_test, verbose=False)
+        results, predictions = self.model.fit(
+            self.X_train, self.y_train, self.X_test, self.y_test, verbose=False
+        )
         self.assertIsInstance(results, list)
         self.assertIsInstance(predictions, dict)
         self.assertGreater(len(results), 0)
         self.assertGreater(len(predictions), 0)
-    
+
     def test_predict(self):
         """Test the predict method of AutoRegressor."""
         self.model.fit(self.X_train, self.y_train, verbose=False)
         predictions = self.model.predict(self.X_test)
         self.assertIsInstance(predictions, dict)
         self.assertEqual(len(predictions), len(self.model.models))
-    
+
     def test_predict_specific_model(self):
         """Test prediction with a specific model."""
         self.model.fit(self.X_train, self.y_train, verbose=False)
         specific_model = list(self.model.models.keys())[0]
         prediction = self.model.predict(self.X_test, model=specific_model)
         self.assertIsInstance(prediction, np.ndarray)
-    
+
     def test_evaluate(self):
         """Test the evaluate method of AutoRegressor."""
-        self.model.fit(self.X_train, self.y_train, self.X_test, self.y_test, verbose=False)
+        self.model.fit(
+            self.X_train, self.y_train, self.X_test, self.y_test, verbose=False
+        )
         evaluation_results = self.model.evaluate(self.y_test)
         self.assertIsInstance(evaluation_results, dict)
         self.assertGreater(len(evaluation_results), 0)
-    
+
     def test_get_model(self):
         """Test the get_model method of AutoRegressor."""
         specific_model = list(self.model.models.keys())[0]
         model_instance = self.model.get_model(specific_model)
         self.assertIsNotNone(model_instance)
-    
+
     def test_summary(self):
         """Test the summary method of AutoRegressor."""
-        self.model.fit(self.X_train, self.y_train, self.X_test, self.y_test, verbose=False)
+        self.model.fit(
+            self.X_train, self.y_train, self.X_test, self.y_test, verbose=False
+        )
         with suppress_print():
             self.model.summary()
 
@@ -111,11 +124,19 @@ class TestAutoRegressor(unittest.TestCase):
 
     def test_fit_with_custom_metrics(self):
         """Test fit method with custom metrics."""
+
         def custom_metric(y_true, y_pred):
             return np.mean(np.abs(y_true - y_pred))  # Mean Absolute Error
 
         custom_metrics = {"MAE": custom_metric}
-        results, _ = self.model.fit(self.X_train, self.y_train, self.X_test, self.y_test, custom_metrics=custom_metrics, verbose=False)
+        results, _ = self.model.fit(
+            self.X_train,
+            self.y_train,
+            self.X_test,
+            self.y_test,
+            custom_metrics=custom_metrics,
+            verbose=False,
+        )
         self.assertIn("MAE", results[0])
 
     def test_predict_before_fit(self):
@@ -125,13 +146,17 @@ class TestAutoRegressor(unittest.TestCase):
 
     def test_evaluate_with_custom_metrics(self):
         """Test evaluate method with custom metrics."""
-        self.model.fit(self.X_train, self.y_train, self.X_test, self.y_test, verbose=False)
+        self.model.fit(
+            self.X_train, self.y_train, self.X_test, self.y_test, verbose=False
+        )
 
         def custom_metric(y_true, y_pred):
             return np.mean(np.abs(y_true - y_pred))  # Mean Absolute Error
 
         custom_metrics = {"MAE": custom_metric}
-        evaluation_results = self.model.evaluate(self.y_test, custom_metrics=custom_metrics)
+        evaluation_results = self.model.evaluate(
+            self.y_test, custom_metrics=custom_metrics
+        )
         for model_name in evaluation_results:
             self.assertIn("MAE", evaluation_results[model_name])
 
@@ -171,7 +196,9 @@ class TestAutoRegressor(unittest.TestCase):
         y_train = np.random.rand(100)
         X_test = np.random.rand(50, 1)
         y_test = np.random.rand(50)
-        results, predictions = self.model.fit(X_train, y_train, X_test, y_test, verbose=False)
+        results, predictions = self.model.fit(
+            X_train, y_train, X_test, y_test, verbose=False
+        )
         self.assertGreater(len(results), 0)
         self.assertGreater(len(predictions), 0)
 
@@ -180,53 +207,64 @@ class TestAutoClassifier(unittest.TestCase):
     """
     Unit test for the AutoClassifier class.
     """
+
     @classmethod
     def setUpClass(cls):
         """Initializes a new instance of the AutoClassifier class before each test method is run."""
         print("\nTesting AutoClassifier Model", end="", flush=True)
-    
+
     def setUp(self):
         self.model = AutoClassifier()
-        self.X_train, self.y_train = make_classification(n_samples=100, n_features=5, n_classes=3)
-        self.X_test, self.y_test = make_classification(n_samples=50, n_features=5, n_classes=3)
-    
+        self.X_train, self.y_train = make_classification(
+            n_samples=100, n_features=5, n_classes=3
+        )
+        self.X_test, self.y_test = make_classification(
+            n_samples=50, n_features=5, n_classes=3
+        )
+
     def test_initialization(self):
         """Test that the AutoClassifier initializes with the correct models."""
         self.assertIsInstance(self.model.models, dict)
         self.assertGreater(len(self.model.models), 0)
-    
+
     def test_fit(self):
         """Test the fit method of AutoClassifier."""
-        results, predictions = self.model.fit(self.X_train, self.y_train, self.X_test, self.y_test, verbose=False)
+        results, predictions = self.model.fit(
+            self.X_train, self.y_train, self.X_test, self.y_test, verbose=False
+        )
         self.assertIsInstance(results, list)
         self.assertIsInstance(predictions, dict)
         self.assertGreater(len(results), 0)
         self.assertGreater(len(predictions), 0)
-    
+
     def test_predict(self):
         """Test the predict method of AutoClassifier."""
         self.model.fit(self.X_train, self.y_train, verbose=False)
         predictions = self.model.predict(self.X_test)
         self.assertIsInstance(predictions, dict)
         self.assertEqual(len(predictions), len(self.model.models))
-    
+
     def test_predict_specific_model(self):
         """Test prediction with a specific model."""
         self.model.fit(self.X_train, self.y_train, verbose=False)
         specific_model = list(self.model.models.keys())[0]
         prediction = self.model.predict(self.X_test, model=specific_model)
         self.assertIsInstance(prediction, np.ndarray)
-    
+
     def test_evaluate(self):
         """Test the evaluate method of AutoClassifier."""
-        self.model.fit(self.X_train, self.y_train, self.X_test, self.y_test, verbose=False)
+        self.model.fit(
+            self.X_train, self.y_train, self.X_test, self.y_test, verbose=False
+        )
         evaluation_results = self.model.evaluate(self.y_test)
         self.assertIsInstance(evaluation_results, dict)
         self.assertGreater(len(evaluation_results), 0)
-    
+
     def test_summary(self):
         """Test the summary method of AutoClassifier."""
-        self.model.fit(self.X_train, self.y_train, self.X_test, self.y_test, verbose=False)
+        self.model.fit(
+            self.X_train, self.y_train, self.X_test, self.y_test, verbose=False
+        )
         with suppress_print():
             self.model.summary()
 
@@ -255,22 +293,34 @@ class TestAutoClassifier(unittest.TestCase):
 
     def test_fit_with_custom_metrics(self):
         """Test fit method with custom metrics."""
+
         def custom_metric(y_true, y_pred):
             return np.mean(y_true == y_pred)  # Custom accuracy
 
         custom_metrics = {"Custom Accuracy": custom_metric}
-        results, _ = self.model.fit(self.X_train, self.y_train, self.X_test, self.y_test, custom_metrics=custom_metrics, verbose=False)
+        results, _ = self.model.fit(
+            self.X_train,
+            self.y_train,
+            self.X_test,
+            self.y_test,
+            custom_metrics=custom_metrics,
+            verbose=False,
+        )
         self.assertIn("Custom Accuracy", results[0])
 
     def test_evaluate_with_custom_metrics(self):
         """Test evaluate method with custom metrics."""
-        self.model.fit(self.X_train, self.y_train, self.X_test, self.y_test, verbose=False)
+        self.model.fit(
+            self.X_train, self.y_train, self.X_test, self.y_test, verbose=False
+        )
 
         def custom_metric(y_true, y_pred):
             return np.mean(y_true == y_pred)  # Custom accuracy
 
         custom_metrics = {"Custom Accuracy": custom_metric}
-        evaluation_results = self.model.evaluate(self.y_test, custom_metrics=custom_metrics)
+        evaluation_results = self.model.evaluate(
+            self.y_test, custom_metrics=custom_metrics
+        )
         for model_name in evaluation_results:
             self.assertIn("Custom Accuracy", evaluation_results[model_name])
 
@@ -308,10 +358,12 @@ class TestAutoClassifier(unittest.TestCase):
         y_train = np.random.randint(0, 3, size=100)
         X_test = np.random.rand(50, 1)
         y_test = np.random.randint(0, 3, size=50)
-        results, predictions = self.model.fit(X_train, y_train, X_test, y_test, verbose=False)
+        results, predictions = self.model.fit(
+            X_train, y_train, X_test, y_test, verbose=False
+        )
         self.assertGreater(len(results), 0)
         self.assertGreater(len(predictions), 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

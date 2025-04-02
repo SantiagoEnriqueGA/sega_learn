@@ -1,19 +1,18 @@
-import unittest
-import sys
-import os
 import io
-import tempfile
-import warnings
-import numpy as np
+import os
 import subprocess
-import matplotlib.pyplot as plt
+import sys
+import tempfile
+import unittest
 from unittest.mock import patch
+
 from matplotlib.animation import FuncAnimation
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.neural_networks.animation import TrainingAnimator
 from tests.utils import suppress_print
+
 
 # Dummy writer to simulate FFMpegWriter / PillowWriter behavior.
 class DummyWriter:
@@ -21,32 +20,37 @@ class DummyWriter:
         self.setup_called = False
         self.grab_called = False
         self.finish_called = False
+
     def setup(self, fig, filepath, dpi):
         self.setup_called = True
         self.fig = fig
         self.filepath = filepath
         self.dpi = dpi
+
     def grab_frame(self):
         self.grab_called = True
+
     def finish(self):
         self.finish_called = True
 
+
 class TestTrainingAnimator(unittest.TestCase):
     """
-     Unit tests for the TrainingAnimator class.
-     Methods:
-     - setUpClass: Print message before running tests.
-     - setUp: Initialize the TrainingAnimator class and metrics.
-     - test_initialization: Test the initialization method.
-     - test_update_metrics: Test the update_metrics method.
-     - test_animate_training_metrics: Test the animate_training_metrics method.
-     - test_animate_training_metrics_no_initialize: Test the animate_training_metrics method with no initialization.
-     - test_setup_training_video_success: Test the setup_training_video method with a successful setup.
-     - test_setup_training_video_no_initialize: Test the setup_training_video method with no initialization.
-     - test_add_training_frame: Test the add_training_frame method.
-     - test_finish_training_video: Test the finish_training_video method.
-     - test_setup_training_video_fallback: Test the fallback mechanism in setup_training_video.
+    Unit tests for the TrainingAnimator class.
+    Methods:
+    - setUpClass: Print message before running tests.
+    - setUp: Initialize the TrainingAnimator class and metrics.
+    - test_initialization: Test the initialization method.
+    - test_update_metrics: Test the update_metrics method.
+    - test_animate_training_metrics: Test the animate_training_metrics method.
+    - test_animate_training_metrics_no_initialize: Test the animate_training_metrics method with no initialization.
+    - test_setup_training_video_success: Test the setup_training_video method with a successful setup.
+    - test_setup_training_video_no_initialize: Test the setup_training_video method with no initialization.
+    - test_add_training_frame: Test the add_training_frame method.
+    - test_finish_training_video: Test the finish_training_video method.
+    - test_setup_training_video_fallback: Test the fallback mechanism in setup_training_video.
     """
+
     @classmethod
     def setUpClass(cls):
         print("\nTesting the TrainingAnimator Class", end="", flush=True)
@@ -115,8 +119,9 @@ class TestTrainingAnimator(unittest.TestCase):
         """
         Test that animate_training_metrics creates a FuncAnimation correctly and saves it to a temp file.
         If ffmpeg is not available, it should fall back to PillowWriter and save the animation as a .gif file.
-        """                
-        import contextlib, io
+        """
+        import contextlib
+
         metrics = ["loss", "accuracy"]
         self.animator.initialize(metrics_to_track=metrics, has_validation=False)
         # Simulate training data for 3 epochs.
@@ -210,13 +215,19 @@ class TestTrainingAnimator(unittest.TestCase):
         self.animator.initialize(metrics_to_track=["loss"], has_validation=False)
         with tempfile.NamedTemporaryFile(suffix=".mp4", delete=True) as tmp:
             # Patch FFMpegWriter from matplotlib.animation to raise FileNotFoundError.
-            with patch("matplotlib.animation.FFMpegWriter", side_effect=FileNotFoundError("Not found")):
+            with patch(
+                "matplotlib.animation.FFMpegWriter",
+                side_effect=FileNotFoundError("Not found"),
+            ):
                 # Patch PillowWriter from matplotlib.animation to return DummyWriter.
-                with patch("matplotlib.animation.PillowWriter", return_value=DummyWriter()) as mock_pillow:
+                with patch(
+                    "matplotlib.animation.PillowWriter", return_value=DummyWriter()
+                ) as mock_pillow:
                     with suppress_print():
                         self.animator.setup_training_video(tmp.name, fps=10, dpi=80)
                     self.assertIsNotNone(self.animator.writer)
                     self.assertTrue(self.animator.writer.setup_called)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

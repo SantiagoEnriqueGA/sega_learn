@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class lr_scheduler_step:
     """
     Learning rate scheduler class for training neural networks.
@@ -9,14 +10,15 @@ class lr_scheduler_step:
         lr_decay (float, optional): The factor to reduce the learning rate by. Defaults to 0.1.
         lr_decay_epoch (int, optional): The number of epochs to wait before decaying the learning rate. Defaults to 10
     """
+
     def __init__(self, optimizer, lr_decay=0.1, lr_decay_epoch=10):
         self.optimizer = optimizer
         self.lr_decay = lr_decay
         self.lr_decay_epoch = lr_decay_epoch
-        
+
     def __repr__(self):
         return f"StepLR({self.optimizer}, lr_decay={self.lr_decay}, lr_decay_epoch={self.lr_decay_epoch})"
-    
+
     def step(self, epoch):
         """
         Adjusts the learning rate based on the current epoch. Decays the learning rate by lr_decay every lr_decay_epoch epochs.
@@ -27,24 +29,26 @@ class lr_scheduler_step:
         if epoch % self.lr_decay_epoch == 0 and epoch > 0:
             self.optimizer.learning_rate *= self.lr_decay
             return f"  --Decaying learning rate stepped at epoch {epoch} from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * self.lr_decay}"
-            
+
     def reduce(self):
         self.optimizer.learning_rate *= self.lr_decay
         return f"  --Decaying learning rate from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * self.lr_decay}"
+
 
 class lr_scheduler_exp:
     """
     Learning rate scheduler class for training neural networks.
     Reduces the learning rate exponentially by lr_decay every lr_decay_epoch epochs.
     """
+
     def __init__(self, optimizer, lr_decay=0.1, lr_decay_epoch=10):
         self.optimizer = optimizer
         self.lr_decay = lr_decay
         self.lr_decay_epoch = lr_decay_epoch
-    
+
     def __repr__(self):
         return f"ExponentialLR({self.optimizer}, lr_decay={self.lr_decay}, lr_decay_epoch={self.lr_decay_epoch})"
-    
+
     def step(self, epoch):
         """
         Adjusts the learning rate based on the current epoch. Decays the learning rate by lr_decay every lr_decay_epoch epochs.
@@ -55,10 +59,11 @@ class lr_scheduler_exp:
         if epoch % self.lr_decay_epoch == 0 and epoch > 0:
             self.optimizer.learning_rate *= np.exp(-self.lr_decay * epoch)
             return f"  --Decaying learning rate exponentially at epoch {epoch} from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * np.exp(-self.lr_decay * epoch)}"
-    
+
     def reduce(self):
         self.optimizer.learning_rate *= np.exp(-self.lr_decay)
         return f"  --Decaying learning rate exponentially from {self.optimizer.learning_rate} to {self.optimizer.learning_rate * np.exp(-self.lr_decay)}"
+
 
 class lr_scheduler_plateau:
     """
@@ -70,16 +75,17 @@ class lr_scheduler_plateau:
     Methods:
         step(loss): Updates the learning rate based on the loss value.
     """
+
     def __init__(self, lr_scheduler, patience=5, threshold=0.01):
         self.lr_scheduler = lr_scheduler
         self.patience = patience
         self.threshold = threshold
-        self.best_loss = float('inf')
+        self.best_loss = float("inf")
         self.wait = 0
-    
+
     def __repr__(self):
         return f"PlateauLR({self.lr_scheduler}, patience={self.patience}, threshold={self.threshold})"
-    
+
     def step(self, epoch, loss):
         """
         Updates the learning rate based on the loss value.
@@ -94,4 +100,4 @@ class lr_scheduler_plateau:
             if self.wait >= self.patience:
                 self.lr_scheduler.reduce()
                 self.wait = 0
-                return f"  --Plateau learning rate scheduler triggered, reducing learning rate"
+                return "  --Plateau learning rate scheduler triggered, reducing learning rate"

@@ -1,12 +1,9 @@
-
-from .treeRegressor import RegressorTreeUtility, RegressorTree
-import sega_learn.utils.dataPrep as dp
-
 import numpy as np
-import csv
-import ast
 
-class GradientBoostedRegressor(object):
+from .treeRegressor import RegressorTree, RegressorTreeUtility
+
+
+class GradientBoostedRegressor:
     """
     A class to represent a Gradient Boosted Decision Tree Regressor.
 
@@ -19,7 +16,7 @@ class GradientBoostedRegressor(object):
         y (list): A list of target values.
         XX (list): A list of input data features and target values.
         numerical_cols (set): A set of indices of numeric attributes (columns).
-    
+
     Methods:
         __init__(file_loc, num_trees=5, random_seed=0, max_depth=10): Initializes the GBDT object.
         reset(): Resets the GBDT object.
@@ -28,25 +25,43 @@ class GradientBoostedRegressor(object):
         get_stats(y_predicted): Calculates various evaluation metrics for the predicted target values.
     """
 
-    def __init__(self, X=None, y=None, num_trees: int = 10, max_depth: int = 10, random_seed: int = 0):
+    def __init__(
+        self,
+        X=None,
+        y=None,
+        num_trees: int = 10,
+        max_depth: int = 10,
+        random_seed: int = 0,
+    ):
         self.random_seed = random_seed  # Set the random seed for reproducibility
-        self.num_trees = num_trees      # Set the number of trees in the ensemble
-        self.max_depth = max_depth      # Set the maximum depth of each tree
+        self.num_trees = num_trees  # Set the number of trees in the ensemble
+        self.max_depth = max_depth  # Set the maximum depth of each tree
 
-        self.X = list()                 # Initialize the list of input data features
-        self.y = list()                 # Initialize the list of target values
-        self.XX = list()                # Initialize the list of input data features and target values
-        
-        self.numerical_cols = 0             # Initialize the set of indices of numeric attributes (columns)
-        self.mean_absolute_residuals = []   # Initialize the list of Mean Absolute Residuals for each tree
+        self.X = list()  # Initialize the list of input data features
+        self.y = list()  # Initialize the list of target values
+        self.XX = list()  # Initialize the list of input data features and target values
 
-        self.utility = RegressorTreeUtility()            # Initialize the Utility object
-        self.trees = [RegressorTree(self.max_depth) for i in range(self.num_trees)] # Initialize the list of decision trees, each with the specified maximum depth
-        self.numerical_cols = set()         # Initialize the set of indices of numeric attributes (columns)
+        self.numerical_cols = (
+            0  # Initialize the set of indices of numeric attributes (columns)
+        )
+        self.mean_absolute_residuals = []  # Initialize the list of Mean Absolute Residuals for each tree
 
-        if X is not None: self.X = X.tolist()             # Convert ndarray to list
-        if y is not None: self.y = y.tolist()             # Convert ndarray to list
-        if X is not None and y is not None: self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
+        self.utility = RegressorTreeUtility()  # Initialize the Utility object
+        self.trees = [
+            RegressorTree(self.max_depth) for i in range(self.num_trees)
+        ]  # Initialize the list of decision trees, each with the specified maximum depth
+        self.numerical_cols = (
+            set()
+        )  # Initialize the set of indices of numeric attributes (columns)
+
+        if X is not None:
+            self.X = X.tolist()  # Convert ndarray to list
+        if y is not None:
+            self.y = y.tolist()  # Convert ndarray to list
+        if X is not None and y is not None:
+            self.XX = [
+                list(x) + [y] for x, y in zip(X, y, strict=False)
+            ]  # Combine X and y
 
     def reset(self):
         # Reset the GBDT object
@@ -75,28 +90,48 @@ class GradientBoostedRegressor(object):
         Returns:
             None
         """
-        if X is not None: self.X = X.tolist()
-        if y is not None: self.y = y.tolist()
-        if X is not None and y is not None: self.XX = [list(x) + [y] for x, y in zip(X, y)]  # Combine X and y
-        
-        if not self.X or not self.y:    # If the input data X or target values y are empty
+        if X is not None:
+            self.X = X.tolist()
+        if y is not None:
+            self.y = y.tolist()
+        if X is not None and y is not None:
+            self.XX = [
+                list(x) + [y] for x, y in zip(X, y, strict=False)
+            ]  # Combine X and y
+
+        if not self.X or not self.y:  # If the input data X or target values y are empty
             raise ValueError("Input data X and target values y cannot be empty.")
-        
-        residuals = np.array(self.y)    # Initialize the residuals with the target values
 
-        for i in range(self.num_trees):     # Loop over the number of trees in the ensemble
-            tree = self.trees[i]                            # Get the current tree
-            self.trees[i] = tree.learn(self.X, residuals)   # Fit the tree to the residuals
+        residuals = np.array(self.y)  # Initialize the residuals with the target values
 
-            predictions = np.array([RegressorTree.evaluate_tree(self.trees[i], record) for record in self.X]) # Predict the target values using the current tree
-        
-            residuals = residuals - predictions     # Update the residuals by subtracting the predictions from the target values
+        for i in range(self.num_trees):  # Loop over the number of trees in the ensemble
+            tree = self.trees[i]  # Get the current tree
+            self.trees[i] = tree.learn(
+                self.X, residuals
+            )  # Fit the tree to the residuals
 
-            mean_absolute_residual = np.mean(np.abs(residuals))         # Calculate the mean absolute residuals
-            self.mean_absolute_residuals.append(mean_absolute_residual) # Append the mean absolute residuals to the list
+            predictions = np.array(
+                [
+                    RegressorTree.evaluate_tree(self.trees[i], record)
+                    for record in self.X
+                ]
+            )  # Predict the target values using the current tree
 
-            if stats:   # If stats is True, print the mean absolute residuals
-                print(f"Tree {i+1} trained. Mean Absolute Residuals: {mean_absolute_residual}")
+            residuals = (
+                residuals - predictions
+            )  # Update the residuals by subtracting the predictions from the target values
+
+            mean_absolute_residual = np.mean(
+                np.abs(residuals)
+            )  # Calculate the mean absolute residuals
+            self.mean_absolute_residuals.append(
+                mean_absolute_residual
+            )  # Append the mean absolute residuals to the list
+
+            if stats:  # If stats is True, print the mean absolute residuals
+                print(
+                    f"Tree {i + 1} trained. Mean Absolute Residuals: {mean_absolute_residual}"
+                )
 
     def predict(self, X=None):
         """
@@ -104,24 +139,31 @@ class GradientBoostedRegressor(object):
 
         Parameters:
         - X (numpy.ndarray): An array of input data features. Default is None.
-        
+
         Returns:
             predictions (numpy.ndarray): An array of predicted target values for the input data.
         """
-        if X is not None: self.X = X.tolist()
-        
-        predictions = np.zeros(len(self.X))     # Initialize an array of zeros for the predictions
+        if X is not None:
+            self.X = X.tolist()
 
-        for i in range(self.num_trees):                     # Loop over the number of trees in the ensemble
-            oneTree_predictions = np.zeros(len(self.X))     # Initialize an array of zeros for the predictions of the current tree
+        predictions = np.zeros(
+            len(self.X)
+        )  # Initialize an array of zeros for the predictions
 
-            for j in range(len(self.X)):                    # Loop over the indices of the input data
-                oneTree_predictions[j] += RegressorTree.evaluate_tree(self.trees[i], self.X[j])   # Predict the target value for the current input data
+        for i in range(self.num_trees):  # Loop over the number of trees in the ensemble
+            oneTree_predictions = np.zeros(
+                len(self.X)
+            )  # Initialize an array of zeros for the predictions of the current tree
 
-            predictions += oneTree_predictions              # Add the predictions of the current tree to the overall predictions
-            
+            for j in range(len(self.X)):  # Loop over the indices of the input data
+                oneTree_predictions[j] += RegressorTree.evaluate_tree(
+                    self.trees[i], self.X[j]
+                )  # Predict the target value for the current input data
+
+            predictions += oneTree_predictions  # Add the predictions of the current tree to the overall predictions
+
         return predictions
-    
+
     def get_stats(self, y_predicted):
         """
         Calculates various evaluation metrics for the predicted target values.
@@ -137,18 +179,36 @@ class GradientBoostedRegressor(object):
                 - MAE (float): Mean Absolute Error
                 - RMSE (float): Root Mean Squared Error
         """
-        mse = np.mean((np.array(y_predicted) - np.array(self.y)) ** 2)  # Mean Squared Error (MSE): (y - y')^2
+        mse = np.mean(
+            (np.array(y_predicted) - np.array(self.y)) ** 2
+        )  # Mean Squared Error (MSE): (y - y')^2
 
-        ssr = np.sum((np.array(y_predicted) - np.array(self.y)) ** 2)   # Sum of Squared Residuals (SSR): (y - y')^2
-        sst = np.sum((np.array(self.y) - np.mean(self.y)) ** 2)         # Total Sum of Squares (SST): (y - mean(y))^2
-        r2 = 1 - (ssr / sst)                                            # R-squared Score (R^2): 1 - (SSR / SST)
+        ssr = np.sum(
+            (np.array(y_predicted) - np.array(self.y)) ** 2
+        )  # Sum of Squared Residuals (SSR): (y - y')^2
+        sst = np.sum(
+            (np.array(self.y) - np.mean(self.y)) ** 2
+        )  # Total Sum of Squares (SST): (y - mean(y))^2
+        r2 = 1 - (ssr / sst)  # R-squared Score (R^2): 1 - (SSR / SST)
 
         epsilon = 1e-10  # Small value to prevent division by zero
-        mape = np.mean(np.abs((np.array(self.y) - np.array(y_predicted)) / (np.array(self.y) + epsilon))) * 100  # Mean Absolute Percentage Error (MAPE): (|y - y'| / y) * 100
-        
-        mae = np.mean(np.abs(np.array(self.y) - np.array(y_predicted))) # Mean Absolute Error (MAE): |y - y'|
+        mape = (
+            np.mean(
+                np.abs(
+                    (np.array(self.y) - np.array(y_predicted))
+                    / (np.array(self.y) + epsilon)
+                )
+            )
+            * 100
+        )  # Mean Absolute Percentage Error (MAPE): (|y - y'| / y) * 100
 
-        rmse = np.sqrt(np.mean((np.array(y_predicted) - np.array(self.y)) ** 2))    # Root Mean Squared Error (RMSE): sqrt((y - y')^2)
+        mae = np.mean(
+            np.abs(np.array(self.y) - np.array(y_predicted))
+        )  # Mean Absolute Error (MAE): |y - y'|
+
+        rmse = np.sqrt(
+            np.mean((np.array(y_predicted) - np.array(self.y)) ** 2)
+        )  # Root Mean Squared Error (RMSE): sqrt((y - y')^2)
 
         # Return the evaluation metrics
         return {
@@ -159,5 +219,3 @@ class GradientBoostedRegressor(object):
             "RMSE": rmse,
             # "Mean_Absolute_Residuals": self.mean_absolute_residuals
         }
-
-  

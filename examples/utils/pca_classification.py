@@ -1,15 +1,24 @@
 import numpy as np
+
 np.random.seed(0)
 
-import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+import sys
 
-from sega_learn.utils.decomposition import PCA
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
 from sega_learn.utils import make_classification
+from sega_learn.utils.decomposition import PCA
 
 # Example data
-X, y = make_classification(n_samples=1000, n_features=10, n_classes=2, n_informative=9, n_redundant=1, random_state=0)
+X, y = make_classification(
+    n_samples=1000,
+    n_features=10,
+    n_classes=2,
+    n_informative=9,
+    n_redundant=1,
+    random_state=0,
+)
 
 # Initialize PCA object
 pca = PCA(n_components=5)
@@ -32,7 +41,7 @@ qda = QuadraticDiscriminantAnalysis()
 qda.fit(X, y)
 y_pred = qda.predict(X)
 
-print("\nOriginal data:\n" + "-"*20)
+print("\nOriginal data:\n" + "-" * 20)
 print(f"Accuracy: {Metrics.accuracy(y, y_pred):.2f}")
 print(f"Precision: {Metrics.precision(y, y_pred):.2f}")
 
@@ -41,6 +50,6 @@ qdareduced = QuadraticDiscriminantAnalysis()
 qdareduced.fit(X_reduced, y)
 y_pred_reduced = qdareduced.predict(X_reduced)
 
-print("\nReduced data:\n" + "-"*20)
+print("\nReduced data:\n" + "-" * 20)
 print(f"Accuracy: {Metrics.accuracy(y, y_pred_reduced):.2f}")
 print(f"Precision: {Metrics.precision(y, y_pred_reduced):.2f}")

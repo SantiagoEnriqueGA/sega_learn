@@ -1,15 +1,16 @@
 import numpy as np
 
+
 class Activation:
     """
     This class contains various activation functions and their corresponding derivatives for use in neural networks.
     relu: Rectified Linear Unit activation function. Returns the input directly if it's positive, otherwise returns 0.
-    leaky_relu: Leaky ReLU activation function. A variant of ReLU that allows a small gradient when the input is negative. 
+    leaky_relu: Leaky ReLU activation function. A variant of ReLU that allows a small gradient when the input is negative.
     tanh: Hyperbolic tangent activation function. Maps input to range [-1, 1]. Commonly used for normalized input.
     sigmoid: Sigmoid activation function. Maps input to range [0, 1]. Commonly used for binary classification.
     softmax: Softmax activation function. Maps input into a probability distribution over multiple classes.
     """
-    
+
     @staticmethod
     def relu(z):
         """
@@ -24,7 +25,7 @@ class Activation:
         Derivative of the ReLU function: f'(z) = 1 if z > 0, else 0
         Returns 1 for positive input, and 0 for negative input.
         """
-        return (z > 0).astype(np.float32)  
+        return (z > 0).astype(np.float32)
 
     @staticmethod
     def leaky_relu(z, alpha=0.01):
@@ -84,4 +85,3 @@ class Activation:
         # Subtract the max value from each row to prevent overflow (numerical stability)
         exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
         return exp_z / np.sum(exp_z, axis=1, keepdims=True)
-

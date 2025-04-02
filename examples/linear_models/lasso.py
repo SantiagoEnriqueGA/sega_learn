@@ -1,13 +1,14 @@
-import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from sega_learn.linear_models import Lasso
-from sega_learn.utils import make_regression
-from sega_learn.utils import Metrics
+from sega_learn.utils import Metrics, make_regression
+
 r2_score = Metrics.r_squared
 
-X, y = make_regression(n_samples=1000, n_features=5, noise=.5, random_state=42)
+X, y = make_regression(n_samples=1000, n_features=5, noise=0.5, random_state=42)
 
 reg = Lasso(alpha=1.0, fit_intercept=True)
 reg.fit(X, y)

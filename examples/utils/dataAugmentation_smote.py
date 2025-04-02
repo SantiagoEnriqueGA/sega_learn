@@ -1,14 +1,22 @@
-
-import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+import sys
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+from sega_learn.utils import make_classification, train_test_split
 from sega_learn.utils.dataAugmentation import *
-from sega_learn.utils import make_classification
-from sega_learn.utils import train_test_split
 
-X, y = make_classification(n_samples=1000, n_features=20, n_classes=2, weights=[0.7, 0.3], random_state=42, class_sep=.5)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X, y = make_classification(
+    n_samples=1000,
+    n_features=20,
+    n_classes=2,
+    weights=[0.7, 0.3],
+    random_state=42,
+    class_sep=0.5,
+)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
 
 # Show class distribution imbalance
 print("Class distribution before SMOTE:")
@@ -28,9 +36,10 @@ print(f"Resampled dataset shape: {X_resampled.shape}, {y_resampled.shape}")
 
 
 # Fit both models
+from sega_learn.utils import Metrics
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
-from sega_learn.utils import Metrics
+
 accuracy_score = Metrics.accuracy
 
 # Train a Random Forest classifier on the original data
@@ -48,4 +57,3 @@ y_pred_resampled = rf_resampled.predict(X_test)
 print("\nClassification report for resampled data:")
 print(classification_report(y_test, y_pred_resampled))
 print(f"Accuracy for resampled data: {accuracy_score(y_test, y_pred_resampled)}")
-
