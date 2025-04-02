@@ -83,6 +83,10 @@ from .svm import (
     GeneralizedSVC,
 )
 
+from .auto import (
+    AutoRegressor,
+    AutoClassifier,
+)
 
 __all__ = [
     # Utils
@@ -163,6 +167,10 @@ __all__ = [
     'OneClassSVM',
     'GeneralizedSVR',
     'GeneralizedSVC',
+    
+    # Auto
+    'AutoRegressor',
+    'AutoClassifier',
 ]
 
 try:
