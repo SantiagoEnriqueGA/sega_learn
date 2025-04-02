@@ -5,6 +5,7 @@ import io
 import tempfile
 import warnings
 import numpy as np
+import subprocess
 import matplotlib.pyplot as plt
 from unittest.mock import patch
 from matplotlib.animation import FuncAnimation
@@ -115,6 +116,7 @@ class TestTrainingAnimator(unittest.TestCase):
         Test that animate_training_metrics creates a FuncAnimation correctly and saves it to a temp file.
         If ffmpeg is not available, it should fall back to PillowWriter and save the animation as a .gif file.
         """                
+        import contextlib, io
         metrics = ["loss", "accuracy"]
         self.animator.initialize(metrics_to_track=metrics, has_validation=False)
         # Simulate training data for 3 epochs.
@@ -127,18 +129,18 @@ class TestTrainingAnimator(unittest.TestCase):
         ax = self.animator.metric_to_ax["loss"]
         xlim = ax.get_xlim()
         self.assertEqual(xlim, (0, 4))
-        # Save animation to a temporary file
+        # Save animation to a temporary file with stderr suppressed.
         with tempfile.NamedTemporaryFile(suffix=".gif", delete=False) as tmp_file:
             tmp_path = tmp_file.name
         try:
-            try:
-                anim.save(tmp_path, fps=10, dpi=100, writer="ffmpeg")
-            except ValueError:
-                anim.save(tmp_path, fps=10, dpi=100, writer="pillow")
-            self.assertTrue(os.path.exists(tmp_path))  # Ensure the file is created
+            with contextlib.redirect_stderr(io.StringIO()):
+                try:
+                    anim.save(tmp_path, fps=10, dpi=100, writer="ffmpeg")
+                except (ValueError, subprocess.CalledProcessError):
+                    anim.save(tmp_path, fps=10, dpi=100, writer="pillow")
+            self.assertTrue(os.path.exists(tmp_path))
         finally:
-            os.remove(tmp_path)  # Clean up after test
-            
+            os.remove(tmp_path)
 
     def test_animate_training_metrics_no_initialize(self):
         """Test that animate_training_metrics raises an error if initialize() wasn't called."""
