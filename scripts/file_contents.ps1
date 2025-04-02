@@ -6,7 +6,7 @@ $folders = @(
 )
 
 # Define the output file
-$outputFile = "scripts\out\python_file_contents.txt"
+$outputFile = "scripts\out\file_contents.txt"
 
 # Clear the output file if it exists
 if (Test-Path $outputFile) {
@@ -25,4 +25,12 @@ foreach ($folder in $folders) {
         "-----------------------------------------------------------------" | Out-File -Append -FilePath $outputFile
         Get-Content -Path $file.FullName | Out-File -Append -FilePath $outputFile
     }
+}
+
+# Add readme.md files to the output
+Get-ChildItem -Path $folders -Recurse -Filter "readme.md" | ForEach-Object {
+    "`n-----------------------------------------------------------------" | Out-File -Append -FilePath $outputFile
+    "$($_.FullName -replace '.*sega_learn', 'sega_learn'):" | Out-File -Append -FilePath $outputFile
+    "-----------------------------------------------------------------" | Out-File -Append -FilePath $outputFile
+    Get-Content -Path $_.FullName | Out-File -Append -FilePath $outputFile
 }
