@@ -93,7 +93,21 @@ class AutoRegressor:
         Returns:
             - results (list) - A list of dictionaries containing model performance metrics.
             - predictions (dict) - A dictionary of predictions for each model.
-        """       
+        """
+        # Input validation
+        if not isinstance(X_train, np.ndarray) or not isinstance(y_train, np.ndarray):
+            raise TypeError("X_train and y_train must be NumPy arrays.")
+        if X_train.size == 0 or y_train.size == 0:
+            raise ValueError("X_train and y_train cannot be empty.")
+        if len(X_train) != len(y_train):
+            raise ValueError("X_train and y_train must have the same number of samples.")
+        if len(np.unique(y_train)) < 2:
+            raise ValueError("y_train must contain at least two classes.")
+        if np.any(np.isnan(X_train)) or np.any(np.isnan(y_train)):
+            raise ValueError("X_train and y_train cannot contain NaN values.")
+        if np.any(np.isinf(X_train)) or np.any(np.isinf(y_train)):
+            raise ValueError("X_train and y_train cannot contain infinite values.")
+        
         progress_bar = tqdm(self.models.items(), desc="Fitting Models", disable=not verbose or not TQDM_AVAILABLE) if TQDM_AVAILABLE else self.models.items()
 
         for name, model in progress_bar:
@@ -104,7 +118,7 @@ class AutoRegressor:
                 try:
                     # Attempt to fit using both training and testing data if the model supports it
                     model.fit(X_train, y_train, X_test, y_test)
-                except TypeError:
+                except (TypeError, ValueError):
                     # If the model does not support separate test data, combine train and test
                     X_combined = np.vstack((X_train, X_test))
                     y_combined = np.hstack((y_train, y_test))
@@ -113,7 +127,10 @@ class AutoRegressor:
                 # Fit using only training data
                 model.fit(X_train, y_train)
 
-            y_pred = model.predict(X_test if X_test is not None else X_train)
+            try:
+                y_pred = model.predict(X_test if X_test is not None else X_train)
+            except IndexError as e:
+                raise ValueError(f"Model '{name}' encountered an error during prediction: {e}")
             elapsed_time = time.time() - start_time
 
             metrics = {}
