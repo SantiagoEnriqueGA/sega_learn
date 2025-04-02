@@ -25,14 +25,18 @@ $todoComments | Tee-Object -FilePath "scripts/out/todo_comments.txt" | Format-Ta
 $otherTodos = @"
 Planned/Ideas:
 Time Series Analysis - ARIMA, Moving Average, Exponential Smoothing
-Anomaly Detection - Isolation Forest, One-Class SVM
 Data Preprocessing - Normalization, Standardization, Missing Value Imputation, StandardScaler
 OneClassSVM - fix/check implementation
 Deep Learning Enhancements
+    - Implement Neural Network Regressor
     - Implement Flatten Layer, Conv Layer:Base Done, Numba: TODO
     - Implement Recurrent Layers
     - Implement Data Preprocessing Layers
     - Live plotting of training and validation loss
+Classification
+    - Implement Logistic Regression
+    - Implement SGDClassifier
+    - Implement Gradient Boosted Classifier
 "@
 
 # Add the "Other" section to the file and console output
