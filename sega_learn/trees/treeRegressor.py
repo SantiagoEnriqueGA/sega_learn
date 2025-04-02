@@ -187,6 +187,21 @@ class RegressorTree(object):
         self.tree = {}              # Initialize an empty dictionary to represent the decision tree
         self.max_depth = max_depth  # Set the maximum depth of the tree
 
+
+    def fit(self, X, y):
+        """
+        Fit the decision tree to the training data.
+
+        Parameters:
+        - X (array-like): The input features.
+        - y (array-like): The target labels.
+
+        Returns:
+        - dict: The learned decision tree.
+        """
+        self.tree = self.learn(X, y)
+        return self.tree
+    
     def learn(self, X, y, par_node={}, depth=0):
         """
         Builds the decision tree based on the given training data.
@@ -244,7 +259,7 @@ class RegressorTree(object):
         }
 
     @staticmethod
-    def predict(tree, record):
+    def evaluate_tree(tree, record):
         """Make a prediction using the decision tree."""
         # If tree is empty, return None
         if tree is None or tree == {}:
@@ -254,6 +269,26 @@ class RegressorTree(object):
             return tree['value']
         
         if record[tree['split_attribute']] <= tree['split_val']:
-            return RegressorTree.predict(tree['left'], record)
+            return RegressorTree.evaluate_tree(tree['left'], record)
         else:
-            return RegressorTree.predict(tree['right'], record)
+            return RegressorTree.evaluate_tree(tree['right'], record)
+        
+        
+    def predict(self, X):
+        """
+        Predict the target value for a record using the decision tree.
+
+        Parameters:
+        - X (array-like): The input features.
+
+        Returns:
+        - float: The predicted target value.
+        """
+        if not isinstance(X, (list, np.ndarray)):
+            raise TypeError("X must be a list or NumPy array.")
+        
+        if isinstance(X, np.ndarray):
+            X = X.tolist()
+        
+        predictions = [self.evaluate_tree(self.tree, record) for record in X]
+        return np.array(predictions) if len(predictions) > 1 else predictions[0]

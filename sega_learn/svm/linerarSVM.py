@@ -2,7 +2,7 @@ from .baseSVM import BaseSVM
 import numpy as np
 
 class LinearSVC(BaseSVM):
-    def __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, numba=True):
+    def __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, numba=False):
         super().__init__(C, tol, max_iter, learning_rate)
         
         if numba:
@@ -18,6 +18,8 @@ class LinearSVC(BaseSVM):
             except Exception as e:
                 print(f"Numba not available: {e}")
                 self.numba_available = False
+        else:
+            self.numba_available = False
         
     def _fit(self, X, y):
         """
@@ -173,7 +175,7 @@ class LinearSVC(BaseSVM):
 
 
 class LinearSVR(BaseSVM):
-    def __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, epsilon=0.1, numba=True):
+    def __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, epsilon=0.1, numba=False):
         super().__init__(C, tol, max_iter, learning_rate, regression=True)
         self.epsilon = epsilon
         
