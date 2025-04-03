@@ -92,12 +92,20 @@ exclude = [
     # TID = flake8-tidy-imports
 select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "TID"]
 
-# Might want to ignore specific rules project-wide if needed
-# ignore = ["F401"] # Example: ignore unused imports globally
+# Add the specific codes to ignore
+ignore = ["F403", "F405", "E501"]
+# TODO: Remove F403 and F405 errors
+# F403/405 are "import *" statements
+# E501 is line length (ruff format . will still try to wrap lines)
 
-# Fixable rules will be auto-fixed when running `ruff check --fix`
+# Keep fixable settings
 fixable = ["ALL"]
 unfixable = []
+
+# Optional: If you had per-file ignores, keep them or adjust as needed
+# per-file-ignores = {
+#   "tests_performance/*.py" = ["E402"]
+# }
 
 [tool.ruff.format]
 # Enable the formatter (similar to Black)
@@ -106,3 +114,8 @@ unfixable = []
 # line-ending = "lf"
 # quote-style = "double"
 # docstring-code-format = true
+
+# Keep this section enabled. The formatter will still wrap long lines.
+# You could configure line-length here if you wanted something other than 88,
+# but ignoring E501 in the linter doesn't stop the formatter.
+# line-length = 100 # Example: If you wanted a longer line limit
