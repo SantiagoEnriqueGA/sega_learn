@@ -1,22 +1,18 @@
 import os
-
-os.environ["NUMBA_WARNINGS"] = "0"
-
 import sys
 import unittest
 import warnings
 
-import numpy as np
-from numba.core.errors import NumbaPendingDeprecationWarning
-
-warnings.filterwarnings("ignore", category=NumbaPendingDeprecationWarning)
-
 # Adjust sys.path to import from the parent directory
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+import numpy as np
+from numba.core.errors import NumbaPendingDeprecationWarning
 from sega_learn.neural_networks import *
 from tests.utils import suppress_print
 
+os.environ["NUMBA_WARNINGS"] = "0"
+warnings.filterwarnings("ignore", category=NumbaPendingDeprecationWarning)
 
 class TestNeuralNetworkNumba(unittest.TestCase):
     """
@@ -90,8 +86,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
         nn = NumbaBackendNeuralNetwork(
             [2, 100, 1], compile_numba=False, progress_bar=False
         )
-        with self.assertWarns(UserWarning):
-            with suppress_print():
+        with self.assertWarns(UserWarning), suppress_print():
                 nn.train(
                     self.X,
                     self.y_binary,
@@ -271,7 +266,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
             )
             nn.forward(X_single)
             nn.backward(y_single)
-            accuracy, predicted = nn.evaluate(X_single, y_single)
+            _accuracy, predicted = nn.evaluate(X_single, y_single)
             self.assertEqual(predicted.shape, (1, 1))
 
     def test_lr_scheduler(self):
@@ -305,7 +300,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             X_int = np.array([[1, 2], [3, 4]])
-            y_int = np.array([[0], [1]])
+            _y_int = np.array([[0], [1]])
             nn = NumbaBackendNeuralNetwork(
                 [2, 10, 1], compile_numba=False, progress_bar=False
             )

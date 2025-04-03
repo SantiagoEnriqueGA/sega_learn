@@ -3,7 +3,12 @@ import sys
 import unittest
 import warnings
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import numpy as np
+from sega_learn.auto import AutoClassifier, AutoRegressor
+from sega_learn.utils import Metrics, make_classification, make_regression
+from tests.utils import suppress_print
 
 # Suppress warnings
 warnings.filterwarnings(
@@ -11,16 +16,8 @@ warnings.filterwarnings(
     message="Tried to use C compiled code, but failed. Using Python code instead.",
 )
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from sega_learn.utils import Metrics
-
 r2_score = Metrics.r_squared
 accuracy_score = Metrics.accuracy
-
-from sega_learn.auto import AutoClassifier, AutoRegressor
-from sega_learn.utils import make_classification, make_regression
-from tests.utils import suppress_print
-
 
 class TestAutoRegressor(unittest.TestCase):
     """

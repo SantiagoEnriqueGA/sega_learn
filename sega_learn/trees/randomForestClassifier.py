@@ -14,7 +14,8 @@ from datetime import datetime
 import numpy as np
 from joblib import Parallel, delayed
 
-from ..utils.metrics import Metrics
+from sega_learn.utils.metrics import Metrics
+
 from .treeClassifier import ClassifierTree
 
 
@@ -56,7 +57,7 @@ def _classify_oob(X, trees, bootstraps):
 
     for i, record in enumerate(X):
         classifications = []
-        for j, (tree, bootstrap) in enumerate(zip(trees, bootstraps, strict=False)):
+        for _j, (tree, bootstrap) in enumerate(zip(trees, bootstraps, strict=False)):
             # Check if record is out-of-bag for this tree
             if i not in bootstrap:
                 classifications.append(ClassifierTree.classify(tree, record))

@@ -82,7 +82,7 @@ class DataPrep:
                 "Prepared data written to", csv_file
             )  # Print the path of the written file
 
-    def prepare_data(csv_file, label_col_index, cols_to_encode=[], write_to_csv=True):
+    def prepare_data(csv_file, label_col_index, cols_to_encode=None, write_to_csv=True):
         """
         Prepares the data by loading a CSV file, one-hot encoding non-numerical columns,
         and optionally writing the prepared data to a new CSV file.

@@ -42,7 +42,7 @@ def fig_add_one_class_svm(X, y, ocsvm, ax):
 
     # Predict the labels using decision function
     decision_values = ocsvm.decision_function(X)
-    y_pred = np.where(decision_values >= 0, 1, -1)  # Inliers (1), outliers (-1)
+    _y_pred = np.where(decision_values >= 0, 1, -1)  # Inliers (1), outliers (-1)
 
     # Plot the data points
     ax.scatter(X[:, 0], X[:, 1], color="blue", label="", alpha=0.2)

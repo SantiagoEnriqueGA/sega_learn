@@ -1,14 +1,14 @@
-import numpy as np
-
-np.random.seed(0)
-
 import os
 import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from sega_learn.utils import make_regression
+import numpy as np
+from sega_learn.linear_models import OrdinaryLeastSquares
+from sega_learn.utils import Metrics, make_regression
 from sega_learn.utils.decomposition import SVD
+
+np.random.seed(0)
 
 # Example data
 X, y = make_regression(n_samples=10_000, n_features=10, noise=25, random_state=0)
@@ -22,9 +22,6 @@ X_reduced = svd.fit_transform(X)
 print(f"Original shape: {X.shape}")
 print(f"Reduced shape: {X_reduced.shape}")
 
-# Fit linear regression both on the original and reduced data
-from sega_learn.linear_models import OrdinaryLeastSquares
-from sega_learn.utils import Metrics
 
 # Fit OLS on the original data
 reg = OrdinaryLeastSquares(fit_intercept=True)

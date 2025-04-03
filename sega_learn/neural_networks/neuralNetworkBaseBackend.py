@@ -1,3 +1,4 @@
+import contextlib
 import warnings
 
 import numpy as np
@@ -14,7 +15,7 @@ try:
     from tqdm.auto import tqdm
 
     TQDM_AVAILABLE = True
-except:
+except ImportError:
     TQDM_AVAILABLE = False
 
 
@@ -66,7 +67,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         A = X
 
         # Pass through each layer
-        for i, layer in enumerate(self.layers):
+        for _i, layer in enumerate(self.layers):
             A = layer.forward(A)
             # Apply dropout only to DenseLayer outputs during training
             if training and self.dropout_rate > 0 and isinstance(layer, DenseLayer):
@@ -462,10 +463,8 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             if patience_counter >= early_stopping_threshold:
                 # Capture final frame if not already captured and if animation is enabled
                 if save_animation and epoch % frame_every != 0:
-                    try:
+                    with contextlib.suppress(Exception):
                         animator.add_training_frame()
-                    except Exception:
-                        pass
 
                 # Stop training
                 if p and use_tqdm:
@@ -475,7 +474,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                 break
 
         # Restore best weights
-        trainable_layers = [l for l in self.layers if hasattr(l, "weights")]
+        trainable_layers = [layer for layer in self.layers if hasattr(layer, "weights")]
         for i, layer in enumerate(trainable_layers):
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
@@ -955,14 +954,11 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                 print(f"Early stopping at epoch {epoch + 1}")
                 # Capture final frame if not already captured and if animation is enabled
                 if animation_enabled and epoch % frame_every != 0:
-                    try:
+                    with contextlib.suppress(Exception):
                         animator.add_training_frame()
-                    except Exception:
-                        pass
                 break
-
         # Restore best weights
-        trainable_layers = [l for l in self.layers if hasattr(l, "weights")]
+        trainable_layers = [layer for layer in self.layers if hasattr(layer, "weights")]
         for i, layer in enumerate(trainable_layers):
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]

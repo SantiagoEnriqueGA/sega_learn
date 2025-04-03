@@ -34,9 +34,7 @@ class RegressorTreeUtility:
         - y_right (array-like): The subset of target labels corresponding to X_right.
         """
         # Check type of X and y
-        if not isinstance(X, (list, np.ndarray)) or not isinstance(
-            y, (list, np.ndarray)
-        ):
+        if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
             raise TypeError("X and y must be lists or NumPy arrays.")
 
         # Convert X and y to NumPy arrays if they are not already
@@ -91,9 +89,7 @@ class RegressorTreeUtility:
                 and the information gain achieved by the split.
         """
         # Check type of X and y
-        if not isinstance(X, (list, np.ndarray)) or not isinstance(
-            y, (list, np.ndarray)
-        ):
+        if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
             raise TypeError("X and y must be lists or NumPy arrays.")
 
         # Convert X and y to NumPy arrays if they are not already
@@ -209,7 +205,7 @@ class RegressorTree:
         self.tree = self.learn(X, y)
         return self.tree
 
-    def learn(self, X, y, par_node={}, depth=0):
+    def learn(self, X, y, par_node=None, depth=0):
         """
         Builds the decision tree based on the given training data.
 
@@ -223,9 +219,7 @@ class RegressorTree:
         - dict: The learned decision tree.
         """
         # Check type of X and y
-        if not isinstance(X, (list, np.ndarray)) or not isinstance(
-            y, (list, np.ndarray)
-        ):
+        if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
             raise TypeError("X and y must be lists or NumPy arrays.")
 
         y = (
@@ -300,7 +294,7 @@ class RegressorTree:
         Returns:
         - float: The predicted target value.
         """
-        if not isinstance(X, (list, np.ndarray)):
+        if not isinstance(X, list | np.ndarray):
             raise TypeError("X must be a list or NumPy array.")
 
         if isinstance(X, np.ndarray):

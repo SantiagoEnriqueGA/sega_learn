@@ -231,7 +231,7 @@ class TestTrainTestSplit(unittest.TestCase):
         self.assertEqual(len(w_test), 25)
 
         # Check that the indices match (X and y should have the same split)
-        X_indices = set(tuple(x) for x in X_train)
+        X_indices = {tuple(x) for x in X_train}
         for i, y_val in enumerate(y_train):
             # Find the original index of this y value
             orig_indices = np.where(self.y == y_val)[0]

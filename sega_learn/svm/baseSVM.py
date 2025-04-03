@@ -67,7 +67,7 @@ class BaseSVM:
             self.gamma = 1 / (X.shape[1] * X.var()) if X.var() != 0 else 1.0
         elif self.gamma == "auto":
             self.gamma = 1 / X.shape[1]
-        elif not isinstance(self.gamma, (int, float)):
+        elif not isinstance(self.gamma, int | float):
             raise ValueError("gamma must be 'scale', 'auto', or a numeric value")
 
         # Handle multi-class classification using one-vs-rest strategy

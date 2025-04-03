@@ -81,9 +81,9 @@ class OrdinaryLeastSquares:
                 self.coef_ = self.coef_[1:]  # Remaining elements are the coefficients
             else:
                 self.intercept_ = 0.0  # No intercept
-        except:
+        except Exception as _e:
             warnings.warn(
-                "Tried to use C compiled code, but failed. Using Python code instead."
+                "Tried to use C compiled code, but failed. Using Python code instead.", stacklevel=2
             )
 
             if self.fit_intercept:  # If fit_intercept is True
@@ -229,7 +229,7 @@ class Ridge:
             except ImportError:
                 raise ImportError(
                     "Numba is not installed. Please install numba to use this feature."
-                )
+                ) from None
             except Exception as e:
                 print(f"Error compiling numba functions: {e}")
 
@@ -265,9 +265,9 @@ class Ridge:
                     self.intercept_ = 0.0  # No intercept
 
                 return
-            except:
+            except Exception as _e:
                 warnings.warn(
-                    "Tried to use C compiled code, but failed. Using Python code instead."
+                    "Tried to use C compiled code, but failed. Using Python code instead.", stacklevel=2
                 )
 
         if numba:
@@ -289,7 +289,7 @@ class Ridge:
                     self.intercept_ = 0.0
 
             # Else if numba is not available, try to use the compiled version (not as optimized)
-            except:
+            except Exception as _e:
                 try:
                     from .compiled_ridge_jit_utils import (
                         compiled_fit_numba_intercept,
@@ -308,7 +308,7 @@ class Ridge:
                 except ImportError:
                     raise ImportError(
                         "Numba is not installed. Please install numba to use this feature."
-                    )
+                    ) from None
             return
 
         if self.fit_intercept:  # If fit_intercept is True
@@ -465,7 +465,7 @@ class Lasso:
             except ImportError:
                 raise ImportError(
                     "Numba is not installed. Please install numba to use this feature."
-                )
+                ) from None
             except Exception as e:
                 print(f"Error compiling numba functions: {e}")
 
@@ -501,9 +501,9 @@ class Lasso:
                     self.intercept_ = 0.0  # No intercept
 
                 return
-            except:
+            except Exception as _e:
                 warnings.warn(
-                    "Tried to use C compiled code, but failed. Using Python code instead."
+                    "Tried to use C compiled code, but failed. Using Python code instead.", stacklevel=2
                 )
 
         if numba:
@@ -525,7 +525,7 @@ class Lasso:
                     self.intercept_ = 0.0
 
             # Else if numba is not available, try to use the compiled version (not as optimized)
-            except:
+            except Exception as _e:
                 try:
                     from .compiled_lasso_jit_utils import (
                         compiled_fit_numba_intercept,
@@ -544,7 +544,7 @@ class Lasso:
                 except ImportError:
                     raise ImportError(
                         "Numba is not installed. Please install numba to use this feature."
-                    )
+                    ) from None
             return
 
         if self.fit_intercept:  # If fit_intercept is True
@@ -730,7 +730,7 @@ class Bayesian:
         alpha_2 = self.alpha_2
 
         # Variables to store the values of the parameters from the previous iteration
-        self.scores_ = list()
+        self.scores_ = []
         coef_old_ = None
 
         XT_y = np.dot(X.T, y)  # Compute X^T * y
@@ -740,7 +740,7 @@ class Bayesian:
         eigen_vals_ = S**2  # Compute the eigenvalues of X
 
         # Main loop for the algorithm
-        for iter in range(self.max_iter):
+        for _iter in range(self.max_iter):
             # Update the coefficients
             # coef_ formula: coef_ = Vh * (S^2 / (S^2 + lambda_ / alpha_)) * U^T * y
             coef_ = np.linalg.multi_dot(
@@ -763,7 +763,7 @@ class Bayesian:
                 break
             coef_old_ = np.copy(coef_)  # Copy the coefficients
 
-        self.n_iter_ = iter + 1
+        self.n_iter_ = _iter + 1
         self.coef_ = coef_
         self.alpha_ = alpha_
         self.lambda_ = lambda_
@@ -1129,7 +1129,7 @@ class RANSAC:
         """
         try:
             return self.best_fit.get_formula()
-        except:
+        except Exception as _e:
             return "No model fit available"
 
 

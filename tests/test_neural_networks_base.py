@@ -129,7 +129,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
                 batch_size=32,
                 use_tqdm=False,
             )
-        accuracy, predicted = self.nn_binary.evaluate(self.X, self.y_binary)
+        accuracy, _predicted = self.nn_binary.evaluate(self.X, self.y_binary)
         loss = self.nn_binary.calculate_loss(self.X, self.y_binary)
         self.assertTrue(0 <= accuracy <= 1)
         self.assertGreater(loss, 0)
@@ -231,7 +231,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
     def test_integer_inputs(self):
         """Test handling of integer inputs."""
         X_int = np.array([[1, 2], [3, 4]])
-        y_int = np.array([0, 1])
+        _y_int = np.array([0, 1])
         nn = BaseBackendNeuralNetwork([2, 10, 1])
         outputs = nn.forward(X_int)
         self.assertEqual(outputs.shape, (2, 1))

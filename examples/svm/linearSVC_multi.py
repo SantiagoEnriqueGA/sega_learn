@@ -1,21 +1,18 @@
-import warnings
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-warnings.filterwarnings("ignore", category=UserWarning)
-
 import os
 import sys
+import warnings
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+import matplotlib.pyplot as plt
+import numpy as np
 from sega_learn.svm import *
 from sega_learn.utils import Scaler
 from sega_learn.utils.makeData import make_blobs
 
 # Set random seed for reproducibility
 np.random.seed(42)
+warnings.filterwarnings("ignore", category=UserWarning)
 
 # Generate a multi-class classification dataset
 X, y, _ = make_blobs(

@@ -3,6 +3,7 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+import matplotlib.pyplot as plt
 import numpy as np
 from sega_learn.linear_models import OrdinaryLeastSquares
 from sega_learn.utils import Metrics, PolynomialTransform
@@ -42,7 +43,6 @@ print(
 )
 
 
-import matplotlib.pyplot as plt
 
 plt.figure(figsize=(10, 6))
 plt.scatter(X, y, color="blue", label="Data Points", alpha=0.5)

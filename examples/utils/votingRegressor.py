@@ -3,13 +3,11 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+from sega_learn.linear_models import Lasso, OrdinaryLeastSquares, Ridge
 from sega_learn.utils import Metrics, make_regression
+from sega_learn.utils.voting import VotingRegressor
 
 r2_score = Metrics.r_squared
-
-
-from sega_learn.linear_models import Lasso, OrdinaryLeastSquares, Ridge
-from sega_learn.utils.voting import VotingRegressor
 
 # Create a synthetic dataset
 X, y = make_regression(n_samples=1000, n_features=5, noise=25, random_state=42)

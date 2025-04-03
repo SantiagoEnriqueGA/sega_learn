@@ -1,11 +1,10 @@
 import os
 import sys
 
-import matplotlib.pyplot as plt
-import numpy as np
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+import matplotlib.pyplot as plt
+import numpy as np
 from sega_learn.svm import *
 from sega_learn.utils import Scaler, make_classification
 
@@ -23,7 +22,7 @@ try:
         random_state=42,
         n_clusters_per_class=1,
     )
-except:
+except Exception:
     from sega_learn.utils import make_classification
 
     X, y = make_classification(

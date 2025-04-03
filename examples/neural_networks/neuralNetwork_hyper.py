@@ -71,7 +71,7 @@ def hyper_train_and_evaluate_model(
     nn = BaseBackendNeuralNetwork(
         [input_size] + [100, 50, 25] + [output_size], dropout_rate=0.5, reg_lambda=0.0
     )
-    optimizer = AdamOptimizer(learning_rate=0.0001)
+    _optimizer = AdamOptimizer(learning_rate=0.0001)
 
     # Hyperparameter tuning with Adam optimizer
     best_params, best_accuracy = nn.tune_hyperparameters(

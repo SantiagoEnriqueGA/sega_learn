@@ -55,7 +55,7 @@ class GeneralizedSVR(BaseSVM):
 
             # Compute epsilon-insensitive loss and gradients
             errors = y - prediction
-            abs_errors = np.abs(errors)
+            _abs_errors = np.abs(errors)
 
             if self.kernel == "linear":
                 dw = self.C * self.w

@@ -1,3 +1,13 @@
+import time
+
+import numpy as np
+
+try:
+    from tqdm.auto import tqdm
+
+    TQDM_AVAILABLE = True
+except ImportError:
+    TQDM_AVAILABLE = False
 from sega_learn.utils.metrics import Metrics
 
 from ..linear_models.linearModels import *
@@ -11,16 +21,7 @@ precision = Metrics.precision
 recall = Metrics.recall
 f1 = Metrics.f1_score
 
-import time
 
-import numpy as np
-
-try:
-    from tqdm.auto import tqdm
-
-    TQDM_AVAILABLE = True
-except:
-    TQDM_AVAILABLE = False
 
 
 class AutoClassifier:
@@ -163,7 +164,7 @@ class AutoClassifier:
             except IndexError as e:
                 raise ValueError(
                     f"Model '{name}' encountered an error during prediction: {e}"
-                )
+                ) from None
             elapsed_time = time.time() - start_time
 
             metrics = {}
@@ -229,7 +230,7 @@ class AutoClassifier:
 
         models_to_evaluate = {model: self.models[model]} if model else self.models
 
-        for name, model_instance in models_to_evaluate.items():
+        for name, _model_instance in models_to_evaluate.items():
             if name not in self.predictions:
                 raise ValueError(f"Model '{name}' has not been fitted yet.")
 
@@ -261,7 +262,7 @@ class AutoClassifier:
         # Extract all metric keys dynamically from the results
         metric_keys = [
             key
-            for key in self.results[0].keys()
+            for key in self.results[0]
             if key not in ["Model", "Model Class", "Time Taken"]
         ]
 

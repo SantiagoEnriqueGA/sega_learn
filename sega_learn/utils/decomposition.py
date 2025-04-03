@@ -97,9 +97,6 @@ class PCA:
     def get_explained_variance_ratio(self):
         return self.explained_variance_ratio_
 
-    def get_explained_variance_ratio(self):
-        return self.explained_variance_ratio_
-
     def get_components(self):
         return self.components_
 

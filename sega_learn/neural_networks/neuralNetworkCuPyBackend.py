@@ -14,16 +14,16 @@ try:
     from .optimizers_cupy import *
 
     CUPY_AVAILABLE = True
-except:
+except ImportError:
     raise ImportError(
         "Numba is not installed. Please install it to use the Numba backend."
-    )
+    ) from None
 
 try:
     from tqdm.auto import tqdm
 
     TQDM_AVAILABLE = True
-except:
+except ImportError:
     TQDM_AVAILABLE = False
 
 
@@ -365,10 +365,10 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
                     raise ValueError(
                         f"Unsupported optimizer: {optimizer.__class__.__name__}"
                     )
-            except:
+            except Exception as e:
                 raise ValueError(
-                    "Unable to convert optimizer to a JIT optimizer. Please use a JIT optimizer."
-                )
+                    f"Unable to convert optimizer to a JIT optimizer: {str(e)}. Please use a JIT optimizer."
+                ) from None
 
         # Initialize optimizer
         optimizer.initialize(self.trainable_layers)
@@ -585,7 +585,7 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
                 break
 
         # Restore best weights
-        trainable_layers = [l for l in self.layers if hasattr(l, "weights")]
+        trainable_layers = [layer for layer in self.layers if hasattr(layer, "weights")]
         for i, layer in enumerate(trainable_layers):
             layer.weights = best_weights[i]
             layer.biases = best_biases[i]
@@ -688,7 +688,7 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
             loss = loss_fn(outputs, y)
 
         # Add L2 regularization term
-        weights = [layer.weights for layer in self.layers if hasattr(layer, "weights")]
+        _weights = [layer.weights for layer in self.layers if hasattr(layer, "weights")]
         l2_reg = self.reg_lambda * sum(cp.sum(w**2) for w in self.weights)
         loss += l2_reg
         return float(loss)

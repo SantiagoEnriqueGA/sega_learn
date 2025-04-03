@@ -289,7 +289,7 @@ class TestMakeData(unittest.TestCase):
         try:
             from sklearn.linear_model import LogisticRegression
             from sklearn.model_selection import cross_val_score
-        except:  # Skip if sklearn is not installed
+        except ImportError:  # Skip if sklearn is not installed
             return
 
         n_samples = 1000
@@ -476,7 +476,6 @@ class TestMakeData(unittest.TestCase):
 
     def test_make_blobs_shuffle(self):
         """Test shuffle parameter works."""
-        n_samples, centers = 100, 3
         n_samples_per_center = [30, 30, 40]
 
         # Generate data with and without shuffling

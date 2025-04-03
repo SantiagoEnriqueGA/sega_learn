@@ -60,7 +60,7 @@ class LinearSVC(BaseSVM):
         # Mini-batch size
         batch_size = min(64, n_samples)
 
-        for iteration in range(self.max_iter):
+        for _iteration in range(self.max_iter):
             # Shuffle data for mini-batch
             indices = np.random.permutation(n_samples)
             X_shuffled = X[indices]
@@ -264,7 +264,7 @@ class LinearSVR(BaseSVM):
         # Mini-batch size
         batch_size = min(64, n_samples)
 
-        for iteration in range(self.max_iter):
+        for _iteration in range(self.max_iter):
             # Shuffle data for mini-batch
             indices = np.random.permutation(n_samples)
             X_shuffled = X[indices]

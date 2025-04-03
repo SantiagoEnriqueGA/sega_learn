@@ -306,7 +306,7 @@ class TestRandomForestClassifier(unittest.TestCase):
 
     def test_fitting_single_value(self):
         """Tests the fitting method with a single value."""
-        X = [[1, 2, 3]]
+        _X = [[1, 2, 3]]
         self.rf.fit()
         for tree in self.rf.trees:
             self.assertIn("split_attribute", tree)

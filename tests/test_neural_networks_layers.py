@@ -62,7 +62,7 @@ class TestDenseLayer(unittest.TestCase):
         self.assertEqual(dA_prev.shape, (3, self.input_size))
         # Manually compute expected gradients
         Z = np.dot(X, self.layer.weights) + self.layer.biases
-        output = np.maximum(0, Z)
+        _output = np.maximum(0, Z)
         dZ = dA * (Z > 0)  # ReLU derivative
         dW = np.dot(X.T, dZ) / 3  # m=3 (batch size)
         db = np.sum(dZ, axis=0, keepdims=True) / 3

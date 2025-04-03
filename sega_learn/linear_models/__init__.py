@@ -23,4 +23,5 @@ __all__ = [
     # Discriminant Analysis
     "LinearDiscriminantAnalysis",
     "QuadraticDiscriminantAnalysis",
+    "make_sample_data",
 ]

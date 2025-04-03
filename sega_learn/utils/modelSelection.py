@@ -231,7 +231,7 @@ class RandomSearchCV:
         # Store tried combinations
         self.tried_params = []
 
-        for i in range(self.iter):
+        for _i in range(self.iter):
             # Check if all parameter combinations have been tried
             if len(self.tried_params) >= len(self.param_combinations):
                 print("All parameter combinations have been tried.")
@@ -332,14 +332,14 @@ class segaSearchCV:
         curr_h_l = None
         self.tried_params = []
 
-        for i in range(self.iter):
+        for _i in range(self.iter):
             # If params is empty, set to midpoint of param_space
             if not params:
                 for param in self.param_space:
                     key = list(param.keys())[0]
-                    if param[key][0] == int:
+                    if param[key][0] is int:
                         params[key] = (param[key][1] + param[key][2]) // 2
-                    elif param[key][0] == float:
+                    elif param[key][0] is float:
                         params[key] = (param[key][1] + param[key][2]) / 2
 
             if param_high:

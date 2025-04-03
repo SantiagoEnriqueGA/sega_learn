@@ -37,9 +37,9 @@ class GradientBoostedRegressor:
         self.num_trees = num_trees  # Set the number of trees in the ensemble
         self.max_depth = max_depth  # Set the maximum depth of each tree
 
-        self.X = list()  # Initialize the list of input data features
-        self.y = list()  # Initialize the list of target values
-        self.XX = list()  # Initialize the list of input data features and target values
+        self.X = []  # Initialize the list of input data features
+        self.y = []  # Initialize the list of target values
+        self.XX = []  # Initialize the list of input data features and target values
 
         self.numerical_cols = (
             0  # Initialize the set of indices of numeric attributes (columns)
@@ -68,9 +68,9 @@ class GradientBoostedRegressor:
         self.random_seed = 0
         self.num_trees = 10
         self.max_depth = 10
-        self.X = list()
-        self.y = list()
-        self.XX = list()
+        self.X = []
+        self.y = []
+        self.XX = []
         self.numerical_cols = 0
         self.mean_absolute_residuals = []
 

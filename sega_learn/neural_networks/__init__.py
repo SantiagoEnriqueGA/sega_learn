@@ -1,3 +1,4 @@
+from tkinter import E
 from .activations import Activation
 from .layers import ConvLayer, DenseLayer, FlattenLayer, RNNLayer
 from .loss import BCEWithLogitsLoss, CrossEntropyLoss
@@ -45,7 +46,7 @@ try:
             "NumbaBackendNeuralNetwork",
         ]
     )
-except:
+except Exception as _e:
     pass
 
 try:
@@ -71,5 +72,5 @@ try:
             "CuPyDenseLayer",
         ]
     )
-except:
+except Exception as _e:
     pass

@@ -2,18 +2,15 @@ import os
 import sys
 import unittest
 
-import numpy as np
-
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+import numpy as np
+from sega_learn.linear_models import *
+from sega_learn.linear_models import make_sample_data
 from sega_learn.utils import Metrics
+from tests.utils import suppress_print, synthetic_data_regression
 
 r2_score = Metrics.r_squared
 accuracy_score = Metrics.accuracy
-
-from sega_learn.linear_models import *
-from sega_learn.linear_models import make_sample_data
-from tests.utils import suppress_print, synthetic_data_regression
-
 
 class TestOrdinaryLeastSquares(unittest.TestCase):
     """
@@ -44,12 +41,12 @@ class TestOrdinaryLeastSquares(unittest.TestCase):
 
     def test_invalid_fit(self):
         """Tests the fit method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             self.model.fit(None, None)
 
     def test_invalid_predict(self):
         """Tests the predict method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AttributeError):
             self.model.predict(None)
 
     def test_get_formula(self):
@@ -118,12 +115,12 @@ class TestRidge(unittest.TestCase):
 
     def test_invalid_fit(self):
         """Tests the fit method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             self.model.fit(None, None)
 
     def test_invalid_predict(self):
         """Tests the predict method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AttributeError):
             self.model.predict(None)
 
     def test_get_formula(self):
@@ -166,9 +163,8 @@ class TestRidge(unittest.TestCase):
     def test_invalid_fit_numba(self):
         """Test the fit method with invalid input using numba implementation."""
         self.model = Ridge(alpha=1.0, fit_intercept=True, max_iter=1000, tol=1e-4)
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             self.model.fit(None, None, numba=True)
-
 
 class TestLasso(unittest.TestCase):
     """
@@ -213,12 +209,12 @@ class TestLasso(unittest.TestCase):
 
     def test_invalid_fit(self):
         """Tests the fit method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             self.model.fit(None, None)
 
     def test_invalid_predict(self):
         """Tests the predict method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AttributeError):
             self.model.predict(None)
 
     def test_get_formula(self):
@@ -261,7 +257,7 @@ class TestLasso(unittest.TestCase):
     def test_invalid_fit_numba(self):
         """Test the fit method with invalid input using numba implementation."""
         self.model = Lasso(alpha=1.0, fit_intercept=True, max_iter=1000, tol=1e-4)
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             self.model.fit(None, None, numba=True)
 
 
@@ -320,12 +316,12 @@ class TestBayesian(unittest.TestCase):
 
     def test_invalid_fit(self):
         """Tests the fit method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             self.model.fit(None, None)
 
     def test_invalid_predict(self):
         """Tests the predict method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             self.model.predict(None)
 
     def test_get_formula(self):
@@ -415,12 +411,12 @@ class TestRANSAC(unittest.TestCase):
 
     def test_invalid_fit(self):
         """Tests the fit method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             self.model.fit(None, None)
 
     def test_invalid_predict(self):
         """Tests the predict method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AttributeError):
             self.model.predict(None)
 
     def test_get_formula(self):
@@ -494,12 +490,12 @@ class TestPassiveAggressiveRegressor(unittest.TestCase):
 
     def test_invalid_fit(self):
         """Tests the fit method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             self.model.fit(None, None)
 
     def test_invalid_predict(self):
         """Tests the predict method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             self.model.predict(None)
 
     def test_get_formula(self):
@@ -603,7 +599,7 @@ class TestLinearDiscriminantAnalysis(unittest.TestCase):
     def test_lda_no_data(self):
         """Tests the fit method with invalid input."""
         lda = LinearDiscriminantAnalysis()
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             lda.fit(None, None)
 
 
@@ -662,14 +658,14 @@ class TestQuadraticDiscriminantAnalysis(unittest.TestCase):
 
     def test_qda_bad_reg_param(self):
         """Tests the fit method with invalid reg_param parameter of the Quadratic Discriminant Analysis class."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AssertionError):
             qda = QuadraticDiscriminantAnalysis(reg_param=-0.1)
             qda.fit(self.X, self.y)
 
     def test_qda_no_data(self):
         """Tests the fit method with invalid input."""
         qda = QuadraticDiscriminantAnalysis()
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             qda.fit(None, None)
 
     def test_qda_no_priors(self):
@@ -680,7 +676,7 @@ class TestQuadraticDiscriminantAnalysis(unittest.TestCase):
 
     def test_qda_bad_priors(self):
         """Tests the fit method with invalid priors parameter of the Quadratic Discriminant Analysis class."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             qda = QuadraticDiscriminantAnalysis(priors=[0.5, 0.5, 0.5])
             qda.fit(self.X, self.y)
 

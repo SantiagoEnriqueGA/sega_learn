@@ -119,11 +119,6 @@ class JITDenseLayer:
             raise ValueError(f"Unsupported activation: {self.activation}")
 
 
-from numba import float64, int32, types
-from numba.experimental import jitclass
-
-from .numba_utils import *
-
 # Unchanged JITFlattenLayer implementation
 flatten_spec = [
     ("input_shape", types.UniTuple(int32, 3)),

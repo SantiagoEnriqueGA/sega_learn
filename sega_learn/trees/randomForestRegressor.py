@@ -54,7 +54,7 @@ def _predict_oob(X, trees, bootstraps):
 
     for i, record in enumerate(X):
         predictions = []
-        for j, (tree, bootstrap) in enumerate(zip(trees, bootstraps, strict=False)):
+        for _j, (tree, bootstrap) in enumerate(zip(trees, bootstraps, strict=False)):
             # Check if record is out-of-bag for this tree
             if i not in bootstrap:
                 predictions.append(RegressorTree.evaluate_tree(tree, record))

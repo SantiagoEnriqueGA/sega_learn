@@ -172,7 +172,7 @@ def train_test_split(
                 # Ensure at least one sample goes to the test set if possible
                 if class_counts[cls] > 1 and (class_counts[cls] - n_train_cls) < 1:
                     n_train_cls = class_counts[cls] - 1
-                n_test_cls = class_counts[cls] - n_train_cls
+                _n_test_cls = class_counts[cls] - n_train_cls
                 train_indices.extend(cls_idx[:n_train_cls])
                 test_indices.extend(cls_idx[n_train_cls:])
 

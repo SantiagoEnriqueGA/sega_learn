@@ -312,8 +312,8 @@ class TestRandomForestRegressor(unittest.TestCase):
 
     def test_fit_empty(self):
         """Tests the fit method with an empty dataset."""
-        X = []
-        y = []
+        _X = []
+        _y = []
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
             self.rf.fit()
@@ -322,7 +322,7 @@ class TestRandomForestRegressor(unittest.TestCase):
 
     def test_fit_single_value(self):
         """Tests the fit method with a single value dataset."""
-        X = [[1, 2, 3]]
+        _X = [[1, 2, 3]]
         self.rf.fit()
         for tree in self.rf.trees:
             self.assertIn("split_val", tree)
@@ -337,7 +337,7 @@ class TestRandomForestRegressor(unittest.TestCase):
     def test_predict_empty(self):
         """Tests the predict method with an empty dataset."""
         X = []
-        y = []
+        _y = []
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
             self.rf.fit()

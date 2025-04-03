@@ -113,9 +113,7 @@ class ClassifierTreeUtility:
                 and the information gain achieved by the split.
         """
         # Check type of X and y
-        if not isinstance(X, (list, np.ndarray)) or not isinstance(
-            y, (list, np.ndarray)
-        ):
+        if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
             raise TypeError("X and y must be lists or NumPy arrays.")
 
         # Convert X and y to NumPy arrays if they are not already
@@ -229,7 +227,7 @@ class ClassifierTree:
         self.tree = self.learn(X, y)
         return self.tree
 
-    def learn(self, X, y, par_node={}, depth=0):
+    def learn(self, X, y, par_node=None, depth=0):
         """
         Builds the decision tree based on the given training data.
 
@@ -243,9 +241,7 @@ class ClassifierTree:
         - dict: The learned decision tree.
         """
         # Check type of X and y
-        if not isinstance(X, (list, np.ndarray)) or not isinstance(
-            y, (list, np.ndarray)
-        ):
+        if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
             raise TypeError("X and y must be lists or NumPy arrays.")
 
         y = y.tolist() if isinstance(y, np.ndarray) else y  # Convert y to a Python list

@@ -113,12 +113,12 @@ class TestKNeighborsClassifier(unittest.TestCase):
         X_test = np.array([[1, "a"], [2, "b"], [3, "a"]])
         knn = KNeighborsClassifier(n_neighbors=3, one_hot_encode=True)
         knn.fit(X_train, y_train)
-        predictions = knn.predict(X_test)
+        _predictions = knn.predict(X_test)
 
     def test_predict_with_invalid_one_hot_encoding(self):
         """Tests the behavior when an invalid one-hot encoding is provided during prediction."""
         with self.assertRaises(ValueError):
-            knn = KNeighborsClassifier(n_neighbors=3, one_hot_encode="invalid_value")
+            _knn = KNeighborsClassifier(n_neighbors=3, one_hot_encode="invalid_value")
 
 
 class TestKNeighborsRegressor(unittest.TestCase):
@@ -223,12 +223,12 @@ class TestKNeighborsRegressor(unittest.TestCase):
         X_test = np.array([[1, "a"], [2, "b"], [3, "a"]])
         knn = KNeighborsRegressor(n_neighbors=3, one_hot_encode=True)
         knn.fit(X_train, y_train)
-        predictions = knn.predict(X_test)
+        _predictions = knn.predict(X_test)
 
     def test_predict_with_invalid_one_hot_encoding(self):
         """Tests the behavior when an invalid one-hot encoding is provided during prediction."""
         with self.assertRaises(ValueError):
-            knn = KNeighborsRegressor(n_neighbors=3, one_hot_encode="invalid_value")
+            _knn = KNeighborsRegressor(n_neighbors=3, one_hot_encode="invalid_value")
 
 
 if __name__ == "__main__":

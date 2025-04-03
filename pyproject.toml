@@ -60,23 +60,25 @@ exclude = [
     "__pypackages__",
     "_build",
     "buck-out",
-    "build",          # Exclude the build directory
     "dist",
     "node_modules",
     "site-packages",
     "venv",
-    "sega_learn.egg-info", # Exclude egg info
-    "docs/**/*.html",    # Exclude generated HTML docs
-    "_archive/",         # Exclude the archive directory
-    "__pycache__/",      # Exclude python cache
+    "build",                # Exclude the build directory
+    "sega_learn.egg-info",  # Exclude egg info
+    "docs/**/*.html",       # Exclude generated HTML docs
+    "_archive/",            # Exclude the archive directory
+    "__pycache__/",         # Exclude python cache
     "*.pyc",
     "*.pyo",
     "*.pyd",
-    # You might want to exclude performance test logs/plots if they aren't Python
-    "tests_performance/CPython_vs_PyPy/logs_clustering/",
-    "tests_performance/CPython_vs_PyPy/logs_linear_models/",
+    "*_dev/",               # Exclude any folder ending in _dev
+    # Exclude performance test logs/plots
+    "tests_performance/",
     "examples/**/plots/",
-    "tests_performance/**/plots/",
+
+    # Exclude ipynb files
+    "*.ipynb",
 ]
 
 [tool.ruff.lint]
@@ -102,10 +104,13 @@ ignore = ["F403", "F405", "E501"]
 fixable = ["ALL"]
 unfixable = []
 
-# Optional: If you had per-file ignores, keep them or adjust as needed
-# per-file-ignores = {
-#   "tests_performance/*.py" = ["E402"]
-# }
+# Optional: per-file ignores
+[tool.ruff.lint.per-file-ignores]
+"sega_learn/__init__.py" = ["F401"]   # This has to remain unsorted to avoid circular imports
+"sega_learn/utils/__init__.py" = ["I001"]   # This has to remain unsorted to avoid circular imports
+"sega_learn/neural_networks/__init__.py" = ["I001", "F401"]   # This has to remain unsorted to avoid circular imports
+"sega_learn/auto/regressor.py" = ["TID252"]  # This has to remain unsorted to avoid circular imports
+"sega_learn/auto/classifier.py" = ["TID252"]  # This has to remain unsorted to avoid circular imports
 
 [tool.ruff.format]
 # Enable the formatter (similar to Black)

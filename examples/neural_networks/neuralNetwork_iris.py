@@ -7,6 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 
 from sega_learn.neural_networks import *
 from sega_learn.utils import Scaler
+from sklearn.datasets import load_iris
 
 
 def test_model(load_data_func, nn_layers, dropout_rate, reg_lambda, test_size=0.2):
@@ -77,8 +78,5 @@ def test_model(load_data_func, nn_layers, dropout_rate, reg_lambda, test_size=0.
     print(classification_report(y_test, predicted, zero_division=0))
 
     print(f"End Neural Network State: \n{str(nn)}")
-
-
-from sklearn.datasets import load_iris
 
 test_model(load_iris, [4, 100, 25, 3], dropout_rate=0.1, reg_lambda=0.0, test_size=0.1)

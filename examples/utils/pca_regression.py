@@ -1,14 +1,15 @@
-import numpy as np
-
-np.random.seed(0)
-
 import os
 import sys
 
+import numpy as np
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from sega_learn.utils import make_regression
+from sega_learn.linear_models import OrdinaryLeastSquares
+from sega_learn.utils import Metrics, make_regression
 from sega_learn.utils.decomposition import PCA
+
+np.random.seed(0)
 
 # Example data
 X, y = make_regression(n_samples=10_000, n_features=10, noise=25, random_state=0)
@@ -24,11 +25,7 @@ print(f"Reduced shape: {X_reduced.shape}")
 
 print(f"Explained variance: {pca.get_explained_variance_ratio()}")
 
-
 # Fit linear regression both on the original and reduced data
-from sega_learn.linear_models import OrdinaryLeastSquares
-from sega_learn.utils import Metrics
-
 # Fit OLS on the original data
 reg = OrdinaryLeastSquares(fit_intercept=True)
 reg.fit(X, y)

@@ -42,12 +42,12 @@ class TestPolynomialTransform(unittest.TestCase):
 
     def test_invalid_fit(self):
         """Tests the fit method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AttributeError):
             self.transform.fit(None)
 
     def test_invalid_transform(self):
         """Tests the transform method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AttributeError):
             self.transform.transform(None)
 
 
@@ -91,7 +91,7 @@ class TestDataPrep(unittest.TestCase):
     def test_one_hot_encode_invalid_col(self):
         """Tests the one_hot_encode method with an invalid column index."""
         df = pd.DataFrame({"A": [1, 2, 3, 4], "B": [5, 6, 7, 8]})
-        with self.assertRaises(Exception):
+        with self.assertRaises(IndexError):
             DataPrep.one_hot_encode(df, [2])
 
     def test_one_hot_encode_dtype_pd(self):
@@ -160,7 +160,7 @@ class TestDataPrep(unittest.TestCase):
 
     def test_k_split_invalid(self):
         """Tests the k_split method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             DataPrep.k_split(None, None, k=5)
 
 
@@ -234,12 +234,12 @@ class TestModelSelectionUtils(unittest.TestCase):
 
     def test_get_param_combinations_invalid(self):
         """Tests the get_param_combinations method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             ModelSelectionUtility.get_param_combinations(None)
 
     def test_get_param_combinations_empty(self):
         """Tests the get_param_combinations method with empty input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             ModelSelectionUtility.get_param_combinations([])
 
     def test_get_param_combinations_single(self):
@@ -260,26 +260,26 @@ class TestModelSelectionUtils(unittest.TestCase):
 
     def test_cross_validate_invalid(self):
         """Tests the cross_validate method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             ModelSelectionUtility.cross_validate(None, None, None, params=None, cv=5)
 
     def test_cross_validate_invalid_cv(self):
         """Tests the cross_validate method with invalid cv."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(UnboundLocalError):
             ModelSelectionUtility.cross_validate(
                 OrdinaryLeastSquares, self.X, self.y, params=None, cv=0
             )
 
     def test_cross_validate_invalid_params(self):
         """Tests the cross_validate method with invalid params."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             ModelSelectionUtility.cross_validate(
                 OrdinaryLeastSquares, self.X, self.y, params=None, cv=5
             )
 
     def test_cross_validate_invalid_params_type(self):
         """Tests the cross_validate method with invalid params type."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             ModelSelectionUtility.cross_validate(
                 OrdinaryLeastSquares, self.X, self.y, params="params", cv=5
             )
@@ -287,7 +287,7 @@ class TestModelSelectionUtils(unittest.TestCase):
     def test_cross_validate_cv_1(self):
         """Tests the cross_validate method with cv=1."""
         ols = OrdinaryLeastSquares
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             mse_scores, _ = ModelSelectionUtility.cross_validate(
                 ols, self.X, self.y, params={"fit_intercept": [True]}, cv=1
             )
@@ -386,7 +386,7 @@ class TestGridSearchCV(unittest.TestCase):
 
     def test_invalid_param_grid(self):
         """Tests the GridSearchCV class with invalid param_grid."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AssertionError):
             grid_search = GridSearchCV(model=Ridge, param_grid=None)
             grid_search.fit(self.X_reg, self.y_reg)
 
@@ -497,7 +497,7 @@ class TestRandomSearchCV(unittest.TestCase):
 
     def test_invalid_iter(self):
         """Tests the RandomSearchCV class with invalid iter."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AssertionError):
             rand_search = RandomSearchCV(
                 model=Ridge, param_grid=[{"alpha": [0.1, 1, 10]}], iter=0
             )
@@ -513,7 +513,7 @@ class TestRandomSearchCV(unittest.TestCase):
 
     def test_invalid_param_grid(self):
         """Tests the RandomSearchCV class with invalid param_grid."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AssertionError):
             rand_search = RandomSearchCV(model=Ridge, param_grid=None, iter=3)
             rand_search.fit(self.X_reg, self.y_reg)
 
@@ -676,7 +676,7 @@ class TestMetrics(unittest.TestCase):
                 sk_report = sk_metrics.classification_report(
                     y_true, y_pred, output_dict=True
                 )
-                for cls in report.keys():
+                for cls in report:
                     self.assertAlmostEqual(
                         report[cls]["recall"], sk_report[str(cls)]["recall"], places=4
                     )
@@ -740,19 +740,16 @@ class TestDataAugmentation(unittest.TestCase):
 
     def test_random_over_sampler_invalid(self):
         """Tests the Random Over Sampler method with invalid input."""
-        with self.subTest("Invalid input"):
-            with self.assertRaises(Exception):
+        with self.subTest("Invalid input"), self.assertRaises(TypeError):
                 self.ros.fit_resample(None, None)
-        with self.subTest("Invalid input type"):
-            with self.assertRaises(Exception):
+        with self.subTest("Invalid input type"), self.assertRaises(ValueError):
                 self.ros.fit_resample("invalid_input", "invalid_input")
-        with self.subTest("Invalid input shape"):
-            with self.assertRaises(Exception):
+        with self.subTest("Invalid input shape"), self.assertRaises(ValueError):
                 self.ros.fit_resample(np.random.rand(101, 20), np.random.rand(100, 20))
 
     def test_random_over_sampler_invalid_params(self):
         """Tests the Random Over Sampler method with invalid params."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             ros = RandomOverSampler(
                 random_state=42, sampling_strategy="invalid_strategy"
             )
@@ -760,13 +757,13 @@ class TestDataAugmentation(unittest.TestCase):
 
     def test_fit_random_over_sampler_invalid(self):
         """Tests the fit method of the Random Over Sampler with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AttributeError):
             ros = RandomOverSampler(random_state=42)
             ros.fit(None, None)
 
     def test_fit_random_over_sampler_invalid_params(self):
         """Tests the fit method of the Random Over Sampler with invalid params."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AttributeError):
             ros = RandomOverSampler(random_state=42)
             ros.fit(self.X_train, None)
 
@@ -784,14 +781,11 @@ class TestDataAugmentation(unittest.TestCase):
 
     def test_smote_invalid(self):
         """Tests the SMOTE method with invalid input."""
-        with self.subTest("Invalid input"):
-            with self.assertRaises(Exception):
+        with self.subTest("Invalid input"), self.assertRaises(TypeError):
                 self.smote.fit_resample(None, None)
-        with self.subTest("Invalid input type"):
-            with self.assertRaises(Exception):
+        with self.subTest("Invalid input type"), self.assertRaises(ValueError):
                 self.smote.fit_resample("invalid_input", "invalid_input")
-        with self.subTest("Invalid input shape"):
-            with self.assertRaises(Exception):
+        with self.subTest("Invalid input shape"), self.assertRaises(ValueError):
                 self.smote.fit_resample(
                     np.random.rand(101, 20), np.random.rand(100, 20)
                 )
@@ -804,19 +798,16 @@ class TestDataAugmentation(unittest.TestCase):
 
     def test_random_under_sampler_invalid(self):
         """Tests the Random Under Sampler method with invalid input."""
-        with self.subTest("Invalid input"):
-            with self.assertRaises(Exception):
+        with self.subTest("Invalid input"), self.assertRaises(TypeError):
                 self.rus.fit_resample(None, None)
-        with self.subTest("Invalid input type"):
-            with self.assertRaises(Exception):
+        with self.subTest("Invalid input type"), self.assertRaises(ValueError):
                 self.rus.fit_resample("invalid_input", "invalid_input")
-        with self.subTest("Invalid input shape"):
-            with self.assertRaises(Exception):
+        with self.subTest("Invalid input shape"), self.assertRaises(ValueError):
                 self.rus.fit_resample(np.random.rand(101, 20), np.random.rand(100, 20))
 
     def test_random_under_sampler_invalid_params(self):
         """Tests the Random Under Sampler method with invalid params."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             rus = RandomUnderSampler(
                 random_state=42, sampling_strategy="invalid_strategy"
             )
@@ -824,13 +815,13 @@ class TestDataAugmentation(unittest.TestCase):
 
     def test_fit_random_under_sampler_invalid(self):
         """Tests the fit method of the Random Under Sampler with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AttributeError):
             rus = RandomUnderSampler(random_state=42)
             rus.fit(None, None)
 
     def test_fit_random_under_sampler_invalid_params(self):
         """Tests the fit method of the Random Under Sampler with invalid params."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(AttributeError):
             rus = RandomUnderSampler(random_state=42)
             rus.fit(self.X_train, None)
 
@@ -854,13 +845,13 @@ class TestDataAugmentation(unittest.TestCase):
     def test_augment_with_invalid_technique(self):
         """Tests the augment method with invalid technique."""
         invalid_technique = "invalid_technique"
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             augmenter = Augmenter(techniques=[invalid_technique], verbose=False)
             augmenter.augment(self.X, self.y)
 
     def test_augment_with_invalid_input(self):
         """Tests the augment method with invalid input."""
-        with self.assertRaises(Exception):
+        with self.assertRaises(IndexError):
             self.augmenter.augment(None, None)
 
     def test_augment_with_balanced_data(self):

@@ -189,5 +189,5 @@ try:
             "NumbaBackendNeuralNetwork",
         ]
     )
-except:
+except ImportError:
     pass

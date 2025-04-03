@@ -158,9 +158,7 @@ class TestTrainingAnimator(unittest.TestCase):
         # Use a temporary file for the output.
         with tempfile.NamedTemporaryFile(suffix=".mp4", delete=True) as tmp:
             # Patch FFMpegWriter from matplotlib.animation to return our DummyWriter.
-            with patch("matplotlib.animation.FFMpegWriter", return_value=DummyWriter()):
-                # Suppress any print output during setup.
-                with suppress_print():
+            with patch("matplotlib.animation.FFMpegWriter", return_value=DummyWriter()), suppress_print():
                     self.animator.setup_training_video(tmp.name, fps=10, dpi=80)
             self.assertIsNotNone(self.animator.writer)
             self.assertTrue(hasattr(self.animator.writer, "setup_called"))
@@ -169,9 +167,8 @@ class TestTrainingAnimator(unittest.TestCase):
 
     def test_setup_training_video_no_initialize(self):
         """Test that setup_training_video raises an error if initialize() wasn't called."""
-        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=True) as tmp:
-            with self.assertRaises(ValueError):
-                with suppress_print():
+        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=True) as tmp, \
+            self.assertRaises(ValueError), suppress_print():
                     self.animator.setup_training_video(tmp.name, fps=10)
 
     def test_add_training_frame(self):
@@ -213,16 +210,9 @@ class TestTrainingAnimator(unittest.TestCase):
         It simulates a FileNotFoundError and checks that PillowWriter is used instead.
         """
         self.animator.initialize(metrics_to_track=["loss"], has_validation=False)
-        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=True) as tmp:
-            # Patch FFMpegWriter from matplotlib.animation to raise FileNotFoundError.
-            with patch(
-                "matplotlib.animation.FFMpegWriter",
-                side_effect=FileNotFoundError("Not found"),
-            ):
-                # Patch PillowWriter from matplotlib.animation to return DummyWriter.
-                with patch(
-                    "matplotlib.animation.PillowWriter", return_value=DummyWriter()
-                ) as mock_pillow:
+        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=True) as tmp, \
+            patch("matplotlib.animation.FFMpegWriter",side_effect=FileNotFoundError("Not found")), \
+                patch("matplotlib.animation.PillowWriter", return_value=DummyWriter()) as _mock_pillow:
                     with suppress_print():
                         self.animator.setup_training_video(tmp.name, fps=10, dpi=80)
                     self.assertIsNotNone(self.animator.writer)

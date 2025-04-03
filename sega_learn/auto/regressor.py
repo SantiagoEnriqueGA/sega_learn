@@ -1,3 +1,7 @@
+import time
+
+import numpy as np
+
 from ..linear_models.linearModels import *
 from ..nearest_neighbors import *
 from ..neural_networks import *
@@ -5,21 +9,16 @@ from ..svm import *
 from ..trees import *
 from ..utils.metrics import Metrics
 
-r_squared = Metrics.r_squared
-root_mean_squared_error = Metrics.root_mean_squared_error
-mean_absolute_percentage_error = Metrics.mean_absolute_percentage_error
-
-import time
-
-import numpy as np
-
 try:
     from tqdm.auto import tqdm
 
     TQDM_AVAILABLE = True
-except:
+except Exception as _e:
     TQDM_AVAILABLE = False
 
+r_squared = Metrics.r_squared
+root_mean_squared_error = Metrics.root_mean_squared_error
+mean_absolute_percentage_error = Metrics.mean_absolute_percentage_error
 
 class AutoRegressor:
     """
@@ -147,7 +146,7 @@ class AutoRegressor:
             except IndexError as e:
                 raise ValueError(
                     f"Model '{name}' encountered an error during prediction: {e}"
-                )
+                ) from None
             elapsed_time = time.time() - start_time
 
             metrics = {}
@@ -211,7 +210,7 @@ class AutoRegressor:
         # Select specific model or all models
         models_to_evaluate = {model: self.models[model]} if model else self.models
 
-        for name, model_instance in models_to_evaluate.items():
+        for name, _model_instance in models_to_evaluate.items():
             if name not in self.predictions:
                 raise ValueError(f"Model '{name}' has not been fitted yet.")
 
@@ -257,7 +256,7 @@ class AutoRegressor:
         # Extract all metric keys dynamically from the results
         metric_keys = [
             key
-            for key in self.results[0].keys()
+            for key in self.results[0]
             if key not in ["Model", "Model Class", "Time Taken"]
         ]
 

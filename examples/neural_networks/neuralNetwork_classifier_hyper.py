@@ -31,7 +31,7 @@ def hyper_train_and_evaluate_model(
     nn = BaseBackendNeuralNetwork(
         [input_size] + layers[0] + [output_size], dropout_rate=0.5, reg_lambda=0.0
     )
-    optimizer = AdamOptimizer(learning_rate=0.0001)
+    _optimizer = AdamOptimizer(learning_rate=0.0001)
 
     # Hyperparameter tuning with Adam optimizer
     best_params, best_accuracy = nn.tune_hyperparameters(
@@ -105,7 +105,7 @@ def hyper_train_and_evaluate_model_numba(
         compile_numba=True,
         progress_bar=True,
     )
-    optimizer = JITAdamOptimizer(learning_rate=0.0001)
+    _optimizer = JITAdamOptimizer(learning_rate=0.0001)
 
     # Hyperparameter tuning with Adam optimizer
     best_params, best_accuracy = nn.tune_hyperparameters(

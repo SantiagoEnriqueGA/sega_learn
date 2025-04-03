@@ -227,7 +227,7 @@ def process_batches_binary(
             layer_outputs.append(A)
 
         # Backward pass
-        m = y_batch.shape[0]
+        _m = y_batch.shape[0]
         outputs = layer_outputs[-1]
         y_batch = y_batch.reshape(-1, 1).astype(np.float64)
         dA = -(y_batch / (outputs + 1e-15) - (1 - y_batch) / (1 - outputs + 1e-15))

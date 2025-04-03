@@ -9,9 +9,10 @@ from functools import partialmethod
 
 from tqdm import tqdm
 
+from utils import strip_file_path, suppress_print
+
 tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 
-from utils import strip_file_path, suppress_print
 
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))

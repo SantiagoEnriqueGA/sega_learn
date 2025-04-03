@@ -1,15 +1,14 @@
-import numpy as np
-
-np.random.seed(0)
-
 import os
 import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from sega_learn.utils import make_classification
+import numpy as np
+from sega_learn.linear_models import QuadraticDiscriminantAnalysis
+from sega_learn.utils import Metrics, make_classification
 from sega_learn.utils.decomposition import SVD
 
+np.random.seed(0)
 # Example data
 X, y = make_classification(
     n_samples=1000,
@@ -29,9 +28,6 @@ X_reduced = svd.fit_transform(X)
 print(f"Original shape: {X.shape}")
 print(f"Reduced shape: {X_reduced.shape}")
 
-# Fit quadratic discriminant analysis both on the original and reduced data
-from sega_learn.linear_models import QuadraticDiscriminantAnalysis
-from sega_learn.utils import Metrics
 
 # Fit QDA on the original data
 qda = QuadraticDiscriminantAnalysis()

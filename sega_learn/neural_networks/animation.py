@@ -13,13 +13,13 @@ class TrainingAnimator:
             dpi (int): DPI for rendering
         """
         try:
-            import matplotlib.pyplot as plt
-            import numpy as np
-            from matplotlib.animation import FFMpegWriter, PillowWriter
+            import matplotlib.pyplot as plt  # noqa: F401
+            import numpy as np  # noqa: F401
+            from matplotlib.animation import FFMpegWriter, PillowWriter  # noqa: F401
         except ImportError:
             raise ImportError(
                 "Matplotlib is required for animation. Please install matplotlib first."
-            )
+            ) from None
 
         self.figure_size = figure_size
         self.dpi = dpi
@@ -100,10 +100,7 @@ class TrainingAnimator:
             validation (bool): Whether these are validation metrics
         """
         for metric, value in epoch_metrics.items():
-            if validation:
-                key = f"val_{metric}"
-            else:
-                key = metric
+            key = f"val_{metric}" if validation else metric
             if key in self.metrics:
                 self.metrics[key].append(value)
 
@@ -142,7 +139,7 @@ class TrainingAnimator:
 
         # Set axis limits
         for i, metric in enumerate(
-            [m for m in self.metrics.keys() if not m.startswith("val_")]
+            [m for m in self.metrics if not m.startswith("val_")]
         ):
             row, col = i // 3, i % 3
             ax = self.axes[row, col]
@@ -165,7 +162,7 @@ class TrainingAnimator:
         # Initialization function for animation
         def init():
             artists = []
-            for metric, line in self.lines.items():
+            for _metric, line in self.lines.items():
                 line.set_data([], [])
                 artists.append(line)
             return artists
@@ -199,21 +196,21 @@ class TrainingAnimator:
             if save_format == "mp4":
                 try:
                     from matplotlib.animation import FFMpegWriter
-                except:
+                except Exception as _e:
                     raise ImportError(
                         "FFmpeg writer not available. Install ffmpeg or use a different writer."
-                    )
+                    ) from None
                 writer = FFMpegWriter(
-                    fps=fps, metadata=dict(artist="TrainingAnimator"), bitrate=1800
+                    fps=fps, metadata={"artist": "TrainingAnimator"}, bitrate=1800
                 )
                 self.anim.save(save_path, writer=writer, dpi=dpi)
             elif save_format == "gif":
                 try:
                     from matplotlib.animation import PillowWriter
-                except:
+                except Exception as _e:
                     raise ImportError(
                         "Pillow writer not available. Install Pillow or use a different writer."
-                    )
+                    ) from None
                 writer = PillowWriter(fps=fps)
                 self.anim.save(save_path, writer=writer, dpi=dpi)
             else:
@@ -249,9 +246,9 @@ class TrainingAnimator:
                 # First attempt with default settings
                 self.writer = FFMpegWriter(
                     fps=fps,
-                    metadata=dict(
-                        title="Model Training Progress", artist="TrainingAnimator"
-                    ),
+                    metadata={
+                        "title": "Model Training Progress", "artist": "TrainingAnimator"
+                    },
                     bitrate=1800,
                 )
 
@@ -267,9 +264,9 @@ class TrainingAnimator:
 
                 self.writer = PillowWriter(
                     fps=fps,
-                    metadata=dict(
-                        title="Model Training Progress", artist="TrainingAnimator"
-                    ),
+                    metadata={
+                        "title": "Model Training Progress", "artist": "TrainingAnimator"
+                    },
                 )
 
                 # Change extension to .gif if it was .mp4

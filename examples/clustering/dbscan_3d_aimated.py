@@ -1,16 +1,17 @@
 import os
 import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
 import warnings
-
-warnings.filterwarnings("ignore")
 
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
 from sega_learn.clustering import *
 from sega_learn.utils import make_blobs
+
+warnings.filterwarnings("ignore")
+
 
 # Genetrate 3D data
 true_k = 4
@@ -34,7 +35,7 @@ dbscan.eps = best_eps
 # Store labels for each eps value
 labels_list = []
 eps_values = []
-for eps, score in scores_dict.items():
+for eps, _score in scores_dict.items():
     dbscan = DBSCAN(X, eps=eps, min_samples=min_samples)
     labels_list.append(dbscan.fit_predict())
     eps_values.append(eps)

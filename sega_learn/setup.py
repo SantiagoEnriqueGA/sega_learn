@@ -17,7 +17,7 @@ from setuptools import setup
 
 def find_pyx_files(root_dir):
     pyx_files = []
-    for dirpath, dirnames, filenames in os.walk(root_dir):
+    for dirpath, _dirnames, filenames in os.walk(root_dir):
         for filename in filenames:
             if filename.endswith(".pyx"):
                 pyx_files.append(os.path.join(dirpath, filename))

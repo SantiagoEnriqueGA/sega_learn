@@ -59,7 +59,7 @@ class KNeighborsBase(ABC):
                 self.numba = False
                 raise ImportError(
                     "Numba is not installed. Please install numba to use the numba optimized version of the KNN algorithm."
-                )
+                ) from None
             except Exception as e:
                 self.numba = False
                 print(f"Error compiling numba functions: {e}")

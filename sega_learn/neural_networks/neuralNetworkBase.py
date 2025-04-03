@@ -5,11 +5,11 @@ from .schedulers import *
 
 try:
     from .layers_jit import *
-except:
+except ImportError:
     JITDenseLayer = None
 try:
     from .layers_cupy import *
-except:
+except ImportError:
     CuPyDenseLayer = None
 
 
@@ -153,12 +153,12 @@ class NeuralNetworkBase:
         except ImportError:
             raise ImportError(
                 "Matplotlib is required for plotting. Please install matplotlib first."
-            )
+            ) from None
 
         if not hasattr(self, "train_loss"):
             raise ValueError(
                 "No training history available. Please set track_metrics=True during training."
-            )
+            ) from None
 
         # Different number of plots for metrics vs metrics/adv_metrics
 
