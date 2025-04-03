@@ -80,19 +80,19 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-# Start with a good baseline set of rules:
-# E = pycodestyle errors
-# F = Pyflakes errors
-# W = pycodestyle warnings
-# I = isort (import sorting)
-# UP = pyupgrade (suggests modern Python syntax)
-# B = flake8-bugbear (finds likely bugs)
-# C4 = flake8-comprehensions (helps write better comprehensions)
-# SIM = flake8-simplify (simplifies code)
-# TID = flake8-tidy-imports
+# Baseline set of rules:
+    # E = pycodestyle errors
+    # F = Pyflakes errors
+    # W = pycodestyle warnings
+    # I = isort (import sorting)
+    # UP = pyupgrade (suggests modern Python syntax)
+    # B = flake8-bugbear (finds likely bugs)
+    # C4 = flake8-comprehensions (helps write better comprehensions)
+    # SIM = flake8-simplify (simplifies code)
+    # TID = flake8-tidy-imports
 select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "TID"]
 
-# You might want to ignore specific rules project-wide if needed
+# Might want to ignore specific rules project-wide if needed
 # ignore = ["F401"] # Example: ignore unused imports globally
 
 # Fixable rules will be auto-fixed when running `ruff check --fix`
