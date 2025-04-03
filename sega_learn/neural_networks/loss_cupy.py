@@ -2,19 +2,19 @@ import cupy as cp
 
 
 class CuPyCrossEntropyLoss:
-    """
-    Optimized cross entropy loss implementation using cupy for multi-class classification.
+    """Optimized cross entropy loss implementation using cupy for multi-class classification.
+
     Formula: -sum(y * log(p)) / m
     Methods:
         __call__(self, logits, targets): Calculate the cross entropy loss.
     """
-
     def __call__(self, logits, targets):
-        """
-        Calculate the cross entropy loss.
+        """Calculate the cross entropy loss.
+
         Args:
             logits (cp.ndarray): The logits (predicted values) of shape (num_samples, num_classes).
             targets (cp.ndarray): The target labels of shape (num_samples, num_classes) or (num_samples,).
+
         Returns:
             float: The cross entropy loss.
         """
@@ -45,19 +45,21 @@ class CuPyCrossEntropyLoss:
 
 
 class CuPyBCEWithLogitsLoss:
-    """
-    Optimized binary cross entropy loss with logits implementation using cupy.
+    """Optimized binary cross entropy loss with logits implementation using cupy.
+
     Formula: -mean(y * log(sigmoid(x)) + (1 - y) * log(1 - sigmoid(x)))
+
     Methods:
         __call__(self, logits, targets): Calculate the binary cross entropy loss.
     """
 
     def __call__(self, logits, targets):
-        """
-        Calculate the binary cross entropy loss.
+        """Calculate the binary cross entropy loss.
+
         Args:
             logits (cp.ndarray): The logits (predicted values) of shape (num_samples,).
             targets (cp.ndarray): The target labels of shape (num_samples,).
+
         Returns:
             float: The binary cross entropy loss.
         """

@@ -5,11 +5,12 @@ from cupy import fuse
 # Fused dropout kernel: combines masking and scaling into one operation.
 @fuse()
 def fused_dropout(x, dropout_rate, random_vals):
+    """Apply fused dropout operation."""
     return cp.where(random_vals < (1 - dropout_rate), x / (1 - dropout_rate), 0)
 
 
 def apply_dropout(X, dropout_rate):
-    # Generate dropout mask and apply fused dropout.
+    """Generate dropout mask and apply fused dropout."""
     random_vals = cp.random.rand(*X.shape)
     return fused_dropout(X, dropout_rate, random_vals)
 
@@ -17,21 +18,25 @@ def apply_dropout(X, dropout_rate):
 # Fused activation functions to fuse operations and reduce kernel launches.
 @fuse()
 def fused_relu(x):
+    """Apply fused ReLU activation."""
     return cp.where(x > 0, x, 0)
 
 
 @fuse()
 def fused_sigmoid(x):
+    """Apply fused sigmoid activation."""
     return 1 / (1 + cp.exp(-x))
 
 
 @fuse()
 def fused_leaky_relu(x, alpha=0.01):
+    """Apply fused leaky ReLU activation."""
     return cp.where(x > 0, x, alpha * x)
 
 
 # Optimized forward pass with in-place operations and fused kernels.
 def forward_cupy(X, weights, biases, activations, dropout_rate, training, is_binary):
+    """Perform forward pass using CuPy with fused and in-place operations."""
     num_layers = len(weights)
     layer_outputs = [X]
     for i in range(num_layers - 1):
@@ -82,6 +87,7 @@ def forward_cupy(X, weights, biases, activations, dropout_rate, training, is_bin
 def backward_cupy(
     layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs
 ):
+    """Perform backward pass using CuPy with fused derivative computations."""
     m = y.shape[0]
     num_layers = len(weights)
     outputs = layer_outputs[-1]
@@ -122,6 +128,7 @@ def backward_cupy(
 
 # Optimized loss functions.
 def logsumexp(a, axis=None, keepdims=False):
+    """Compute log-sum-exp for numerical stability."""
     a_max = cp.max(a, axis=axis, keepdims=True)
     out = cp.log(cp.sum(cp.exp(a - a_max), axis=axis, keepdims=True)) + a_max
     if not keepdims:
@@ -130,6 +137,7 @@ def logsumexp(a, axis=None, keepdims=False):
 
 
 def calculate_cross_entropy_loss(logits, targets):
+    """Calculate cross-entropy loss for multi-class classification."""
     n = logits.shape[0]
     c_i = cp.argmax(targets, axis=1)
     loss = cp.mean(logsumexp(logits, axis=1) - logits[cp.arange(n), c_i])
@@ -137,6 +145,7 @@ def calculate_cross_entropy_loss(logits, targets):
 
 
 def calculate_bce_with_logits_loss(logits, targets):
+    """Calculate binary cross-entropy loss with logits."""
     # Numerically stable BCE with logits formulation.
     loss = cp.mean(
         cp.maximum(logits, 0) - logits * targets + cp.log1p(cp.exp(-cp.abs(logits)))
@@ -145,6 +154,7 @@ def calculate_bce_with_logits_loss(logits, targets):
 
 
 def calculate_loss_from_outputs_binary(outputs, y, weights, reg_lambda):
+    """Calculate binary classification loss with L2 regularization."""
     loss = calculate_bce_with_logits_loss(outputs, y)
     if isinstance(weights, list):
         l2_reg = reg_lambda * cp.sum([cp.sum(w**2) for w in weights])
@@ -153,6 +163,7 @@ def calculate_loss_from_outputs_binary(outputs, y, weights, reg_lambda):
 
 
 def calculate_loss_from_outputs_multi(outputs, y, weights, reg_lambda):
+    """Calculate multi-class classification loss with L2 regularization."""
     loss = calculate_cross_entropy_loss(outputs, y)
     if isinstance(weights, list):
         l2_reg = reg_lambda * cp.sum([cp.sum(w**2) for w in weights])
@@ -161,6 +172,7 @@ def calculate_loss_from_outputs_multi(outputs, y, weights, reg_lambda):
 
 
 def evaluate_batch(y_hat, y_true, is_binary):
+    """Evaluate batch accuracy for binary or multi-class classification."""
     if is_binary:
         predicted = (y_hat > 0.5).astype(cp.int32).ravel()
         accuracy = cp.mean(predicted == y_true.ravel())

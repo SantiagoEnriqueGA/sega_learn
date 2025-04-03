@@ -4,19 +4,15 @@ import numpy as np
 
 
 class ClassifierTreeUtility:
-    """
-    Utility class for computing entropy, partitioning classes, and calculating information gain.
-    """
-
+    """Utility class for computing entropy, partitioning classes, and calculating information gain."""
     def entropy(self, class_y):
-        """
-        Computes the entropy for a given class.
+        """Computes the entropy for a given class.
 
-        Parameters:
-        - class_y (array-like): The class labels.
+        Args:
+            class_y: (array-like) - The class labels.
 
         Returns:
-        - float: The entropy value.
+            float: The entropy value.
         """
         # Handle empty arrays
         if len(class_y) == 0:
@@ -34,20 +30,19 @@ class ClassifierTreeUtility:
         return -np.dot(non_zero_probs, np.log2(non_zero_probs))
 
     def partition_classes(self, X, y, split_attribute, split_val):
-        """
-        Partitions the dataset into two subsets based on a given split attribute and value.
+        """Partitions the dataset into two subsets based on a given split attribute and value.
 
-        Parameters:
-        - X (array-like): The input features.
-        - y (array-like): The target labels.
-        - split_attribute (int): The index of the attribute to split on.
-        - split_val (float): The value to split the attribute on.
+        Args:
+            X: (array-like) - The input features.
+            y: (array-like) - The target labels.
+            split_attribute: (int) - The index of the attribute to split on.
+            split_val: (float) - The value to split the attribute on.
 
         Returns:
-        - X_left  (array-like): The subset of input features where the split attribute is less than or equal to the split value.
-        - X_right (array-like): The subset of input features where the split attribute is greater than the split value.
-        - y_left  (array-like): The subset of target labels corresponding to X_left.
-        - y_right (array-like): The subset of target labels corresponding to X_right.
+            X_left:  (array-like) - The subset of input features where the split attribute is less than or equal to the split value.
+            X_right: (array-like) - The subset of input features where the split attribute is greater than the split value.
+            y_left:  (array-like) - The subset of target labels corresponding to X_left.
+            y_right: (array-like) - The subset of target labels corresponding to X_right.
         """
         # Convert X and y to NumPy arrays for faster computation
         X = np.array(X)
@@ -70,15 +65,14 @@ class ClassifierTreeUtility:
         return X_left, X_right, y_left, y_right  # Return the partitioned subsets
 
     def information_gain(self, previous_y, current_y):
-        """
-        Calculates the information gain between the previous and current values of y.
+        """Calculates the information gain between the previous and current values of y.
 
-        Parameters:
-        - previous_y (array-like): The previous values of y.
-        - current_y (array-like): The current values of y.
+        Args:
+            previous_y: (array-like) - The previous values of y.
+            current_y: (array-like) - The current values of y.
 
         Returns:
-        - float: The information gain between the previous and current values of y.
+            float: The information gain between the previous and current values of y.
         """
         entropy_prev = self.entropy(
             previous_y
@@ -101,16 +95,15 @@ class ClassifierTreeUtility:
         return info_gain
 
     def best_split(self, X, y):
-        """
-        Finds the best attribute and value to split the data based on information gain.
+        """Finds the best attribute and value to split the data based on information gain.
 
-        Parameters:
-        - X (array-like): The input features.
-        - y (array-like): The target variable.
+        Args:
+            X: (array-like) - The input features.
+            y: (array-like) - The target variable.
 
         Returns:
-        - dict: A dictionary containing the best split attribute, split value, left and right subsets of X and y,
-                and the information gain achieved by the split.
+            dict: A dictionary containing the best split attribute, split value, left and right subsets of X and y,
+                  and the information gain achieved by the split.
         """
         # Check type of X and y
         if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
@@ -199,46 +192,42 @@ class ClassifierTreeUtility:
 
 
 class ClassifierTree:
-    """
-    A class representing a decision tree.
+    """A class representing a decision tree.
 
-    Parameters:
-    - max_depth (int): The maximum depth of the decision tree.
+    Args:
+        max_depth: (int) - The maximum depth of the decision tree.
 
     Methods:
-    - learn(X, y, par_node={}, depth=0): Builds the decision tree based on the given training data.
-    - classify(record): Classifies a record using the decision tree.
-
+        learn(X, y, par_node={}, depth=0): Builds the decision tree based on the given training data.
+        classify(record): Classifies a record using the decision tree.
     """
-
     def __init__(self, max_depth=5):
+        """Initializes the ClassifierTree with a maximum depth."""
         self.tree = {}  # Initialize the tree as an empty dictionary
         self.max_depth = max_depth  # Set the maximum depth of the tree
         self.info_gain = []  # Initialize the information gain list
 
     def fit(self, X, y):
-        """
-        Fits the decision tree to the training data.
+        """Fits the decision tree to the training data.
 
-        Parameters:
-        - X (array-like): The input features.
-        - y (array-like): The target labels.
+        Args:
+            X: (array-like) - The input features.
+            y: (array-like) - The target labels.
         """
         self.tree = self.learn(X, y)
         return self.tree
 
     def learn(self, X, y, par_node=None, depth=0):
-        """
-        Builds the decision tree based on the given training data.
+        """Builds the decision tree based on the given training data.
 
-        Parameters:
-        - X (array-like): The input features.
-        - y (array-like): The target labels.
-        - par_node (dict): The parent node of the current subtree (default: {}).
-        - depth (int): The current depth of the subtree (default: 0).
+        Args:
+            X: (array-like) - The input features.
+            y: (array-like) - The target labels.
+            par_node: (dict) - The parent node of the current subtree (default: {}).
+            depth: (int) - The current depth of the subtree (default: 0).
 
         Returns:
-        - dict: The learned decision tree.
+            dict: The learned decision tree.
         """
         # Check type of X and y
         if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
@@ -291,15 +280,14 @@ class ClassifierTree:
 
     @staticmethod
     def classify(tree, record):
-        """
-        Classifies a given record using the decision tree.
+        """Classifies a given record using the decision tree.
 
-        Parameters:
-        - tree (dict): The decision tree.
-        - record (dict): A dictionary representing the record to be classified.
+        Args:
+            tree: (dict) - The decision tree.
+            record: (dict) - A dictionary representing the record to be classified.
 
         Returns:
-        - The label assigned to the record based on the decision tree.
+            The label assigned to the record based on the decision tree.
         """
         # If tree is empty return None
         if tree is None or tree == {}:
@@ -314,14 +302,13 @@ class ClassifierTree:
             return ClassifierTree.classify(tree["right"], record)
 
     def predict(self, X):
-        """
-        Predicts the labels for a given set of records using the decision tree.
+        """Predicts the labels for a given set of records using the decision tree.
 
-        Parameters:
-        - X (array-like): The input features.
+        Args:
+            X: (array-like) - The input features.
 
         Returns:
-        - list: A list of predicted labels for each record.
+            list: A list of predicted labels for each record.
         """
         if self.tree is None or self.tree == {}:
             return None

@@ -9,16 +9,15 @@ from numba import njit, prange
 
 @njit(parallel=True, fastmath=True)
 def _identify_core_points(dist_matrix, eps, min_samples):
-    """
-    Identify core points based on the distance matrix, eps, and min_samples.
+    """Identify core points based on the distance matrix, eps, and min_samples.
 
-    Parameters:
-    - dist_matrix: Pairwise distance matrix.
-    - eps: Maximum distance for neighbors.
-    - min_samples: Minimum number of neighbors to be a core point.
+    Args:
+        dist_matrix: Pairwise distance matrix.
+        eps: Maximum distance for neighbors.
+        min_samples: Minimum number of neighbors to be a core point.
 
     Returns:
-    - core_points: Boolean array indicating core points.
+        core_points: Boolean array indicating core points.
     """
     n_points = dist_matrix.shape[0]
     core_points = np.zeros(n_points, dtype=np.bool_)
@@ -36,16 +35,15 @@ def _identify_core_points(dist_matrix, eps, min_samples):
 
 @njit(parallel=False, fastmath=True)
 def _assign_clusters(dist_matrix, core_points, eps):
-    """
-    Assign cluster labels using depth-first search (DFS) starting from core points.
+    """Assign cluster labels using depth-first search (DFS) starting from core points.
 
-    Parameters:
-    - dist_matrix: Pairwise distance matrix.
-    - core_points: Boolean array indicating core points.
-    - eps: Maximum distance for neighbors.
+    Args:
+        dist_matrix: Pairwise distance matrix.
+        core_points: Boolean array indicating core points.
+        eps: Maximum distance for neighbors.
 
     Returns:
-    - labels: Cluster labels for each data point.
+        labels: Cluster labels for each data point.
     """
     n_points = dist_matrix.shape[0]
     labels = -1 * np.ones(n_points, dtype=np.int32)

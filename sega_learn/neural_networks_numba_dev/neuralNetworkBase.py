@@ -108,7 +108,7 @@ class NeuralNetworkBase:
     def calculate_precision_recall_f1(self, X, y):
         """
         Calculates precision, recall, and F1 score.
-        Parameters:
+        Args:
             - X (ndarray): Input data
             - y (ndarray): Target labels
         Returns:

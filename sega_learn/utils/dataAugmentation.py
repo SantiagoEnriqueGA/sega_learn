@@ -4,33 +4,34 @@ from sega_learn.nearest_neighbors import KNeighborsClassifier
 
 
 class _Utils:
-    """
-    Utility class for data augmentation techniques.
+    """Utility class for data augmentation techniques.
 
     This class provides methods to check if classes are balanced and to separate samples by class.
     """
 
     @staticmethod
     def check_class_balance(y):
-        """
-        Check the balance of classes in the given array.
-        Parameters:
-            y (array-like): Array of class labels.
+        """Checks the balance of classes in the given array.
+
+        Args:
+            y: (array-like) - Array of class labels.
+
         Returns:
-            tuple: A tuple containing the number of unique classes and an array of counts for each class.
+            tuple: (int, np.ndarray) - A tuple containing the number of unique classes and an array of counts for each class.
         """
         unique, counts = np.unique(y, return_counts=True)
         return len(unique), counts
 
     @staticmethod
     def separate_samples(X, y):
-        """
-        Separates samples based on their class labels.
-        Parameters:
-            X (numpy.ndarray): The input data samples.
-            y (numpy.ndarray): The class labels corresponding to the input data samples.
+        """Separates samples based on their class labels.
+
+        Args:
+            X: (np.ndarray) - The input data samples.
+            y: (np.ndarray) - The class labels corresponding to the input data samples.
+
         Returns:
-            dict: A dictionary where the keys are unique class labels and the values are arrays of samples belonging to each class.
+            dict: (dict) - A dictionary where the keys are unique class labels and the values are arrays of samples belonging to each class.
         """
         unique_classes = np.unique(y)
         separated_samples = {cls: X[y == cls] for cls in unique_classes}
@@ -38,24 +39,26 @@ class _Utils:
 
     @staticmethod
     def get_class_distribution(y):
-        """
-        Get the distribution of classes in the given array.
-        Parameters:
-            y (array-like): Array of class labels.
+        """Gets the distribution of classes in the given array.
+
+        Args:
+            y: (array-like) - Array of class labels.
+
         Returns:
-            dict: A dictionary where the keys are unique class labels and the values are their respective counts.
+            dict: (dict) - A dictionary where the keys are unique class labels and the values are their respective counts.
         """
         unique, counts = np.unique(y, return_counts=True)
         return dict(zip(unique, counts, strict=False))
 
     @staticmethod
     def get_minority_majority_classes(y):
-        """
-        Get the minority and majority classes from the given array.
-        Parameters:
-            y (array-like): Array of class labels.
+        """Gets the minority and majority classes from the given array.
+
+        Args:
+            y: (array-like) - Array of class labels.
+
         Returns:
-            tuple: A tuple containing the minority class and the majority class.
+            tuple: (int, int) - A tuple containing the minority class and the majority class.
         """
         unique, counts = np.unique(y, return_counts=True)
         minority_class = unique[np.argmin(counts)]
@@ -64,13 +67,14 @@ class _Utils:
 
     @staticmethod
     def validate_Xy(X, y):
-        """
-        Validate the input data and labels.
-        Parameters:
-            X (array-like): Feature matrix.
-            y (array-like): Target vector.
+        """Validates the input data and labels.
+
+        Args:
+            X: (array-like) - Feature matrix.
+            y: (array-like) - Target vector.
+
         Raises:
-            ValueError: If the shapes of X and y do not match.
+            ValueError: If the shapes of X and y do not match or if they are not numpy arrays.
         """
         if len(X) != len(y):
             raise ValueError("The number of samples in X and y must be the same.")
@@ -81,8 +85,7 @@ class _Utils:
 
 
 class SMOTE:
-    """
-    Synthetic Minority Over-sampling Technique (SMOTE) for balancing class distribution.
+    """Synthetic Minority Over-sampling Technique (SMOTE) for balancing class distribution.
 
     SMOTE generates synthetic samples for the minority class by interpolating between existing samples.
     This helps to create a more balanced dataset, which can improve the performance of machine learning models.
@@ -95,21 +98,21 @@ class SMOTE:
     """
 
     def __init__(self, random_state=None, k_neighbors=5):
+        """Initializes the SMOTE with an optional random state and number of neighbors."""
         self.random_state = random_state
         self.k_neighbors = k_neighbors
 
     def fit_resample(self, X, y, force_equal=False):
-        """
-        Resample the dataset to balance the class distribution by generating synthetic samples.
-        Parameters:
-            X (array-like): Feature matrix.
-            y (array-like): Target vector.
-            force_equal (bool): If True, resample until classes are equal. Default is False.
-        Returns:
-            X_resampled (array-like): Resampled feature matrix.
-            y_resampled (array-like): Resampled target vector.
-        """
+        """Resamples the dataset to balance the class distribution by generating synthetic samples.
 
+        Args:
+            X: (array-like) - Feature matrix.
+            y: (array-like) - Target vector.
+            force_equal: (bool), optional - If True, resample until classes are equal (default is False).
+
+        Returns:
+            tuple: (np.ndarray, np.ndarray) - Resampled feature matrix and target vector.
+        """
         np.random.seed(self.random_state)
 
         # Validate input data
@@ -160,8 +163,7 @@ class SMOTE:
 
 
 class RandomOverSampler:
-    """
-    Randomly over-sample the minority class by duplicating examples.
+    """Randomly over-sample the minority class by duplicating examples.
 
     This technique helps to balance the class distribution by randomly duplicating samples from the minority class.
     It is a simple yet effective method to address class imbalance in datasets.
@@ -174,17 +176,18 @@ class RandomOverSampler:
     """
 
     def __init__(self, random_state=None):
+        """Initializes the RandomOverSampler with an optional random state."""
         self.random_state = random_state
 
     def fit_resample(self, X, y):
-        """
-        Resample the dataset to balance the class distribution by duplicating minority class samples.
-        Parameters:
-            X (array-like): Feature matrix.
-            y (array-like): Target vector.
+        """Resamples the dataset to balance the class distribution by duplicating minority class samples.
+
+        Args:
+            X: (array-like) - Feature matrix.
+            y: (array-like) - Target vector.
+
         Returns:
-            X_resampled (array-like): Resampled feature matrix.
-            y_resampled (array-like): Resampled target vector.
+            tuple: (np.ndarray, np.ndarray) - Resampled feature matrix and target vector.
         """
         np.random.seed(self.random_state)
 
@@ -221,8 +224,7 @@ class RandomOverSampler:
 
 
 class RandomUnderSampler:
-    """
-    Randomly under-sample the majority class by removing examples.
+    """Randomly under-sample the majority class by removing examples.
 
     This technique helps to balance the class distribution by randomly removing samples from the majority class.
     It is a simple yet effective method to address class imbalance in datasets.
@@ -235,17 +237,18 @@ class RandomUnderSampler:
     """
 
     def __init__(self, random_state=None):
+        """Initializes the RandomUnderSampler with an optional random state."""
         self.random_state = random_state
 
     def fit_resample(self, X, y):
-        """
-        Resample the dataset to balance the class distribution by removing majority class samples.
-        Parameters:
-            X (array-like): Feature matrix.
-            y (array-like): Target vector.
+        """Resamples the dataset to balance the class distribution by removing majority class samples.
+
+        Args:
+            X: (array-like) - Feature matrix.
+            y: (array-like) - Target vector.
+
         Returns:
-            X_resampled (array-like): Resampled feature matrix.
-            y_resampled (array-like): Resampled target vector.
+            tuple: (np.ndarray, np.ndarray) - Resampled feature matrix and target vector.
         """
         np.random.seed(self.random_state)
 
@@ -286,12 +289,13 @@ class RandomUnderSampler:
 
 
 class Augmenter:
-    """
-    General class for data augmentation techniques.
+    """General class for data augmentation techniques.
+
     This class allows for the application of multiple augmentation techniques in sequence.
     """
 
     def __init__(self, techniques, verbose=False):
+        """Initializes the Augmenter with a list of techniques and verbosity option."""
         if not isinstance(techniques, list):
             raise ValueError("techniques should be a list of augmentation techniques.")
         for technique in techniques:
@@ -302,6 +306,15 @@ class Augmenter:
         self.verbose = verbose
 
     def augment(self, X, y):
+        """Applies multiple augmentation techniques in sequence.
+
+        Args:
+            X: (np.ndarray) - Feature matrix.
+            y: (np.ndarray) - Target vector.
+
+        Returns:
+            tuple: (np.ndarray, np.ndarray) - Augmented feature matrix and target vector.
+        """
         if self.verbose:
             print("Starting data augmentation...")
 

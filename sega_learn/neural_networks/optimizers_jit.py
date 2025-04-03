@@ -21,8 +21,8 @@ spec_adam = [
 
 @jitclass(spec_adam)
 class JITAdamOptimizer:
-    """
-    Adam optimizer class for training neural networks.
+    """Adam optimizer class for training neural networks.
+
     Formula: w = w - alpha * m_hat / (sqrt(v_hat) + epsilon) - lambda * w
     Derived from: https://arxiv.org/abs/1412.6980
     Args:
@@ -33,9 +33,16 @@ class JITAdamOptimizer:
         reg_lambda (float, optional): The regularization parameter. Defaults to 0.01.
     """
 
-    def __init__(
-        self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8, reg_lambda=0.01
-    ):
+    def __init__(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8, reg_lambda=0.01):
+        """Initializes the optimizer with the specified hyperparameters.
+
+        Args:
+            learning_rate: (float), optional - The learning rate for the optimizer (default is 0.001).
+            beta1: (float), optional - Exponential decay rate for the first moment estimates (default is 0.9).
+            beta2: (float), optional - Exponential decay rate for the second moment estimates (default is 0.999).
+            epsilon: (float), optional - A small value to prevent division by zero (default is 1e-8).
+            reg_lambda: (float), optional - Regularization parameter; larger values imply stronger regularization (default is 0.01).
+        """
         self.learning_rate = learning_rate  # Learning rate, alpha
         self.beta1 = beta1  # Exponential decay rate for the first moment estimates
         self.beta2 = beta2  # Exponential decay rate for the second moment estimates
@@ -47,10 +54,13 @@ class JITAdamOptimizer:
         self.t = 0  # Time step
 
     def initialize(self, layers):
-        """
-        Initializes the first and second moment estimates for each layer's weights.
-        Args: layers (list): List of layers in the neural network.
-        Returns: None
+        """Initializes the first and second moment estimates for each layer's weights.
+
+        Args:
+            layers: (list) - List of layers in the neural network.
+
+        Returns:
+            None
         """
         num_layers = len(layers)
         max_rows = 0
@@ -74,14 +84,16 @@ class JITAdamOptimizer:
                     self.v[i, row, col] = 0.0
 
     def update(self, layer, dW, db, index):
-        """
-        Updates the weights and biases of a layer using the Adam optimization algorithm.
+        """Updates the weights and biases of a layer using the Adam optimization algorithm.
+
         Args:
-            layer (Layer): The layer to update.
-            dW (ndarray): The gradient of the weights.
-            db (ndarray): The gradient of the biases.
-            index (int): The index of the layer.
-        Returns: None
+            layer: (Layer) - The layer to update.
+            dW: (np.ndarray) - The gradient of the weights.
+            db: (np.ndarray) - The gradient of the biases.
+            index: (int) - The index of the layer.
+
+        Returns:
+            None
         """
         self.t += 1  # Increment time step
         self.m[index][: dW.shape[0], : dW.shape[1]] = (
@@ -106,6 +118,16 @@ class JITAdamOptimizer:
         layer.biases -= self.learning_rate * db  # Update biases
 
     def update_layers(self, layers, dWs, dbs):
+        """Updates all layers' weights and biases using the Adam optimization algorithm.
+
+        Args:
+            layers: (list) - List of layers in the neural network.
+            dWs: (list of np.ndarray) - Gradients of the weights for each layer.
+            dbs: (list of np.ndarray) - Gradients of the biases for each layer.
+
+        Returns:
+            None
+        """
         # Increment timestep by number of layers
         self.t += len(layers)
         adam_update_layers(
@@ -124,9 +146,25 @@ class JITAdamOptimizer:
 
 
 @njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
-def adam_update_layers(
-    m, v, t, layers, dWs, dbs, learning_rate, beta1, beta2, epsilon, reg_lambda
-):
+def adam_update_layers(m, v, t, layers, dWs, dbs, learning_rate, beta1, beta2, epsilon, reg_lambda):
+    """Performs parallelized Adam updates for all layers.
+
+    Args:
+        m: (np.ndarray) - First moment estimates.
+        v: (np.ndarray) - Second moment estimates.
+        t: (int) - Current time step.
+        layers: (list) - List of layers in the neural network.
+        dWs: (list of np.ndarray) - Gradients of the weights for each layer.
+        dbs: (list of np.ndarray) - Gradients of the biases for each layer.
+        learning_rate: (float) - Learning rate for the optimizer.
+        beta1: (float) - Exponential decay rate for the first moment estimates.
+        beta2: (float) - Exponential decay rate for the second moment estimates.
+        epsilon: (float) - Small value to prevent division by zero.
+        reg_lambda: (float) - Regularization parameter.
+
+    Returns:
+        None
+    """
     for i in prange(len(layers)):
         layer = layers[i]
         dW = dWs[i]
@@ -159,8 +197,8 @@ spec_sgd = [
 
 @jitclass(spec_sgd)
 class JITSGDOptimizer:
-    """
-    Stochastic Gradient Descent (SGD) optimizer class for training neural networks.
+    """Stochastic Gradient Descent (SGD) optimizer class for training neural networks.
+
     Formula: w = w - learning_rate * dW, b = b - learning_rate * db
     Args:
         learning_rate (float, optional): The learning rate for the optimizer. Defaults to 0.001.
@@ -169,16 +207,32 @@ class JITSGDOptimizer:
     """
 
     def __init__(self, learning_rate=0.001, momentum=0.0, reg_lambda=0.0):
+        """Initializes the optimizer with specified hyperparameters.
+
+        Args:
+            learning_rate: (float), optional - The learning rate for the optimizer (default is 0.001).
+            momentum: (float), optional - The momentum factor for the optimizer (default is 0.0).
+            reg_lambda: (float), optional - The regularization parameter (default is 0.0).
+
+        Attributes:
+            learning_rate: (float) - The learning rate for the optimizer.
+            momentum: (float) - The momentum factor for the optimizer.
+            reg_lambda: (float) - The regularization parameter.
+            velocity: (np.ndarray) - The velocity used for momentum updates, initialized to zeros.
+        """
         self.learning_rate = learning_rate  # Learning rate
         self.momentum = momentum  # Momentum factor
         self.reg_lambda = reg_lambda  # Regularization parameter
         self.velocity = np.zeros((1, 1, 1))  # Velocity for momentum
 
     def initialize(self, layers):
-        """
-        Initializes the velocity for each layer's weights.
-        Args: layers (list): List of layers in the neural network.
-        Returns: None
+        """Initializes the velocity for each layer's weights.
+
+        Args:
+            layers: (list) - List of layers in the neural network.
+
+        Returns:
+            None
         """
         num_layers = len(layers)
         max_rows = 0
@@ -198,14 +252,16 @@ class JITSGDOptimizer:
                     self.velocity[i, row, col] = 0.0
 
     def update(self, layer, dW, db, index):
-        """
-        Updates the weights and biases of a layer using the SGD optimization algorithm.
+        """Updates the weights and biases of a layer using the SGD optimization algorithm.
+
         Args:
-            layer (Layer): The layer to update.
-            dW (ndarray): The gradient of the weights.
-            db (ndarray): The gradient of the biases.
-            index (int): The index of the layer.
-        Returns: None
+            layer: (Layer) - The layer to update.
+            dW: (np.ndarray) - The gradient of the weights.
+            db: (np.ndarray) - The gradient of the biases.
+            index: (int) - The index of the layer.
+
+        Returns:
+           None
         """
         self.velocity[index][: dW.shape[0], : dW.shape[1]] = (
             self.momentum * self.velocity[index][: dW.shape[0], : dW.shape[1]]
@@ -222,6 +278,16 @@ class JITSGDOptimizer:
         )  # Update biases
 
     def update_layers(self, layers, dWs, dbs):
+        """Updates all layers' weights and biases using the SGD optimization algorithm.
+
+        Args:
+            layers: (list) - List of layers in the neural network.
+            dWs: (list of np.ndarray) - Gradients of the weights for each layer.
+            dbs: (list of np.ndarray) - Gradients of the biases for each layer.
+
+        Returns:
+            None
+        """
         sgd_update_layers(
             self.velocity,
             layers,
@@ -235,6 +301,20 @@ class JITSGDOptimizer:
 
 @njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
 def sgd_update_layers(velocity, layers, dWs, dbs, learning_rate, momentum, reg_lambda):
+    """Performs parallelized SGD updates for all layers.
+
+    Args:
+        velocity: (np.ndarray) - Velocity for momentum.
+        layers: (list) - List of layers in the neural network.
+        dWs: (list of np.ndarray) - Gradients of the weights for each layer.
+        dbs: (list of np.ndarray) - Gradients of the biases for each layer.
+        learning_rate: (float) - Learning rate for the optimizer.
+        momentum: (float) - Momentum factor.
+        reg_lambda: (float) - Regularization parameter.
+
+    Returns:
+        None
+    """
     for i in prange(len(layers)):
         layer = layers[i]
         dW = dWs[i]
@@ -266,8 +346,8 @@ spec_adadelta = [
 
 @jitclass(spec_adadelta)
 class JITAdadeltaOptimizer:
-    """
-    Adadelta optimizer class for training neural networks.
+    """Adadelta optimizer class for training neural networks.
+
     Formula:
         E[g^2]_t = rho * E[g^2]_{t-1} + (1 - rho) * g^2
         Delta_x = - (sqrt(E[delta_x^2]_{t-1} + epsilon) / sqrt(E[g^2]_t + epsilon)) * g
@@ -281,6 +361,18 @@ class JITAdadeltaOptimizer:
     """
 
     def __init__(self, learning_rate=1.0, rho=0.95, epsilon=1e-6, reg_lambda=0.0):
+        """Initializes the optimizer with specified hyperparameters.
+
+        Args:
+            learning_rate: (float), optional - The learning rate for the optimizer (default is 1.0).
+            rho: (float), optional - The decay rate for the running averages (default is 0.95).
+            epsilon: (float), optional - A small value to prevent division by zero (default is 1e-6).
+            reg_lambda: (float), optional - The regularization parameter (default is 0.0).
+
+        Attributes:
+            E_g2: (np.ndarray) - Running average of squared gradients.
+            E_delta_x2: (np.ndarray) - Running average of squared parameter updates.
+        """
         self.learning_rate = learning_rate  # Learning rate
         self.rho = rho  # Decay rate
         self.epsilon = epsilon  # Small value to prevent division by zero
@@ -292,10 +384,13 @@ class JITAdadeltaOptimizer:
         )  # Running average of squared parameter updates
 
     def initialize(self, layers):
-        """
-        Initializes the running averages for each layer's weights.
-        Args: layers (list): List of layers in the neural network.
-        Returns: None
+        """Initializes the running averages for each layer's weights.
+
+        Args:
+            layers: (list) - List of layers in the neural network.
+
+        Returns:
+            None
         """
         num_layers = len(layers)
         max_rows = 0
@@ -319,14 +414,16 @@ class JITAdadeltaOptimizer:
                     self.E_delta_x2[i, row, col] = 0.0
 
     def update(self, layer, dW, db, index):
-        """
-        Updates the weights and biases of a layer using the Adadelta optimization algorithm.
+        """Updates the weights and biases of a layer using the Adadelta optimization algorithm.
+
         Args:
-            layer (Layer): The layer to update.
-            dW (ndarray): The gradient of the weights.
-            db (ndarray): The gradient of the biases.
-            index (int): The index of the layer.
-        Returns: None
+            layer: (Layer) - The layer to update.
+            dW: (np.ndarray) - The gradient of the weights.
+            db: (np.ndarray) - The gradient of the biases.
+            index: (int) - The index of the layer.
+
+        Returns:
+            None
         """
         self.E_g2[index][: dW.shape[0], : dW.shape[1]] = self.rho * self.E_g2[index][
             : dW.shape[0], : dW.shape[1]
@@ -358,6 +455,16 @@ class JITAdadeltaOptimizer:
         )  # Update biases
 
     def update_layers(self, layers, dWs, dbs):
+        """Updates all layers' weights and biases using the Adadelta optimization algorithm.
+
+        Args:
+            layers: (list) - List of layers in the neural network.
+            dWs: (list of np.ndarray) - Gradients of the weights for each layer.
+            dbs: (list of np.ndarray) - Gradients of the biases for each layer.
+
+        Returns:
+            None
+        """
         adadelta_update_layers(
             self.E_g2,
             self.E_delta_x2,
@@ -372,9 +479,23 @@ class JITAdadeltaOptimizer:
 
 
 @njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
-def adadelta_update_layers(
-    E_g2, E_delta_x2, layers, dWs, dbs, learning_rate, rho, epsilon, reg_lambda
-):
+def adadelta_update_layers(E_g2, E_delta_x2, layers, dWs, dbs, learning_rate, rho, epsilon, reg_lambda):
+    """Performs parallelized Adadelta updates for all layers.
+
+    Args:
+        E_g2: (np.ndarray) - Running average of squared gradients.
+        E_delta_x2: (np.ndarray) - Running average of squared parameter updates.
+        layers: (list) - List of layers in the neural network.
+        dWs: (list of np.ndarray) - Gradients of the weights for each layer.
+        dbs: (list of np.ndarray) - Gradients of the biases for each layer.
+        learning_rate: (float) - Learning rate for the optimizer.
+        rho: (float) - Decay rate.
+        epsilon: (float) - Small value to prevent division by zero.
+        reg_lambda: (float) - Regularization parameter.
+
+    Returns:
+        None
+    """
     for i in prange(len(layers)):
         layer = layers[i]
         dW = dWs[i]

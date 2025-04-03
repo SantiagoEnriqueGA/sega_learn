@@ -94,14 +94,17 @@ exclude = [
     # TID = flake8-tidy-imports
     # D = pydocstyle (docstring style checker) 
 
-# TODO: Add and fix D (pydocstyle) errors
+# TODO: Add and fix D (pydocstyle) errors in tests/ folder
 select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "TID"]
+# select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "TID", "D"]
+
 
 # Add the specific codes to ignore
-ignore = ["F403", "F405", "E501"]
-# TODO: Remove F403 and F405 errors
+ignore = ["F403", "F405", "E501", "D100", "D104"]
 # F403/405 are "import *" statements
 # E501 is line length (ruff format . will still try to wrap lines)
+# D100 is missing docstring in public module
+# D104 is missing docstring in public package
 
 # Keep fixable settings
 fixable = ["ALL"]

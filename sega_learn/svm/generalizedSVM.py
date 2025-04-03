@@ -4,6 +4,37 @@ from .baseSVM import BaseSVM
 
 
 class GeneralizedSVR(BaseSVM):
+    """GeneralizedSVR: A Support Vector Regression (SVR) model with support for multiple kernels.
+
+    This class implements an SVR model using gradient descent for optimization. It supports
+    linear and non-linear kernels, including polynomial and RBF kernels.
+
+    Attributes:
+        C (float): Regularization parameter. Default is 1.0.
+        tol (float): Tolerance for stopping criteria. Default is 1e-4.
+        max_iter (int): Maximum number of iterations for gradient descent. Default is 1000.
+        learning_rate (float): Learning rate for gradient descent. Default is 0.01.
+        epsilon (float): Epsilon parameter for epsilon-insensitive loss. Default is 0.1.
+        kernel (str): Kernel type ('linear', 'poly', 'rbf'). Default is 'linear'.
+        degree (int): Degree of the polynomial kernel function ('poly'). Ignored by other kernels. Default is 3.
+        gamma (str or float): Kernel coefficient for 'rbf' and 'poly'. Default is 'scale'.
+        coef0 (float): Independent term in kernel function ('poly'). Default is 0.0.
+
+    Methods:
+        __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, epsilon=0.1, kernel="linear", degree=3, gamma="scale", coef0=0.0):
+            Initialize the GeneralizedSVR model with specified hyperparameters.
+        _fit(self, X, y):
+            Fit the GeneralizedSVR model to the training data using gradient descent.
+        predict(self, X):
+            Predict continuous target values for input samples.
+        decision_function(self, X):
+            Compute raw decision function values for input samples.
+        score(self, X, y):
+            Compute the coefficient of determination (R² score) for the model's predictions.
+
+    Raises:
+        ValueError: If numerical instability is detected during training.
+    """
     def __init__(
         self,
         C=1.0,
@@ -16,6 +47,19 @@ class GeneralizedSVR(BaseSVM):
         gamma="scale",
         coef0=0.0,
     ):
+        """Initializes the GeneralizedSVR model with specified hyperparameters.
+
+        Args:
+            C: (float) - Regularization parameter. Default is 1.0.
+            tol: (float) - Tolerance for stopping criteria. Default is 1e-4.
+            max_iter: (int) - Maximum number of iterations for gradient descent. Default is 1000.
+            learning_rate: (float) - Learning rate for gradient descent. Default is 0.01.
+            epsilon: (float) - Epsilon parameter for epsilon-insensitive loss. Default is 0.1.
+            kernel: (str) - Kernel type ('linear', 'poly', 'rbf'). Default is 'linear'.
+            degree: (int) - Degree of the polynomial kernel function ('poly'). Ignored by other kernels. Default is 3.
+            gamma: (str or float) - Kernel coefficient for 'rbf' and 'poly'. Default is 'scale'.
+            coef0: (float) - Independent term in kernel function ('poly'). Default is 0.0.
+        """
         super().__init__(
             C,
             tol,
@@ -30,9 +74,7 @@ class GeneralizedSVR(BaseSVM):
         self.epsilon = epsilon
 
     def _fit(self, X, y):
-        """
-        Fit the SVR model using gradient descent with support for multiple kernels.
-        """
+        """Fit the GeneralizedSVR model to the training data using gradient descent."""
         n_samples, n_features = X.shape
         self.w = np.zeros(n_features) if self.kernel == "linear" else None
         self.b = 0.0
@@ -130,15 +172,11 @@ class GeneralizedSVR(BaseSVM):
         return self
 
     def predict(self, X):
-        """
-        Predict continuous target values for input samples.
-        """
+        """Predict continuous target values for input samples."""
         return self.decision_function(X)
 
     def decision_function(self, X):
-        """
-        Compute raw decision function values.
-        """
+        """Compute raw decision function values for input samples."""
         if self.kernel == "linear":
             return np.dot(X, self.w) + self.b
         else:
@@ -146,9 +184,7 @@ class GeneralizedSVR(BaseSVM):
             return np.dot(K, self.support_vector_alphas_) + self.b
 
     def score(self, X, y):
-        """
-        Compute the coefficient of determination (R² score).
-        """
+        """Compute the coefficient of determination (R² score) for the model's predictions."""
         y_pred = self.predict(X)
         u = ((y - y_pred) ** 2).sum()
         v = ((y - y.mean()) ** 2).sum()
@@ -156,6 +192,40 @@ class GeneralizedSVR(BaseSVM):
 
 
 class GeneralizedSVC(BaseSVM):
+    """GeneralizedSVC: A Support Vector Classifier (SVC) model with support for multiple kernels.
+
+    This class implements an SVC model using gradient descent for optimization. It supports
+    linear and non-linear kernels, including polynomial and RBF kernels.
+
+    Attributes:
+        C (float): Regularization parameter. Default is 1.0.
+        tol (float): Tolerance for stopping criteria. Default is 1e-4.
+        max_iter (int): Maximum number of iterations for gradient descent. Default is 1000.
+        learning_rate (float): Learning rate for gradient descent. Default is 0.01.
+        kernel (str): Kernel type ('linear', 'poly', 'rbf'). Default is 'linear'.
+        degree (int): Degree of the polynomial kernel function ('poly'). Ignored by other kernels. Default is 3.
+        gamma (str or float): Kernel coefficient for 'rbf' and 'poly'. Default is 'scale'.
+        coef0 (float): Independent term in kernel function ('poly'). Default is 0.0.
+
+    Methods:
+        __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, kernel="linear", degree=3, gamma="scale", coef0=0.0):
+            Initialize the GeneralizedSVC model with specified hyperparameters.
+        _fit(self, X, y):
+            Fit the GeneralizedSVC model to the training data using gradient descent.
+        _predict_binary(self, X):
+            Predict binary class labels for input samples.
+        _predict_multiclass(self, X):
+            Predict multi-class labels using one-vs-rest strategy.
+        decision_function(self, X):
+            Compute raw decision function values for input samples.
+        _score_binary(self, X, y):
+            Compute the accuracy score for binary classification.
+        _score_multiclass(self, X, y):
+            Compute the accuracy score for multi-class classification.
+
+    Raises:
+        ValueError: If numerical instability is detected during training.
+    """
     def __init__(
         self,
         C=1.0,
@@ -167,6 +237,18 @@ class GeneralizedSVC(BaseSVM):
         gamma="scale",
         coef0=0.0,
     ):
+        """Initializes the GeneralizedSVC model with specified hyperparameters.
+
+        Args:
+            C: (float) - Regularization parameter. Default is 1.0.
+            tol: (float) - Tolerance for stopping criteria. Default is 1e-4.
+            max_iter: (int) - Maximum number of iterations for gradient descent. Default is 1000.
+            learning_rate: (float) - Learning rate for gradient descent. Default is 0.01.
+            kernel: (str) - Kernel type ('linear', 'poly', 'rbf'). Default is 'linear'.
+            degree: (int) - Degree of the polynomial kernel function ('poly'). Ignored by other kernels. Default is 3.
+            gamma: (str or float) - Kernel coefficient for 'rbf' and 'poly'. Default is 'scale'.
+            coef0: (float) - Independent term in kernel function ('poly'). Default is 0.0.
+        """
         super().__init__(
             C,
             tol,
@@ -180,9 +262,7 @@ class GeneralizedSVC(BaseSVM):
         )
 
     def _fit(self, X, y):
-        """
-        Fit the SVC model using gradient descent with support for multiple kernels.
-        """
+        """Fit the GeneralizedSVC model to the training data using gradient descent."""
         n_samples, n_features = X.shape
         # For binary classification, convert labels to {-1, 1}
         y_binary = np.where(y > 0, 1, -1)
@@ -272,16 +352,12 @@ class GeneralizedSVC(BaseSVM):
         return self
 
     def _predict_binary(self, X):
-        """
-        Predict binary class labels for input samples.
-        """
+        """Predict binary class labels for input samples."""
         decision = self.decision_function(X)
         return np.where(decision >= 0, self.classes_[1], self.classes_[0])
 
     def _predict_multiclass(self, X):
-        """
-        Predict multi-class labels using one-vs-rest strategy.
-        """
+        """Predict multi-class labels using one-vs-rest strategy."""
         # Get decision values for each binary classifier
         decision_values = np.array(
             [model.decision_function(X) for model in self.models_]
@@ -290,21 +366,15 @@ class GeneralizedSVC(BaseSVM):
         return self.classes_[np.argmax(decision_values, axis=0)]
 
     def _score_binary(self, X, y):
-        """
-        Compute the accuracy score for binary classification.
-        """
+        """Compute the accuracy score for binary classification."""
         return np.mean(self.predict(X) == y)
 
     def _score_multiclass(self, X, y):
-        """
-        Compute the accuracy score for multi-class classification.
-        """
+        """Compute the accuracy score for multi-class classification."""
         return np.mean(self.predict(X) == y)
 
     def decision_function(self, X):
-        """
-        Compute raw decision function values.
-        """
+        """Compute raw decision function values for input samples."""
         if self.kernel == "linear" and self.w is not None:
             return np.dot(X, self.w) + self.b
         else:

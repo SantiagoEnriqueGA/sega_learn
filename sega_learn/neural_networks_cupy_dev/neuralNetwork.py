@@ -10,7 +10,7 @@ from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_ste
 class NeuralNetwork:
     """
     Neural network class for training and evaluating a custom neural network model.
-    Parameters:
+    Args:
         - layer_sizes (list): A list of integers representing the sizes of each layer in the neural network.
         - dropout_rate (float): The dropout rate to be applied during training. Default is 0.2.
         - reg_lambda (float): The regularization lambda value. Default is 0.01.
@@ -198,7 +198,7 @@ class NeuralNetwork:
     ):
         """
         Trains the neural network model.
-        Parameters:
+        Args:
             - X_train (ndarray): Training data features.
             - y_train (ndarray): Training data labels.
             - X_val (ndarray): Validation data features, optional.
@@ -351,7 +351,7 @@ class NeuralNetwork:
     def evaluate(self, X, y):
         """
         Evaluates the model performance.
-        Parameters:
+        Args:
             - X (ndarray): Input data (NumPy or CuPy array)
             - y (ndarray): Target labels (NumPy or CuPy array)
         Returns:
@@ -389,7 +389,7 @@ class NeuralNetwork:
     def predict(self, X):
         """
         Generate predictions for input data.
-        Parameters:
+        Args:
             - X (ndarray): Input data
         Returns:
             - predictions: Model predictions (class probabilities or labels)

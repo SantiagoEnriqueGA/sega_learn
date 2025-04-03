@@ -45,14 +45,15 @@ def _jit_compute_distances_minkowski(X, X_train, p):
 
 @njit(parallel=True, fastmath=True)
 def _numba_predict_regressor(distances, y_train, n_neighbors):
-    """
-    Numba-optimized helper function for KNN regression predictions.
-    Parameters:
-    - distances: 2D array of shape (n_samples, n_train_samples), precomputed distances.
-    - y_train: 1D array of shape (n_train_samples,), training labels.
-    - n_neighbors: int, number of nearest neighbors to consider.
+    """Numba-optimized helper function for KNN regression predictions.
+
+    Args:
+        distances (np.ndarray): 2D array of shape (n_samples, n_train_samples), precomputed distances.
+        y_train (np.ndarray): 1D array of shape (n_train_samples,), training labels.
+        n_neighbors (int): Number of nearest neighbors to consider.
+
     Returns:
-    - predictions: 1D array of shape (n_samples,), predicted values.
+        np.ndarray: 1D array of shape (n_samples,), predicted values.
     """
     n_samples = distances.shape[0]
     predictions = np.empty(n_samples, dtype=np.float64)
@@ -68,14 +69,15 @@ def _numba_predict_regressor(distances, y_train, n_neighbors):
 
 @njit(parallel=True, fastmath=True)
 def _numba_predict_classifier(distances, y_train, n_neighbors):
-    """
-    Numba-optimized helper function for KNN classification predictions.
-    Parameters:
-    - distances: 2D array of shape (n_samples, n_train_samples), precomputed distances.
-    - y_train: 1D array of shape (n_train_samples,), training labels.
-    - n_neighbors: int, number of nearest neighbors to consider.
+    """Numba-optimized helper function for KNN classification predictions.
+
+    Args:
+        distances (np.ndarray): 2D array of shape (n_samples, n_train_samples), precomputed distances.
+        y_train (np.ndarray): 1D array of shape (n_train_samples,), training labels.
+        n_neighbors (int): Number of nearest neighbors to consider.
+
     Returns:
-    - predictions: 1D array of shape (n_samples,), predicted class labels.
+        predictions (np.ndarray): 1D array of shape (n_samples,), predicted class labels.
     """
     n_samples = distances.shape[0]
     predictions = np.empty(n_samples, dtype=np.int32)

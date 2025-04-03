@@ -4,18 +4,19 @@ from .base import KNeighborsBase
 
 
 class KNeighborsClassifier(KNeighborsBase):
-    """
-    K-Nearest Neighbors classifier.
+    """K-Nearest Neighbors classifier.
+
     This class implements the k-nearest neighbors algorithm for classification.
     """
 
     def predict(self, X):
-        """
-        Predict the class labels for the provided data.
-        Parameters:
-        - X: array-like, shape (n_samples, n_features). The input data for which to predict the class labels.
+        """Predict the class labels for the provided data.
+
+        Args:
+            X: array-like, shape (n_samples, n_features) - The input data for which to predict the class labels.
+
         Returns:
-        - predictions: array, shape (n_samples,). The predicted class labels for the input data.
+            predictions: array, shape (n_samples,) - The predicted class labels for the input data.
         """
         # Apply one-hot encoding if specified
         if self.one_hot_encode:

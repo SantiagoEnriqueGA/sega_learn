@@ -22,18 +22,14 @@ recall = Metrics.recall
 f1 = Metrics.f1_score
 
 
-
-
 class AutoClassifier:
-    """
-    A class to automatically select and evaluate the best classification model for a given dataset.
-    It uses various classification models and compares their performance using metrics such as accuracy, precision, recall, F1 score, and ROC AUC.
+    """A class to automatically select and evaluate the best classification model for a given dataset.
+
+    Uses various classification models and compares their performance using metrics such as accuracy, precision, recall, F1 score, and ROC AUC.
     """
 
     def __init__(self):
-        """
-        Initializes the AutoClassifier with a set of predefined classification models.
-        """
+        """Initializes the AutoClassifier with a set of predefined classification models."""
         self.models = {
             # Linear Models - Not yet implemented
             # "LogisticRegression": LogisticRegression(),
@@ -81,20 +77,19 @@ class AutoClassifier:
         custom_metrics=None,
         verbose=False,
     ):
-        """
-        Fits the classification models to the training data and evaluates their performance.
+        """Fits the classification models to the training data and evaluates their performance.
 
         Args:
-            - X_train (np.ndarray): Training feature data.
-            - y_train (np.ndarray): Training target data.
-            - X_test (np.ndarray), optional: Testing feature data (default is None).
-            - y_test (np.ndarray), optional: Testing target data (default is None).
-            - custom_metrics (dict: str -> callable), optional: Custom metrics for evaluation (default is None).
-            - verbose (bool), optional: If True, prints progress (default is False).
+            X_train: (np.ndarray) - Training feature data.
+            y_train: (np.ndarray) - Training target data.
+            X_test: (np.ndarray), optional - Testing feature data (default is None).
+            y_test: (np.ndarray), optional - Testing target data (default is None).
+            custom_metrics: (dict: str -> callable), optional - Custom metrics for evaluation (default is None).
+            verbose: (bool), optional - If True, prints progress (default is False).
 
         Returns:
-            - results (list): A list of dictionaries containing model performance metrics.
-            - predictions (dict): A dictionary of predictions for each model.
+            results: (list) - A list of dictionaries containing model performance metrics.
+            predictions: (dict) - A dictionary of predictions for each model.
         """
         # Input validation
         if not isinstance(X_train, np.ndarray) or not isinstance(y_train, np.ndarray):
@@ -195,15 +190,14 @@ class AutoClassifier:
         return self.results, self.predictions
 
     def predict(self, X, model=None):
-        """
-        Generates predictions for the given input data using all fitted models.
+        """Generates predictions for the given input data using all fitted models.
 
         Args:
-            - X (np.ndarray): Input feature data.
-            - model (str), optional: Specific model name to use for predictions (default is None).
+            X: (np.ndarray) - Input feature data.
+            model: (str), optional - Specific model name to use for predictions (default is None).
 
         Returns:
-            - predictions (dict): A dictionary of predictions for each model.
+            predictions: (dict) - A dictionary of predictions for each model.
         """
         if model:
             if model not in self.models:
@@ -215,16 +209,15 @@ class AutoClassifier:
         return predictions
 
     def evaluate(self, y_true, custom_metrics=None, model=None):
-        """
-        Evaluates the performance of the fitted models using the provided true values.
+        """Evaluates the performance of the fitted models using the provided true values.
 
         Args:
-            - y_true (np.ndarray): True target values.
-            - custom_metrics (dict: str -> callable), optional: Custom metrics for evaluation (default is None).
-            - model (str), optional: Specific model name to evaluate (default is None).
+            y_true: (np.ndarray) - True target values.
+            custom_metrics: (dict: str -> callable), optional - Custom metrics for evaluation (default is None).
+            model: (str), optional - Specific model name to evaluate (default is None).
 
         Returns:
-            - evaluation_results (dict): A dictionary containing evaluation metrics for the specified model(s).
+            evaluation_results (dict) - A dictionary containing evaluation metrics for the specified model(s).
         """
         evaluation_results = {}
 
@@ -251,8 +244,8 @@ class AutoClassifier:
         return evaluation_results
 
     def summary(self):
-        """
-        Prints a summary of the performance of all fitted models, sorted by Accuracy, F1 Score, and time taken.
+        """Prints a summary of the performance of all fitted models, sorted by Accuracy, F1 Score, and time taken.
+
         Dynamically adjusts to display the metrics used during evaluation.
         """
         if not self.results:

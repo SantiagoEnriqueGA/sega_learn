@@ -1,5 +1,4 @@
-"""
-This module contains the implementation of a Random Forest Regressor.
+"""This module contains the implementation of a Random Forest Regressor.
 
 The module includes the following classes:
 - RandomForest: A class representing a Random Forest model.
@@ -17,8 +16,7 @@ from .treeRegressor import RegressorTree
 
 
 def _fit_tree(X, y, max_depth):
-    """
-    Helper function for parallel tree fitting. Fits a single tree on a bootstrapped sample.
+    """Helper function for parallel tree fitting. Fits a single tree on a bootstrapped sample.
 
     Args:
         X (array-like): The input features.
@@ -39,8 +37,7 @@ def _fit_tree(X, y, max_depth):
 
 
 def _predict_oob(X, trees, bootstraps):
-    """
-    Helper function for parallel out-of-bag predictions. Predicts using out-of-bag samples.
+    """Helper function for parallel out-of-bag predictions. Predicts using out-of-bag samples.
 
     Args:
         X (array-like): The input features.
@@ -71,8 +68,7 @@ def _predict_oob(X, trees, bootstraps):
 
 
 class RandomForestRegressor:
-    """
-    A class representing a Random Forest model for regression.
+    """A class representing a Random Forest model for regression.
 
     Atributes:
         forest_size (int): The number of trees in the forest.

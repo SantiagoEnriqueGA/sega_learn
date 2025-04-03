@@ -1,16 +1,15 @@
 class TrainingAnimator:
-    """
-    A utility class to create and manage training animations.
+    """A utility class to create and manage training animations.
+
     This class provides callback functions that can be used during model training.
     """
 
     def __init__(self, figure_size=(18, 10), dpi=100):
-        """
-        Initialize the animator with given figure size and DPI.
+        """Initialize the animator with given figure size and DPI.
 
-        Parameters:
-            figure_size (tuple): Size of the figure (width, height)
-            dpi (int): DPI for rendering
+        Args:
+            figure_size: (tuple) - Size of the figure (width, height)
+            dpi: (int) - DPI for rendering
         """
         try:
             import matplotlib.pyplot as plt  # noqa: F401
@@ -32,12 +31,11 @@ class TrainingAnimator:
         self.metric_to_ax = {}  # New dictionary to map metrics to axes
 
     def initialize(self, metrics_to_track, has_validation=False):
-        """
-        Initialize the animation with specified metrics.
+        """Initialize the animation with specified metrics.
 
-        Parameters:
-            metrics_to_track (list): List of metrics to track
-            has_validation (bool): Whether validation metrics are available
+        Args:
+            metrics_to_track: (list) - List of metrics to track
+            has_validation: (bool) - Whether validation metrics are available
         """
         import matplotlib.pyplot as plt
         import numpy as np
@@ -92,10 +90,9 @@ class TrainingAnimator:
         self.bg_cache = None
 
     def update_metrics(self, epoch_metrics, validation=False):
-        """
-        Update the stored metrics with new values.
+        """Update the stored metrics with new values.
 
-        Parameters:
+        Args:
             epoch_metrics (dict): Dictionary containing metric values
             validation (bool): Whether these are validation metrics
         """
@@ -113,16 +110,15 @@ class TrainingAnimator:
         fps=10,
         dpi=300,
     ):
-        """
-        Create an animation of the training metrics.
+        """Create an animation of the training metrics.
 
-        Parameters:
-            interval (int): Delay between frames in milliseconds
-            blit (bool): Whether to use blitting for efficient animation
-            save_path (str, optional): Path to save the animation
-            save_format (str): Format to save animation ('mp4', 'gif', etc.)
-            fps (int): Frames per second for the saved video
-            dpi (int): DPI for the saved animation
+        Args:
+            interval: (int) - Delay between frames in milliseconds
+            blit: (bool) - Whether to use blitting for efficient animation
+            save_path: (str - optional): Path to save the animation
+            save_format: (str) - Format to save animation ('mp4', 'gif', etc.)
+            fps: (int) - Frames per second for the saved video
+            dpi: (int) - DPI for the saved animation
 
         Returns:
             animation.FuncAnimation: Animation object
@@ -220,13 +216,12 @@ class TrainingAnimator:
         return self.anim
 
     def setup_training_video(self, filepath, fps=10, dpi=None):
-        """
-        Set up a video writer to capture training progress in real-time.
+        """Set up a video writer to capture training progress in real-time.
 
-        Parameters:
-            filepath (str): Path to save the video
-            fps (int): Frames per second
-            dpi (int, optional): DPI for rendering
+        Args:
+            filepath: (str) - Path to save the video
+            fps: (int) - Frames per second
+            dpi: (int, optional) - DPI for rendering
         """
         try:
             import os
@@ -295,6 +290,7 @@ class TrainingAnimator:
             raise
 
     def add_training_frame(self):
+        """Add a frame to the training video."""
         import matplotlib.pyplot as plt
 
         if self.writer is None:
@@ -324,9 +320,7 @@ class TrainingAnimator:
         self.frame_count += 1
 
     def finish_training_video(self, print_message=True):
-        """
-        Finish and save the training video.
-        """
+        """Finish and save the training video."""
         if self.writer is None:
             raise ValueError(
                 "Video writer not initialized. Call setup_training_video() first."

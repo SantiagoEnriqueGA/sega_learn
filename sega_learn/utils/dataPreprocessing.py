@@ -3,17 +3,17 @@ import pandas as pd
 
 
 def one_hot_encode(X, cols=None):
-    """
-    One-hot encodes non-numerical columns in a DataFrame or numpy array.
+    """One-hot encodes non-numerical columns in a DataFrame or numpy array.
+
     Drops the original columns after encoding.
 
-    Parameters:
-        - X (pandas.DataFrame or numpy.ndarray): The data to be encoded.
-        - cols (list): The list of column indices to be encoded. Defaults to None, which means all non-numerical columns will be encoded.
-            If None, the function will automatically detect non-numerical columns.
+    Args:
+        X: (pandas.DataFrame or numpy.ndarray) - The data to be encoded.
+        cols: (list), optional - The list of column indices to be encoded (default is None).
+            If None, all non-numerical columns will be encoded.
 
     Returns:
-        - X (pandas.DataFrame or numpy.ndarray): The data with one-hot encoded columns.
+        X: (pandas.DataFrame or numpy.ndarray) - The data with one-hot encoded columns.
     """
     is_dataframe = isinstance(X, pd.DataFrame)
     if not is_dataframe:
@@ -42,14 +42,13 @@ def one_hot_encode(X, cols=None):
 
 
 def _find_categorical_columns(X):
-    """
-    Finds the indices of non-numerical columns in a DataFrame or numpy array.
+    """Finds the indices of non-numerical columns in a DataFrame or numpy array.
 
-    Parameters:
-    - X (pandas.DataFrame or numpy.ndarray): The data to be checked.
+    Args:
+        X: (pandas.DataFrame or numpy.ndarray) - The data to be checked.
 
     Returns:
-    - categorical_cols (list): The list of indices of non-numerical columns.
+        categorical_cols: (list) - The list of indices of non-numerical columns.
     """
     if isinstance(X, np.ndarray):
         X = pd.DataFrame(X)  # Convert to DataFrame if not already
@@ -66,20 +65,19 @@ def _find_categorical_columns(X):
 
 
 def normalize(X, norm="l2"):
-    """
-    Normalizes the input data using the specified norm.
-    Uses L2 normalization by default.
+    """Normalizes the input data using the specified norm.
 
-    Parameters:
-        - X (numpy.ndarray): The input data to be normalized.
-        - norm (str): The type of norm to use for normalization. Default is 'l2'.
-            - 'l2': L2 normalization (Euclidean norm).
-            - 'l1': L1 normalization (Manhattan norm).
-            - 'max': Max normalization (divides by the maximum absolute value).
-            - 'minmax': Min-max normalization (scales to [0, 1]).
+    Args:
+        X: (numpy.ndarray) - The input data to be normalized.
+        norm: (str), optional - The type of norm to use for normalization (default is 'l2').
+            Options:
+                - 'l2': L2 normalization (Euclidean norm).
+                - 'l1': L1 normalization (Manhattan norm).
+                - 'max': Max normalization (divides by the maximum absolute value).
+                - 'minmax': Min-max normalization (scales to [0, 1]).
 
     Returns:
-        - X (numpy.ndarray): The normalized data.
+        X: (numpy.ndarray) - The normalized data.
     """
     # Ensure the data is in the correct shape and type
     if isinstance(X, pd.DataFrame):
@@ -115,16 +113,13 @@ def normalize(X, norm="l2"):
 
 
 class Scaler:
-    """
-    A class for scaling data by standardization and normalization.
-    """
+    """A class for scaling data by standardization and normalization."""
 
     def __init__(self, method="standard"):
-        """
-        Initializes the scaler with the specified method.
+        """Initializes the scaler with the specified method.
 
-        Parameters:
-            - method (str): The scaling method to use. Options are 'standard', 'minmax', or 'normalize'.
+        Args:
+            method: (str) - The scaling method to use. Options are 'standard', 'minmax', or 'normalize'.
         """
         if method not in ["standard", "minmax", "normalize"]:
             raise ValueError(f"Unsupported method: {method}")
@@ -137,11 +132,10 @@ class Scaler:
         self.norm = None
 
     def fit(self, X):
-        """
-        Fits the scaler to the data.
+        """Fits the scaler to the data.
 
-        Parameters:
-            - X (numpy.ndarray): The data to fit the scaler to.
+        Args:
+            X: (numpy.ndarray) - The data to fit the scaler to.
         """
         if self.method == "standard":
             self.mean = np.mean(X, axis=0)
@@ -157,14 +151,13 @@ class Scaler:
             raise ValueError(f"Unsupported method: {self.method}")
 
     def transform(self, X):
-        """
-        Transforms the data using the fitted scaler.
+        """Transforms the data using the fitted scaler.
 
-        Parameters:
-            - X (numpy.ndarray): The data to transform.
+        Args:
+            X: (numpy.ndarray) - The data to transform.
 
         Returns:
-            - X_transformed (numpy.ndarray): The transformed data.
+            X_transformed: (numpy.ndarray) - The transformed data.
         """
         if self.method == "standard":
             return (X - self.mean) / (self.std + 1e-8)
@@ -174,27 +167,25 @@ class Scaler:
             return X / (self.norm[:, np.newaxis] + 1e-8)
 
     def fit_transform(self, X):
-        """
-        Fits the scaler to the data and then transforms it.
+        """Fits the scaler to the data and then transforms it.
 
-        Parameters:
-            - X (numpy.ndarray): The data to fit and transform.
+        Args:
+            X: (numpy.ndarray) - The data to fit and transform.
 
         Returns:
-            - X_transformed (numpy.ndarray): The transformed data.
+            X_transformed: (numpy.ndarray) - The transformed data.
         """
         self.fit(X)
         return self.transform(X)
 
     def inverse_transform(self, X):
-        """
-        Inverse transforms the data using the fitted scaler.
+        """Inverse transforms the data using the fitted scaler.
 
-        Parameters:
-            - X (numpy.ndarray): The data to inverse transform.
+        Args:
+            X: (numpy.ndarray) - The data to inverse transform.
 
         Returns:
-            - X_inverse (numpy.ndarray): The inverse transformed data.
+            X_inverse: (numpy.ndarray) - The inverse transformed data.
         """
         if self.method == "standard":
             return X * self.std + self.mean

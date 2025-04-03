@@ -10,8 +10,7 @@ def train_test_split(
     shuffle=True,
     stratify=None,
 ):
-    """
-    Split arrays or matrices into random train and test subsets.
+    """Split arrays or matrices into random train and test subsets.
 
     Parameters
     ----------
@@ -42,7 +41,7 @@ def train_test_split(
         If not None, data is split in a stratified fashion, using this as
         the class labels.
 
-    Returns
+    Returns:
     -------
     splitting : list, length=2 * len(arrays)
         List containing train-test split of inputs.

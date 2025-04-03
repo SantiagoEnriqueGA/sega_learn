@@ -20,9 +20,58 @@ except ImportError:
 
 
 class BaseBackendNeuralNetwork(NeuralNetworkBase):
+    """A class representing a backend implementation of a neural network with support for forward propagation, backward propagation, training, evaluation, and hyperparameter tuning.
+
+    This class extends the `NeuralNetworkBase` class and provides additional functionality
+    for managing layers, applying dropout, calculating loss, and optimizing weights and biases.
+
+    Attributes:
+        layers (list): List of layer objects in the neural network.
+        layer_outputs (list): Outputs of each layer during forward propagation.
+        weights (list): Weights of each layer.
+        biases (list): Biases of each layer.
+        train_loss (list): Training loss values over epochs.
+        train_accuracy (list): Training accuracy values over epochs.
+        val_loss (list): Validation loss values over epochs.
+        val_accuracy (list): Validation accuracy values over epochs.
+        train_precision (list): Training precision values over epochs.
+        train_recall (list): Training recall values over epochs.
+        train_f1 (list): Training F1-score values over epochs.
+        val_precision (list): Validation precision values over epochs.
+        val_recall (list): Validation recall values over epochs.
+        val_f1 (list): Validation F1-score values over epochs.
+        learning_rates (list): Learning rates over epochs.
+
+    Methods:
+        __init__(layers, dropout_rate=0.2, reg_lambda=0.01, activations=None):
+            Initializes the neural network with the specified layers, dropout rate,
+            regularization parameter, and activation functions.
+        initialize_new_layers():
+            Initializes the layers of the neural network with random weights and biases.
+        forward(X, training=True):
+            Performs forward propagation through the neural network.
+        backward(y):
+            Performs backward propagation to calculate gradients for weight and bias updates.
+        fit(X_train, y_train, X_val=None, y_val=None, optimizer=None, epochs=100, batch_size=32, ...):
+            Fits the neural network to the training data.
+        train(X_train, y_train, X_val=None, y_val=None, optimizer=None, epochs=100, batch_size=32, ...):
+            Trains the neural network model with optional validation and early stopping.
+        evaluate(X, y):
+            Evaluates the model on the given data and returns accuracy and predictions.
+        predict(X):
+            Predicts the output for the given input data.
+        calculate_loss(X, y):
+            Calculates the loss with L2 regularization for the given input and target labels.
+        _create_optimizer(optimizer_type, learning_rate, JIT=False):
+            Helper method to create optimizer instances based on the specified type.
+        tune_hyperparameters(X_train, y_train, X_val, y_val, param_grid, ...):
+            Performs hyperparameter tuning using grid search.
+        train_with_animation_capture(X_train, y_train, X_val=None, y_val=None, ...):
+            Trains the neural network while capturing training metrics in real-time animation.
+    """
     def __init__(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None):
-        """
-        Initializes the Numba backend neural network.
+        """Initializes the Numba backend neural network.
+
         Args:
             layers (list): List of layer sizes or Layer objects.
             dropout_rate (float): Dropout rate for regularization.
@@ -36,8 +85,8 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             self.initialize_new_layers()
 
     def initialize_new_layers(self):
-        """
-        Initializes the layers of the neural network.
+        """Initializes the layers of the neural network.
+
         Each layer is created with the specified number of neurons and activation function.
         """
         for i in range(len(self.layer_sizes) - 1):
@@ -54,11 +103,12 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             self.biases.append(bias)
 
     def forward(self, X, training=True):
-        """
-        Performs forward propagation through the neural network.
+        """Performs forward propagation through the neural network.
+
         Args:
-            X (ndarray): Input data of shape (batch_size, input_size).
-            training (bool): Whether the network is in training mode (applies dropout).
+            X: (ndarray): - Input data of shape (batch_size, input_size).
+            training: (bool) - Whether the network is in training mode (applies dropout).
+
         Returns:
             ndarray: Output predictions of shape (batch_size, output_size).
         """
@@ -83,10 +133,10 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             )  # Softmax if multi-class and 2D output
 
     def backward(self, y):
-        """
-        Performs backward propagation to calculate the gradients.
-        Parameters:
-            y (ndarray): Target labels of shape (m, output_size).
+        """Performs backward propagation to calculate the gradients.
+
+        Args:
+            y: (ndarray) - Target labels of shape (m, output_size).
         """
         outputs = self.layer_outputs[-1]
 
@@ -126,9 +176,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         dpi=100,
         frame_every=1,
     ):
-        """
-        Fits the neural network to the training data.
-        """
+        """Fits the neural network to the training data."""
         # Call the train method
         return self.train(
             X_train,
@@ -174,28 +222,28 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         dpi=100,
         frame_every=1,
     ):
-        """
-        Trains the neural network model.
-        Parameters:
-            - X_train (ndarray): Training data features.
-            - y_train (ndarray): Training data labels.
-            - X_val (ndarray): Validation data features, optional.
-            - y_val (ndarray): Validation data labels, optional.
-            - optimizer (Optimizer): Optimizer for updating parameters (default: Adam, lr=0.0001).
-            - epochs (int): Number of training epochs (default: 100).
-            - batch_size (int): Batch size for mini-batch gradient descent (default: 32).
-            - early_stopping_threshold (int): Patience for early stopping (default: 10).
-            - lr_scheduler (Scheduler): Learning rate scheduler (default: None).
-            - p (bool): Whether to print training progress (default: True).
-            - use_tqdm (bool): Whether to use tqdm for progress bar (default: True).
-            - n_jobs (int): Number of jobs for parallel processing (default: 1).
-            - track_metrics (bool): Whether to track training metrics (default: False).
-            - track_adv_metrics (bool): Whether to track advanced metrics (default: False).
-            - save_animation (bool): Whether to save the animation of metrics (default: False).
-            - save_path (str): Path to save the animation file. File extension must be .mp4 or .gif (default: 'training_animation.mp4').
-            - fps (int): Frames per second for the saved animation (default: 1).
-            - dpi (int): DPI for the saved animation (default: 100).
-            - frame_every (int): Capture frame every N epochs (to reduce file size) (default: 1).
+        """Trains the neural network model.
+
+        Args:
+            X_train: (ndarray) - Training data features.
+            y_train: (ndarray) - Training data labels.
+            X_val: (ndarray) - Validation data features, optional.
+            y_val: (ndarray) - Validation data labels, optional.
+            optimizer: (Optimizer) - Optimizer for updating parameters (default: Adam, lr=0.0001).
+            epochs: (int) - Number of training epochs (default: 100).
+            batch_size: (int) - Batch size for mini-batch gradient descent (default: 32).
+            early_stopping_threshold: (int) - Patience for early stopping (default: 10).
+            lr_scheduler: (Scheduler) - Learning rate scheduler (default: None).
+            p: (bool) - Whether to print training progress (default: True).
+            use_tqdm: (bool) - Whether to use tqdm for progress bar (default: True).
+            n_jobs: (int) - Number of jobs for parallel processing (default: 1).
+            track_metrics: (bool) - Whether to track training metrics (default: False).
+            track_adv_metrics: (bool) - Whether to track advanced metrics (default: False).
+            save_animation: (bool) - Whether to save the animation of metrics (default: False).
+            save_path: (str) - Path to save the animation file. File extension must be .mp4 or .gif (default: 'training_animation.mp4').
+            fps: (int) - Frames per second for the saved animation (default: 1).
+            dpi: (int) - DPI for the saved animation (default: 100).
+            frame_every: (int) - Capture frame every N epochs (to reduce file size) (default: 1).
         """
         if use_tqdm and not TQDM_AVAILABLE:
             warnings.warn(
@@ -499,6 +547,16 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         return animator if save_animation else None
 
     def evaluate(self, X, y):
+        """Evaluates the model's performance on the given data.
+
+        Args:
+            X: (np.ndarray) - Input feature data for evaluation.
+            y: (np.ndarray) - True target labels corresponding to the input data.
+
+        Returns:
+            accuracy: (float) - The accuracy of the model's predictions.
+            predicted: (np.ndarray) - The predicted labels or classes for the input data.
+        """
         y_hat = self.forward(X, training=False)
         if self.is_binary:
             predicted = (y_hat > 0.5).astype(int)
@@ -510,17 +568,27 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         return accuracy, predicted
 
     def predict(self, X):
+        """Generates predictions for the given input data.
+
+        Args:
+            X: (np.ndarray) - Input feature data for which predictions are to be made.
+
+        Returns:
+            outputs: (np.ndarray) - Predicted outputs. If the model is binary, returns the raw outputs.
+                        Otherwise, returns the class indices with the highest probability.
+        """
         outputs = self.forward(X, training=False)
         return outputs if self.is_binary else np.argmax(outputs, axis=1)
 
     def calculate_loss(self, X, y):
-        """
-        Calculates the loss with L2 regularization.
-        Parameters:
-            - X (ndarray): Input data
-            - y (ndarray): Target labels
+        """Calculates the loss with L2 regularization.
+
+        Args:
+            X: (np.ndarray) - Input feature data.
+            y: (np.ndarray) - Target labels.
+
         Returns:
-            float: The calculated loss value
+            loss: (float) - The calculated loss value with L2 regularization.
         """
         # Get the output of the network (forward pass w/o dropout)
         outputs = self.forward(X, training=False)
@@ -565,20 +633,23 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         epochs=30,
         batch_size=32,
     ):
-        """
-        Performs hyperparameter tuning using grid search.
-        Parameters:
-            - X_train, y_train: Training data
-            - X_val, y_val: Validation data
-            - param_grid: Dict of parameters to try
-            - layer_configs: List of layer configurations
-            - optimizer_types: List of optimizer types
-            - lr_range: (min_lr, max_lr, num_steps) for learning rates
-            - epochs: Max epochs for each trial
-            - batch_size: Batch size for training
+        """Performs hyperparameter tuning using grid search.
+
+        Args:
+            X_train: (np.ndarray) - Training feature data.
+            y_train: (np.ndarray) - Training target data.
+            X_val: (np.ndarray) - Validation feature data.
+            y_val: (np.ndarray) - Validation target data.
+            param_grid: (dict) - Dictionary of parameters to try.
+            layer_configs: (list), optional - List of layer configurations (default is None).
+            optimizer_types: (list), optional - List of optimizer types (default is None).
+            lr_range: (tuple) - Tuple of (min_lr, max_lr, num_steps) for learning rates.
+            epochs: (int) - Maximum epochs for each trial.
+            batch_size: (int) - Batch size for training.
+
         Returns:
-            - best_params: Best hyperparameters found
-            - best_accuracy: Best validation accuracy
+            best_params: (dict) - Best hyperparameters found.
+            best_accuracy: (float) - Best validation accuracy.
         """
         if not TQDM_AVAILABLE:
             # TODO: Make tqdm optional for hyperparameter tuning
@@ -681,13 +752,9 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                             # Update progress
                             pbar.update(1)
 
-        print(
-            f"\nBest configuration: {best_optimizer_type} optimizer with lr={best_params['learning_rate']}"
-        )
+        print(f"\nBest configuration: {best_optimizer_type} optimizer with lr={best_params['learning_rate']}")
         print(f"Layers: {best_params['layers']}")
-        print(
-            f"Parameters: dropout={best_params['dropout_rate']}, reg_lambda={best_params['reg_lambda']}"
-        )
+        print(f"Parameters: dropout={best_params['dropout_rate']}, reg_lambda={best_params['reg_lambda']}")
         print(f"Validation accuracy: {best_accuracy:.4f}")
 
         # Add best optimizer type to best_params
@@ -711,25 +778,25 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         dpi=100,
         frame_every=1,
     ):
-        """
-        Trains the neural network model while capturing training metrics in real-time animation.
+        """Trains the neural network model while capturing training metrics in real-time animation.
 
-        Parameters:
-            - X_train, y_train: Training data
-            - X_val, y_val: Validation data (optional)
-            - optimizer: Optimizer for updating parameters
-            - epochs: Number of training epochs
-            - batch_size: Batch size for mini-batch gradient descent
-            - early_stopping_threshold: Patience for early stopping
-            - lr_scheduler: Learning rate scheduler
-            - save_path: Path to save the animation file
-            - fps: Frames per second for the saved animation
-            - dpi: DPI for the saved animation
-            - writer: Animation writer ('ffmpeg', 'pillow', etc.)
-            - frame_every: Capture frame every N epochs (to reduce file size)
+        Args:
+            X_train: (np.ndarray) - Training feature data.
+            y_train: (np.ndarray) - Training target data.
+            X_val: (np.ndarray), optional - Validation feature data (default is None).
+            y_val: (np.ndarray), optional - Validation target data (default is None).
+            optimizer: (Optimizer), optional - Optimizer for updating parameters (default is None).
+            epochs: (int), optional - Number of training epochs (default is 100).
+            batch_size: (int), optional - Batch size for mini-batch gradient descent (default is 32).
+            early_stopping_threshold: (int), optional - Patience for early stopping (default is 10).
+            lr_scheduler: (Scheduler), optional - Learning rate scheduler (default is None).
+            save_path: (str), optional - Path to save the animation file (default is 'training_animation.mp4').
+            fps: (int), optional - Frames per second for the saved animation (default is 1).
+            dpi: (int), optional - DPI for the saved animation (default is 100).
+            frame_every: (int), optional - Capture frame every N epochs (default is 1).
 
         Returns:
-            - None
+            None
         """
         import os
 

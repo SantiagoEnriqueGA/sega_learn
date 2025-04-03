@@ -5,44 +5,40 @@ from sega_learn.utils import DataPrep
 
 
 class KMeans:
-    """
-    This class implements the K-Means clustering algorithm along with methods for evaluating the optimal number of clusters
-    and visualizing the clustering results.
+    """This class implements the K-Means clustering algorithm along with methods for evaluating the optimal number of clusters and visualizing the clustering results.
 
-    Parameters:
-    - X: The data matrix (numpy array).
-    - n_clusters: The number of clusters.
-    - max_iter: The maximum number of iterations.
-    - tol: The tolerance to declare convergence.
+    Args:
+        X: The data matrix (numpy array).
+        n_clusters: The number of clusters.
+        max_iter: The maximum number of iterations.
+        tol: The tolerance to declare convergence.
 
     Methods:
-    - __init__: Initializes the KMeans object with parameters such as the data matrix, number of clusters, maximum iterations,
-                and convergence tolerance.
-    - _handle_categorical: Handles categorical columns in the input data by one-hot encoding.
-    - _convert_to_ndarray: Converts input data to a NumPy ndarray and handles categorical columns.
-    - initialize_centroids: Randomly initializes the centroids for KMeans clustering.
-    - assign_clusters: Assigns clusters based on the nearest centroid.
-    - update_centroids: Updates centroids based on the current cluster assignments.
-    - fit: Fits the KMeans model to the data by iteratively updating centroids and cluster assignments until convergence.
-    - predict: Predicts the closest cluster each sample in new_X belongs to.
-    - elbow_method: Implements the elbow method to determine the optimal number of clusters.
-    - calinski_harabasz_index: Calculates the Calinski-Harabasz Index for evaluating clustering performance.
-    - davies_bouldin_index: Calculates the Davies-Bouldin Index for evaluating clustering performance.
-    - silhouette_score: Calculates the Silhouette Score for evaluating clustering performance.
-    - find_optimal_clusters: Implements methods to find the optimal number of clusters using the elbow method,
+        - __init__: Initializes the KMeans object with parameters such as the data matrix, number of clusters, maximum iterations, and convergence tolerance.
+        - _handle_categorical: Handles categorical columns in the input data by one-hot encoding.
+        - _convert_to_ndarray: Converts input data to a NumPy ndarray and handles categorical columns.
+        - initialize_centroids: Randomly initializes the centroids for KMeans clustering.
+        - assign_clusters: Assigns clusters based on the nearest centroid.
+        - update_centroids: Updates centroids based on the current cluster assignments.
+        - fit: Fits the KMeans model to the data by iteratively updating centroids and cluster assignments until convergence.
+        - predict: Predicts the closest cluster each sample in new_X belongs to.
+        - elbow_method: Implements the elbow method to determine the optimal number of clusters.
+        - calinski_harabasz_index: Calculates the Calinski-Harabasz Index for evaluating clustering performance.
+        - davies_bouldin_index: Calculates the Davies-Bouldin Index for evaluating clustering performance.
+        - silhouette_score: Calculates the Silhouette Score for evaluating clustering performance.
+        - find_optimal_clusters: Implements methods to find the optimal number of clusters using the elbow method,
                              Calinski-Harabasz Index, Davies-Bouldin Index, and Silhouette Score. It also plots the evaluation
                              metrics to aid in determining the optimal k value.
     """
 
     def __init__(self, X, n_clusters=3, max_iter=300, tol=1e-4):
-        """
-        Initialize the KMeans object.
+        """Initialize the KMeans object.
 
-        Parameters:
-        - X: The data matrix (numpy array, pandas DataFrame, or list).
-        - n_clusters: The number of clusters.
-        - max_iter: The maximum number of iterations.
-        - tol: The tolerance to declare convergence.
+        Args:
+            X: The data matrix (numpy array, pandas DataFrame, or list).
+            n_clusters: The number of clusters.
+            max_iter: The maximum number of iterations.
+            tol: The tolerance to declare convergence.
         """
         # Validate input parameters
         if not isinstance(n_clusters, int) or n_clusters < 1:
@@ -66,14 +62,13 @@ class KMeans:
         self.labels = None  # Cluster assignments for each data point
 
     def _handle_categorical(self, X):
-        """
-        Handle categorical columns by one-hot encoding.
+        """Handle categorical columns by one-hot encoding.
 
-        Parameters:
-        - X: The input data with potential categorical columns.
+        Args:
+            X: The input data with potential categorical columns.
 
         Returns:
-        - X_processed: The processed data with categorical columns encoded.
+            X_processed: The processed data with categorical columns encoded.
         """
         categorical_cols = DataPrep.find_categorical_columns(X)
         X_processed = DataPrep.one_hot_encode(
@@ -83,14 +78,13 @@ class KMeans:
         return X_processed
 
     def _convert_to_ndarray(self, X):
-        """
-        Convert input data to a NumPy ndarray and handle categorical columns.
+        """Convert input data to a NumPy ndarray and handle categorical columns.
 
-        Parameters:
-        - X: The input data, which can be a list, DataFrame, or ndarray.
+        Args:
+            X: The input data, which can be a list, DataFrame, or ndarray.
 
         Returns:
-        - X_ndarray: The converted and processed input data as a NumPy ndarray.
+            X_ndarray: The converted and processed input data as a NumPy ndarray.
         """
         import pandas as pd
 
@@ -113,11 +107,10 @@ class KMeans:
         return X_processed
 
     def initialize_centroids(self):
-        """
-        Randomly initialize the centroids.
+        """Randomly initialize the centroids.
 
         Returns:
-        - centroids: The initialized centroids.
+            centroids: The initialized centroids.
         """
         # np.random.seed(1)                                           # Set random seed for reproducibility
         random_indices = np.random.permutation(
@@ -129,14 +122,13 @@ class KMeans:
         return centroids
 
     def assign_clusters(self, centroids):
-        """
-        Assign clusters based on the nearest centroid.
+        """Assign clusters based on the nearest centroid.
 
-        Parameters:
-        - centroids: The current centroids.
+        Args:
+            centroids: The current centroids.
 
         Returns:
-        - labels: The cluster assignments for each data point.
+            labels: The cluster assignments for each data point.
         """
         self.X = self.X.astype(float)  # Convert X to float type if necessary
         centroids = centroids.astype(float)  # Ensure centroids are float type
@@ -149,11 +141,10 @@ class KMeans:
         return labels
 
     def update_centroids(self):
-        """
-        Update the centroids based on the current cluster assignments.
+        """Update the centroids based on the current cluster assignments.
 
         Returns:
-        - centroids: The updated centroids.
+            centroids: The updated centroids.
         """
         centroids = np.array(
             [  # Calculate new centroids
@@ -169,9 +160,7 @@ class KMeans:
         return centroids
 
     def fit(self):
-        """
-        Fit the KMeans model to the data.
-        """
+        """Fit the KMeans model to the data."""
         self.centroids = self.initialize_centroids()  # Initialize centroids
 
         for _ in range(self.max_iter):  # Iterate until convergence or max_iter
@@ -185,14 +174,13 @@ class KMeans:
                 break
 
     def predict(self, new_X):
-        """
-        Predict the closest cluster each sample in new_X belongs to.
+        """Predict the closest cluster each sample in new_X belongs to.
 
-        Parameters:
-        - new_X: The data matrix to predict (numpy array).
+        Args:
+            new_X: The data matrix to predict (numpy array).
 
         Returns:
-        - labels: The predicted cluster labels.
+            labels: The predicted cluster labels.
         """
         # Validate input data
         if not isinstance(new_X, np.ndarray | list | pd.DataFrame):  # Check if input is a valid type
@@ -218,14 +206,13 @@ class KMeans:
         return labels
 
     def elbow_method(self, max_k=10):
-        """
-        Implement the elbow method to determine the optimal number of clusters.
+        """Implement the elbow method to determine the optimal number of clusters.
 
-        Parameters:
-        - max_k: The maximum number of clusters to test.
+        Args:
+            max_k: The maximum number of clusters to test.
 
         Returns:
-        - distortions: A list of distortions for each k.
+            distortions: A list of distortions for each k.
         """
         distortions = []
         for k in range(1, max_k + 1):  # Iterate over each k value
@@ -250,16 +237,15 @@ class KMeans:
         return distortions
 
     def calinski_harabasz_index(self, X, labels, centroids):
-        """
-        Calculate the Calinski-Harabasz Index for evaluating clustering performance.
+        """Calculate the Calinski-Harabasz Index for evaluating clustering performance.
 
-        Parameters:
-        - X: The data matrix (numpy array).
-        - labels: The cluster labels for each data point.
-        - centroids: The centroids of the clusters.
+        Args:
+            X: The data matrix (numpy array).
+            labels: The cluster labels for each data point.
+            centroids: The centroids of the clusters.
 
         Returns:
-        - ch_index: The computed Calinski-Harabasz Index.
+            ch_index: The computed Calinski-Harabasz Index.
         """
         clusters = np.unique(labels)  # Unique cluster labels
         n_clusters = len(clusters)  # Number of clusters
@@ -291,16 +277,15 @@ class KMeans:
         return ch_index
 
     def davies_bouldin_index(self, X, labels, centroids):
-        """
-        Calculate the Davies-Bouldin Index for evaluating clustering performance.
+        """Calculate the Davies-Bouldin Index for evaluating clustering performance.
 
-        Parameters:
-        - X: The data matrix (numpy array).
-        - labels: The cluster labels for each data point.
-        - centroids: The centroids of the clusters.
+        Args:
+            X: The data matrix (numpy array).
+            labels: The cluster labels for each data point.
+            centroids: The centroids of the clusters.
 
         Returns:
-        - db_index: The computed Davies-Bouldin Index.
+            db_index: The computed Davies-Bouldin Index.
         """
         clusters = np.unique(labels)  # Unique cluster labels
         n_clusters = len(clusters)  # Number of clusters
@@ -354,15 +339,14 @@ class KMeans:
             return 0  # Return 0 if no valid similarity scores found
 
     def silhouette_score(self, X, labels):
-        """
-        Calculate the silhouette score for evaluating clustering performance.
+        """Calculate the silhouette score for evaluating clustering performance.
 
-        Parameters:
-        - X: The data matrix (numpy array).
-        - labels: The cluster labels for each data point.
+        Args:
+            X: The data matrix (numpy array).
+            labels: The cluster labels for each data point.
 
         Returns:
-        - silhouette_score: The computed silhouette score.
+            silhouette_score: The computed silhouette score.
         """
         n = len(X)  # Total number of data points
         clusters = np.unique(labels)  # Unique cluster labels
@@ -393,19 +377,18 @@ class KMeans:
             return 0  # Return 0 if no valid silhouette scores found
 
     def find_optimal_clusters(self, max_k=10, true_k=None, save_dir=None):
-        """
-        Find the optimal number of clusters using various evaluation metrics and plot the results.
+        """Find the optimal number of clusters using various evaluation metrics and plot the results.
 
-        Parameters:
-        - X: The data matrix (numpy array).
-        - max_k: The maximum number of clusters to consider.
-        - true_k: The true number of clusters in the data.
-        - save_dir: The directory to save the plot (optional).
+        Args:
+            X: The data matrix (numpy array).
+            max_k: The maximum number of clusters to consider.
+            true_k: The true number of clusters in the data.
+            save_dir: The directory to save the plot (optional).
 
         Returns:
-        - ch_optimal_k: The optimal number of clusters based on the Calinski-Harabasz Index.
-        - db_optimal_k: The optimal number of clusters based on the Davies-Bouldin Index.
-        - silhouette_optimal_k: The optimal number of clusters based on the Silhouette Score.
+            ch_optimal_k: The optimal number of clusters based on the Calinski-Harabasz Index.
+            db_optimal_k: The optimal number of clusters based on the Davies-Bouldin Index.
+            silhouette_optimal_k: The optimal number of clusters based on the Silhouette Score.
         """
         try:
             import matplotlib.pyplot as plt
@@ -533,34 +516,32 @@ class KMeans:
 
 
 class DBSCAN:
-    """
-    This class implements the Density-Based Spatial Clustering of Applications with Noise (DBSCAN) algorithm.
+    """This class implements the Density-Based Spatial Clustering of Applications with Noise (DBSCAN) algorithm.
 
-    Parameters:
-    - X: The data matrix (numpy array).
-    - eps: The maximum distance between two samples for one to be considered as in the neighborhood of the other.
-    - min_samples: The number of samples in a neighborhood for a point to be considered as a core point.
+    Args:
+        X: The data matrix (numpy array).
+        eps: The maximum distance between two samples for one to be considered as in the neighborhood of the other.
+        min_samples: The number of samples in a neighborhood for a point to be considered as a core point.
 
     Methods:
-    - __init__: Initializes the DBSCAN object with the input parameters.
-    - fit: Fits the DBSCAN model to the data and assigns cluster labels.
-    - predict: Predicts the cluster labels for new data points.
-    - fit_predict: Fits the DBSCAN model and returns cluster labels.
-    - silhouette_score: Calculates the Silhouette Score for evaluating clustering performance.
-    - _handle_categorical: Handles categorical columns by one-hot encoding.
-    - _convert_to_ndarray: Converts input data to a NumPy ndarray and handles categorical columns.
-    - _custom_distance_matrix: Calculates the pairwise distance matrix using a custom distance calculation method.
+        - __init__: Initializes the DBSCAN object with the input parameters.
+        - fit: Fits the DBSCAN model to the data and assigns cluster labels.
+        - predict: Predicts the cluster labels for new data points.
+        - fit_predict: Fits the DBSCAN model and returns cluster labels.
+        - silhouette_score: Calculates the Silhouette Score for evaluating clustering performance.
+        - _handle_categorical: Handles categorical columns by one-hot encoding.
+        - _convert_to_ndarray: Converts input data to a NumPy ndarray and handles categorical columns.
+        - _custom_distance_matrix: Calculates the pairwise distance matrix using a custom distance calculation method.
     """
 
     def __init__(self, X, eps=0.5, min_samples=5, compile_numba=False):
-        """
-        Initialize the DBSCAN object.
+        """Initialize the DBSCAN object.
 
-        Parameters:
-        - X: The data matrix (numpy array).
-        - eps: The maximum distance between two samples for one to be considered as in the neighborhood of the other.
-        - min_samples: The number of samples in a neighborhood for a point to be considered as a core point.
-        - compile_numba: Whether to compile the distance calculations using Numba for performance.
+        Args:
+            X: The data matrix (numpy array).
+            eps: The maximum distance between two samples for one to be considered as in the neighborhood of the other.
+            min_samples: The number of samples in a neighborhood for a point to be considered as a core point.
+            compile_numba: Whether to compile the distance calculations using Numba for performance.
             If not compiled, the first call to the numba fitting function will take longer, but subsequent calls will be faster.
         """
         # Validate input parameters
@@ -594,14 +575,13 @@ class DBSCAN:
                 raise RuntimeError(f"An error occurred while importing Numba: {e}") from None
 
     def _handle_categorical(self, X):
-        """
-        Handle categorical columns by one-hot encoding.
+        """Handle categorical columns by one-hot encoding.
 
-        Parameters:
-        - X: The input data with potential categorical columns.
+        Args:
+            X: The input data with potential categorical columns.
 
         Returns:
-        - X_processed: The processed data with categorical columns encoded.
+            X_processed: The processed data with categorical columns encoded.
         """
         categorical_cols = DataPrep.find_categorical_columns(X)
         X_processed = DataPrep.one_hot_encode(
@@ -611,14 +591,13 @@ class DBSCAN:
         return X_processed
 
     def _convert_to_ndarray(self, X):
-        """
-        Convert input data to a NumPy ndarray and handle categorical columns.
+        """Convert input data to a NumPy ndarray and handle categorical columns.
 
-        Parameters:
-        - X: The input data, which can be a list, DataFrame, or ndarray.
+        Args:
+            X: The input data, which can be a list, DataFrame, or ndarray.
 
         Returns:
-        - X_ndarray: The converted and processed input data as a NumPy ndarray.
+            X_ndarray: The converted and processed input data as a NumPy ndarray.
         """
         if isinstance(X, np.ndarray):  # Check if input is already a NumPy array
             X_ndarray = X.copy()  # Create a copy of the array
@@ -639,16 +618,15 @@ class DBSCAN:
         return X_processed
 
     def _custom_distance_matrix(self, X1, X2, metric="euclidean"):
-        """
-        Calculate the pairwise distance matrix between two sets of data points using a custom distance calculation method.
+        """Calculate the pairwise distance matrix between two sets of data points using a custom distance calculation method.
 
-        Parameters:
-        - X1: The first data matrix (numpy array).
-        - X2: The second data matrix (numpy array).
-        - metric: The distance metric to use ('euclidean', 'manhattan', or 'cosine').
+        Args:
+            X1: The first data matrix (numpy array).
+            X2: The second data matrix (numpy array).
+            metric: The distance metric to use ('euclidean', 'manhattan', or 'cosine').
 
         Returns:
-        - dist_matrix: The pairwise distance matrix between data points in X1 and X2.
+            dist_matrix: The pairwise distance matrix between data points in X1 and X2.
         """
         if metric == "euclidean":
             # Euclidean distance calculation: f(x) = sqrt(sum((x1 - x2)^2))
@@ -671,20 +649,19 @@ class DBSCAN:
         return dist_matrix
 
     def fit(self, metric="euclidean", numba=False):
-        """
-        Fit the DBSCAN model to the data.
+        """Fit the DBSCAN model to the data.
 
         Algorithm Steps:
         1. Calculate the distance matrix between all points in the dataset.
         2. Identify core points based on the minimum number of neighbors within eps distance.
         3. Assign cluster labels using depth-first search (DFS) starting from core points.
 
-        Parameters:
-        - metric: The distance metric to use ('euclidean', 'manhattan', or 'cosine').
-        - numba: Whether to use numba for faster computation.
+        Args:
+            metric: The distance metric to use ('euclidean', 'manhattan', or 'cosine').
+            numba: Whether to use numba for faster computation.
 
         Returns:
-        - labels: The cluster labels for each data point.
+            labels: The cluster labels for each data point.
         """
         if numba:
             try:
@@ -736,15 +713,15 @@ class DBSCAN:
         return labels
 
     def predict(self, new_X):
-        """
-        Predict the cluster labels for new data points.
+        """Predict the cluster labels for new data points.
+
         Note: DBSCAN does not naturally support predicting new data points.
 
-        Parameters:
-        - new_X: The data matrix to predict (numpy array).
+        Args:
+            new_X: The data matrix to predict (numpy array).
 
         Returns:
-        - labels: The predicted cluster labels (-1 for noise).
+            labels: The predicted cluster labels (-1 for noise).
         """
         # Validate input parameters
         if not isinstance(new_X, np.ndarray | list | pd.DataFrame):  # Check if input is a valid type
@@ -781,20 +758,18 @@ class DBSCAN:
         return labels
 
     def fit_predict(self, numba=False):
-        """
-        Fit the DBSCAN model to the data and return the cluster labels.
+        """Fit the DBSCAN model to the data and return the cluster labels.
 
         Returns:
-        - labels: The cluster labels for the data.
+            labels: The cluster labels for the data.
         """
         return self.fit(numba=numba)  # Fits the DBSCAN model and return cluster labels
 
     def silhouette_score(self):
-        """
-        Calculate the silhouette score for evaluating clustering performance.
+        """Calculate the silhouette score for evaluating clustering performance.
 
         Returns:
-        - silhouette_score: The computed silhouette score.
+            silhouette_score: The computed silhouette score.
         """
         if (
             self.labels is None or len(set(self.labels)) <= 1
@@ -845,19 +820,18 @@ class DBSCAN:
     def auto_eps(
         self, min=0.1, max=1.1, precision=0.01, return_scores=False, verbose=False
     ):
-        """
-        Find the optimal eps value for DBSCAN based on silhouette score.
+        """Find the optimal eps value for DBSCAN based on silhouette score.
 
-        Parameters:
-        - min: The minimum eps value to start the search.
-        - max: The maximum eps value to end the search.
-        - precision: The precision of the search.
-        - return_scores: Whether to return a dictionary of (eps, score) pairs.
-        - verbose: Whether to print the silhouette score for each eps value.
+        Args:
+            min: The minimum eps value to start the search.
+            max: The maximum eps value to end the search.
+            precision: The precision of the search.
+            return_scores: Whether to return a dictionary of (eps, score) pairs.
+            verbose: Whether to print the silhouette score for each eps value.
 
         Returns:
-        - eps: The optimal eps value.
-        - scores_dict (optional): A dictionary of (eps, score) pairs if return_scores is True.
+            eps: The optimal eps value.
+            scores_dict (optional): A dictionary of (eps, score) pairs if return_scores is True.
         """
         # Validate input parameters
         if not isinstance(min, int | float) or min <= 0:

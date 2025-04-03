@@ -1,5 +1,4 @@
-"""
-This module contains the implementation of a Random Forest Classifier.
+"""This module contains the implementation of a Random Forest Classifier.
 
 The module includes the following classes:
 - RandomForest: A class representing a Random Forest model.
@@ -20,13 +19,12 @@ from .treeClassifier import ClassifierTree
 
 
 def _fit_tree(X, y, max_depth):
-    """
-    Helper function for parallel tree fitting. Fits a single tree on a bootstrapped sample.
+    """Helper function for parallel tree fitting. Fits a single tree on a bootstrapped sample.
 
     Args:
-        X (array-like): The input features.
-        y (array-like): The target labels.
-        max_depth (int): The maximum depth of the tree.
+        X: (array-like) - The input features.
+        y: (array-like) - The target labels.
+        max_depth: (int) - The maximum depth of the tree.
 
     Returns:
         ClassifierTree: A fitted tree object.
@@ -42,13 +40,12 @@ def _fit_tree(X, y, max_depth):
 
 
 def _classify_oob(X, trees, bootstraps):
-    """
-    Helper function for parallel out-of-bag predictions. Classifies using out-of-bag samples.
+    """Helper function for parallel out-of-bag predictions. Classifies using out-of-bag samples.
 
     Args:
-        X (array-like): The input features.
-        trees (list): The list of fitted trees.
-        bootstraps (list): The list of bootstrapped indices for each tree.
+        X: (array-like) - The input features.
+        trees: (list) - The list of fitted trees.
+        bootstraps: (list) - The list of bootstrapped indices for each tree.
 
     Returns:
         list: The list of out-of-bag predictions.
@@ -73,14 +70,39 @@ def _classify_oob(X, trees, bootstraps):
 
 
 class RandomForestClassifier:
-    """ """
+    """RandomForestClassifier is a custom implementation of a Random Forest classifier.
 
+    Attributes:
+        n_estimators (int): The number of trees in the forest.
+        max_depth (int): The maximum depth of each tree.
+        n_jobs (int): The number of jobs to run in parallel. Defaults to -1 (use all available processors).
+        random_state (int or None): The seed for random number generation. Defaults to None.
+        trees (list): A list of trained decision trees.
+        bootstraps (list): A list of bootstrapped indices for out-of-bag (OOB) scoring.
+        X (numpy.ndarray or None): The feature matrix used for training.
+        y (numpy.ndarray or None): The target labels used for training.
+        accuracy (float): The accuracy of the model after fitting.
+        precision (float): The precision of the model after fitting.
+        recall (float): The recall of the model after fitting.
+        f1_score (float): The F1 score of the model after fitting.
+        log_loss (float or None): The log loss of the model after fitting (only for binary classification).
+
+    Methods:
+        __init__(forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None):
+            Initializes the RandomForestClassifier object with the specified parameters.
+        fit(X=None, y=None, verbose=False):
+            Fits the random forest model to the provided data using parallel processing.
+        calculate_metrics(y_true, y_pred):
+            Calculates evaluation metrics (accuracy, precision, recall, F1 score, and log loss) for classification.
+        predict(X):
+            Predicts class labels for the provided data using the trained random forest.
+        get_stats(verbose=False):
+            Returns the evaluation metrics (accuracy, precision, recall, F1 score, and log loss) as a dictionary.
+    """
     def __init__(
         self, forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None
     ):
-        """
-        Initializes the RandomForest object.
-        """
+        """Initializes the RandomForest object."""
         self.n_estimators = forest_size
         self.max_depth = max_depth
         self.n_jobs = n_jobs if n_jobs > 0 else max(1, multiprocessing.cpu_count())
@@ -187,7 +209,7 @@ class RandomForestClassifier:
         return predictions
 
     def get_stats(self, verbose=False):
-        """Return the evaluation metrics"""
+        """Return the evaluation metrics."""
         stats = {
             "Accuracy": self.accuracy,
             "Precision": self.precision,

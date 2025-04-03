@@ -579,7 +579,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
     ):
         """
         Performs hyperparameter tuning using grid search.
-        Parameters:
+        Args:
             - X_train, y_train: Training data
             - X_val, y_val: Validation data
             - param_grid: Dict of parameters to try

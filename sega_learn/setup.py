@@ -16,6 +16,7 @@ from setuptools import setup
 
 
 def find_pyx_files(root_dir):
+    """Find all .pyx files in the given directory and its subdirectories."""
     pyx_files = []
     for dirpath, _dirnames, filenames in os.walk(root_dir):
         for filename in filenames:

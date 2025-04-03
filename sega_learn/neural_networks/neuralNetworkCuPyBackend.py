@@ -28,14 +28,63 @@ except ImportError:
 
 
 class CuPyBackendNeuralNetwork(NeuralNetworkBase):
+    """CuPyBackendNeuralNetwork is a neural network implementation that uses CuPy for GPU-accelerated computations.
+
+    It inherits from NeuralNetworkBase and provides functionality for forward and backward propagation,
+    training, evaluation, and optimization using CuPy arrays and operations.
+
+    Attributes:
+        layers (list): List of layers in the neural network.
+        compiled (bool): Indicates whether the network is compiled.
+        trainable_layers (list): List of layers with trainable parameters.
+        layer_outputs (list): Cache for forward pass outputs.
+        is_binary (bool): Indicates if the network is for binary classification.
+        weights (list): List of weights for trainable layers.
+        biases (list): List of biases for trainable layers.
+        dWs_cache (list): Cache for weight gradients.
+        dbs_cache (list): Cache for bias gradients.
+        stream_pool_size (int): Number of CUDA streams for asynchronous processing.
+        stream_pool (list): Pool of CUDA streams for asynchronous operations.
+
+    Methods:
+        __init__(layers, dropout_rate=0.2, reg_lambda=0.01, activations=None):
+            Initializes the CuPyBackendNeuralNetwork with specified layers, dropout rate, regularization, and activations.
+        initialize_new_layers():
+            Initializes the layers of the neural network with specified sizes and activation functions.
+        apply_dropout(X):
+            Applies dropout regularization to the input data.
+        forward(X, training=True):
+            Performs forward propagation through the neural network.
+        backward(y):
+            Performs backward propagation to calculate gradients for weights and biases.
+        _process_batches_async(X_shuffled, y_shuffled, batch_size, weights, biases, activations, dropout_rate, is_binary, reg_lambda, dWs_acc, dbs_acc):
+            Processes batches asynchronously using CUDA streams for forward and backward propagation.
+        is_not_instance_of_classes(obj, classes):
+            Checks if an object is not an instance of any class in a given list of classes.
+        train(X_train, y_train, X_val=None, y_val=None, optimizer=None, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=True, use_tqdm=True, n_jobs=1, track_metrics=False, track_adv_metrics=False, save_animation=False, save_path="training_animation.mp4", fps=1, dpi=100, frame_every=1):
+            Trains the neural network model with specified parameters and options.
+        evaluate(X, y):
+            Evaluates the model performance on the given input data and labels.
+        _evaluate_cupy(y_hat, y_true, is_binary):
+            Evaluates model performance using CuPy arrays for predictions and true labels.
+        predict(X):
+            Predicts the output for the given input data.
+        calculate_loss(X, y):
+            Calculates the loss with L2 regularization for the given input data and labels.
+        _create_optimizer(optimizer_type, learning_rate, JIT=False):
+            Helper method to create optimizer instances based on the specified type and learning rate.
+    """
     def __init__(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None):
-        """
-        Initializes the Numba backend neural network.
+        """Initializes the CuPy backend neural network.
+
         Args:
-            layers (list): List of layer sizes or Layer objects.
-            dropout_rate (float): Dropout rate for regularization.
-            reg_lambda (float): L2 regularization parameter.
-            activations (list): List of activation functions for each layer.
+            layers: (list) - List of layer sizes or Layer objects.
+            dropout_rate: (float) - Dropout rate for regularization (default is 0.2).
+            reg_lambda: (float) - L2 regularization parameter (default is 0.01).
+            activations: (list), optional - List of activation functions for each layer (default is None).
+
+        Returns:
+            None
         """
         super().__init__(layers, dropout_rate, reg_lambda, activations)
         self.compiled = False
@@ -69,8 +118,8 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
         ]
 
     def initialize_new_layers(self):
-        """
-        Initializes the layers of the neural network.
+        """Initializes the layers of the neural network.
+
         Each layer is created with the specified number of neurons and activation function.
         """
         for i in range(len(self.layer_sizes) - 1):
@@ -81,16 +130,18 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
             )
 
     def apply_dropout(self, X):
+        """Applies dropout regularization to the input data."""
         # Pre-generate random values and apply fused dropout
         random_vals = cp.random.rand(*X.shape)
         return fused_dropout(X, self.dropout_rate, random_vals)
 
     def forward(self, X, training=True):
-        """
-        Performs forward propagation through the neural network.
+        """Performs forward propagation through the neural network.
+
         Args:
             X (ndarray): Input data of shape (batch_size, input_size).
             training (bool): Whether the network is in training mode (applies dropout).
+
         Returns:
             ndarray: Output predictions of shape (batch_size, output_size).
         """
@@ -106,8 +157,8 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
         return self.layer_outputs[-1]
 
     def backward(self, y):
-        """
-        Performs backward propagation to calculate the gradients.
+        """Performs backward propagation to calculate the gradients.
+
         Args:
             y (ndarray): Target labels of shape (m, output_size).
         """
@@ -210,11 +261,12 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
 
     @staticmethod
     def is_not_instance_of_classes(obj, classes):
-        """
-        Checks if an object is not an instance of any class in a list of classes.
+        """Checks if an object is not an instance of any class in a list of classes.
+
         Args:
             obj: The object to check.
             classes: A list of classes.
+
         Returns:
             bool: True if the object is not an instance of any class in the list of classes, False otherwise.
         """
@@ -242,28 +294,28 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
         dpi=100,
         frame_every=1,
     ):
-        """
-        Trains the neural network model.
+        """Trains the neural network model.
+
         Args:
-            - X_train (ndarray): Training data features.
-            - y_train (ndarray): Training data labels.
-            - X_val (ndarray): Validation data features, optional.
-            - y_val (ndarray): Validation data labels, optional.
-            - optimizer (Optimizer): Optimizer for updating parameters (default: JITAdam, lr=0.0001).
-            - epochs (int): Number of training epochs (default: 100).
-            - batch_size (int): Batch size for mini-batch gradient descent (default: 32).
-            - early_stopping_threshold (int): Patience for early stopping (default: 10).
-            - lr_scheduler (Scheduler): Learning rate scheduler (default: None).
-            - p (bool): Whether to print training progress (default: True).
-            - use_tqdm (bool): Whether to use tqdm for progress bar (default: True).
-            - n_jobs (int): Number of jobs for parallel processing (default: 1).
-            - track_metrics (bool): Whether to track training metrics (default: False).
-            - track_adv_metrics (bool): Whether to track advanced metrics (default: False).
-            - save_animation (bool): Whether to save the animation of metrics (default: False).
-            - save_path (str): Path to save the animation file. File extension must be .mp4 or .gif (default: 'training_animation.mp4').
-            - fps (int): Frames per second for the saved animation (default: 1).
-            - dpi (int): DPI for the saved animation (default: 100).
-            - frame_every (int): Capture frame every N epochs (to reduce file size) (default: 1).
+            X_train: (ndarray) - Training data features.
+            y_train: (ndarray) - Training data labels.
+            X_val: (ndarray) - Validation data features, optional.
+            y_val: (ndarray) - Validation data labels, optional.
+            optimizer: (Optimizer) - Optimizer for updating parameters (default: JITAdam, lr=0.0001).
+            epochs: (int) - Number of training epochs (default: 100).
+            batch_size: (int) - Batch size for mini-batch gradient descent (default: 32).
+            early_stopping_threshold: (int) - Patience for early stopping (default: 10).
+            lr_scheduler: (Scheduler) - Learning rate scheduler (default: None).
+            p: (bool) - Whether to print training progress (default: True).
+            use_tqdm: (bool) - Whether to use tqdm for progress bar (default: True).
+            n_jobs: (int) - Number of jobs for parallel processing (default: 1).
+            track_metrics: (bool) - Whether to track training metrics (default: False).
+            track_adv_metrics: (bool) - Whether to track advanced metrics (default: False).
+            save_animation: (bool) - Whether to save the animation of metrics (default: False).
+            save_path: (str) - Path to save the animation file. File extension must be .mp4 or .gif (default: 'training_animation.mp4').
+            fps: (int) - Frames per second for the saved animation (default: 1).
+            dpi: (int) - DPI for the saved animation (default: 100).
+            frame_every: (int) - Capture frame every N epochs (to reduce file size) (default: 1).
         """
         if use_tqdm and not TQDM_AVAILABLE:
             warnings.warn(
@@ -610,14 +662,15 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
         return animator if save_animation else None
 
     def evaluate(self, X, y):
-        """
-        Evaluates the model performance.
-        Parameters:
-            - X (ndarray): Input data (NumPy or CuPy array)
-            - y (ndarray): Target labels (NumPy or CuPy array)
+        """Evaluates the model performance on the given data.
+
+        Args:
+            X: (np.ndarray or cp.ndarray) - Input feature data.
+            y: (np.ndarray or cp.ndarray) - Target labels.
+
         Returns:
-            - accuracy (float): Model accuracy
-            - predicted (ndarray): Predicted labels (NumPy array)
+            accuracy: (float) - The accuracy of the model.
+            predicted: (np.ndarray) - Predicted labels as a NumPy array.
         """
         # Convert inputs to GPU arrays only if necessary.
         if not isinstance(X, cp.ndarray):
@@ -630,12 +683,13 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
 
     @staticmethod
     def _evaluate_cupy(y_hat, y_true, is_binary):
-        """
-        CuPy-based function to evaluate model performance.
+        """CuPy-based function to evaluate model performance.
+
         Args:
             y_hat (cp.ndarray): Model predictions (CuPy array).
             y_true (cp.ndarray): True labels (CuPy array).
             is_binary (bool): Whether the model is binary or multi-class.
+
         Returns:
             tuple: Accuracy (CuPy scalar) and predicted labels (CuPy array).
         """
@@ -648,10 +702,11 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
         return accuracy, predicted
 
     def predict(self, X):
-        """
-        Predicts the output for the given input data.
+        """Predicts the output for the given input data.
+
         Args:
             X (ndarray): Input data.
+
         Returns:
             ndarray: Predicted outputs.
         """
@@ -660,11 +715,12 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
         return outputs if self.is_binary else np.argmax(outputs, axis=1)
 
     def calculate_loss(self, X, y):
-        """
-        Calculates the loss with L2 regularization.
+        """Calculates the loss with L2 regularization.
+
         Args:
             X (ndarray): Input data.
             y (ndarray): Target labels.
+
         Returns:
             float: The calculated loss value.
         """

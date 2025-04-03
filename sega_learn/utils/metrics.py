@@ -2,32 +2,30 @@ import numpy as np
 
 
 class Metrics:
-    # Regression Metrics
+    """Implements various regression and classification metrics."""
     @classmethod
     def mean_squared_error(cls, y_true, y_pred):
-        """
-        Calculates the mean squared error between the true and predicted values.
+        """Calculates the mean squared error between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - mse (float): The mean squared error.
+            mse: (float) - The mean squared error.
         """
         return np.mean((y_true - y_pred) ** 2)
 
     @classmethod
     def r_squared(cls, y_true, y_pred):
-        """
-        Calculates the R-squared score between the true and predicted values.
+        """Calculates the R-squared score between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - r_squared (float): The R-squared score.
+            r_squared: (float) - The R-squared score.
         """
         ss_res = np.sum((y_true - y_pred) ** 2)
         ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
@@ -35,43 +33,40 @@ class Metrics:
 
     @classmethod
     def mean_absolute_error(cls, y_true, y_pred):
-        """
-        Calculates the mean absolute error between the true and predicted values.
+        """Calculates the mean absolute error between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - mae (float): The mean absolute error.
+            mae: (float) - The mean absolute error.
         """
         return np.mean(np.abs(y_true - y_pred))
 
     @classmethod
     def root_mean_squared_error(cls, y_true, y_pred):
-        """
-        Calculates the root mean squared error between the true and predicted values.
+        """Calculates the root mean squared error between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - rmse (float): The root mean squared error.
+            rmse: (float) - The root mean squared error.
         """
         return np.sqrt(np.mean((y_true - y_pred) ** 2))
 
     @classmethod
     def mean_absolute_percentage_error(cls, y_true, y_pred):
-        """
-        Calculates the mean absolute percentage error between the true and predicted values.
+        """Calculates the mean absolute percentage error between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - mape (float): The mean absolute percentage error as a decimal. Returns np.nan if y_true is all zeros.
+            mape: (float) - The mean absolute percentage error as a decimal. Returns np.nan if y_true is all zeros.
         """
         y_true, y_pred = np.array(y_true), np.array(y_pred)
         non_zero_indices = y_true != 0
@@ -86,15 +81,14 @@ class Metrics:
 
     @classmethod
     def mean_percentage_error(cls, y_true, y_pred):
-        """
-        Calculates the mean percentage error between the true and predicted values.
+        """Calculates the mean percentage error between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - mpe (float): The mean percentage error.
+            mpe: (float) - The mean percentage error.
         """
         y_true, y_pred = np.array(y_true), np.array(y_pred)
         non_zero_indices = y_true != 0
@@ -108,29 +102,27 @@ class Metrics:
     # Classification Metrics
     @classmethod
     def accuracy(cls, y_true, y_pred):
-        """
-        Calculates the accuracy score between the true and predicted values.
+        """Calculates the accuracy score between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - accuracy (float): The accuracy score.
+            accuracy: (float) - The accuracy score.
         """
         return np.mean(y_true == y_pred)
 
     @classmethod
     def precision(cls, y_true, y_pred):
-        """
-        Calculates the precision score between the true and predicted values.
+        """Calculates the precision score between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - precision (float): The precision score.
+            precision: (float) - The precision score.
         """
         # Ensure the arrays are numpy arrays for element-wise operations
         y_true = np.array(y_true)
@@ -144,15 +136,14 @@ class Metrics:
 
     @classmethod
     def recall(cls, y_true, y_pred):
-        """
-        Calculates the recall score between the true and predicted values.
+        """Calculates the recall score between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - recall (float): The recall score.
+            recall: (float) - The recall score.
         """
         # Ensure the arrays are numpy arrays for element-wise operations
         y_true = np.array(y_true)
@@ -166,15 +157,14 @@ class Metrics:
 
     @classmethod
     def f1_score(cls, y_true, y_pred):
-        """
-        Calculates the F1 score between the true and predicted values.
+        """Calculates the F1 score between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - f1_score (float): The F1 score.
+            f1_score: (float) - The F1 score.
         """
         precision = cls.precision(y_true, y_pred)
         recall = cls.recall(y_true, y_pred)
@@ -184,15 +174,14 @@ class Metrics:
 
     @classmethod
     def log_loss(cls, y_true, y_pred):
-        """
-        Calculates the log loss between the true and predicted values.
+        """Calculates the log loss between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted probabilities.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted probabilities.
 
         Returns:
-        - log_loss (float): The log loss.
+            log_loss: (float) - The log loss.
         """
         y_true = np.array(y_true)
         y_pred = np.array(y_pred)
@@ -210,15 +199,14 @@ class Metrics:
     # Additional Metrics
     @classmethod
     def confusion_matrix(cls, y_true, y_pred):
-        """
-        Calculates the confusion matrix between the true and predicted values.
+        """Calculates the confusion matrix between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - cm (numpy.ndarray): The confusion matrix.
+            cm: (np.ndarray) - The confusion matrix.
         """
         y_true = np.array(y_true)
         y_pred = np.array(y_pred)
@@ -231,15 +219,14 @@ class Metrics:
 
     @classmethod
     def show_confusion_matrix(cls, y_true, y_pred):
-        """
-        Calculates and displays the confusion matrix between the true and predicted values.
+        """Calculates and displays the confusion matrix between the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - cm (numpy.ndarray): The confusion matrix.
+            cm: (np.ndarray) - The confusion matrix.
         """
         cm = cls.confusion_matrix(y_true, y_pred)
         unique_labels = np.unique(np.concatenate((y_true, y_pred)))
@@ -256,15 +243,14 @@ class Metrics:
 
     @classmethod
     def classification_report(cls, y_true, y_pred):
-        """
-        Generates a classification report for the true and predicted values.
+        """Generates a classification report for the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - report (dict): The classification report.
+            report: (dict) - The classification report.
         """
         unique_labels = np.unique(np.concatenate((y_true, y_pred)))
         report = {}
@@ -283,15 +269,14 @@ class Metrics:
 
     @classmethod
     def show_classification_report(cls, y_true, y_pred):
-        """
-        Generates and displays a classification report for the true and predicted values.
+        """Generates and displays a classification report for the true and predicted values.
 
-        Parameters:
-        - y_true (numpy.ndarray): The true values.
-        - y_pred (numpy.ndarray): The predicted values.
+        Args:
+            y_true: (np.ndarray) - The true values.
+            y_pred: (np.ndarray) - The predicted values.
 
         Returns:
-        - report (dict): The classification report.
+            report: (dict) - The classification report.
         """
         report = cls.classification_report(y_true, y_pred)
         print(

@@ -7,13 +7,13 @@ from .metrics import Metrics
 
 
 class ModelSelectionUtility:
+    """A utility class for hyperparameter tuning and cross-validation of machine learning models."""
     @staticmethod
     def get_param_combinations(param_grid):
-        """
-        Generates all possible combinations of hyperparameters.
+        """Generates all possible combinations of hyperparameters.
 
         Returns:
-        - param_combinations (list): A list of dictionaries containing hyperparameter combinations.
+            param_combinations (list): A list of dictionaries containing hyperparameter combinations.
         """
         all_params = {}
         for grid in param_grid:
@@ -29,23 +29,22 @@ class ModelSelectionUtility:
     def cross_validate(
         model, X, y, params, cv=5, metric="mse", direction="minimize", verbose=False
     ):
-        """
-        Implements a custom cross-validation for hyperparameter tuning.
+        """Implements a custom cross-validation for hyperparameter tuning.
 
-        Parameters:
-        - model: The model Object to be tuned.
-        - X (numpy.ndarray): The feature columns.
-        - y (numpy.ndarray): The label column.
-        - params (dict): The hyperparameters to be tuned.
-        - cv (int): The number of folds for cross-validation. Default is 5.
-        - metric (str): The metric to be used for evaluation. Default is 'mse'.
-            - Regression Metrics: 'mse', 'r2', 'mae', 'rmse', 'mape', 'mpe'
-            - Classification Metrics: 'accuracy', 'precision', 'recall', 'f1', 'log_loss'
-        - direction (str): The direction to optimize the metric. Default is 'minimize'.
-        - verbose (bool): A flag to display the training progress. Default is False.
+        Args:
+            model: The model Object to be tuned.
+            X: (numpy.ndarray) - The feature columns.
+            y: (numpy.ndarray) - The label column.
+            params: (dict) - The hyperparameters to be tuned.
+            cv: (int) - The number of folds for cross-validation. Default is 5.
+            metric: (str) - The metric to be used for evaluation. Default is 'mse'.
+                - Regression Metrics: 'mse', 'r2', 'mae', 'rmse', 'mape', 'mpe'
+                - Classification Metrics: 'accuracy', 'precision', 'recall', 'f1', 'log_loss'
+            direction: (str) - The direction to optimize the metric. Default is 'minimize'.
+            verbose: (bool) - A flag to display the training progress. Default is False.
 
         Returns:
-        - tuple: A tuple containing the scores (list) and the trained model.
+            tuple: A tuple containing the scores (list) and the trained model.
         """
         scores = []
         if verbose:
@@ -98,22 +97,18 @@ class ModelSelectionUtility:
 
 
 class GridSearchCV:
-    """
-    Implements a grid search cross-validation for hyperparameter tuning.
-    """
-
+    """Implements a grid search cross-validation for hyperparameter tuning."""
     def __init__(self, model, param_grid, cv=5, metric="mse", direction="minimize"):
-        """
-        Initializes the GridSearchCV object.
+        """Initializes the GridSearchCV object.
 
-        Parameters:
-        - model: The model Object to be tuned.
-        - param_grid (list): A list of dictionaries containing hyperparameters to be tuned.
-        - cv (int): The number of folds for cross-validation. Default is 5.
-        - metric (str): The metric to be used for evaluation. Default is 'mse'.
-            - Regression Metrics: 'mse', 'r2', 'mae', 'rmse', 'mape', 'mpe'
-            - Classification Metrics: 'accuracy', 'precision', 'recall', 'f1', 'log_loss'
-        - direction (str): The direction to optimize the metric. Default is 'minimize'.
+        Args:
+            model: The model Object to be tuned.
+            param_grid: (list) - A list of dictionaries containing hyperparameters to be tuned.
+            cv: (int) - The number of folds for cross-validation. Default is 5.
+            metric: (str) - The metric to be used for evaluation. Default is 'mse'.
+                - Regression Metrics: 'mse', 'r2', 'mae', 'rmse', 'mape', 'mpe'
+                - Classification Metrics: 'accuracy', 'precision', 'recall', 'f1', 'log_loss'
+            direction: (str) - The direction to optimize the metric. Default is 'minimize'.
         """
         self.model = model
         self.param_grid = param_grid
@@ -129,16 +124,15 @@ class GridSearchCV:
         )
 
     def fit(self, X, y, verbose=False):
-        """
-        Fits the model to the data for all hyperparameter combinations.
+        """Fits the model to the data for all hyperparameter combinations.
 
-        Parameters:
-        - X (numpy.ndarray): The feature columns.
-        - y (numpy.ndarray): The label column.
-        - verbose (bool): A flag to display the training progress. Default is True.
+        Args:
+            X: (numpy.ndarray) - The feature columns.
+            y: (numpy.ndarray) - The label column.
+            verbose: (bool) - A flag to display the training progress. Default is True.
 
         Returns:
-        - model: The best model with the optimal hyperparameters.
+            model: The best model with the optimal hyperparameters.
         """
         if self.direction == "minimize":
             self.best_score_ = np.inf
@@ -175,25 +169,21 @@ class GridSearchCV:
 
 
 class RandomSearchCV:
-    """
-    Implements a random search cross-validation for hyperparameter tuning.
-    """
-
+    """Implements a random search cross-validation for hyperparameter tuning."""
     def __init__(
         self, model, param_grid, iter=10, cv=5, metric="mse", direction="minimize"
     ):
-        """
-        Initializes the RandomSearchCV object.
+        """Initializes the RandomSearchCV object.
 
-        Parameters:
-        - model: The model Object to be tuned.
-        - param_grid (list): A list of dictionaries containing hyperparameters to be tuned.
-        - iter (int): The number of iterations for random search. Default is 10.
-        - cv (int): The number of folds for cross-validation. Default is 5.
-        - metric (str): The metric to be used for evaluation. Default is 'mse'.
-            - Regression Metrics: 'mse', 'r2', 'mae', 'rmse', 'mape', 'mpe'
-            - Classification Metrics: 'accuracy', 'precision', 'recall', 'f1', 'log_loss'
-        - direction (str): The direction to optimize the metric. Default is 'minimize'.
+        Args:
+            model: The model Object to be tuned.
+            param_grid: (list) - A list of dictionaries containing hyperparameters to be tuned.
+            iter: (int) - The number of iterations for random search. Default is 10.
+            cv: (int) - The number of folds for cross-validation. Default is 5.
+            metric: (str) - The metric to be used for evaluation. Default is 'mse'.
+                - Regression Metrics: 'mse', 'r2', 'mae', 'rmse', 'mape', 'mpe'
+                - Classification Metrics: 'accuracy', 'precision', 'recall', 'f1', 'log_loss'
+            direction: (str) - The direction to optimize the metric. Default is 'minimize'.
         """
         self.model = model
         self.param_grid = param_grid
@@ -211,16 +201,15 @@ class RandomSearchCV:
         )
 
     def fit(self, X, y, verbose=False):
-        """
-        Fits the model to the data for iter random hyperparameter combinations.
+        """Fits the model to the data for iter random hyperparameter combinations.
 
-        Parameters:
-        - X (numpy.ndarray): The feature columns.
-        - y (numpy.ndarray): The label column.
-        - verbose (bool): A flag to display the training progress. Default is True.
+        Args:
+            X: (numpy.ndarray) - The feature columns.
+            y: (numpy.ndarray) - The label column.
+            verbose: (bool) - A flag to display the training progress. Default is True.
 
         Returns:
-        - model: The best model with the optimal hyperparameters.
+            model: The best model with the optimal hyperparameters.
         """
         if self.direction == "minimize":
             self.best_score_ = np.inf
@@ -273,26 +262,22 @@ class RandomSearchCV:
 
 
 class segaSearchCV:
-    """
-    Implements a custom search cross-validation for hyperparameter tuning.
-    """
-
+    """Implements a custom search cross-validation for hyperparameter tuning."""
     def __init__(
         self, model, param_space, iter=10, cv=5, metric="mse", direction="minimize"
     ):
-        """
-        Initializes the segaSearchCV object.
+        """Initializes the segaSearchCV object.
 
-        Parameters:
-        - model: The model Object to be tuned.
-        - param_space (list): A list of dictionaries containing hyperparameters to be tuned.
-            Should be in the format: [{'param': [type, min, max]}, ...]
-        - iter (int): The number of iterations for random search. Default is 10.
-        - cv (int): The number of folds for cross-validation. Default is 5.
-        - metric (str): The metric to be used for evaluation. Default is 'mse'.
-            - Regression Metrics: 'mse', 'r2', 'mae', 'rmse', 'mape', 'mpe'
-            - Classification Metrics: 'accuracy', 'precision', 'recall', 'f1', 'log_loss'
-        - direction (str): The direction to optimize the metric. Default is 'minimize'.
+        Args:
+            model: The model Object to be tuned.
+            param_space (list): A list of dictionaries containing hyperparameters to be tuned.
+                Should be in the format: [{'param': [type, min, max]}, ...]
+            iter (int): The number of iterations for random search. Default is 10.
+            cv (int): The number of folds for cross-validation. Default is 5.
+            metric (str): The metric to be used for evaluation. Default is 'mse'.
+                - Regression Metrics: 'mse', 'r2', 'mae', 'rmse', 'mape', 'mpe'
+                - Classification Metrics: 'accuracy', 'precision', 'recall', 'f1', 'log_loss'
+            direction (str): The direction to optimize the metric. Default is 'minimize'.
         """
         self.model = model
         self.param_space = param_space
@@ -310,13 +295,12 @@ class segaSearchCV:
             self.param_lims[key] = param[key][1:]
 
     def fit(self, X, y, verbose=False):
-        """
-        Fits the model to the data for iter random hyperparameter combinations.
+        """Fits the model to the data for iter random hyperparameter combinations.
 
-        Parameters:
-        - X (numpy.ndarray): The feature columns.
-        - y (numpy.ndarray): The label column.
-        - verbose (bool): A flag to display the training progress. Default is True.
+        Args:
+            X: (numpy.ndarray)- The feature columns.
+            y: (numpy.ndarray)- The label column.
+            verbose: (bool) - A flag to display the training progress. Default is True.
         """
         # TODO: Store search path as binary tree, each has high, low
         if self.direction == "minimize":

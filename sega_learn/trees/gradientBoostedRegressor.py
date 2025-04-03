@@ -4,8 +4,7 @@ from .treeRegressor import RegressorTree, RegressorTreeUtility
 
 
 class GradientBoostedRegressor:
-    """
-    A class to represent a Gradient Boosted Decision Tree Regressor.
+    """A class to represent a Gradient Boosted Decision Tree Regressor.
 
     Attributes:
         random_seed (int): The random seed for the random number generator.
@@ -33,6 +32,18 @@ class GradientBoostedRegressor:
         max_depth: int = 10,
         random_seed: int = 0,
     ):
+        """Initializes the Gradient Boosted Decision Tree Regressor.
+
+        Args:
+            X: (np.ndarray), optional - Input feature data (default is None).
+            y: (np.ndarray), optional - Target data (default is None).
+            num_trees: (int), optional - Number of trees in the ensemble (default is 10).
+            max_depth: (int), optional - Maximum depth of each tree (default is 10).
+            random_seed: (int), optional - Random seed for reproducibility (default is 0).
+
+        Returns:
+            None
+        """
         self.random_seed = random_seed  # Set the random seed for reproducibility
         self.num_trees = num_trees  # Set the number of trees in the ensemble
         self.max_depth = max_depth  # Set the maximum depth of each tree
@@ -64,6 +75,7 @@ class GradientBoostedRegressor:
             ]  # Combine X and y
 
     def reset(self):
+        """Resets the GBDT object to its initial state."""
         # Reset the GBDT object
         self.random_seed = 0
         self.num_trees = 10
@@ -75,17 +87,16 @@ class GradientBoostedRegressor:
         self.mean_absolute_residuals = []
 
     def fit(self, X=None, y=None, stats=False):
-        """
-        Fits the gradient boosted decision tree regressor to the training data.
+        """Fits the gradient boosted decision tree regressor to the training data.
 
         This method trains the ensemble of decision trees by iteratively fitting each tree to the residuals
         of the previous iteration. The residuals are updated after each iteration by subtracting the predictions
-        made by the current tree from the target values.
+        made by the current tree from the :target values.
 
         Args:
-            X (numpy.ndarray): An array of input data features. Default is None.
-            y (numpy.ndarray): An array of target values. Default is None.
-            stats (bool): A flag to decide whether to return stats or not. Default is False.
+            X: (numpy.ndarray) - An array of input :data features. Default is None.
+            y: (numpy.ndarray) - An array of target values. Default is None.
+            stats: (bool) - A flag to decide whether to return stats or not. Default is False.
 
         Returns:
             None
@@ -134,14 +145,13 @@ class GradientBoostedRegressor:
                 )
 
     def predict(self, X=None):
-        """
-        Predicts the target values for the input data using the gradient boosted decision tree regressor.
+        """Predicts the target values for the input data using the gradient boosted decision tree regressor.
 
-        Parameters:
-        - X (numpy.ndarray): An array of input data features. Default is None.
+        Args:
+            X: (numpy.ndarray) - An array of input data features. Default is None.
 
         Returns:
-            predictions (numpy.ndarray): An array of predicted target values for the input data.
+            predictions: (numpy.ndarray) - An array of predicted target values for the input data.
         """
         if X is not None:
             self.X = X.tolist()
@@ -165,8 +175,7 @@ class GradientBoostedRegressor:
         return predictions
 
     def get_stats(self, y_predicted):
-        """
-        Calculates various evaluation metrics for the predicted target values.
+        """Calculates various evaluation metrics for the predicted target values.
 
         Args:
             y_predicted (numpy.ndarray): An array of predicted target values.

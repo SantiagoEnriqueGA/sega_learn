@@ -2,19 +2,19 @@ import numpy as np
 
 
 class CrossEntropyLoss:
-    """
-    Custom cross entropy loss implementation using numpy for multi-class classification.
+    """Custom cross entropy loss implementation using numpy for multi-class classification.
+
     Formula: -sum(y * log(p) + (1 - y) * log(1 - p)) / m
     Methods:
         __call__(self, logits, targets): Calculate the cross entropy loss.
     """
-
     def __call__(self, logits, targets):
-        """
-        Calculate the cross entropy loss.
+        """Calculate the cross entropy loss.
+
         Args:
             logits (np.ndarray): The logits (predicted values) of shape (num_samples, num_classes).
             targets (np.ndarray): The target labels of shape (num_samples,).
+
         Returns:
             float: The cross entropy loss.
         """
@@ -36,19 +36,20 @@ class CrossEntropyLoss:
 
 
 class BCEWithLogitsLoss:
-    """
-    Custom binary cross entropy loss with logits implementation using numpy.
+    """Custom binary cross entropy loss with logits implementation using numpy.
+
     Formula: -mean(y * log(p) + (1 - y) * log(1 - p))
+
     Methods:
         __call__(self, logits, targets): Calculate the binary cross entropy loss.
     """
-
     def __call__(self, logits, targets):
-        """
-        Calculate the binary cross entropy loss.
+        """Calculate the binary cross entropy loss.
+
         Args:
             logits (np.ndarray): The logits (predicted values) of shape (num_samples,).
             targets (np.ndarray): The target labels of shape (num_samples,).
+
         Returns:
             float: The binary cross entropy loss.
         """

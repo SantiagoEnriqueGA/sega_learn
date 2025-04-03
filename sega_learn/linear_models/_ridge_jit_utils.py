@@ -10,18 +10,17 @@ from numba import njit, prange
 @njit(parallel=True, fastmath=True)
 # @cc.export("compiled_fit_numba_no_intercept", sig="float64[:](float64[:, :], float64[:], float64, int64, float64)")
 def _fit_numba_no_intercept(X, y, alpha, max_iter, tol):
-    """
-    Fit the model to the data using coordinate descent with numba (no intercept).
+    """Fits the model to the data using coordinate descent with numba (no intercept).
 
-    Parameters:
-        - X : array-like of shape (n_samples, n_features): Training data.
-        - y : array-like of shape (n_samples,): Target values.
-        - alpha : float: Regularization strength.
-        - max_iter : int: Maximum number of iterations.
-        - tol : float: Tolerance for convergence.
+    Args:
+        X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
+        y: (np.ndarray) - Target values of shape (n_samples,).
+        alpha: (float) - Regularization strength.
+        max_iter: (int) - Maximum number of iterations.
+        tol: (float) - Tolerance for convergence.
 
     Returns:
-        - coef_ : ndarray of shape (n_features,): Estimated coefficients.
+        coef_: (np.ndarray) - Estimated coefficients of shape (n_features,).
     """
     n_samples, n_features = X.shape
     coef_ = np.zeros(n_features)  # Initialize coefficients to zeros
@@ -55,19 +54,18 @@ def _fit_numba_no_intercept(X, y, alpha, max_iter, tol):
 @njit(parallel=True, fastmath=True)
 # @cc.export("compiled_fit_numba_intercept", sig="Tuple((float64[:], float64))(float64[:, :], float64[:], float64, int64, float64)")
 def _fit_numba_intercept(X, y, alpha, max_iter, tol):
-    """
-    Fit the model to the data using coordinate descent with numba (with intercept).
+    """Fits the model to the data using coordinate descent with numba (with intercept).
 
-    Parameters:
-        - X : array-like of shape (n_samples, n_features): Training data.
-        - y : array-like of shape (n_samples,): Target values.
-        - alpha : float: Regularization strength.
-        - max_iter : int: Maximum number of iterations.
-        - tol : float: Tolerance for convergence.
+    Args:
+        X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
+        y: (np.ndarray) - Target values of shape (n_samples,).
+        alpha: (float) - Regularization strength.
+        max_iter: (int) - Maximum number of iterations.
+        tol: (float) - Tolerance for convergence.
 
     Returns:
-        - coef_ : ndarray of shape (n_features,): Estimated coefficients.
-        - intercept_ : float: Estimated intercept.
+        coef_: (np.ndarray) - Estimated coefficients of shape (n_features,).
+        intercept_: (float) - Estimated intercept.
     """
     n_samples, n_features = X.shape
     coef_ = np.zeros(n_features)  # Initialize coefficients to zeros

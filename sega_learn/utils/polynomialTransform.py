@@ -3,33 +3,27 @@ import numpy as np
 
 
 class PolynomialTransform:
-    """
-    This class implements Polynomial Feature Transformation.
-    Polynomial feature transformation is a technique used to create new features from the existing features by raising them to a power or by creating interaction terms.
+    """Implements Polynomial Feature Transformation.
 
-    Parameters:
-    - degree: int, default=2
-        The degree of the polynomial features.
+    Polynomial feature transformation creates new features by raising existing features to a power or creating interaction terms.
+
+    Args:
+        degree (int): The degree of the polynomial features (default is 2).
 
     Attributes:
-    - n_samples: int
-        The number of samples.
-    - n_features: int
-        The number of features.
-    - n_output_features: int
-        The number of output features.
-    - combinations: list of tuples of shape (n_features,)
-        The combinations of features(X) of degree n.
-    - bias: bool, default=True
-        Whether to include a bias term in the output features.
+        n_samples (int): The number of samples in the input data.
+        n_features (int): The number of features in the input data.
+        n_output_features (int): The number of output features after transformation.
+        combinations (list of tuples): The combinations of features for polynomial terms.
     """
 
     def __init__(self, degree=2):
+        """Initialize the PolynomialTransform object."""
         self.degree = degree
 
     def fit(self, X):
-        """
-        Fit the model to the data.
+        """Fit the model to the data.
+
         Uses itertools.combinations_with_replacement to generate all possible combinations of features(X) of degree n.
         """
         from itertools import combinations_with_replacement
@@ -46,9 +40,7 @@ class PolynomialTransform:
         self.n_output_features = len(self.combinations) + 1  # +1 for the bias term
 
     def transform(self, X):
-        """
-        Transform the data into polynomial features by computing the product of the features for each combination of features.
-        """
+        """Transform the data into polynomial features by computing the product of the features for each combination of features."""
         n_samples = X.shape[0]
 
         # Initialize the polynomial features with the bias term
@@ -63,8 +55,6 @@ class PolynomialTransform:
         return X_poly
 
     def fit_transform(self, X):
-        """
-        Fit to data, then transform it.
-        """
+        """Fit to data, then transform it."""
         self.fit(X)
         return self.transform(X)

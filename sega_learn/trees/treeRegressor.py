@@ -4,13 +4,10 @@ import numpy as np
 
 
 class RegressorTreeUtility:
-    """
-    Utility class for computing variance, partitioning classes, and calculating information gain.
-    """
-
+    """Utility class for computing variance, partitioning classes, and calculating information gain."""
     def calculate_variance(self, y):
-        """
-        Calculate the variance of a dataset.
+        """Calculate the variance of a dataset.
+
         Variance is used as the measure of impurity in the case of regression.
         """
         if len(y) == 0:
@@ -18,20 +15,19 @@ class RegressorTreeUtility:
         return np.var(y)
 
     def partition_classes(self, X, y, split_attribute, split_val):
-        """
-        Partitions the dataset into two subsets based on a given split attribute and value.
+        """Partitions the dataset into two subsets based on a given split attribute and value.
 
-        Parameters:
-        - X (array-like): The input features.
-        - y (array-like): The target labels.
-        - split_attribute (int): The index of the attribute to split on.
-        - split_val (float): The value to split the attribute on.
+        Args:
+            X: (array-like) - The input features.
+            y: (array-like) - The target labels.
+            split_attribute: (int) - The index of the attribute to split on.
+            split_val: (float) - The value to split the attribute on.
 
         Returns:
-        - X_left (array-like): The subset of input features where the split attribute is less than or equal to the split value.
-        - X_right (array-like): The subset of input features where the split attribute is greater than the split value.
-        - y_left (array-like): The subset of target labels corresponding to X_left.
-        - y_right (array-like): The subset of target labels corresponding to X_right.
+            X_left: (array-like) - The subset of input features where the split attribute is less than or equal to the split value.
+            X_right: (array-like) - The subset of input features where the split attribute is greater than the split value.
+            y_left: (array-like) - The subset of target labels corresponding to X_left.
+            y_right: (array-like) - The subset of target labels corresponding to X_right.
         """
         # Check type of X and y
         if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
@@ -58,10 +54,7 @@ class RegressorTreeUtility:
         return X_left, X_right, y_left, y_right
 
     def information_gain(self, previous_y, current_y):
-        """
-        Calculate the information gain from a split by subtracting the variance of
-        child nodes from the variance of the parent node.
-        """
+        """Calculate the information gain from a split by subtracting the variance of child nodes from the variance of the parent node."""
         if len(previous_y) == 0:  # If the parent node is empty
             return 0  # Return 0 information gain
 
@@ -77,15 +70,14 @@ class RegressorTreeUtility:
         return parent_variance - child_variance
 
     def best_split(self, X, y):
-        """
-        Finds the best attribute and value to split the data based on information gain.
+        """Finds the best attribute and value to split the data based on information gain.
 
-        Parameters:
-        - X (array-like): The input features.
-        - y (array-like): The target variable.
+        Args:
+            X: (array-like) - The input features.
+            y: (array-like) - The target variable.
 
         Returns:
-        - dict: A dictionary containing the best split attribute, split value, left and right subsets of X and y,
+            dict: A dictionary containing the best split attribute, split value, left and right subsets of X and y,
                 and the information gain achieved by the split.
         """
         # Check type of X and y
@@ -175,48 +167,45 @@ class RegressorTreeUtility:
 
 
 class RegressorTree:
-    """
-    A class representing a decision tree for regression.
+    """A class representing a decision tree for regression.
 
-    Parameters:
-    - max_depth (int): The maximum depth of the decision tree.
+    Args:
+        max_depth: (int) - The maximum depth of the decision tree.
 
     Methods:
-    - learn(X, y, par_node={}, depth=0): Builds the decision tree based on the given training data.
-    - classify(record): Predicts the target value for a record using the decision tree.
-
+        learn(X, y, par_node={}, depth=0): Builds the decision tree based on the given training data.
+        classify(record): Predicts the target value for a record using the decision tree.
     """
 
     def __init__(self, max_depth=5):
+        """Initialize the decision tree."""
         self.tree = {}  # Initialize an empty dictionary to represent the decision tree
         self.max_depth = max_depth  # Set the maximum depth of the tree
 
     def fit(self, X, y):
-        """
-        Fit the decision tree to the training data.
+        """Fit the decision tree to the training data.
 
-        Parameters:
-        - X (array-like): The input features.
-        - y (array-like): The target labels.
+        Args:
+            X: (array-like) - The input features.
+            y: (array-like) - The target labels.
 
         Returns:
-        - dict: The learned decision tree.
+            dict: The learned decision tree.
         """
         self.tree = self.learn(X, y)
         return self.tree
 
     def learn(self, X, y, par_node=None, depth=0):
-        """
-        Builds the decision tree based on the given training data.
+        """Builds the decision tree based on the given training data.
 
-        Parameters:
-        - X (array-like): The input features.
-        - y (array-like): The target labels.
-        - par_node (dict): The parent node of the current subtree (default: {}).
-        - depth (int): The current depth of the subtree (default: 0).
+        Args:
+            X: (array-like) - The input features.
+            y: (array-like) - The target labels.
+            par_node: (dict) - The parent node of the current subtree (default: {}).
+            depth: (int) - The current depth of the subtree (default: 0).
 
         Returns:
-        - dict: The learned decision tree.
+            dict: The learned decision tree.
         """
         # Check type of X and y
         if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
@@ -285,14 +274,13 @@ class RegressorTree:
             return RegressorTree.evaluate_tree(tree["right"], record)
 
     def predict(self, X):
-        """
-        Predict the target value for a record using the decision tree.
+        """Predict the target value for a record using the decision tree.
 
-        Parameters:
-        - X (array-like): The input features.
+        Args:
+            X: (array-like) - The input features.
 
         Returns:
-        - float: The predicted target value.
+            float: The predicted target value.
         """
         if not isinstance(X, list | np.ndarray):
             raise TypeError("X must be a list or NumPy array.")

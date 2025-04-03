@@ -2,6 +2,49 @@ import numpy as np
 
 
 class BaseSVM:
+    """BaseSVM: A base class for Support Vector Machines (SVM) with kernel support.
+
+    This class provides the foundation for implementing SVM models with various kernels
+    and supports both classification and regression tasks.
+
+    Attributes:
+        C (float): Regularization parameter. Default is 1.0.
+        tol (float): Tolerance for stopping criteria. Default is 1e-4.
+        max_iter (int): Maximum number of iterations for optimization. Default is 1000.
+        learning_rate (float): Step size for optimization. Default is 0.01.
+        kernel (str): Kernel type ('linear', 'poly', 'rbf', or 'sigmoid'). Default is 'linear'.
+        degree (int): Degree for polynomial kernel. Default is 3.
+        gamma (str or float): Kernel coefficient ('scale', 'auto', or float). Default is 'scale'.
+        coef0 (float): Independent term in poly and sigmoid kernels. Default is 0.0.
+        regression (bool): Whether to use regression (SVR) or classification (SVC). Default is False.
+        w (ndarray): Weight vector for linear kernel.
+        b (float): Bias term.
+        support_vectors_ (ndarray): Support vectors identified during training.
+        support_vector_labels_ (ndarray): Labels of the support vectors.
+        support_vector_alphas_ (ndarray): Lagrange multipliers for the support vectors.
+
+    Methods:
+        __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, kernel='linear', degree=3, gamma='scale', coef0=0.0, regression=False):
+            Initializes the BaseSVM instance with specified hyperparameters.
+        fit(self, X, y=None):
+            Fits the SVM model to the training data.
+        _fit(self, X, y):
+            Abstract method to be implemented by subclasses for training.
+        _compute_kernel(self, X1, X2):
+            Computes the kernel function between two input matrices.
+        decision_function(self, X):
+            Computes the decision function for input samples.
+        predict(self, X):
+            Predicts class labels for input samples.
+        score(self, X, y):
+            Computes the mean accuracy of the model on the given test data.
+        get_params(self, deep=True):
+            Retrieves the hyperparameters of the model.
+        set_params(self, **parameters):
+            Sets the hyperparameters of the model.
+        __sklearn_is_fitted__(self):
+            Checks if the model has been fitted (for sklearn compatibility).
+    """
     def __init__(
         self,
         C=1.0,
@@ -14,19 +57,18 @@ class BaseSVM:
         coef0=0.0,
         regression=False,
     ):
-        """
-        Initialize the BaseSVM class with kernel support.
+        """Initializes the BaseSVM instance with specified hyperparameters.
 
-        Parameters:
-        - C: float, regularization parameter
-        - tol: float, tolerance for stopping criteria
-        - max_iter: int, maximum number of iterations
-        - learning_rate: float, step size for optimization
-        - kernel: str, 'linear', 'poly', 'rbf', or 'sigmoid'
-        - degree: int, degree for polynomial kernel
-        - gamma: str or float, kernel coefficient ('scale', 'auto', or float)
-        - coef0: float, independent term in poly and sigmoid kernels
-        - regression: bool, whether to use regression (SVR) or classification (SVC) (default: False)
+        Args:
+            C: (float) - Regularization parameter. Default is 1.0.
+            tol: (float) - Tolerance for stopping criteria. Default is 1e-4.
+            max_iter: (int) - Maximum number of iterations for optimization. Default is 1000.
+            learning_rate: (float) - Step size for optimization. Default is 0.01.
+            kernel: (str) - Kernel type ('linear', 'poly', 'rbf', or 'sigmoid'). Default is 'linear'.
+            degree: (int) - Degree for polynomial kernel. Default is 3.
+            gamma: (str or float) - Kernel coefficient ('scale', 'auto', or float). Default is 'scale'.
+            coef0: (float) - Independent term in poly and sigmoid kernels. Default is 0.0.
+            regression: (bool) - Whether to use regression (SVR) or classification (SVC). Default is False.
         """
         self.C = C
         self.tol = tol
@@ -44,12 +86,14 @@ class BaseSVM:
         self.support_vector_alphas_ = None
 
     def fit(self, X, y=None):
-        """
-        Fit the SVM model.
+        """Fits the SVM model to the training data.
 
-        Parameters:
-        - X: array of shape (n_samples, n_features)
-        - y: array of shape (n_samples,)
+        Args:
+            X: (array-like of shape (n_samples, n_features)) - Training vectors.
+            y: (array-like of shape (n_samples,)) - Target values. Default is None.
+
+        Returns:
+            self: (BaseSVM) - The fitted instance.
         """
         X = np.asarray(X, dtype=np.float64)
         if y is not None:
@@ -89,12 +133,11 @@ class BaseSVM:
         return self
 
     def _fit(self, X, y):
-        """
-        Abstract method to be implemented by subclasses for training.
+        """Abstract method to be implemented by subclasses for training.
 
-        Parameters:
-            X (array-like of shape (n_samples, n_features)): Training vectors.
-            y (array-like of shape (n_samples,)): Target values.
+        Args:
+            X: (array-like of shape (n_samples, n_features)) - Training vectors.
+            y: (array-like of shape (n_samples,)) - Target values.
 
         Raises:
             NotImplementedError: If the method is not overridden by subclasses.
@@ -102,15 +145,14 @@ class BaseSVM:
         raise NotImplementedError("Subclasses should implement this!")
 
     def _compute_kernel(self, X1, X2):
-        """
-        Compute the kernel function between X1 and X2.
+        """Computes the kernel function between two input matrices.
 
-        Parameters:
-        - X1: array of shape (n_samples1, n_features)
-        - X2: array of shape (n_samples2, n_features)
+        Args:
+            X1: (array-like of shape (n_samples1, n_features)) - First input matrix.
+            X2: (array-like of shape (n_samples2, n_features)) - Second input matrix.
 
         Returns:
-        - Kernel matrix of shape (n_samples1, n_samples2)
+            kernel_matrix: (ndarray of shape (n_samples1, n_samples2)) - Computed kernel matrix.
         """
         if self.kernel == "linear":
             return np.dot(X1, X2.T)
@@ -131,14 +173,13 @@ class BaseSVM:
             raise ValueError(f"Unsupported kernel type: {self.kernel}")
 
     def decision_function(self, X):
-        """
-        Compute the decision function for input samples.
+        """Computes the decision function for input samples.
 
-        Parameters:
-        - X: array of shape (n_samples, n_features)
+        Args:
+            X: (array-like of shape (n_samples, n_features)) - Input samples.
 
         Returns:
-        - Decision values of shape (n_samples,)
+            decision_values: (ndarray of shape (n_samples,)) - Decision function values.
         """
         if self.kernel == "linear" and self.w is not None:
             return np.dot(X, self.w) + self.b
@@ -150,14 +191,13 @@ class BaseSVM:
             )
 
     def predict(self, X):
-        """
-        Predict class labels for input samples.
+        """Predicts class labels for input samples.
 
-        Parameters:
-        - X: array of shape (n_samples, n_features)
+        Args:
+            X: (array-like of shape (n_samples, n_features)) - Input samples.
 
         Returns:
-        - Predicted labels of shape (n_samples,)
+            predicted_labels: (ndarray of shape (n_samples,)) - Predicted class labels.
         """
         if len(self.classes_) > 2:
             return self._predict_multiclass(X)
@@ -165,18 +205,14 @@ class BaseSVM:
             return self._predict_binary(X)
 
     def score(self, X, y):
-        """
-        Compute the mean accuracy of the model on the given test data.
+        """Computes the mean accuracy of the model on the given test data.
 
-        Parameters:
-            X (array-like of shape (n_samples, n_features)): Test samples.
-            y (array-like of shape (n_samples,)): True class labels.
+        Args:
+            X: (array-like of shape (n_samples, n_features)) - Test samples.
+            y: (array-like of shape (n_samples,)) - True class labels.
 
         Returns:
-            score (float): Mean accuracy of predictions.
-
-        Raises:
-            NotImplementedError: If the method is not overridden by subclasses.
+            score: (float) - Mean accuracy of predictions.
         """
         if len(self.classes_) > 2:
             return self._score_multiclass(X, y)
@@ -184,14 +220,13 @@ class BaseSVM:
             return self._score_binary(X, y)
 
     def get_params(self, deep=True):
-        """
-        Get the hyperparameters of the model.
+        """Retrieves the hyperparameters of the model.
 
-        Parameters:
-            deep (bool, default=True): If True, returns parameters of subobjects as well.
+        Args:
+            deep: (bool) - If True, returns parameters of subobjects as well. Default is True.
 
         Returns:
-            params (dict): Dictionary of hyperparameter names and values.
+            params: (dict) - Dictionary of hyperparameter names and values.
         """
         return {
             "C": self.C,
@@ -201,24 +236,22 @@ class BaseSVM:
         }
 
     def set_params(self, **parameters):
-        """
-        Set hyperparameters of the model.
+        """Sets the hyperparameters of the model.
 
-        Parameters:
-            **parameters (dict): Hyperparameter names and values.
+        Args:
+            **parameters: (dict) - Hyperparameter names and values.
 
         Returns:
-            self (BaseSVM): The updated estimator instance.
+            self: (BaseSVM) - The updated estimator instance.
         """
         for parameter, value in parameters.items():
             setattr(self, parameter, value)
         return self
 
     def __sklearn_is_fitted__(self):
-        """
-        Check if the model has been fitted. For compatibility with sklearn.
+        """Checks if the model has been fitted (for sklearn compatibility).
 
         Returns:
-            fitted (bool): True if the model has been fitted, otherwise False.
+            fitted: (bool) - True if the model has been fitted, otherwise False.
         """
         return hasattr(self, "w") and self.w is not None

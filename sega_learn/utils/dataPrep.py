@@ -3,21 +3,19 @@ import pandas as pd
 
 
 class DataPrep:
-    """
-    A class for preparing data for machine learning models.
-    """
+    """A class for preparing data for machine learning models."""
 
     def one_hot_encode(data, cols):
-        """
-        One-hot encodes non-numerical columns in a DataFrame or numpy array.
+        """One-hot encodes non-numerical columns in a DataFrame or numpy array.
+
         Drops the original columns after encoding.
 
-        Parameters:
-        - data (pandas.DataFrame or numpy.ndarray): The data to be encoded.
-        - cols (list): The list of column indices to be encoded.
+        Args:
+            data: (pandas.DataFrame or numpy.ndarray) - The data to be encoded.
+            cols: (list) - The list of column indices to be encoded.
 
         Returns:
-        - data (pandas.DataFrame or numpy.ndarray): The data with one-hot encoded columns.
+            data: (pandas.DataFrame or numpy.ndarray) - The data with one-hot encoded columns.
         """
         is_dataframe = isinstance(data, pd.DataFrame)
         if not is_dataframe:
@@ -46,14 +44,13 @@ class DataPrep:
         return data  # Else, return the DataFrame
 
     def find_categorical_columns(data):
-        """
-        Finds the indices of non-numerical columns in a DataFrame or numpy array.
+        """Finds the indices of non-numerical columns in a DataFrame or numpy array.
 
-        Parameters:
-        - data (pandas.DataFrame or numpy.ndarray): The data to be checked.
+        Args:
+            data: (pandas.DataFrame or numpy.ndarray) - The data to be checked.
 
         Returns:
-        - categorical_cols (list): The list of indices of non-numerical columns.
+            categorical_cols: (list) - The list of indices of non-numerical columns.
         """
         if isinstance(data, np.ndarray):
             data = pd.DataFrame(data)  # Convert to DataFrame if not already
@@ -69,12 +66,12 @@ class DataPrep:
         return categorical_cols  # Return the list of indices of non-numerical columns
 
     def write_data(df, csv_file, print_path=False):
-        """
-        Writes the DataFrame to a CSV file.
+        """Writes the DataFrame to a CSV file.
 
-        Parameters:
-        - df (pandas.DataFrame): The DataFrame to be written.
-        - csv_file (str): The path of the CSV file to write to.
+        Args:
+            df: (pandas.DataFrame) - The DataFrame to be written.
+            csv_file: (str) - The path of the CSV file to write to.
+            print_path: (bool), optional - If True, prints the file path (default is False).
         """
         df.to_csv(csv_file, index=False)  # Write the DataFrame to a CSV file
         if print_path:
@@ -83,19 +80,17 @@ class DataPrep:
             )  # Print the path of the written file
 
     def prepare_data(csv_file, label_col_index, cols_to_encode=None, write_to_csv=True):
-        """
-        Prepares the data by loading a CSV file, one-hot encoding non-numerical columns,
-        and optionally writing the prepared data to a new CSV file.
+        """Prepares the data by loading a CSV file, one-hot encoding non-numerical columns, and optionally writing the prepared data to a new CSV file.
 
-        Parameters:
-        - csv_file (str): The path of the CSV file to load.
-        - label_col_index (int): The index of the label column.
-        - cols_to_encode (list): The list of column indices to one-hot encode. Default is an empty list.
-        - write_to_csv (bool): Whether to write the prepared data to a new CSV file. Default is True.
+        Args:
+            csv_file: (str) - The path of the CSV file to load.
+            label_col_index: (int) - The index of the label column.
+            cols_to_encode: (list), optional - The list of column indices to one-hot encode (default is None).
+            write_to_csv: (bool), optional - Whether to write the prepared data to a new CSV file (default is True).
 
         Returns:
-        - df (pandas.DataFrame): The prepared DataFrame.
-        - prepared_csv_file (str): The path of the prepared CSV file. If write_to_csv is False, returns "N/A".
+            df: (pandas.DataFrame) - The prepared DataFrame.
+            prepared_csv_file: (str) - The path of the prepared CSV file. If write_to_csv is False, returns "N/A".
         """
         df = pd.read_csv(csv_file)  # Load the CSV file
 
@@ -123,16 +118,15 @@ class DataPrep:
         return df, "N/A"  # Else, return the prepared DataFrame and "N/A"
 
     def df_to_ndarray(df, y_col=0):
-        """
-        Converts a DataFrame to a NumPy array.
+        """Converts a DataFrame to a NumPy array.
 
-        Parameters:
-        - df (pandas.DataFrame): The DataFrame to be converted.
-        - y_col (int): The index of the label column. Default is 0.
+        Args:
+            df: (pandas.DataFrame) - The DataFrame to be converted.
+            y_col: (int), optional - The index of the label column (default is 0).
 
         Returns:
-        - X (numpy.ndarray): The feature columns as a NumPy array.
-        - y (numpy.ndarray): The label column as a NumPy array.
+            X: (numpy.ndarray) - The feature columns as a NumPy array.
+            y: (numpy.ndarray) - The label column as a NumPy array.
         """
         y = df.iloc[:, y_col].values  # Get the label column as a NumPy array
         X = df.drop(
@@ -142,17 +136,16 @@ class DataPrep:
         return X, y
 
     def k_split(X, y, k=5):
-        """
-        Splits the data into k folds for cross-validation.
+        """Splits the data into k folds for cross-validation.
 
-        Parameters:
-        - X (numpy.ndarray): The feature columns.
-        - y (numpy.ndarray): The label column.
-        - k (int): The number of folds. Default is 5.
+        Args:
+            X: (numpy.ndarray) - The feature columns.
+            y: (numpy.ndarray) - The label column.
+            k: (int), optional - The number of folds (default is 5).
 
         Returns:
-        - X_folds (list): A list of k folds of feature columns.
-        - y_folds (list): A list of k folds of label columns.
+            X_folds: (list) - A list of k folds of feature columns.
+            y_folds: (list) - A list of k folds of label columns.
         """
         n_samples = len(y)  # Get the number of samples
         fold_size = n_samples // k  # Calculate the fold size

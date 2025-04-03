@@ -6,8 +6,13 @@ from scipy import linalg
 
 
 def _validate_data(X, y):
-    """
-    Validate input data:
+    """Validates input data.
+
+    Args:
+        X : array-like of shape (n_samples, n_features): Training data.
+        y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
+
+    Must be:
         - array-like
         - same number of samples
         - Not empty
@@ -23,50 +28,41 @@ def _validate_data(X, y):
 
 
 class OrdinaryLeastSquares:
-    """
-    Ordinary Least Squares (OLS) linear regression model.
-
-    Parameters:
-    - fit_intercept : bool, default=True
-        Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
+    """Ordinary Least Squares (OLS) linear regression model.
 
     Attributes:
-    - coef_ : ndarray of shape (n_features,) or (n_features + 1,)
-        Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
-    - intercept_ : float
-        Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.
+        coef_ : ndarray of shape (n_features,) or (n_features + 1,) - Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
+        intercept_ : float - Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.
 
     Methods:
-    - fit(X, y): Fit the linear model to the data.
-    - predict(X): Predict using the linear model.
-    - get_formula(): Returns the formula of the model as a string.
+        fit(X, y): Fit the linear model to the data.
+        predict(X): Predict using the linear model.
+        get_formula(): Returns the formula of the model as a string.
     """
 
     def __init__(self, fit_intercept=True) -> None:
-        """
-        Initialize the OrdinaryLeastSquares object.
+        """Initializes the OrdinaryLeastSquares object.
 
-        Parameters:
-        - fit_intercept : bool, default=True
-            Whether to calculate the intercept for this model.
+        Args:
+            fit_intercept: (bool) - Whether to calculate the intercept for this model (default is True).
         """
         self.fit_intercept = fit_intercept
         self.coef_ = None
         self.intercept_ = None
 
     def __str__(self):
+        """Returns the string representation of the model."""
         return "Ordinary Least Squares"
 
     def fit(self, X, y):
-        """
-        Fit linear model.
+        """Fits the linear regression model to the training data.
 
-        Parameters:
-        - X : array-like of shape (n_samples, n_features): Training data.
-        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
+        Args:
+            X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
+            y: (np.ndarray) - Training target data of shape (n_samples,).
 
         Returns:
-        - self : object
+            self: (OrdinaryLeastSquares) - The fitted linear regression model.
         """
         _validate_data(X, y)
 
@@ -107,14 +103,13 @@ class OrdinaryLeastSquares:
                 self.intercept_ = 0.0  # Set the intercept to 0.0
 
     def predict(self, X):
-        """
-        Predict using the linear model.
+        """Predicts the target values using the linear model.
 
-        Parameters:
-        - X : array-like of shape (n_samples, n_features): Samples.
+        Args:
+            X: (np.ndarray) - Feature data of shape (n_samples, n_features).
 
         Returns:
-        - y_pred : array-like of shape (n_samples,): Predicted values.
+            y_pred: (np.ndarray) - Predicted target values of shape (n_samples,).
         """
         if self.fit_intercept:  # If fit_intercept is True
             X = np.hstack(
@@ -128,11 +123,10 @@ class OrdinaryLeastSquares:
             return X @ self.coef_  # Return the predicted values
 
     def get_formula(self):
-        """
-        Returns the formula of the model as a string.
+        """Returns the formula of the model as a string.
 
         Returns:
-        - formula : str: The formula of the model.
+            formula: (str) - The formula of the model.
         """
         terms = [
             f"{coef:.4f} * x_{i}" for i, coef in enumerate(self.coef_)
@@ -146,30 +140,24 @@ class OrdinaryLeastSquares:
 
 
 class Ridge:
-    """
-    This class implements Ridge Regression using Coordinate Descent.
+    """Fits the Ridge Regression model to the training data.
+
     Ridge regression implements L2 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
 
-    Parameters:
-    - alpha : float, default=1.0
-        Regularization strength; must be a positive float. Regularization improves the conditioning of the problem and reduces the variance of the estimates.
-    - fit_intercept : bool, default=True
-        Whether to calculate the intercept for this model.
-    - max_iter : int, default=10000
-        Maximum number of iterations for the coordinate descent solver.
-    - tol : float, default=1e-4
-        Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance.
+    Args:
+        alpha: (float) - Regularization strength; must be a positive float (default is 1.0).
+        fit_intercept: (bool), optional - Whether to calculate the intercept for this model (default is True).
+        max_iter: (int), optional - Maximum number of iterations for the coordinate descent solver (default is 10000).
+        tol: (float), optional - Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance (default is 1e-4).
 
     Attributes:
-    - coef_ : ndarray of shape (n_features,) or (n_features + 1,)
-        Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
-    - intercept_ : float
-        Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.
+        coef_: (np.ndarray) - Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
+        intercept_: (float) - Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.
 
     Methods:
-    - fit(X, y): Fit the linear model to the data.
-    - predict(X): Predict using the linear model.
-    - get_formula(): Returns the formula of the model as a string.
+        fit(X, y): Fits the Ridge Regression model to the training data.
+        predict(X): Predicts using the Ridge Regression model.
+        get_formula(): Returns the formula of the model as a string.
     """
 
     def __init__(
@@ -180,22 +168,16 @@ class Ridge:
         tol=1e-4,
         compile_numba=False,
     ):
-        """
-        This class implements Ridge Regression using Coordinate Descent.
+        """Initializes the Ridge Regression model.
+
         Ridge regression implements L2 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
 
-        Parameters:
-        - alpha : float, default=1.0
-            Regularization strength; must be a positive float. Regularization improves the conditioning of the problem and reduces the variance of the estimates.
-        - fit_intercept : bool, default=True
-            Whether to calculate the intercept for this model.
-        - max_iter : int, default=10000
-            Maximum number of iterations for the coordinate descent solver.
-        - tol : float, default=1e-4
-            Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance.
-        - compile_numba : bool, default=False
-            Whether to precompile the numba functions. If True, the numba fitting functions will be compiled before use.
-            If not compiled, the first call to the numba fitting function will take longer, but subsequent calls will be faster.
+        Args:
+            alpha: (float) - Regularization strength; must be a positive float (default is 1.0).
+            fit_intercept: (bool), optional - Whether to calculate the intercept for this model (default is True).
+            max_iter: (int), optional - Maximum number of iterations for the coordinate descent solver (default is 10000).
+            tol: (float), optional - Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance (default is 1e-4).
+            compile_numba: (bool), optional - Whether to precompile the numba functions (default is False). If True, the numba fitting functions will be compiled before use.
         """
         self.alpha = alpha
         self.fit_intercept = fit_intercept
@@ -234,16 +216,19 @@ class Ridge:
                 print(f"Error compiling numba functions: {e}")
 
     def __str__(self):
+        """Returns the string representation of the model."""
         return "Ridge Regression"
 
     def fit(self, X, y, numba=False):
-        """
-        Fit the model to the data using coordinate descent.
+        """Fits the Ridge Regression model to the training data.
 
-        Parameters:
-            - X : array-like of shape (n_samples, n_features): Training data.
-            - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
-            - numba : Whether to use numba for faster computation. Default is False.
+        Args:
+            X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
+            y: (np.ndarray) - Training target data of shape (n_samples,).
+            numba: (bool), optional - Whether to use numba for faster computation (default is False).
+
+        Returns:
+            self: (Ridge) - The fitted Ridge Regression model.
         """
         _validate_data(X, y)
 
@@ -351,11 +336,13 @@ class Ridge:
             self.intercept_ = 0.0  # Set the intercept to 0.0
 
     def predict(self, X):
-        """
-        Predict using the linear model.
+        """Predicts the target values using the Ridge Regression model.
 
-        Parameters:
-        - X : array-like of shape (n_samples, n_features): Samples.
+        Args:
+            X: (np.ndarray) - Feature data of shape (n_samples, n_features).
+
+        Returns:
+            y_pred: (np.ndarray) - Predicted target values of shape (n_samples,).
         """
         if self.fit_intercept:  # If fit_intercept is True
             X = np.hstack(
@@ -369,11 +356,10 @@ class Ridge:
             return X @ self.coef_  # Return the predicted values
 
     def get_formula(self):
-        """
-        Computes the formula of the model.
+        """Computes the formula of the model.
 
         Returns:
-        - formula : str: The formula of the model.
+            formula: (str) - The formula of the model as a string.
         """
         terms = [
             f"{coef:.4f} * x_{i}" for i, coef in enumerate(self.coef_)
@@ -387,25 +373,25 @@ class Ridge:
 
 
 class Lasso:
-    """
-    This class implements Lasso Regression using Coordinate Descent.
+    """Fits the Lasso Regression model to the training data.
+
     Lasso regression implements L1 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
 
-    Parameters:
-    - alpha : float, default=1.0
-        Regularization strength; must be a positive float. Regularization improves the conditioning of the problem and reduces the variance of the estimates.
-    - fit_intercept : bool, default=True
-        Whether to calculate the intercept for this model.
-    - max_iter : int, default=10000
-        Maximum number of iterations for the coordinate descent solver.
-    - tol : float, default=1e-4
-        Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance.
+    Args:
+        X_train: (np.ndarray) - Training feature data of shape (n_samples, n_features).
+        y_train: (np.ndarray) - Training target data of shape (n_samples,).
+        X_test: (np.ndarray), optional - Testing feature data (default is None).
+        y_test: (np.ndarray), optional - Testing target data (default is None).
+        custom_metrics: (dict: str -> callable), optional - Custom metrics for evaluation (default is None).
+        verbose: (bool), optional - If True, prints progress (default is False).
 
     Attributes:
-    - coef_ : ndarray of shape (n_features,) or (n_features + 1,)
-        Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
-    - intercept_ : float
-        Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.
+        coef_: (np.ndarray) - Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
+        intercept_: (float) - Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.
+
+    Returns:
+        results: (list) - A list of dictionaries containing model performance metrics.
+        predictions: (dict) - A dictionary of predictions for each model.
     """
 
     def __init__(
@@ -416,22 +402,16 @@ class Lasso:
         tol=1e-4,
         compile_numba=False,
     ):
-        """
-        This class implements Lasso Regression using Coordinate Descent.
+        """Initializes the Lasso Regression model.
+
         Lasso regression implements L1 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
 
-        Parameters:
-        - alpha : float, default=1.0
-            Regularization strength; must be a positive float. Regularization improves the conditioning of the problem and reduces the variance of the estimates.
-        - fit_intercept : bool, default=True
-            Whether to calculate the intercept for this model.
-        - max_iter : int, default=10000
-            Maximum number of iterations for the coordinate descent solver.
-        - tol : float, default=1e-4
-            Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance.
-        - compile_numba : bool, default=False
-            Whether to precompile the numba functions. If True, the numba fitting functions will be compiled before use.
-            If not compiled, the first call to the numba fitting function will take longer, but subsequent calls will be faster.
+        Args:
+            alpha: (float) - Regularization strength; must be a positive float (default is 1.0).
+            fit_intercept: (bool), optional - Whether to calculate the intercept for this model (default is True).
+            max_iter: (int), optional - Maximum number of iterations for the coordinate descent solver (default is 10000).
+            tol: (float), optional - Tolerance for the optimization. The optimization stops when the change in the coefficients is less than this tolerance (default is 1e-4).
+            compile_numba: (bool), optional - Whether to precompile the numba functions (default is False). If True, the numba fitting functions will be compiled before use.
         """
         self.alpha = alpha
         self.fit_intercept = fit_intercept
@@ -470,16 +450,19 @@ class Lasso:
                 print(f"Error compiling numba functions: {e}")
 
     def __str__(self):
+        """Returns the string representation of the model."""
         return "Lasso Regression"
 
     def fit(self, X, y, numba=False):
-        """
-        Fit the model to the data using coordinate descent.
+        """Fits the Lasso Regression model to the training data using coordinate descent.
 
-        Parameters:
-            - X : array-like of shape (n_samples, n_features): Training data.
-            - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
-            - numba : Whether to use numba for faster computation. Default is False.
+        Args:
+            X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
+            y: (np.ndarray) - Training target data of shape (n_samples,).
+            numba: (bool), optional - Whether to use numba for faster computation (default is False).
+
+        Returns:
+            self: (Lasso) - The fitted Lasso Regression model.
         """
         _validate_data(X, y)
 
@@ -588,11 +571,13 @@ class Lasso:
             self.intercept_ = 0.0  # Set the intercept to 0.0
 
     def predict(self, X):
-        """
-        Predict using the linear model.
+        """Predicts the target values using the Lasso Regression model.
 
-        Parameters:
-        - X : array-like of shape (n_samples, n_features): Samples.
+        Args:
+            X: (np.ndarray) - Feature data of shape (n_samples, n_features).
+
+        Returns:
+            y_pred: (np.ndarray) - Predicted target values of shape (n_samples,).
         """
         if self.fit_intercept:  # If fit_intercept is True
             X = np.hstack(
@@ -606,8 +591,7 @@ class Lasso:
             return X @ self.coef_  # Return the predicted values
 
     def get_formula(self):
-        """
-        Computes the formula of the model.
+        """Computes the formula of the model.
 
         Returns:
         - formula : str: The formula of the model.
@@ -624,39 +608,28 @@ class Lasso:
 
 
 class Bayesian:
-    """
-    This class implements Bayesian Regression using Coordinate Descent.
-    Bayesian regression implements both L1 and L2 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
+    """Fits the Bayesian Regression model to the training data using Coordinate Descent.
 
-    Parameters:
-    - max_iter: int, default=300
-        The maximum number of iterations to perform.
-    - tol: float, default=0.001
-        The convergence threshold. The algorithm will stop if the coefficients change less than the threshold.
-    - alpha_1: float, default=1e-06
-        The shape parameter for the prior on the weights.
-    - alpha_2: float, default=1e-06
-        The scale parameter for the prior on the weights.
-    - lambda_1: float, default=1e-06
-        The shape parameter for the prior on the noise.
-    - lambda_2: float, default=1e-06
-        The scale parameter for the prior on the noise.
-    - fit_intercept: bool, default=True
-         Whether to calculate the intercept for this model.
+    Args:
+        X_train: (np.ndarray) - Training feature data.
+        y_train: (np.ndarray) - Training target data.
+        X_test: (np.ndarray), optional - Testing feature data (default is None).
+        y_test: (np.ndarray), optional - Testing target data (default is None).
+        max_iter: (int), optional - The maximum number of iterations to perform (default is 300).
+        tol: (float), optional - The convergence threshold. The algorithm stops when the coefficients change less than this threshold (default is 0.001).
+        alpha_1: (float), optional - The shape parameter for the prior on the weights (default is 1e-06).
+        alpha_2: (float), optional - The scale parameter for the prior on the weights (default is 1e-06).
+        lambda_1: (float), optional - The shape parameter for the prior on the noise (default is 1e-06).
+        lambda_2: (float), optional - The scale parameter for the prior on the noise (default is 1e-06).
+        fit_intercept: (bool), optional - Whether to calculate the intercept for this model (default is True).
 
-    Attributes:
-    - intercept_: float
-        The intercept of the model.
-    - coef_: ndarray of shape (n_features,) or (n_features + 1,)
-        Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
-    - n_iter_: int
-         The number of iterations performed.
-    - alpha_: float
-        The precision of the weights.
-    - lambda_: float
-        The precision of the noise.
-    - sigma_: ndarray of shape (n_features, n_features)
-        The posterior covariance of the weights.
+    Returns:
+        intercept_: (float) - The intercept of the model.
+        coef_: (np.ndarray) - Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
+        n_iter_: (int) - The number of iterations performed.
+        alpha_: (float) - The precision of the weights.
+        lambda_: (float) - The precision of the noise.
+        sigma_: (np.ndarray) - The posterior covariance of the weights.
     """
 
     def __init__(
@@ -669,25 +642,26 @@ class Bayesian:
         lambda_2=1e-06,
         fit_intercept=None,
     ):
-        """
-        This class implements Bayesian Regression using Coordinate Descent.
-        Bayesian regression implements both L1 and L2 regularization, which helps to prevent overfitting by adding a penalty term to the loss function.
+        """Implements Bayesian Regression using Coordinate Descent.
 
-        Parameters:
-        - max_iter: int, default=300
-            The maximum number of iterations to perform.
-        - tol: float, default=0.001
-            The convergence threshold. The algorithm will stop if the coefficients change less than the threshold.
-        - alpha_1: float, default=1e-06
-            The shape parameter for the prior on the weights.
-        - alpha_2: float, default=1e-06
-            The scale parameter for the prior on the weights.
-        - lambda_1: float, default=1e-06
-            The shape parameter for the prior on the noise.
-        - lambda_2: float, default=1e-06
-            The scale parameter for the prior on the noise.
-        - fit_intercept: bool, default=True
-            Whether to calculate the intercept for this model.
+        Bayesian regression applies both L1 and L2 regularization to prevent overfitting by adding penalty terms to the loss function.
+
+        Args:
+            max_iter: (int) - The maximum number of iterations to perform (default is 300).
+            tol: (float) - The convergence threshold. The algorithm stops when the coefficients change less than this threshold (default is 0.001).
+            alpha_1: (float) - The shape parameter for the prior on the weights (default is 1e-06).
+            alpha_2: (float) - The scale parameter for the prior on the weights (default is 1e-06).
+            lambda_1: (float) - The shape parameter for the prior on the noise (default is 1e-06).
+            lambda_2: (float) - The scale parameter for the prior on the noise (default is 1e-06).
+            fit_intercept: (bool), optional - Whether to calculate the intercept for this model (default is True).
+
+        Returns:
+            intercept_: (float) - The intercept of the model.
+            coef_: (np.ndarray) - Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
+            n_iter_: (int) - The number of iterations performed.
+            alpha_: (float) - The precision of the weights.
+            lambda_: (float) - The precision of the noise.
+            sigma_: (np.ndarray) - The posterior covariance of the weights.
         """
         self.max_iter = max_iter
         self.tol = tol
@@ -701,15 +675,18 @@ class Bayesian:
         self.coef_ = None
 
     def __str__(self):
+        """Returns the string representation of the model."""
         return "Bayesian Regression"
 
     def fit(self, X, y):
-        """
-        Fit the model to the data.
+        """Fits the Bayesian Regression model to the training data.
 
-        Parameters:
-        - X : array-like of shape (n_samples, n_features): Training data.
-        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
+        Args:
+            X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
+            y: (np.ndarray) - Training target data of shape (n_samples,).
+
+        Returns:
+            self: (Bayesian) - The fitted Bayesian Regression model.
         """
         _validate_data(X, y)
 
@@ -781,32 +758,21 @@ class Bayesian:
         return self
 
     def tune(self, X, y, beta1=0.9, beta2=0.999, iter=1000):
-        """
-        Automatically tune the hyperparameters alpha_1, alpha_2, lambda_1, lambda_2.
-        Loops through the parameter space, and returns the best hyperparameters based on the mean squared error.
-        Computes gradients using ADAM optimizer.
+        """Tunes the hyperparameters alpha_1, alpha_2, lambda_1, and lambda_2 using ADAM optimizer.
 
-        Parameters:
-        - X : array-like of shape (n_samples, n_features): Training data.
-        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
-        - beta1: float, default=0.9
-            The exponential decay rate for the first moment estimates.
-        - beta2: float, default=0.999
-            The exponential decay rate for the second moment estimates.
-        - iter: int, default=1000
-            The number of iterations to perform.
+        Args:
+            X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
+            y: (np.ndarray) - Training target data of shape (n_samples,).
+            beta1: (float), optional - The exponential decay rate for the first moment estimates (default is 0.9).
+            beta2: (float), optional - The exponential decay rate for the second moment estimates (default is 0.999).
+            iter: (int), optional - The maximum number of iterations to perform (default is 1000).
 
         Returns:
-        - best_alpha_1: float
-            The best value of alpha_1.
-        - best_alpha_2: float
-            The best value of alpha_2.
-        - best_lambda_1: float
-            The best value of lambda_1.
-        - best_lambda_2: float
-            The best value of lambda_2.
+            best_alpha_1: (float) - The best value of alpha_1.
+            best_alpha_2: (float) - The best value of alpha_2.
+            best_lambda_1: (float) - The best value of lambda_1.
+            best_lambda_2: (float) - The best value of lambda_2.
         """
-
         # Initialize the best values of the hyperparameters
         best_alpha_1 = None
         best_alpha_2 = None
@@ -836,19 +802,19 @@ class Bayesian:
         t = 0  # The time step
 
         def _compute_gradient_alpha_1():
-            """Compute the gradient of the loss function with respect to alpha_1"""
+            """Compute the gradient of the loss function with respect to alpha_1."""
             return -0.5 * (np.sum(self.coef_**2) + 2 * self.alpha_2)
 
         def _compute_gradient_alpha_2():
-            """Compute the gradient of the loss function with respect to alpha_2"""
+            """Compute the gradient of the loss function with respect to alpha_2."""
             return -0.5 * (self.alpha_1 / self.alpha_2**2)
 
         def _compute_gradient_lambda_1():
-            """Compute the gradient of the loss function with respect to lambda_1"""
+            """Compute the gradient of the loss function with respect to lambda_1."""
             return -0.5 * (np.sum(self.coef_**2) + 2 * self.lambda_2)
 
         def _compute_gradient_lambda_2():
-            """Compute the gradient of the loss function with respect to lambda_2"""
+            """Compute the gradient of the loss function with respect to lambda_2."""
             return -0.5 * (self.lambda_1 / self.lambda_2**2)
 
         # loop until convergence
@@ -923,20 +889,21 @@ class Bayesian:
         return best_alpha_1, best_alpha_2, best_lambda_1, best_lambda_2
 
     def predict(self, X):
-        """
-        Predict using the linear model. Computes the dot product of X and the coefficients.
+        """Predicts the target values using the Bayesian Regression model.
 
-        Parameters:
-        - X : array-like of shape (n_samples, n_features): Samples.
+        Args:
+            X: (np.ndarray) - Feature data of shape (n_samples, n_features).
+
+        Returns:
+            y_pred: (np.ndarray) - Predicted target values of shape (n_samples,).
         """
         return np.dot(X, self.coef_)
 
     def get_formula(self):
-        """
-        Computes the formula of the model.
+        """Computes the formula of the model.
 
         Returns:
-        - formula : str: The formula of the model.
+            formula: (str) - The formula of the model as a string.
         """
         terms = [
             f"{coef:.4f} * x_{i}" for i, coef in enumerate(self.coef_)
@@ -950,41 +917,29 @@ class Bayesian:
 
 
 class RANSAC:
-    """
-    Implements RANSAC (RANdom SAmple Consensus) algorithm for robust linear regression.
-    This uses the RANSAC algorithm to fit a linear model to the data, while ignoring outliers.
+    """Fits the RANSAC (RANdom SAmple Consensus) algorithm for robust linear regression.
 
-    Parameters:
-    - n: int, default=10
-        Number of data points to estimate parameters.
-    - k: int, default=100
-        Maximum iterations allowed.
-    - t: float, default=0.05
-         Threshold value to determine if points are fit well, in terms of residuals.
-    - d: int, default=10
-        Number of close data points required to assert model fits well.
-    - model: object, default=None
-        The model to use for fitting. If None, uses Ordinary Least Squares.
-    - auto_scale_t: bool, default=False
-        - Whether to automatically scale the threshold until a model is fit.
-    - scale_t_factor: float, default=2
-        - Factor by which to scale the threshold until a model is fit.
-    - auto_scale_n: bool, default=False
-        - Whether to automatically scale the number of data points until a model is fit.
-    - scale_n_factor: float, default=2
-        - Factor by which to scale the number of data points until a model is fit.
+    Args:
+        X_train: (np.ndarray) - Training feature data.
+        y_train: (np.ndarray) - Training target data.
+        X_test: (np.ndarray), optional - Testing feature data (default is None).
+        y_test: (np.ndarray), optional - Testing target data (default is None).
+        n: (int), optional - Number of data points to estimate parameters (default is 10).
+        k: (int), optional - Maximum iterations allowed (default is 100).
+        t: (float), optional - Threshold value to determine if points are fit well, in terms of residuals (default is 0.05).
+        d: (int), optional - Number of close data points required to assert model fits well (default is 10).
+        model: (object), optional - The model to use for fitting. If None, uses Ordinary Least Squares (default is None).
+        auto_scale_t: (bool), optional - Whether to automatically scale the threshold until a model is fit (default is False).
+        scale_t_factor: (float), optional - Factor by which to scale the threshold until a model is fit (default is 2).
+        auto_scale_n: (bool), optional - Whether to automatically scale the number of data points until a model is fit (default is False).
+        scale_n_factor: (float), optional - Factor by which to scale the number of data points until a model is fit (default is 2).
 
-    Attributes:
-    - best_fit: object
-        The best model fit.
-    - best_error: float
-        The best error achieved by the model.
-    - best_n: int
-        The best number of data points used to fit the model.
-    - best_t: float
-        The best threshold value used to determine if points are fit well, in terms of residuals.
-    - best_model: object
-        The best model fit.
+    Returns:
+        best_fit: (object) - The best model fit.
+        best_error: (float) - The best error achieved by the model.
+        best_n: (int) - The best number of data points used to fit the model.
+        best_t: (float) - The best threshold value used to determine if points are fit well, in terms of residuals.
+        best_model: (object) - The best model fit.
     """
 
     def __init__(
@@ -999,29 +954,29 @@ class RANSAC:
         auto_scale_n=False,
         scale_n_factor=2,
     ):
-        """
-        Implements RANSAC (RANdom SAmple Consensus) algorithm for robust linear regression.
-        This uses the RANSAC algorithm to fit a linear model to the data, while ignoring outliers.
+        """Fits the RANSAC (RANdom SAmple Consensus) algorithm for robust linear regression.
 
-        Parameters:
-        - n: int, default=10
-            Number of data points to estimate parameters.
-        - k: int, default=100
-            Maximum iterations allowed.
-        - t: float, default=0.05
-            Threshold value to determine if points are fit well, in terms of residuals.
-        - d: int, default=10
-            Number of close data points required to assert model fits well.
-        - model: object, default=None
-            The model to use for fitting. If None, uses Ordinary Least Squares.
-        - auto_scale_t: bool, default=False
-            - Whether to automatically scale the threshold until a model is fit.
-        - scale_t_factor: float, default=2
-            - Factor by which to scale the threshold until a model is fit.
-        - auto_scale_n: bool, default=False
-            - Whether to automatically scale the number of data points until a model is fit.
-        - scale_n_factor: float, default=2
-            - Factor by which to scale the number of data points until a model is fit.
+        Args:
+            X_train: (np.ndarray) - Training feature data.
+            y_train: (np.ndarray) - Training target data.
+            X_test: (np.ndarray), optional - Testing feature data (default is None).
+            y_test: (np.ndarray), optional - Testing target data (default is None).
+            n: (int), optional - Number of data points to estimate parameters (default is 10).
+            k: (int), optional - Maximum iterations allowed (default is 100).
+            t: (float), optional - Threshold value to determine if points are fit well, in terms of residuals (default is 0.05).
+            d: (int), optional - Number of close data points required to assert model fits well (default is 10).
+            model: (object), optional - The model to use for fitting. If None, uses Ordinary Least Squares (default is None).
+            auto_scale_t: (bool), optional - Whether to automatically scale the threshold until a model is fit (default is False).
+            scale_t_factor: (float), optional - Factor by which to scale the threshold until a model is fit (default is 2).
+            auto_scale_n: (bool), optional - Whether to automatically scale the number of data points until a model is fit (default is False).
+            scale_n_factor: (float), optional - Factor by which to scale the number of data points until a model is fit (default is 2).
+
+        Returns:
+            best_fit: (object) - The best model fit.
+            best_error: (float) - The best error achieved by the model.
+            best_n: (int) - The best number of data points used to fit the model.
+            best_t: (float) - The best threshold value used to determine if points are fit well, in terms of residuals.
+            best_model: (object) - The best model fit.
         """
         # Can only scale one of the threshold or the number of data points
         assert not (auto_scale_t and auto_scale_n), (
@@ -1050,6 +1005,7 @@ class RANSAC:
         self.scale_n_factor = scale_n_factor
 
     def __str__(self):
+        """Returns the string representation of the model."""
         return "RANSAC"
 
     def _square_loss(self, y_true, y_pred):
@@ -1061,12 +1017,14 @@ class RANSAC:
         return np.mean(self._square_loss(y_true, y_pred))
 
     def fit(self, X, y):
-        """
-        Fit the model to the data, using RANSAC.
+        """Fits the RANSAC model to the training data.
 
-        Parameters:
-        - X : array-like of shape (n_samples, n_features): Training data.
-        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
+        Args:
+            X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
+            y: (np.ndarray) - Training target data of shape (n_samples,).
+
+        Returns:
+            None
         """
         _validate_data(X, y)
 
@@ -1115,18 +1073,18 @@ class RANSAC:
             self.fit(X, y)
 
     def predict(self, X):
-        """
-        Predict using the best fit model.
+        """Predicts the target values using the best fit model.
 
-        Parameters:
-        - X : array-like of shape (n_samples, n_features): Samples.
+        Args:
+            X: (np.ndarray) - Feature data of shape (n_samples, n_features).
+
+        Returns:
+            y_pred: (np.ndarray) - Predicted target values of shape (n_samples,).
         """
         return self.best_fit.predict(X)
 
     def get_formula(self):
-        """
-        Computes the formula of the model if fit, else returns "No model fit available"
-        """
+        """Computes the formula of the model if fit, else returns "No model fit available"."""
         try:
             return self.best_fit.get_formula()
         except Exception as _e:
@@ -1134,45 +1092,31 @@ class RANSAC:
 
 
 class PassiveAggressiveRegressor:
-    """
-    Implements Passive Aggressive Regression using the Passive Aggressive algorithm.
-    The algorithm is a type of online learning algorithm that updates the model parameters based on the current sample.
-    If the prediction is within a certain tolerance, the model parameters are updated.
+    """Fits the Passive Aggressive Regression model to the training data.
 
-    Parameters:
-    - C: float, default=1.0
-        Regularization parameter/step size.
-    - max_iter: int, default=1000
-        The maximum number of passes over the training data.
-    - tol: float, default=1e-3
-        The stopping criterion.
+    Args:
+        X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
+        y: (np.ndarray) - Training target data of shape (n_samples,).
+        save_steps: (bool), optional - Whether to save the weights and intercept at each iteration (default is False).
+        verbose: (bool), optional - If True, prints progress during training (default is False).
 
     Attributes:
-    - coef_: ndarray of shape (n_features,) or (n_features + 1,)
-        Estimated coefficients for the linear regression problem. If `fit_intercept` is True, the first element is the intercept.
-    - intercept_: float
-        Independent term in the linear model. Set to 0.0 if `fit_intercept` is False.
-    - n_iter_: int
-        The number of iterations performed.
-    - steps_: list of tuples of shape (n_features,) or (n_features + 1,)
-        The weights and intercept at each iteration if save_steps is True.
-    - save_steps: bool, default=False
-        - Whether to save the weights and intercept at each iteration.
+        coef_: (np.ndarray) - Estimated coefficients for the regression problem.
+        intercept_: (float) - Independent term in the linear model.
+        steps_: (list of tuples), optional - The weights and intercept at each iteration if `save_steps` is True.
     """
 
     def __init__(self, C=1.0, max_iter=1000, tol=1e-3):
-        """
-        Implements Passive Aggressive Regression using the Passive Aggressive algorithm.
-        The algorithm is a type of online learning algorithm that updates the model parameters based on the current sample.
-        If the prediction is within a certain tolerance, the model parameters are updated.
+        """Fits the Passive Aggressive Regression model to the training data.
 
-        Parameters:
-        - C: float, default=1.0
-            Regularization parameter/step size.
-        - max_iter: int, default=1000
-            The maximum number of passes over the training data.
-        - tol: float, default=1e-3
-            The stopping criterion.
+        Args:
+            C: (float) - Regularization parameter/step size (default is 1.0).
+            max_iter: (int) - The maximum number of passes over the training data (default is 1000).
+            tol: (float) - The stopping criterion (default is 1e-3).
+
+        Attributes:
+            coef_: (np.ndarray) - Estimated coefficients for the regression problem.
+            intercept_: (float) - Independent term in the linear model.
         """
         self.C = C  # Regularization parameter/step size
         self.max_iter = max_iter  # The maximum number of passes over the training data
@@ -1182,18 +1126,20 @@ class PassiveAggressiveRegressor:
         self.intercept_ = None  # The learned intercept
 
     def __str__(self):
+        """Returns the string representation of the model."""
         return "Passive Aggressive Regressor"
 
     def fit(self, X, y, save_steps=False, verbose=False):
-        """
-        Fit the model to the data.
-        Save the weights and the intercept at each iteration if save_steps is True.
+        """Fits the Passive Aggressive Regression model to the training data.
 
-        Parameters:
-        - X : array-like of shape (n_samples, n_features): Training data.
-        - y : array-like of shape (n_samples,) or (n_samples, n_targets): Target values.
-        - save_steps: bool, default=False
-        - verbose: bool, default=False
+        Args:
+            X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
+            y: (np.ndarray) - Training target data of shape (n_samples,).
+            save_steps: (bool), optional - Whether to save the weights and intercept at each iteration (default is False).
+            verbose: (bool), optional - If True, prints progress during training (default is False).
+
+        Returns:
+            None
         """
         _validate_data(X, y)
 
@@ -1244,15 +1190,11 @@ class PassiveAggressiveRegressor:
                 break
 
     def predict(self, X):
-        """
-        Predict using the linear model. Dot product of X and the coefficients.
-        """
+        """Predict using the linear model. Dot product of X and the coefficients."""
         return np.dot(X, self.coef_) + self.intercept_
 
     def predict_all_steps(self, X):
-        """
-        Predict using the linear model at each iteration. (save_steps=True)
-        """
+        """Predict using the linear model at each iteration. (save_steps=True)."""
         assert hasattr(self, "steps_"), "Model has not been fitted with save_steps=True"
 
         predictions = []
@@ -1262,11 +1204,10 @@ class PassiveAggressiveRegressor:
         return predictions
 
     def get_formula(self):
-        """
-        Computes the formula of the model.
+        """Computes the formula of the model.
 
         Returns:
-        - formula : str: The formula of the model.
+            formula : str: The formula of the model.
         """
         terms = [
             f"{coef:.4f} * x_{i}" for i, coef in enumerate(self.coef_)

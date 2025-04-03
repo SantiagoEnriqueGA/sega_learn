@@ -36,6 +36,49 @@ except ImportError:
 
 
 class NumbaBackendNeuralNetwork(NeuralNetworkBase):
+    """A neural network implementation using Numba for Just-In-Time (JIT) compilation to optimize performance.
+
+    This class supports forward and backward propagation, training, evaluation, and hyperparameter tuning
+    with various optimizers and activation functions.
+
+    Attributes:
+        compiled (bool): Indicates whether Numba functions are compiled.
+        trainable_layers (list): Layers with trainable parameters (weights and biases).
+        progress_bar (bool): Whether to display a progress bar during training.
+
+    Methods:
+        __init__(layers, dropout_rate, reg_lambda, activations, compile_numba, progress_bar):
+            Initializes the neural network with the specified parameters.
+        store_init_layers():
+            Stores the initial layers and their parameters for restoration after initialization.
+        restore_layers():
+            Restores the layers and their parameters after initialization.
+        initialize_new_layers():
+            Initializes the layers of the neural network with specified sizes and activation functions.
+        forward(X, training):
+            Performs forward propagation through the neural network.
+        backward(y):
+            Performs backward propagation to calculate gradients.
+        is_not_instance_of_classes(obj, classes):
+            Checks if an object is not an instance of any class in a list of classes.
+        train(X_train, y_train, X_val, y_val, optimizer, epochs, batch_size, early_stopping_threshold,
+              lr_scheduler, p, use_tqdm, n_jobs, track_metrics, track_adv_metrics, save_animation,
+              save_path, fps, dpi, frame_every):
+            Trains the neural network model with the specified parameters.
+        evaluate(X, y):
+            Evaluates the neural network on the given data and returns accuracy and predictions.
+        predict(X):
+            Predicts the output for the given input data.
+        calculate_loss(X, y):
+            Calculates the loss with L2 regularization.
+        _create_optimizer(optimizer_type, learning_rate, JIT):
+            Helper method to create optimizer instances.
+        tune_hyperparameters(X_train, y_train, X_val, y_val, param_grid, layer_configs, optimizer_types,
+                             lr_range, epochs, batch_size):
+            Performs hyperparameter tuning using grid search.
+        compile_numba_functions(progress_bar):
+            Compiles all Numba JIT functions to improve performance.
+    """
     def __init__(
         self,
         layers,
@@ -45,15 +88,15 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         compile_numba=True,
         progress_bar=True,
     ):
-        """
-        Initializes the Numba backend neural network.
+        """Initializes the Numba backend neural network.
+
         Args:
-            layers (list): List of layer sizes or Layer objects.
-            dropout_rate (float): Dropout rate for regularization.
-            reg_lambda (float): L2 regularization parameter.
-            activations (list): List of activation functions for each layer.
-            compile_numba (bool): Whether to compile Numba functions.
-            progress_bar (bool): Whether to display a progress bar.
+            layers: (list) - List of layer sizes or Layer objects.
+            dropout_rate: (float) - Dropout rate for regularization.
+            reg_lambda: (float) - L2 regularization parameter.
+            activations: (list) - List of activation functions for each layer.
+            compile_numba: (bool) - Whether to compile Numba functions.
+            progress_bar: (bool) - Whether to display a progress bar.
         """
         super().__init__(layers, dropout_rate, reg_lambda, activations)
         self.compiled = False
@@ -110,8 +153,8 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         ]
 
     def initialize_new_layers(self):
-        """
-        Initializes the layers of the neural network.
+        """Initializes the layers of the neural network.
+
         Each layer is created with the specified number of neurons and activation function.
         """
         for i in range(len(self.layer_sizes) - 1):
@@ -130,11 +173,12 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         self.dbs_cache = [np.zeros_like(b) for b in self.biases]
 
     def forward(self, X, training=True):
-        """
-        Performs forward propagation through the neural network.
+        """Performs forward propagation through the neural network.
+
         Args:
             X (ndarray): Input data of shape (batch_size, input_size).
             training (bool): Whether the network is in training mode (applies dropout).
+
         Returns:
             ndarray: Output predictions of shape (batch_size, output_size).
         """
@@ -157,8 +201,8 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         return output
 
     def backward(self, y):
-        """
-        Performs backward propagation to calculate the gradients.
+        """Performs backward propagation to calculate the gradients.
+
         Args:
             y (ndarray): Target labels of shape (m, output_size).
         """
@@ -180,11 +224,12 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
 
     @staticmethod
     def is_not_instance_of_classes(obj, classes):
-        """
-        Checks if an object is not an instance of any class in a list of classes.
+        """Checks if an object is not an instance of any class in a list of classes.
+
         Args:
             obj: The object to check.
             classes: A list of classes.
+
         Returns:
             bool: True if the object is not an instance of any class in the list of classes, False otherwise.
         """
@@ -212,28 +257,28 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         dpi=100,
         frame_every=1,
     ):
-        """
-        Trains the neural network model.
+        """Trains the neural network model.
+
         Args:
-            - X_train (ndarray): Training data features.
-            - y_train (ndarray): Training data labels.
-            - X_val (ndarray): Validation data features, optional.
-            - y_val (ndarray): Validation data labels, optional.
-            - optimizer (Optimizer): Optimizer for updating parameters (default: JITAdam, lr=0.0001).
-            - epochs (int): Number of training epochs (default: 100).
-            - batch_size (int): Batch size for mini-batch gradient descent (default: 32).
-            - early_stopping_threshold (int): Patience for early stopping (default: 10).
-            - lr_scheduler (Scheduler): Learning rate scheduler (default: None).
-            - p (bool): Whether to print training progress (default: True).
-            - use_tqdm (bool): Whether to use tqdm for progress bar (default: True).
-            - n_jobs (int): Number of jobs for parallel processing (default: 1).
-            - track_metrics (bool): Whether to track training metrics (default: False).
-            - track_adv_metrics (bool): Whether to track advanced metrics (default: False).
-            - save_animation (bool): Whether to save the animation of metrics (default: False).
-            - save_path (str): Path to save the animation file. File extension must be .mp4 or .gif (default: 'training_animation.mp4').
-            - fps (int): Frames per second for the saved animation (default: 1).
-            - dpi (int): DPI for the saved animation (default: 100).
-            - frame_every (int): Capture frame every N epochs (to reduce file size) (default: 1).
+            X_train: (ndarray) - Training data features.
+            y_train: (ndarray) - Training data labels.
+            X_val: (ndarray) - Validation data features, optional.
+            y_val: (ndarray) - Validation data labels, optional.
+            optimizer: (Optimizer) - Optimizer for updating parameters (default: JITAdam, lr=0.0001).
+            epochs: (int) - Number of training epochs (default: 100).
+            batch_size: (int) - Batch size for mini-batch gradient descent (default: 32).
+            early_stopping_threshold: (int) - Patience for early stopping (default: 10).
+            lr_scheduler: (Scheduler) - Learning rate scheduler (default: None).
+            p: (bool) - Whether to print training progress (default: True).
+            use_tqdm: (bool) - Whether to use tqdm for progress bar (default: True).
+            n_jobs: (int) - Number of jobs for parallel processing (default: 1).
+            track_metrics: (bool) - Whether to track training metrics (default: False).
+            track_adv_metrics: (bool) - Whether to track advanced metrics (default: False).
+            save_animation: (bool) - Whether to save the animation of metrics (default: False).
+            save_path: (str) - Path to save the animation file. File extension must be .mp4 or .gif (default: 'training_animation.mp4').
+            fps: (int) - Frames per second for the saved animation (default: 1).
+            dpi: (int) - DPI for the saved animation (default: 100).
+            frame_every: (int) - Capture frame every N epochs (to reduce file size) (default: 1).
         """
         if use_tqdm and not TQDM_AVAILABLE:
             warnings.warn(
@@ -591,11 +636,12 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         return animator if save_animation else None
 
     def evaluate(self, X, y):
-        """
-        Evaluates the neural network on the given data.
+        """Evaluates the neural network on the given data.
+
         Args:
             X (ndarray): Input data.
             y (ndarray): Target labels.
+
         Returns:
             tuple: Accuracy and predicted labels.
         """
@@ -608,10 +654,11 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         return accuracy, predicted
 
     def predict(self, X):
-        """
-        Predicts the output for the given input data.
+        """Predicts the output for the given input data.
+
         Args:
             X (ndarray): Input data.
+
         Returns:
             ndarray: Predicted outputs.
         """
@@ -620,11 +667,12 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         return outputs if self.is_binary else np.argmax(outputs, axis=1)
 
     def calculate_loss(self, X, y):
-        """
-        Calculates the loss with L2 regularization.
+        """Calculates the loss with L2 regularization.
+
         Args:
             X (ndarray): Input data.
             y (ndarray): Target labels.
+
         Returns:
             float: The calculated loss value.
         """
@@ -670,20 +718,23 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         epochs=30,
         batch_size=32,
     ):
-        """
-        Performs hyperparameter tuning using grid search.
-        Parameters:
-            - X_train, y_train: Training data
-            - X_val, y_val: Validation data
-            - param_grid: Dict of parameters to try
-            - layer_configs: List of layer configurations
-            - optimizer_types: List of optimizer types
-            - lr_range: (min_lr, max_lr, num_steps) for learning rates
-            - epochs: Max epochs for each trial
-            - batch_size: Batch size for training
+        """Performs hyperparameter tuning using grid search.
+
+        Args:
+            X_train: (np.ndarray) - Training feature data.
+            y_train: (np.ndarray) - Training target data.
+            X_val: (np.ndarray) - Validation feature data.
+            y_val: (np.ndarray) - Validation target data.
+            param_grid: (dict) - Dictionary of parameters to try.
+            layer_configs: (list), optional - List of layer configurations (default is None).
+            optimizer_types: (list), optional - List of optimizer types (default is None).
+            lr_range: (tuple), optional - (min_lr, max_lr, num_steps) for learning rates (default is (0.0001, 0.01, 5)).
+            epochs: (int), optional - Max epochs for each trial (default is 30).
+            batch_size: (int), optional - Batch size for training (default is 32).
+
         Returns:
-            - best_params: Best hyperparameters found
-            - best_accuracy: Best validation accuracy
+            best_params: (dict) - Best hyperparameters found.
+            best_accuracy: (float) - Best validation accuracy.
         """
         if not TQDM_AVAILABLE:
             # TODO: Make tqdm optional for hyperparameter tuning
@@ -804,8 +855,8 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         return best_params, best_accuracy
 
     def compile_numba_functions(self, progress_bar=True):
-        """
-        Compiles all Numba JIT functions to improve performance.
+        """Compiles all Numba JIT functions to improve performance.
+
         Args:
             progress_bar (bool): Whether to display a progress bar.
         """

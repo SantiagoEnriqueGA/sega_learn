@@ -20,16 +20,15 @@ r_squared = Metrics.r_squared
 root_mean_squared_error = Metrics.root_mean_squared_error
 mean_absolute_percentage_error = Metrics.mean_absolute_percentage_error
 
+
 class AutoRegressor:
-    """
-    A class to automatically select and evaluate the best regression model for a given dataset.
-    It uses various regression models and compares their performance using metrics such as R-squared, RMSE, and MAPE.
+    """A class to automatically select and evaluate the best regression model for a given dataset.
+
+    Uses various regression models and compares their performance using metrics such as R-squared, RMSE, and MAPE.
     """
 
     def __init__(self):
-        """
-        Initializes the AutoRegressor with a set of predefined regression models.
-        """
+        """Initializes the AutoRegressor with a set of predefined regression models."""
         # Each model should have a fit and predict method
         self.models = {
             # Linear Models
@@ -82,20 +81,19 @@ class AutoRegressor:
         custom_metrics=None,
         verbose=False,
     ):
-        """
-        Fits the regression models to the training data and evaluates their performance.
+        """Fits the regression models to the training data and evaluates their performance.
 
         Args:
-            - X_train (np.ndarray) - Training feature data.
-            - y_train (np.ndarray) - Training target data.
-            - X_test (np.ndarray), optional - Testing feature data (default is None).
-            - y_test (np.ndarray), optional - Testing target data (default is None).
-            - custom_metrics (dict: str -> callable), optional - Custom metrics for evaluation (default is None).
-            - verbose (bool), optional - If True, prints progress (default is False).
+            X_train: (np.ndarray) - Training feature data.
+            y_train: (np.ndarray) - Training target data.
+            X_test: (np.ndarray) optional - Testing feature data (default is None).
+            y_test: (np.ndarray) optional - Testing target data (default is None).
+            custom_metrics: (dict: str -> callable), optional: Custom metrics for evaluation (default is None).
+            verbose: (bool), optional - If True, prints progress (default is False).
 
         Returns:
-            - results (list) - A list of dictionaries containing model performance metrics.
-            - predictions (dict) - A dictionary of predictions for each model.
+            results (list) - A list of dictionaries containing model performance metrics.
+            predictions (dict) - A dictionary of predictions for each model.
         """
         # Input validation
         if not isinstance(X_train, np.ndarray) or not isinstance(y_train, np.ndarray):
@@ -174,12 +172,11 @@ class AutoRegressor:
         return self.results, self.predictions
 
     def predict(self, X, model=None):
-        """
-        Generates predictions for the given input data using all fitted models.
+        """Generates predictions for the given input data using all fitted models.
 
-        Parameters:
-            - X (np.ndarray) - Input feature data.
-            - model (str), optional - Specific model name to use for predictions (default is None).
+        Args:
+            X: (np.ndarray) - Input feature data.
+            model: (str), optional - Specific model name to use for predictions (default is None).
 
         Returns:
             - predictions (dict) - A dictionary of predictions for each model.
@@ -194,13 +191,12 @@ class AutoRegressor:
         return predictions
 
     def evaluate(self, y_true, custom_metrics=None, model=None):
-        """
-        Evaluates the performance of the fitted models using the provided true values.
+        """Evaluates the performance of the fitted models using the provided true values.
 
         Args:
-            - y_true (np.ndarray): True target values.
-            - custom_metrics (dict: str -> callable), optional: Custom metrics for evaluation (default is None).
-            - model (str), optional: Specific model name to evaluate (default is None).
+            y_true: (np.ndarray) - True target values.
+            custom_metrics: (dict: str -> callable), optional - Custom metrics for evaluation (default is None).
+            model: (str), optional - Specific model name to evaluate (default is None).
 
         Returns:
             - evaluation_results (dict): A dictionary containing evaluation metrics for the specified model(s).
@@ -231,22 +227,21 @@ class AutoRegressor:
         return evaluation_results
 
     def get_model(self, model_name):
-        """
-        Returns the model instance for the specified model name.
+        """Returns the model instance for the specified model name.
 
         Args:
-            - model_name (str): The name of the model.
+            model_name: (str) - The name of the model.
 
         Returns:
-            - model_instance: The model instance.
+            model_instance: The model instance.
         """
         if model_name not in self.models:
             raise ValueError(f"Model '{model_name}' not found.")
         return self.models[model_name]
 
     def summary(self):
-        """
-        Prints a summary of the performance of all fitted models, sorted by R-squared, RMSE, and time taken.
+        """Prints a summary of the performance of all fitted models, sorted by R-squared, RMSE, and time taken.
+
         Dynamically adjusts to display the metrics used during evaluation.
         """
         if not self.results:

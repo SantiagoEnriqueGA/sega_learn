@@ -19,9 +19,10 @@ spec = [
 
 @jitclass(spec)
 class JITDenseLayer:
-    """
-    Initializes a fully connected layer object, where each neuron is connected to all neurons in the previous layer.
+    """Initializes a fully connected layer object, where each neuron is connected to all neurons in the previous layer.
+
     Each layer consists of weights, biases, and an activation function.
+
     Args:
         input_size (int): The size of the input to the layer.
         output_size (int): The size of the output from the layer.
@@ -45,6 +46,25 @@ class JITDenseLayer:
     """
 
     def __init__(self, input_size, output_size, activation="relu"):
+        """Initializes the layer with weights, biases, and activation function.
+
+        Args:
+            input_size: (int) - The number of input features to the layer.
+            output_size: (int) - The number of output features from the layer.
+            activation: (str), optional - The activation function to use (default is "relu").
+
+        Attributes:
+            weights: (np.ndarray) - The weight matrix initialized using He initialization for ReLU or Leaky ReLU,
+                        or Xavier initialization for other activations.
+            biases: (np.ndarray) - The bias vector initialized to zeros.
+            activation: (str) - The activation function for the layer.
+            weight_gradients: (np.ndarray) - Gradients of the weights, initialized to zeros.
+            bias_gradients: (np.ndarray) - Gradients of the biases, initialized to zeros.
+            input_cache: (np.ndarray) - Cached input values for backpropagation, initialized to zeros.
+            output_cache: (np.ndarray) - Cached output values for backpropagation, initialized to zeros.
+            input_size: (int) - The number of input features to the layer.
+            output_size: (int) - The number of output features from the layer.
+        """
         # He initialization for weights
         if activation in ["relu", "leaky_relu"]:
             scale = np.sqrt(2.0 / input_size)
@@ -71,12 +91,14 @@ class JITDenseLayer:
         self.bias_gradients = np.zeros_like(self.bias_gradients)
 
     def forward(self, X):
+        """Perform the forward pass of the layer."""
         Z = np.dot(X, self.weights) + self.biases
         self.input_cache = X
         self.output_cache = self.activate(Z)
         return self.output_cache
 
     def backward(self, dA, reg_lambda):
+        """Perform the backward pass of the layer."""
         m = self.input_cache.shape[0]
         dZ = dA * self.activation_derivative(self.output_cache)
         dW = np.dot(self.input_cache.T, dZ) / m + reg_lambda * self.weights
@@ -130,12 +152,22 @@ flatten_spec = [
 
 @jitclass(flatten_spec)
 class JITFlattenLayer:
-    """
-    A layer that flattens multi-dimensional input into a 2D array (batch_size, flattened_size).
+    """A layer that flattens multi-dimensional input into a 2D array (batch_size, flattened_size).
+
     Useful for transitioning from convolutional layers to dense layers.
     """
-
     def __init__(self):
+        """Initializes the layer with placeholder values for input and output dimensions.
+
+        Attributes:
+            input_shape: (tuple) - Shape of the input data, initialized to (0, 0, 0).
+                       This will be set during the forward pass.
+            output_size: (int) - Size of the output, initialized to 0.
+                     This will be set during the forward pass.
+            input_size: (int) - Size of the input, initialized to 0.
+                    This will be set during the forward pass.
+            input_cache: (any) - Cache for input data, to be set during the forward pass.
+        """
         # Initialize with placeholder values
         self.input_shape = (0, 0, 0)  # Will be set during forward pass
         self.output_size = 0  # Will be set during forward pass
@@ -143,8 +175,7 @@ class JITFlattenLayer:
         # input_cache will be set during forward pass
 
     def forward(self, X):
-        """
-        Flattens the input tensor.
+        """Flattens the input tensor.
 
         Args:
             X (np.ndarray): Input data of shape (batch_size, channels, height, width)
@@ -178,8 +209,7 @@ class JITFlattenLayer:
         return result
 
     def backward(self, dA, reg_lambda=0):
-        """
-        Reshapes the gradient back to the original input shape.
+        """Reshapes the gradient back to the original input shape.
 
         Args:
             dA (np.ndarray): Gradient of the loss with respect to the layer's output,
@@ -231,10 +261,7 @@ conv_spec = [
 
 @jitclass(conv_spec)
 class JITConvLayer:
-    """
-    A convolutional layer implementation for neural networks using Numba JIT compilation.
-    """
-
+    """A convolutional layer implementation for neural networks using Numba JIT compilation."""
     def __init__(
         self,
         in_channels,
@@ -244,9 +271,33 @@ class JITConvLayer:
         padding=0,
         activation="relu",
     ):
+        """Initializes the convolutional layer with weights, biases, and activation function.
+
+        Args:
+            in_channels: (int) - Number of input channels.
+            out_channels: (int) - Number of output channels.
+            kernel_size: (int) - Size of the convolutional kernel (assumes square kernels).
+            stride: (int), optional - Stride of the convolution (default is 1).
+            padding: (int), optional - Padding added to the input (default is 0).
+            activation: (str), optional - Activation function to use (default is "relu").
+
+        Attributes:
+            weights: (np.ndarray) - Convolutional weight matrix initialized using He initialization.
+            biases: (np.ndarray) - Bias vector initialized to zeros.
+            activation: (str) - Activation function for the layer.
+            weight_gradients: (np.ndarray) - Gradients of the weights, initialized to zeros.
+            bias_gradients: (np.ndarray) - Gradients of the biases, initialized to zeros.
+            input_cache: (np.ndarray) - Cached input values for backpropagation, initialized to zeros.
+            X_cols: (np.ndarray) - Cached column-transformed input for backpropagation, initialized to zeros.
+            X_padded: (np.ndarray) - Cached padded input for backpropagation, initialized to zeros.
+            h_out: (int) - Height of the output feature map, initialized to 0.
+            w_out: (int) - Width of the output feature map, initialized to 0.
+            input_size: (int) - Number of input channels.
+            output_size: (int) - Number of output channels.
+        """
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.kernel_size = kernel_size  # assume square kernels
+        self.kernel_size = kernel_size
         self.stride = stride
         self.padding = padding
 
@@ -281,10 +332,7 @@ class JITConvLayer:
         self.bias_gradients = np.zeros_like(self.biases)
 
     def _im2col(self, x, h_out, w_out):
-        """
-        Convert image regions to columns for efficient convolution.
-        Fixed to avoid reshape contiguity issues.
-        """
+        """Convert image regions to columns for efficient convolution."""
         batch_size = x.shape[0]
         channels = x.shape[1]
         h = x.shape[2]
@@ -312,10 +360,7 @@ class JITConvLayer:
         return col
 
     def _col2im(self, dcol, x_shape):
-        """
-        Convert column back to image format for the backward pass.
-        Fixed to avoid reshape contiguity issues.
-        """
+        """Convert column back to image format for the backward pass."""
         batch_size = x_shape[0]
         channels = x_shape[1]
         h = x_shape[2]
@@ -360,8 +405,7 @@ class JITConvLayer:
         return dx_padded
 
     def forward(self, X):
-        """
-        Forward pass for convolutional layer.
+        """Forward pass for convolutional layer.
 
         Args:
             X: numpy array with shape (batch_size, in_channels, height, width)
@@ -449,8 +493,7 @@ class JITConvLayer:
         return self.activate(output_reshaped)
 
     def backward(self, d_out, reg_lambda=0):
-        """
-        Backward pass for convolutional layer.
+        """Backward pass for convolutional layer.
 
         Args:
             d_out (np.ndarray): Gradient of the loss with respect to the layer output
@@ -577,5 +620,7 @@ class JITConvLayer:
 
 
 class JITRNNLayer:
+    """A recurrent layer implementation for neural networks using Numba JIT compilation."""
     def __init__(self, input_size, hidden_size, activation="tanh"):
+        """Will be implemented later."""
         pass

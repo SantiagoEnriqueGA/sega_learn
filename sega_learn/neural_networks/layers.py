@@ -4,9 +4,10 @@ from .activations import Activation
 
 
 class DenseLayer:
-    """
-    Initializes a fully connected layer object, where each neuron is connected to all neurons in the previous layer.
+    """Initializes a fully connected layer object, where each neuron is connected to all neurons in the previous layer.
+
     Each layer consists of weights, biases, and an activation function.
+
     Args:
         input_size (int): The size of the input to the layer.
         output_size (int): The size of the output from the layer.
@@ -30,6 +31,22 @@ class DenseLayer:
     """
 
     def __init__(self, input_size, output_size, activation="relu"):
+        """Initializes the layer with weights, biases, and activation function.
+
+        Args:
+            input_size: (int) - The number of input features to the layer.
+            output_size: (int) - The number of output features from the layer.
+            activation: (str), optional - The activation function to use (default is "relu").
+
+        Attributes:
+            weights: (np.ndarray) - The weight matrix initialized using He initialization for ReLU or Leaky ReLU, or standard initialization otherwise.
+            biases: (np.ndarray) - The bias vector initialized to zeros.
+            input_size: (int) - The number of input features to the layer.
+            output_size: (int) - The number of output features from the layer.
+            activation: (str) - The activation function to use.
+            weight_gradients: (np.ndarray or None) - Gradients of the weights, initialized to None.
+            bias_gradients: (np.ndarray or None) - Gradients of the biases, initialized to None.
+        """
         # He initialization for weights
         if activation in ["relu", "leaky_relu"]:
             scale = np.sqrt(2.0 / input_size)
@@ -50,12 +67,14 @@ class DenseLayer:
         self.bias_gradients = None
 
     def forward(self, X):
+        """"Forward pass of the layer."""
         Z = np.dot(X, self.weights) + self.biases
         self.input_cache = X
         self.output_cache = self.activate(Z)
         return self.output_cache
 
     def backward(self, dA, reg_lambda):
+        """"Backward pass of the layer."""
         m = self.input_cache.shape[0]
         dZ = dA * self.activation_derivative(self.output_cache)
         dW = np.dot(self.input_cache.T, dZ) / m + reg_lambda * self.weights
@@ -101,19 +120,28 @@ class DenseLayer:
 
 
 class FlattenLayer:
-    """
-    A layer that flattens multi-dimensional input into a 2D array (batch_size, flattened_size).
+    """A layer that flattens multi-dimensional input into a 2D array (batch_size, flattened_size).
+
     Useful for transitioning from convolutional layers to dense layers.
 
     Attributes:
-        input_shape (tuple): Shape of the input data (excluding batch size).
-        output_size (int): Size of the flattened output vector.
-        input_cache (np.ndarray): Cached input for backpropagation.
-        input_size (int): Size of the input (same as input_shape).
-        output_size (int): Size of the output (same as output_size).
+        input_shape: (tuple) - Shape of the input data (excluding batch size).
+        output_size: (int) - Size of the flattened output vector.
+        input_cache: (np.ndarray) - Cached input for backpropagation.
+        input_size: (int) - Size of the input (same as input_shape).
+        output_size: (int) - Size of the output (same as output_size).
     """
 
     def __init__(self):
+        """Initializes the layer with default attributes.
+
+        Attributes:
+            input_shape: (tuple or None) - Shape of the input data, to be set dynamically during the forward pass.
+            output_size: (int or None) - Size of the output data, to be set dynamically during the forward pass.
+            input_cache: (any or None) - Cache to store input data for use during backpropagation.
+            input_size: (int or None) - Flattened size of the input, calculated as channels * height * width.
+            output_size: (int or None) - Flattened size of the output, same as input_size.
+        """
         self.input_shape = None
         self.output_size = None
         self.input_cache = None
@@ -122,11 +150,10 @@ class FlattenLayer:
         self.output_size = None  # Same as input_size (flattened)
 
     def forward(self, X):
-        """
-        Flattens the input tensor.
+        """Flattens the input tensor.
 
         Args:
-            X (np.ndarray): Input data of shape (batch_size, channels, height, width)
+            X: (np.ndarray) - Input data of shape (batch_size, channels, height, width)
                            or any multi-dimensional shape after batch dimension.
 
         Returns:
@@ -144,8 +171,7 @@ class FlattenLayer:
         return X.reshape(batch_size, self.input_size)
 
     def backward(self, dA, reg_lambda=0):
-        """
-        Reshapes the gradient back to the original input shape.
+        """Reshapes the gradient back to the original input shape.
 
         Args:
             dA (np.ndarray): Gradient of the loss with respect to the layer's output,
@@ -161,8 +187,7 @@ class FlattenLayer:
 
 
 class ConvLayer:
-    """
-    A convolutional layer implementation for neural networks.
+    """A convolutional layer implementation for neural networks.
 
     This layer performs 2D convolution operations, commonly used in convolutional neural networks (CNNs).
     The implementation uses the im2col technique for efficient computation, transforming the convolution operation into matrix multiplication.
@@ -202,7 +227,6 @@ class ConvLayer:
         _col2im(dcol, x_shape): Convert column back to image format for the backward pass.
         backward(d_out, reg_lambda=0): Perform backward pass of the convolutional layer.
     """
-
     def __init__(
         self,
         in_channels,
@@ -212,22 +236,52 @@ class ConvLayer:
         padding=0,
         activation="relu",
     ):
+        """Initializes a convolutional layer object for neural networks.
+
+        This layer performs 2D convolution operations, commonly used in convolutional neural networks (CNNs).
+
+        Args:
+            in_channels: (int) - Number of input channels (depth of input volume).
+            out_channels: (int) - Number of output channels (number of filters).
+            kernel_size: (int) - Size of the convolutional kernel (square kernel assumed).
+            stride: (int), optional - Stride of the convolution (default is 1).
+            padding: (int), optional - Zero-padding added to both sides of the input (default is 0).
+            activation: (str), optional - Activation function to use (default is "relu").
+
+        Attributes:
+            in_channels: (int) - Number of input channels.
+            out_channels: (int) - Number of output channels.
+            kernel_size: (int) - Size of the square convolutional kernel.
+            stride: (int) - Stride of the convolution.
+            padding: (int) - Zero-padding added to both sides of the input.
+            weights: (np.ndarray) - Learnable weights of shape (out_channels, in_channels, kernel_size, kernel_size).
+            biases: (np.ndarray) - Learnable biases of shape (out_channels, 1).
+            activation: (str) - Type of activation function.
+            weight_gradients: (np.ndarray or None) - Gradients with respect to weights, initialized to None.
+            bias_gradients: (np.ndarray or None) - Gradients with respect to biases, initialized to None.
+            input_cache: (np.ndarray or None) - Cached input for use in backward pass.
+            input_size: (int) - Size of input (same as in_channels).
+            output_size: (int) - Size of output (same as out_channels).
+        """
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.kernel_size = kernel_size  # assume square kernels
+        self.kernel_size = kernel_size  # Assume square kernels
         self.stride = stride
         self.padding = padding
+
         # He initialization for convolutional weights
         self.weights = np.random.randn(
             out_channels, in_channels, kernel_size, kernel_size
         ) * np.sqrt(2.0 / (in_channels * kernel_size * kernel_size))
         self.biases = np.zeros((out_channels, 1))
         self.activation = activation
+
         # Placeholders for gradients and cache for backpropagation
         self.weight_gradients = None
         self.bias_gradients = None
         self.input_cache = None
-        # Laeyr size info
+
+        # Layer size information
         self.input_size = in_channels
         self.output_size = out_channels
 
@@ -237,8 +291,8 @@ class ConvLayer:
         self.bias_gradients = np.zeros_like(self.biases)
 
     def _im2col(self, x, h_out, w_out):
-        """
-        Convert image regions to columns for efficient convolution.
+        """Convert image regions to columns for efficient convolution.
+
         This transforms the 4D input tensor into a 2D matrix where each column
         contains a kernel-sized region of the input.
         """
@@ -258,9 +312,7 @@ class ConvLayer:
         return col
 
     def _col2im(self, dcol, x_shape):
-        """
-        Convert column back to image format for the backward pass.
-        """
+        """Convert column back to image format for the backward pass."""
         batch_size, channels, h, w = x_shape
         h_padded, w_padded = h + 2 * self.padding, w + 2 * self.padding
         dx_padded = np.zeros((batch_size, channels, h_padded, w_padded))
@@ -284,8 +336,11 @@ class ConvLayer:
         return dx_padded
 
     def forward(self, X):
-        """
-        X: numpy array with shape (batch_size, in_channels, height, width)
+        """Perform forward pass of the convolutional layer.
+
+        Args:
+            X: numpy array with shape (batch_size, in_channels, height, width)
+
         Returns:
             Output feature maps after convolution and activation.
         """
@@ -335,12 +390,13 @@ class ConvLayer:
         return self.activate(output)
 
     def backward(self, d_out, reg_lambda=0):
-        """
-        Optimized backward pass using im2col technique.
+        """Optimized backward pass using im2col technique.
+
         Args:
-            d_out (np.ndarray): Gradient of the loss with respect to the layer output,
+            d_out: (np.ndarray) - Gradient of the loss with respect to the layer output,
                               shape (batch_size, out_channels, h_out, w_out)
-            reg_lambda (float, optional): Regularization parameter.
+            reg_lambda: (float, optional) - Regularization parameter.
+
         Returns:
             dX: Gradient with respect to the input X.
         """
@@ -403,7 +459,9 @@ class ConvLayer:
 
 
 class RNNLayer:
+    """Will be implemented later."""
     def __init__(self, input_size, hidden_size, activation="tanh"):
+        """Will be implemented later."""
         pass
 
     #     self.input_size = input_size

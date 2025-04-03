@@ -2,29 +2,25 @@ import numpy as np
 
 
 class PCA:
-    """
-    Principal Component Analysis (PCA) implementation.
-    """
-
+    """Principal Component Analysis (PCA) implementation."""
     def __init__(self, n_components):
-        """
-        Principal Component Analysis (PCA) implementation.
-        Uses the eigendecomposition of the covariance matrix to project the data onto a lower-dimensional space.
+        """Initializes the PCA model.
 
-        Parameters:
-        - n_components: number of principal components to keep
+        Args:
+            n_components: (int) - Number of principal components to keep.
         """
         self.n_components = n_components
         self.components = None
         self.mean_ = None
 
     def fit(self, X):
-        """
-        Fit the PCA model to the data X.
+        """Fits the PCA model to the data.
 
-        Parameters:
-        - X: numpy array of shape (n_samples, n_features)
-             The data to fit the model to.
+        Args:
+            X: (np.ndarray) - Input data of shape (n_samples, n_features).
+
+        Raises:
+            ValueError: If input data is not a 2D numpy array or if n_components exceeds the number of features.
         """
         if not isinstance(X, np.ndarray):
             raise ValueError("Input data must be a numpy array.")
@@ -55,16 +51,16 @@ class PCA:
         )
 
     def transform(self, X):
-        """
-        Apply the dimensionality reduction on X.
+        """Applies dimensionality reduction on the input data.
 
-        Parameters:
-        - X: numpy array of shape (n_samples, n_features)
-             The data to transform.
+        Args:
+            X: (np.ndarray) - Input data of shape (n_samples, n_features).
 
         Returns:
-        - X_transformed: numpy array of shape (n_samples, n_components)
-                         The data transformed into the principal component space.
+            X_transformed: (np.ndarray) - Data transformed into the principal component space of shape (n_samples, n_components).
+
+        Raises:
+            ValueError: If input data is not a 2D numpy array or if its dimensions do not match the fitted data.
         """
         if not isinstance(X, np.ndarray):
             raise ValueError("Input data must be a numpy array.")
@@ -80,27 +76,45 @@ class PCA:
         return np.dot(X, self.components_)
 
     def fit_transform(self, X):
-        """
-        Fit the PCA model to the data X and apply the dimensionality reduction on X.
+        """Fits the PCA model and applies dimensionality reduction on the input data.
 
-        Parameters:
-        - X: numpy array of shape (n_samples, n_features)
-             The data to fit the model to and transform.
+        Args:
+            X: (np.ndarray) - Input data of shape (n_samples, n_features).
 
         Returns:
-        - X_transformed: numpy array of shape (n_samples, n_components)
-                         The data transformed into the principal component space.
+            X_transformed: (np.ndarray) - Data transformed into the principal component space of shape (n_samples, n_components).
         """
         self.fit(X)
         return self.transform(X)
 
     def get_explained_variance_ratio(self):
+        """Retrieves the explained variance ratio.
+
+        Returns:
+            explained_variance_ratio_: (np.ndarray) - Array of explained variance ratios for each principal component.
+        """
         return self.explained_variance_ratio_
 
     def get_components(self):
+        """Retrieves the principal components.
+
+        Returns:
+            components_: (np.ndarray) - Array of principal components of shape (n_features, n_components).
+        """
         return self.components_
 
     def inverse_transform(self, X_reduced):
+        """Reconstructs the original data from the reduced data.
+
+        Args:
+            X_reduced: (np.ndarray) - Reduced data of shape (n_samples, n_components).
+
+        Returns:
+            X_original: (np.ndarray) - Reconstructed data of shape (n_samples, n_features).
+
+        Raises:
+            ValueError: If input data is not a 2D numpy array.
+        """
         if not isinstance(X_reduced, np.ndarray):
             raise ValueError("Input data must be a numpy array.")
         if X_reduced.ndim != 2:
@@ -109,16 +123,12 @@ class PCA:
 
 
 class SVD:
-    """
-    Singular Value Decomposition (SVD) implementation.
-    """
-
+    """Singular Value Decomposition (SVD) implementation."""
     def __init__(self, n_components):
-        """
-        Singular Value Decomposition (SVD) implementation.
+        """Initializes the SVD model.
 
-        Parameters:
-        - n_components: number of singular values and vectors to keep
+        Args:
+            n_components: (int) - Number of singular values and vectors to keep.
         """
         self.n_components = n_components
         self.U = None
@@ -126,12 +136,13 @@ class SVD:
         self.Vt = None
 
     def fit(self, X):
-        """
-        Fit the SVD model to the data X.
+        """Fits the SVD model to the data.
 
-        Parameters:
-        - X: numpy array of shape (n_samples, n_features)
-             The data to fit the model to.
+        Args:
+            X: (np.ndarray) - Input data of shape (n_samples, n_features).
+
+        Raises:
+            ValueError: If input data is not a 2D numpy array or if n_components exceeds the minimum dimension of the input data.
         """
         if not isinstance(X, np.ndarray):
             raise ValueError("Input data must be a numpy array.")
@@ -148,16 +159,16 @@ class SVD:
         self.Vt = Vt[: self.n_components, :]
 
     def transform(self, X):
-        """
-        Apply the SVD transformation on X.
+        """Applies the SVD transformation on the input data.
 
-        Parameters:
-        - X: numpy array of shape (n_samples, n_features)
-             The data to transform.
+        Args:
+            X: (np.ndarray) - Input data of shape (n_samples, n_features).
 
         Returns:
-        - X_transformed: numpy array of shape (n_samples, n_components)
-                         The data transformed into the singular value space.
+            X_transformed: (np.ndarray) - Data transformed into the singular value space of shape (n_samples, n_components).
+
+        Raises:
+            ValueError: If input data is not a 2D numpy array.
         """
         if not isinstance(X, np.ndarray):
             raise ValueError("Input data must be a numpy array.")
@@ -167,22 +178,30 @@ class SVD:
         return np.dot(X, self.Vt.T)
 
     def fit_transform(self, X):
-        """
-        Fit the SVD model to the data X and apply the SVD transformation on X.
+        """Fits the SVD model and applies the transformation on the input data.
 
-        Parameters:
-        - X: numpy array of shape (n_samples, n_features)
-             The data to fit the model to and transform.
+        Args:
+            X: (np.ndarray) - Input data of shape (n_samples, n_features).
 
         Returns:
-        - X_transformed: numpy array of shape (n_samples, n_components)
-                         The data transformed into the singular value space.
+            X_transformed: (np.ndarray) - Data transformed into the singular value space of shape (n_samples, n_components).
         """
         self.fit(X)
         return self.transform(X)
 
     def get_singular_values(self):
+        """Retrieves the singular values.
+
+        Returns:
+            S: (np.ndarray) - Array of singular values of shape (n_components,).
+        """
         return self.S
 
     def get_singular_vectors(self):
+        """Retrieves the singular vectors.
+
+        Returns:
+            U: (np.ndarray) - Left singular vectors of shape (n_samples, n_components).
+            Vt: (np.ndarray) - Right singular vectors of shape (n_components, n_features).
+        """
         return self.U, self.Vt

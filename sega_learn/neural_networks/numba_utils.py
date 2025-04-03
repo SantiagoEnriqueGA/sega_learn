@@ -9,6 +9,7 @@ CACHE = False
 # -------------------------------------------------------------------------------------------------
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def calculate_loss_from_outputs_binary(outputs, y, weights, reg_lambda):
+    """Calculate binary classification loss with L2 regularization."""
     # Apply loss function
     loss = calculate_bce_with_logits_loss(outputs, y)
 
@@ -25,6 +26,7 @@ def calculate_loss_from_outputs_binary(outputs, y, weights, reg_lambda):
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def calculate_loss_from_outputs_multi(outputs, y, weights, reg_lambda):
+    """Calculate multi-class classification loss with L2 regularization."""
     # Apply loss function
     loss = calculate_cross_entropy_loss(outputs, y)
 
@@ -40,6 +42,7 @@ def calculate_loss_from_outputs_multi(outputs, y, weights, reg_lambda):
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def calculate_cross_entropy_loss(logits, targets):
+    """Calculate cross-entropy loss for multi-class classification."""
     n = logits.shape[0]
     loss = 0.0
     for i in prange(n):
@@ -55,6 +58,7 @@ def calculate_cross_entropy_loss(logits, targets):
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def calculate_bce_with_logits_loss(logits, targets):
+    """Calculate binary cross-entropy loss with logits."""
     probs = 1 / (1 + np.exp(-logits))  # Apply sigmoid to logits to get probabilities
     loss = -np.mean(
         targets * np.log(probs + 1e-15) + (1 - targets) * np.log(1 - probs + 1e-15)
@@ -64,6 +68,7 @@ def calculate_bce_with_logits_loss(logits, targets):
 
 @njit(fastmath=True, nogil=True, parallel=True, cache=CACHE)
 def _compute_l2_reg(weights):
+    """Compute L2 regularization for a list of weight matrices."""
     total = 0.0
     for i in prange(len(weights)):
         total += np.sum(weights[i] ** 2)
@@ -72,6 +77,7 @@ def _compute_l2_reg(weights):
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def evaluate_batch(y_hat, y_true, is_binary):
+    """Evaluate accuracy for a batch of predictions."""
     if is_binary:
         predicted = (y_hat > 0.5).astype(np.int32).flatten()
         accuracy = np.mean(predicted == y_true.flatten())
@@ -86,47 +92,56 @@ def evaluate_batch(y_hat, y_true, is_binary):
 # -------------------------------------------------------------------------------------------------
 @njit(fastmath=True, cache=CACHE)
 def relu(z):
+    """Apply ReLU activation function."""
     return np.maximum(0, z)
 
 
 @njit(fastmath=True, cache=CACHE)
 def relu_derivative(z):
+    """Compute the derivative of the ReLU activation function."""
     return (z > 0).astype(np.float64)  # Ensure return type is float64
 
 
 @njit(fastmath=True, cache=CACHE)
 def leaky_relu(z, alpha=0.01):
+    """Apply Leaky ReLU activation function."""
     return np.where(z > 0, z, alpha * z)
 
 
 @njit(fastmath=True, cache=CACHE)
 def leaky_relu_derivative(z, alpha=0.01):
+    """Compute the derivative of the Leaky ReLU activation function."""
     return np.where(z > 0, 1, alpha).astype(np.float64)  # Ensure return type is float64
 
 
 @njit(fastmath=True, cache=CACHE)
 def tanh(z):
+    """Apply tanh activation function."""
     return np.tanh(z)
 
 
 @njit(fastmath=True, cache=CACHE)
 def tanh_derivative(z):
+    """Compute the derivative of the tanh activation function."""
     return 1 - np.tanh(z) ** 2
 
 
 @njit(fastmath=True, cache=CACHE)
 def sigmoid(z):
+    """Apply sigmoid activation function."""
     return 1 / (1 + np.exp(-z))
 
 
 @njit(fastmath=True, cache=CACHE)
 def sigmoid_derivative(z):
+    """Compute the derivative of the sigmoid activation function."""
     sig = sigmoid(z)
     return sig * (1 - sig)
 
 
 @njit(parallel=True, fastmath=True, cache=CACHE)
 def softmax(z):
+    """Apply softmax activation function."""
     out = np.empty_like(z)
     for i in prange(z.shape[0]):
         row = z[i]
@@ -143,6 +158,7 @@ def softmax(z):
 # -------------------------------------------------------------------------------------------------
 @njit(fastmath=True, cache=CACHE)
 def sum_reduce(arr):
+    """Sum elements along the last axis and reduce the array."""
     sum_vals = np.empty((arr.shape[0], 1), dtype=arr.dtype)
     for i in range(arr.shape[0]):
         sum_vals[i, 0] = np.sum(arr[i])
@@ -151,6 +167,7 @@ def sum_reduce(arr):
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def sum_axis0(arr):
+    """Sum elements along axis 0."""
     sum_vals = np.zeros((1, arr.shape[1]), dtype=arr.dtype)
     for j in range(arr.shape[1]):
         for i in range(arr.shape[0]):
@@ -163,14 +180,7 @@ def sum_axis0(arr):
 # -------------------------------------------------------------------------------------------------
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def apply_dropout_jit(X, dropout_rate):
-    """
-    Numba JIT-compiled function to apply dropout.
-    Args:
-        X (ndarray): Activation values.
-        dropout_rate (float): Dropout rate.
-    Returns:
-        ndarray: Activation values after applying dropout.
-    """
+    """Apply dropout to activation values."""
     # Generate the entire mask at once - more vectorized approach
     mask = (np.random.random(X.shape) < (1 - dropout_rate)).astype(np.float64)
     return (X * mask) / (1 - dropout_rate)
@@ -178,6 +188,7 @@ def apply_dropout_jit(X, dropout_rate):
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def compute_l2_reg(weights):
+    """Compute L2 regularization for weights."""
     total = 0.0
     for i in prange(len(weights)):
         total += np.sum(weights[i] ** 2)
@@ -186,6 +197,7 @@ def compute_l2_reg(weights):
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def one_hot_encode(y, num_classes):
+    """One-hot encode a vector of class labels."""
     m = y.shape[0]
     y_ohe = np.zeros((m, num_classes), dtype=np.float64)
     for i in range(m):
@@ -205,6 +217,7 @@ def process_batches_binary(
     dWs_acc,
     dbs_acc,
 ):
+    """Process batches for binary classification."""
     num_samples = X_shuffled.shape[0]
     num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
     running_loss = 0.0
@@ -268,6 +281,7 @@ def process_batches_multi(
     dWs_acc,
     dbs_acc,
 ):
+    """Process batches for multi-class classification."""
     num_samples = X_shuffled.shape[0]
     num_batches = (num_samples + batch_size - 1) // batch_size  # Ceiling division
     running_loss = 0.0
@@ -326,14 +340,7 @@ def process_batches_multi(
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def evaluate_jit(y_hat, y_true, is_binary):
-    """
-    Numba JIT-compiled function to evaluate model performance.
-    Args:
-        y_hat (ndarray): Model predictions.
-        is_binary (bool): Whether the model is binary or multi-class.
-    Returns:
-        tuple: Accuracy and predicted labels.
-    """
+    """Evaluate model performance and return accuracy and predictions."""
     if is_binary:
         predicted = (y_hat > 0.5).astype(np.int32).flatten()
         accuracy = np.mean(predicted == y_true.flatten())
