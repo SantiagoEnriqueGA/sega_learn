@@ -11,12 +11,10 @@ from sega_learn.neural_networks import *
 
 
 class TestJITCrossEntropyLoss(unittest.TestCase):
-    """
-    Unit tests for the JITCrossEntropyLoss class.
-    """
+    """Unit tests for the JITCrossEntropyLoss class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting the JITCrossEntropyLoss class", end="", flush=True)
 
     def test_cross_entropy_loss_single_class(self):
@@ -53,12 +51,10 @@ class TestJITCrossEntropyLoss(unittest.TestCase):
 
 
 class TestJITBCEWithLogitsLoss(unittest.TestCase):
-    """
-    Unit tests for the JITBCEWithLogitsLoss class.
-    """
+    """Unit tests for the JITBCEWithLogitsLoss class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting the BCEWithLogitsLoss class", end="", flush=True)
 
     def test_bce_with_logits_loss(self):

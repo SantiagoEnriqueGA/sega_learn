@@ -12,17 +12,16 @@ from tests.utils import suppress_print, synthetic_data_regression
 r2_score = Metrics.r_squared
 accuracy_score = Metrics.accuracy
 
+
 class TestOrdinaryLeastSquares(unittest.TestCase):
-    """
-    Unit test for the Ordinary Least Squares regression class.
-    """
+    """Unit test for the Ordinary Least Squares regression class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting Ordinary Least Squares Model", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.model = OrdinaryLeastSquares()
 
     def test_fit_predict(self):
@@ -73,16 +72,14 @@ class TestOrdinaryLeastSquares(unittest.TestCase):
 
 
 class TestRidge(unittest.TestCase):
-    """
-    Unit test for the Ridge regression class.
-    """
+    """Unit test for the Ridge regression class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting Ridge Regression Model", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.model = Ridge()
 
     def test_fit_predict(self):
@@ -166,17 +163,16 @@ class TestRidge(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.model.fit(None, None, numba=True)
 
+
 class TestLasso(unittest.TestCase):
-    """
-    Unit test for the Lasso regression class.
-    """
+    """Unit test for the Lasso regression class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting Lasso Regression Model", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.model = Lasso()
 
     def test_fit_predict(self):
@@ -262,16 +258,14 @@ class TestLasso(unittest.TestCase):
 
 
 class TestBayesian(unittest.TestCase):
-    """
-    Unit test for the Bayesian regression class.
-    """
+    """Unit test for the Bayesian regression class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting Bayesian Regression Model", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.model = Bayesian()
 
     def test_fit_predict(self):
@@ -348,16 +342,14 @@ class TestBayesian(unittest.TestCase):
 
 
 class TestRANSAC(unittest.TestCase):
-    """
-    Unit test for the RANSAC regression class.
-    """
+    """Unit test for the RANSAC regression class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting RANSAC Regression Model", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.model = RANSAC()
 
     def test_fit_predict(self):
@@ -437,16 +429,14 @@ class TestRANSAC(unittest.TestCase):
 
 
 class TestPassiveAggressiveRegressor(unittest.TestCase):
-    """
-    Unit test for the Passive Aggressive Regressor class.
-    """
+    """Unit test for the Passive Aggressive Regressor class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting Passive Aggressive Regressor Model", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.model = PassiveAggressiveRegressor()
 
     def test_fit_predict(self):
@@ -525,16 +515,14 @@ class TestPassiveAggressiveRegressor(unittest.TestCase):
 
 
 class TestLinearDiscriminantAnalysis(unittest.TestCase):
-    """
-    Unit test for the Linear Discriminant Analysis class.
-    """
+    """Unit test for the Linear Discriminant Analysis class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting Linear Discriminant Analysis", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.cov_class_1 = (
             np.array([[0.0, -1.0], [2.5, 0.7]]) * 2.0
         )  # Covariance matrix for class 1, scaled by 2.0
@@ -604,16 +592,14 @@ class TestLinearDiscriminantAnalysis(unittest.TestCase):
 
 
 class TestQuadraticDiscriminantAnalysis(unittest.TestCase):
-    """
-    Unit test for the Quadratic Discriminant Analysis class.
-    """
+    """Unit test for the Quadratic Discriminant Analysis class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting Quadratic Discriminant Analysis", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.cov_class_1 = (
             np.array([[0.0, -1.0], [2.5, 0.7]]) * 2.0
         )  # Covariance matrix for class 1, scaled by 2.0

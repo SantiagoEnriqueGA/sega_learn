@@ -12,6 +12,13 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 
 def load_tests(loader, standard_tests, pattern):
+    """Dynamically load test cases for each example file.
+
+    Args:
+        loader: The test loader instance.
+        standard_tests: The standard test cases to load.
+        pattern: The pattern to match test files.
+    """
     suite = unittest.TestSuite()
     for all_test_suite in unittest.defaultTestLoader.discover(
         "tests", pattern="test*_examples.py"

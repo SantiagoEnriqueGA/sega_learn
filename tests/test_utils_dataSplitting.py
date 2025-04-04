@@ -11,16 +11,14 @@ from sega_learn.utils import train_test_split
 
 
 class TestTrainTestSplit(unittest.TestCase):
-    """
-    Unit test for the train_test_split function.
-    """
+    """Unit test for the train_test_split function."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes the test suite."""
         print("\nTesting train_test_split function", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Prepares data for each test."""
         # Create sample data for tests
         self.X = np.random.rand(100, 5)

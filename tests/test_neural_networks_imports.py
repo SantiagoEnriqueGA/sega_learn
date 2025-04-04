@@ -28,8 +28,8 @@ from sega_learn.neural_networks import neuralNetworkNumbaBackend as nnNumba
 
 
 class TestImportsNeuralNetworks(unittest.TestCase):
-    """
-    Tests that the neural_networks package can be imported correctly.
+    """Tests that the neural_networks package can be imported correctly.
+
     Methods:
     - setUpClass: Initializes a new instance of the Index class before each test method is run.
     - test_individual_imports: Tests that each module in the segadb package can be imported individually.
@@ -37,22 +37,22 @@ class TestImportsNeuralNetworks(unittest.TestCase):
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Imports - Neural Networks", end="", flush=True)
 
-    def test_base_method_imports(self):
+    def test_base_method_imports(self):  # NOQA D201
         assert lrExp is not None
         assert lrPlateau is not None
         assert lrStep is not None
         assert nn is not None
 
-    def test_base_method_wildcard_import(self):
+    def test_base_method_wildcard_import(self):  # NOQA D201
         assert lr_scheduler_exp is not None
         assert lr_scheduler_plateau is not None
         assert lr_scheduler_step is not None
         assert NeuralNetworkBase is not None
 
-    def test_base_backend_imports(self):
+    def test_base_backend_imports(self):  # NOQA D201
         assert adam is not None
         assert sgd is not None
         assert adadelta is not None
@@ -63,7 +63,7 @@ class TestImportsNeuralNetworks(unittest.TestCase):
         assert act is not None
         assert nnBackend is not None
 
-    def test_base_backend_wildcard_import(self):
+    def test_base_backend_wildcard_import(self):  # NOQA D201
         assert AdamOptimizer is not None
         assert SGDOptimizer is not None
         assert AdadeltaOptimizer is not None
@@ -76,7 +76,7 @@ class TestImportsNeuralNetworks(unittest.TestCase):
         assert Activation is not None
         assert BaseBackendNeuralNetwork is not None
 
-    def test_numba_method_imports(self):
+    def test_numba_method_imports(self):  # NOQA D201
         assert jitadam is not None
         assert jitsgd is not None
         assert jitadadelta is not None
@@ -85,7 +85,7 @@ class TestImportsNeuralNetworks(unittest.TestCase):
         assert jitlay is not None
         assert nnNumba is not None
 
-    def test_numba_method_wildcard_import(self):
+    def test_numba_method_wildcard_import(self):  # NOQA D201
         assert JITAdamOptimizer is not None
         assert JITSGDOptimizer is not None
         assert JITAdadeltaOptimizer is not None

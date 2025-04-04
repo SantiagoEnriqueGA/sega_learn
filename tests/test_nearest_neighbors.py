@@ -12,16 +12,14 @@ from sega_learn.nearest_neighbors.knn_regressor import KNeighborsRegressor
 
 
 class TestKNeighborsClassifier(unittest.TestCase):
-    """
-    Unit tests for the KNeighborsClassifier class.
-    """
+    """Unit tests for the KNeighborsClassifier class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting KNeighborsClassifierKNeighborsBase Class", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Sets up the test environment before each test."""
         pass
 
@@ -122,16 +120,14 @@ class TestKNeighborsClassifier(unittest.TestCase):
 
 
 class TestKNeighborsRegressor(unittest.TestCase):
-    """
-    Unit tests for the KNeighborsRegressor class.
-    """
+    """Unit tests for the KNeighborsRegressor class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting KNeighborsRegressor Class", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Sets up the test environment before each test."""
         pass
 

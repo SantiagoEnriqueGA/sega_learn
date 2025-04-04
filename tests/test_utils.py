@@ -16,15 +16,13 @@ from tests.utils import suppress_print, synthetic_data_regression
 
 
 class TestPolynomialTransform(unittest.TestCase):
-    """
-    Unit tests for the PolynomialTransform class.
-    """
+    """Unit tests for the PolynomialTransform class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Polynomial Transform", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Set up the PolynomialTransform instance for testing."""
         self.transform = PolynomialTransform(degree=2)
 
@@ -52,12 +50,10 @@ class TestPolynomialTransform(unittest.TestCase):
 
 
 class TestDataPrep(unittest.TestCase):
-    """
-    Unit tests for the DataPrep class.
-    """
+    """Unit tests for the DataPrep class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Data Prep", end="", flush=True)
 
     def test_one_hot_encode(self):
@@ -165,15 +161,13 @@ class TestDataPrep(unittest.TestCase):
 
 
 class TestVotingRegressor(unittest.TestCase):
-    """
-    Unit tests for the VotingRegressor class.
-    """
+    """Unit tests for the VotingRegressor class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Voting Regressor", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Set up the VotingRegressor instance for testing."""
         self.X, self.y = make_regression(
             n_samples=1000, n_features=5, noise=25, random_state=42
@@ -211,15 +205,13 @@ class TestVotingRegressor(unittest.TestCase):
 
 
 class TestModelSelectionUtils(unittest.TestCase):
-    """
-    Unit tests for the Model Selection Utility class.
-    """
+    """Unit tests for the Model Selection Utility class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Model Selection Utils", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Set up the Model Selection Utility instance for testing."""
         self.X, self.y = make_regression(
             n_samples=100, n_features=5, noise=25, random_state=42
@@ -294,15 +286,13 @@ class TestModelSelectionUtils(unittest.TestCase):
 
 
 class TestGridSearchCV(unittest.TestCase):
-    """
-    Unit tests for the GridSearchCV class.
-    """
+    """Unit tests for the GridSearchCV class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting GridSearchCV", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Set up the GridSearchCV instance for testing."""
         self.X_reg, self.y_reg = make_regression(
             n_samples=100, n_features=5, noise=25, random_state=42
@@ -392,15 +382,13 @@ class TestGridSearchCV(unittest.TestCase):
 
 
 class TestRandomSearchCV(unittest.TestCase):
-    """
-    Unit tests for the RandomSearchCV class.
-    """
+    """Unit tests for the RandomSearchCV class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting RandomSearchCV", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Set up the RandomSearchCV instance for testing."""
         self.X_reg, self.y_reg = make_regression(
             n_samples=100, n_features=5, noise=25, random_state=42
@@ -519,16 +507,14 @@ class TestRandomSearchCV(unittest.TestCase):
 
 
 class TestMetrics(unittest.TestCase):
-    """
-    Unit tests for the Metrics class.
-    """
+    """Unit tests for the Metrics class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Metrics", end="", flush=True)
         cls.num_tests = 100  # Define the variable for the number of tests
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Set up the Metrics instance for testing."""
         self.metrics = Metrics()
 
@@ -704,15 +690,13 @@ class TestMetrics(unittest.TestCase):
 
 
 class TestDataAugmentation(unittest.TestCase):
-    """
-    Unit tests for the Data Augmentation class.
-    """
+    """Unit tests for the Data Augmentation class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Data Augmentation", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Set up the Data Augmentation instance for testing."""
         self.X, self.y = make_classification(
             n_samples=1000,
@@ -741,11 +725,11 @@ class TestDataAugmentation(unittest.TestCase):
     def test_random_over_sampler_invalid(self):
         """Tests the Random Over Sampler method with invalid input."""
         with self.subTest("Invalid input"), self.assertRaises(TypeError):
-                self.ros.fit_resample(None, None)
+            self.ros.fit_resample(None, None)
         with self.subTest("Invalid input type"), self.assertRaises(ValueError):
-                self.ros.fit_resample("invalid_input", "invalid_input")
+            self.ros.fit_resample("invalid_input", "invalid_input")
         with self.subTest("Invalid input shape"), self.assertRaises(ValueError):
-                self.ros.fit_resample(np.random.rand(101, 20), np.random.rand(100, 20))
+            self.ros.fit_resample(np.random.rand(101, 20), np.random.rand(100, 20))
 
     def test_random_over_sampler_invalid_params(self):
         """Tests the Random Over Sampler method with invalid params."""
@@ -782,13 +766,11 @@ class TestDataAugmentation(unittest.TestCase):
     def test_smote_invalid(self):
         """Tests the SMOTE method with invalid input."""
         with self.subTest("Invalid input"), self.assertRaises(TypeError):
-                self.smote.fit_resample(None, None)
+            self.smote.fit_resample(None, None)
         with self.subTest("Invalid input type"), self.assertRaises(ValueError):
-                self.smote.fit_resample("invalid_input", "invalid_input")
+            self.smote.fit_resample("invalid_input", "invalid_input")
         with self.subTest("Invalid input shape"), self.assertRaises(ValueError):
-                self.smote.fit_resample(
-                    np.random.rand(101, 20), np.random.rand(100, 20)
-                )
+            self.smote.fit_resample(np.random.rand(101, 20), np.random.rand(100, 20))
 
     def test_random_under_sampler(self):
         """Tests the Random Under Sampler method of the Data Augmentation class."""
@@ -799,11 +781,11 @@ class TestDataAugmentation(unittest.TestCase):
     def test_random_under_sampler_invalid(self):
         """Tests the Random Under Sampler method with invalid input."""
         with self.subTest("Invalid input"), self.assertRaises(TypeError):
-                self.rus.fit_resample(None, None)
+            self.rus.fit_resample(None, None)
         with self.subTest("Invalid input type"), self.assertRaises(ValueError):
-                self.rus.fit_resample("invalid_input", "invalid_input")
+            self.rus.fit_resample("invalid_input", "invalid_input")
         with self.subTest("Invalid input shape"), self.assertRaises(ValueError):
-                self.rus.fit_resample(np.random.rand(101, 20), np.random.rand(100, 20))
+            self.rus.fit_resample(np.random.rand(101, 20), np.random.rand(100, 20))
 
     def test_random_under_sampler_invalid_params(self):
         """Tests the Random Under Sampler method with invalid params."""
@@ -885,15 +867,13 @@ class TestDataAugmentation(unittest.TestCase):
 
 
 class TestDataDecomposition(unittest.TestCase):
-    """
-    Unit tests for the Data Decomposition class.
-    """
+    """Unit tests for the Data Decomposition class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Decomposition", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Set up the Decomposition instance for testing."""
         self.X = np.random.rand(100, 5)
 

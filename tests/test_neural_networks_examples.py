@@ -19,11 +19,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 
 class TestExampleExceptions(unittest.TestCase):
-    """
-    Test cases to check for exceptions in example files.
-    """
+    """Test cases to check for exceptions in example files."""
 
     def test_main(self, example_file):
+        """Main test function to check for exceptions in example files."""
         if "neuralNetwork_hyper.py" in example_file:
             from examples.neural_networks.neuralNetwork_hyper import main
 
@@ -57,8 +56,8 @@ class TestExampleExceptions(unittest.TestCase):
 
 
 class TestExamplesNeuralNetworks(unittest.TestCase):
-    """
-    Test cases for the example files.
+    """Test cases for the example files.
+
     Holds dynamically generated test cases for each example file.
     """
 
@@ -66,9 +65,9 @@ class TestExamplesNeuralNetworks(unittest.TestCase):
 
 
 def load_tests(loader, tests, pattern):
-    """
-    Dynamically load test cases for each example file.
-    args:
+    """Dynamically load test cases for each example file.
+
+    Args:
         loader: The test loader instance.
         tests: The test cases to load.
         pattern: The pattern to match test files.

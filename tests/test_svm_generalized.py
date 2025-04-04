@@ -12,15 +12,13 @@ from sega_learn.utils import make_classification, make_regression
 
 
 class TestGeneralizedSVR(unittest.TestCase):
-    """
-    Unit test suite for the GeneralizedSVR class.
-    """
+    """Unit test suite for the GeneralizedSVR class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting GeneralizedSVR", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.utility = GeneralizedSVR(kernel="linear")
 
     def test_fit_regression(self):
@@ -119,15 +117,13 @@ class TestGeneralizedSVR(unittest.TestCase):
 
 
 class TestGeneralizedSVC(unittest.TestCase):
-    """
-    Unit test suite for the GeneralizedSVC class.
-    """
+    """Unit test suite for the GeneralizedSVC class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting GeneralizedSVC", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.utility = GeneralizedSVC(kernel="linear")
 
     def test_fit_binary(self):

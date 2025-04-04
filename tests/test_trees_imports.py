@@ -16,8 +16,8 @@ from sega_learn.trees import RegressorTreeUtility as rtu
 
 
 class TestImportsLinear(unittest.TestCase):
-    """
-    Tests that the linear_models subpackage can be imported correctly.
+    """Tests that the linear_models subpackage can be imported correctly.
+
     Methods:
     - setUpClass: Initializes a new instance of the Index class before each test method is run.
     - test_individual_imports: Tests that each module in the segadb package can be imported individually.
@@ -25,10 +25,11 @@ class TestImportsLinear(unittest.TestCase):
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Imports - Trees", end="", flush=True)
 
     def test_individual_imports(self):
+        """Tests that each module in the segadb package can be imported individually."""
         assert ctu is not None
         assert ct is not None
         assert rtu is not None
@@ -38,6 +39,7 @@ class TestImportsLinear(unittest.TestCase):
         assert gbr is not None
 
     def test_wildcard_import(self):
+        """Tests that the segadb package can be imported using a wildcard import."""
         assert ClassifierTreeUtility is not None
         assert ClassifierTree is not None
         assert RegressorTreeUtility is not None

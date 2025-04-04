@@ -13,21 +13,20 @@ class MockLayer:
     """Mock layer class for testing optimizers."""
 
     def __init__(self, input_size, output_size):
+        """Initialize the MockLayer class."""
         self.weights = np.random.randn(input_size, output_size) * 0.01
         self.biases = np.zeros((1, output_size))
 
 
 class TestAdamOptimizer(unittest.TestCase):
-    """
-    Unit tests for the AdamOptimizer class.
-    """
+    """Unit tests for the AdamOptimizer class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Print message before running tests."""
         print("\nTesting the AdamOptimizer Class", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Initialize the AdamOptimizer class and layers."""
         self.optimizer = AdamOptimizer()
         self.layers = [MockLayer(3, 2), MockLayer(2, 1)]
@@ -56,16 +55,14 @@ class TestAdamOptimizer(unittest.TestCase):
 
 
 class TestSGDOptimizer(unittest.TestCase):
-    """
-    Unit tests for the SGDOptimizer class.
-    """
+    """Unit tests for the SGDOptimizer class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Print message before running tests."""
         print("\nTesting the SGDOptimizer Class", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Initialize the SGDOptimizer class and layers."""
         self.optimizer = SGDOptimizer()
         self.layers = [MockLayer(3, 2), MockLayer(2, 1)]
@@ -90,16 +87,14 @@ class TestSGDOptimizer(unittest.TestCase):
 
 
 class TestAdadeltaOptimizer(unittest.TestCase):
-    """
-    Unit tests for the AdadeltaOptimizer class.
-    """
+    """Unit tests for the AdadeltaOptimizer class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Print message before running tests."""
         print("\nTesting the AdadeltaOptimizer Class", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Initialize the AdadeltaOptimizer class and layers."""
         self.optimizer = AdadeltaOptimizer()
         self.layers = [MockLayer(3, 2), MockLayer(2, 1)]

@@ -9,15 +9,13 @@ from sega_learn.utils import make_blobs, make_classification, make_regression
 
 
 class TestMakeData(unittest.TestCase):
-    """
-    Unit test for the data generation utilities make_regression, make_classification, and make_blobs.
-    """
+    """Unit test for the data generation utilities make_regression, make_classification, and make_blobs."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting makeData Utilities", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.random_state = 42  # Fixed random state for reproducibility
 
     # === Tests for make_regression ===

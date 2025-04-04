@@ -18,8 +18,8 @@ from sega_learn.linear_models import make_sample_data as mdt
 
 
 class TestImportsLinear(unittest.TestCase):
-    """
-    Tests that the linear_models subpackage can be imported correctly.
+    """Tests that the linear_models subpackage can be imported correctly.
+
     Methods:
     - setUpClass: Initializes a new instance of the Index class before each test method is run.
     - test_individual_imports: Tests that each module in the segadb package can be imported individually.
@@ -27,10 +27,10 @@ class TestImportsLinear(unittest.TestCase):
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Imports - Linear Models", end="", flush=True)
 
-    def test_individual_imports(self):
+    def test_individual_imports(self):  # NOQA D201
         assert ols is not None
         assert rdg is not None
         assert lso is not None
@@ -41,7 +41,7 @@ class TestImportsLinear(unittest.TestCase):
         assert qda is not None
         assert mdt is not None
 
-    def test_wildcard_import(self):
+    def test_wildcard_import(self):  # NOQA D201
         assert OrdinaryLeastSquares is not None
         assert Ridge is not None
         assert Lasso is not None

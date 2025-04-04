@@ -15,8 +15,8 @@ from sega_learn.svm import OneClassSVM as osvm
 
 
 class TestImportsSVM(unittest.TestCase):
-    """
-    Tests that the SVM subpackage can be imported correctly.
+    """Tests that the SVM subpackage can be imported correctly.
+
     Methods:
     - setUpClass: Initializes a new instance of the Index class before each test method is run.
     - test_individual_imports: Tests that each module in the segadb package can be imported individually.
@@ -24,10 +24,11 @@ class TestImportsSVM(unittest.TestCase):
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Imports - SVM", end="", flush=True)
 
     def test_individual_imports(self):
+        """Tests that each module in the segadb package can be imported individually."""
         assert bsvm is not None
         assert lsvc is not None
         assert lsvr is not None
@@ -36,6 +37,7 @@ class TestImportsSVM(unittest.TestCase):
         assert gsvc is not None
 
     def test_wildcard_import(self):
+        """Tests that the segadb package can be imported using a wildcard import."""
         assert BaseSVM is not None
         assert LinearSVC is not None
         assert LinearSVR is not None

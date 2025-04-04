@@ -11,15 +11,13 @@ from sega_learn.svm import OneClassSVM
 
 
 class TestOneClassSVM(unittest.TestCase):
-    """
-    Unit test suite for the OneClassSVM class.
-    """
+    """Unit test suite for the OneClassSVM class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting OneClassSVM", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         # Using a default kernel; tests below also include a non-linear kernel case.
         self.model = OneClassSVM(
             kernel="linear", max_iter=200, learning_rate=0.05, C=0.5
@@ -80,8 +78,8 @@ class TestOneClassSVM(unittest.TestCase):
             )
 
     def test_score(self):
-        """
-        Test the score method by generating inlier and outlier data.
+        """Test the score method by generating inlier and outlier data.
+
         Inliers are drawn from a Gaussian and outliers from a shifted distribution.
         """
         # Generate inliers (label 1)
@@ -115,10 +113,7 @@ class TestOneClassSVM(unittest.TestCase):
         )
 
     def test_is_fitted(self):
-        """
-        Test that the model indicates it is not fitted before calling fit
-        and that after fitting the necessary attributes are present.
-        """
+        """Test that the model indicates it is not fitted before calling fit and that after fitting the necessary attributes are present."""
         model = OneClassSVM(kernel="linear")
         # Before fitting, support_vectors_ should be None
         self.assertIsNone(

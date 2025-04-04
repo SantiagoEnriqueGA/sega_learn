@@ -18,11 +18,13 @@ from sega_learn import (
 
 
 class TestImports(unittest.TestCase):
+    """Tests that the main package can be imported correctly."""
+
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Imports - Main Package", end="", flush=True)
 
-    def test_all_imports(self):
+    def test_all_imports(self):  # NOQA D201
         assert sega_learn is not None
         assert sega_learn.linear_models is not None
         assert sega_learn.clustering is not None
@@ -32,7 +34,7 @@ class TestImports(unittest.TestCase):
         assert sega_learn.nearest_neighbors is not None
         assert sega_learn.auto is not None
 
-    def test_module_imports(self):
+    def test_module_imports(self):  # NOQA D201
         assert clustering is not None
         assert linear_models is not None
         assert utils is not None

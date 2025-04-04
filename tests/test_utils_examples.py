@@ -13,27 +13,22 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 
 class TestExampleExceptions(unittest.TestCase):
-    """
-    Test cases to check for exceptions in example files.
-    """
+    """Test cases to check for exceptions in example files."""
 
-    def test_main(self, example_file):
+    def test_main(self, example_file):  # NOQA D201
         pass
 
 
 class TestExamplesClustering(unittest.TestCase):
-    """
-    Test cases for the example files.
-    Holds dynamically generated test cases for each example file.
-    """
+    """Test cases for the example files.Holds dynamically generated test cases for each example file."""
 
     pass
 
 
 def load_tests(loader, tests, pattern):
-    """
-    Dynamically load test cases for each example file.
-    args:
+    """Dynamically load test cases for each example file.
+
+    Args:
         loader: The test loader instance.
         tests: The test cases to load.
         pattern: The pattern to match test files.

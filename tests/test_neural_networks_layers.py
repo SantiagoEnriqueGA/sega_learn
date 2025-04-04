@@ -10,16 +10,16 @@ from sega_learn.neural_networks import *
 
 
 class TestDenseLayer(unittest.TestCase):
-    """
-    Comprehensive test suite for DenseLayer class.
+    """Comprehensive test suite for DenseLayer class.
+
     Tests initialization, forward pass, and backward pass functionalities.
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting DenseLayer class", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Initialize test fixtures."""
         self.input_size = 10
         self.output_size = 5
@@ -73,16 +73,16 @@ class TestDenseLayer(unittest.TestCase):
 
 
 class TestFlattenLayer(unittest.TestCase):
-    """
-    Comprehensive test suite for FlattenLayer class.
+    """Comprehensive test suite for FlattenLayer class.
+
     Tests forward and backward pass functionalities for flattening multi-dimensional inputs.
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting FlattenLayer class", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Initialize test fixtures."""
         self.layer = FlattenLayer()
         np.random.seed(42)
@@ -111,16 +111,16 @@ class TestFlattenLayer(unittest.TestCase):
 
 
 class TestConvLayer(unittest.TestCase):
-    """
-    Comprehensive test suite for ConvLayer class.
+    """Comprehensive test suite for ConvLayer class.
+
     Tests initialization, forward pass, and backward pass with convolution operations.
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting ConvLayer class", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Initialize test fixtures."""
         self.in_channels = 1
         self.out_channels = 1

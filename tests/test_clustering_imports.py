@@ -11,8 +11,8 @@ from sega_learn.clustering import KMeans as kms
 
 
 class TestImportsClustering(unittest.TestCase):
-    """
-    Tests that the clustering subpackage can be imported correctly.
+    """Tests that the clustering subpackage can be imported correctly.
+
     Methods:
     - setUpClass: Initializes a new instance of the Index class before each test method is run.
     - test_individual_imports: Tests that each module in the segadb package can be imported individually.
@@ -20,14 +20,14 @@ class TestImportsClustering(unittest.TestCase):
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting Imports - Clustering", end="", flush=True)
 
-    def test_individual_imports(self):
+    def test_individual_imports(self):  # NOQA D201
         assert dbs is not None
         assert kms is not None
 
-    def test_wildcard_import(self):
+    def test_wildcard_import(self):  # NOQA D201
         assert DBSCAN is not None
         assert KMeans is not None
 

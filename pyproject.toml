@@ -92,7 +92,7 @@ exclude = [
     # C4 = flake8-comprehensions (helps write better comprehensions)
     # SIM = flake8-simplify (simplifies code)
     # TID = flake8-tidy-imports
-    # D = pydocstyle (docstring style checker) 
+    # D = pydocstyle (docstring style checker)
 
 # TODO: Add and fix D (pydocstyle) errors in tests/ folder
 select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "TID"]

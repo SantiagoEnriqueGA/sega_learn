@@ -14,17 +14,18 @@ from tests.utils import suppress_print
 os.environ["NUMBA_WARNINGS"] = "0"
 warnings.filterwarnings("ignore", category=NumbaPendingDeprecationWarning)
 
+
 class TestNeuralNetworkNumba(unittest.TestCase):
-    """
-    Comprehensive test suite for NumbaBackendNeuralNetwork class.
+    """Comprehensive test suite for NumbaBackendNeuralNetwork class.
+
     Tests all major functions and edge cases under Numba acceleration.
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting NeuralNetwork class with Numba backend", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Initialize test fixtures."""
         with suppress_print():
             # Binary classification network
@@ -87,14 +88,14 @@ class TestNeuralNetworkNumba(unittest.TestCase):
             [2, 100, 1], compile_numba=False, progress_bar=False
         )
         with self.assertWarns(UserWarning), suppress_print():
-                nn.train(
-                    self.X,
-                    self.y_binary,
-                    optimizer=optimizer,
-                    epochs=1,
-                    batch_size=32,
-                    use_tqdm=False,
-                )
+            nn.train(
+                self.X,
+                self.y_binary,
+                optimizer=optimizer,
+                epochs=1,
+                batch_size=32,
+                use_tqdm=False,
+            )
 
     ### Dropout Tests ###
     def test_apply_dropout(self):

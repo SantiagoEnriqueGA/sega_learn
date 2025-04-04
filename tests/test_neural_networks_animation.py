@@ -16,27 +16,33 @@ from tests.utils import suppress_print
 
 # Dummy writer to simulate FFMpegWriter / PillowWriter behavior.
 class DummyWriter:
+    """Dummy writer to simulate FFMpegWriter / PillowWriter behavior."""
+
     def __init__(self, *args, **kwargs):
+        """Initialize attributes."""
         self.setup_called = False
         self.grab_called = False
         self.finish_called = False
 
     def setup(self, fig, filepath, dpi):
+        """Setup the writer."""
         self.setup_called = True
         self.fig = fig
         self.filepath = filepath
         self.dpi = dpi
 
     def grab_frame(self):
+        """Grab a frame."""
         self.grab_called = True
 
     def finish(self):
+        """Finish the writer."""
         self.finish_called = True
 
 
 class TestTrainingAnimator(unittest.TestCase):
-    """
-    Unit tests for the TrainingAnimator class.
+    """Unit tests for the TrainingAnimator class.
+
     Methods:
     - setUpClass: Print message before running tests.
     - setUp: Initialize the TrainingAnimator class and metrics.
@@ -52,10 +58,10 @@ class TestTrainingAnimator(unittest.TestCase):
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting the TrainingAnimator Class", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         # Create an instance with specific figure size and dpi for testing.
         self.animator = TrainingAnimator(figure_size=(8, 6), dpi=80)
 
@@ -116,8 +122,8 @@ class TestTrainingAnimator(unittest.TestCase):
         self.assertEqual(self.animator.metrics["val_accuracy"], [0.85])
 
     def test_animate_training_metrics(self):
-        """
-        Test that animate_training_metrics creates a FuncAnimation correctly and saves it to a temp file.
+        """Test that animate_training_metrics creates a FuncAnimation correctly and saves it to a temp file.
+
         If ffmpeg is not available, it should fall back to PillowWriter and save the animation as a .gif file.
         """
         import contextlib
@@ -158,8 +164,11 @@ class TestTrainingAnimator(unittest.TestCase):
         # Use a temporary file for the output.
         with tempfile.NamedTemporaryFile(suffix=".mp4", delete=True) as tmp:
             # Patch FFMpegWriter from matplotlib.animation to return our DummyWriter.
-            with patch("matplotlib.animation.FFMpegWriter", return_value=DummyWriter()), suppress_print():
-                    self.animator.setup_training_video(tmp.name, fps=10, dpi=80)
+            with (
+                patch("matplotlib.animation.FFMpegWriter", return_value=DummyWriter()),
+                suppress_print(),
+            ):
+                self.animator.setup_training_video(tmp.name, fps=10, dpi=80)
             self.assertIsNotNone(self.animator.writer)
             self.assertTrue(hasattr(self.animator.writer, "setup_called"))
             self.assertEqual(self.animator.frame_count, 0)
@@ -167,9 +176,12 @@ class TestTrainingAnimator(unittest.TestCase):
 
     def test_setup_training_video_no_initialize(self):
         """Test that setup_training_video raises an error if initialize() wasn't called."""
-        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=True) as tmp, \
-            self.assertRaises(ValueError), suppress_print():
-                    self.animator.setup_training_video(tmp.name, fps=10)
+        with (
+            tempfile.NamedTemporaryFile(suffix=".mp4", delete=True) as tmp,
+            self.assertRaises(ValueError),
+            suppress_print(),
+        ):
+            self.animator.setup_training_video(tmp.name, fps=10)
 
     def test_add_training_frame(self):
         """Test that add_training_frame updates frame_count and calls writer.grab_frame."""
@@ -205,18 +217,25 @@ class TestTrainingAnimator(unittest.TestCase):
             self.animator.finish_training_video()
 
     def test_setup_training_video_fallback(self):
-        """
-        Test the fallback mechanism in setup_training_video when FFMpegWriter is unavailable.
+        """Test the fallback mechanism in setup_training_video when FFMpegWriter is unavailable.
+
         It simulates a FileNotFoundError and checks that PillowWriter is used instead.
         """
         self.animator.initialize(metrics_to_track=["loss"], has_validation=False)
-        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=True) as tmp, \
-            patch("matplotlib.animation.FFMpegWriter",side_effect=FileNotFoundError("Not found")), \
-                patch("matplotlib.animation.PillowWriter", return_value=DummyWriter()) as _mock_pillow:
-                    with suppress_print():
-                        self.animator.setup_training_video(tmp.name, fps=10, dpi=80)
-                    self.assertIsNotNone(self.animator.writer)
-                    self.assertTrue(self.animator.writer.setup_called)
+        with (
+            tempfile.NamedTemporaryFile(suffix=".mp4", delete=True) as tmp,
+            patch(
+                "matplotlib.animation.FFMpegWriter",
+                side_effect=FileNotFoundError("Not found"),
+            ),
+            patch(
+                "matplotlib.animation.PillowWriter", return_value=DummyWriter()
+            ) as _mock_pillow,
+        ):
+            with suppress_print():
+                self.animator.setup_training_video(tmp.name, fps=10, dpi=80)
+            self.assertIsNotNone(self.animator.writer)
+            self.assertTrue(self.animator.writer.setup_called)
 
 
 if __name__ == "__main__":

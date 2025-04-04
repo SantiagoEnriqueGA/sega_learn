@@ -19,17 +19,16 @@ warnings.filterwarnings(
 r2_score = Metrics.r_squared
 accuracy_score = Metrics.accuracy
 
+
 class TestAutoRegressor(unittest.TestCase):
-    """
-    Unit test for the AutoRegressor class.
-    """
+    """Unit test for the AutoRegressor class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the AutoRegressor class before each test method is run."""
         print("\nTesting AutoRegressor Model", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.model = AutoRegressor()
         self.X_train, self.y_train = make_regression(n_samples=100, n_features=5)
         self.X_test, self.y_test = make_regression(n_samples=50, n_features=5)
@@ -201,16 +200,14 @@ class TestAutoRegressor(unittest.TestCase):
 
 
 class TestAutoClassifier(unittest.TestCase):
-    """
-    Unit test for the AutoClassifier class.
-    """
+    """Unit test for the AutoClassifier class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the AutoClassifier class before each test method is run."""
         print("\nTesting AutoClassifier Model", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         self.model = AutoClassifier()
         self.X_train, self.y_train = make_classification(
             n_samples=100, n_features=5, n_classes=3

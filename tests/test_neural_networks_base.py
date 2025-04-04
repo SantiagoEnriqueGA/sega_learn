@@ -12,16 +12,16 @@ from tests.utils import suppress_print
 
 
 class TestNeuralNetworkVanilla(unittest.TestCase):
-    """
-    Comprehensive test suite for BaseBackendNeuralNetwork class.
+    """Comprehensive test suite for BaseBackendNeuralNetwork class.
+
     Tests all major functions and edge cases.
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         print("\nTesting NeuralNetwork class with base backend", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Initialize test fixtures."""
         # Binary classification network
         self.nn_binary = BaseBackendNeuralNetwork(

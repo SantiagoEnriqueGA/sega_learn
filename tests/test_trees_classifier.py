@@ -12,6 +12,8 @@ from sega_learn.utils import make_classification
 
 
 class TestClassifierTreeUtility(unittest.TestCase):
+    """Set up the ClassifierTreeUtility instance for testing."""
+
     @classmethod
     def setUpClass(cls):
         """Initializes a new instance of the Index class before each test method is run."""
@@ -184,6 +186,8 @@ class TestClassifierTreeUtility(unittest.TestCase):
 
 
 class TestClassifierTree(unittest.TestCase):
+    """Set up the ClassifierTree instance for testing."""
+
     @classmethod
     def setUpClass(cls):
         """Initializes a new instance of the Index class before each test method is run."""
@@ -280,12 +284,14 @@ class TestClassifierTree(unittest.TestCase):
 
 
 class TestRandomForestClassifier(unittest.TestCase):
+    """Set up the RandomForestClassifier instance for testing."""
+
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting Random Forest Classifier", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Set up the RandomForestClassifier instance for testing."""
         X, y = make_classification(n_samples=100, n_features=5, n_classes=2)
         self.rf = RandomForestClassifier(

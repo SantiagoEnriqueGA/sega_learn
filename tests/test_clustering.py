@@ -10,16 +10,14 @@ from sega_learn.clustering import *
 
 
 class TestKMeans(unittest.TestCase):
-    """
-    Unit test for the KMeans clustering class.
-    """
+    """Unit test for the KMeans clustering class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting KMeans", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Sets up synthetic data and initializes the KMeans instance."""
         # Generate synthetic data for testing
         self.true_k = 3
@@ -241,16 +239,14 @@ class TestKMeans(unittest.TestCase):
 
 
 class TestDBSCAN(unittest.TestCase):
-    """
-    Unit test for the DBSCAN clustering class.
-    """
+    """Unit test for the DBSCAN clustering class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting DBSCAN", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Sets up synthetic data and initializes the DBSCAN instance."""
         # Generate synthetic data for testing
         self.X = np.array(
@@ -352,16 +348,14 @@ class TestDBSCAN(unittest.TestCase):
 
 
 class TestDBSCANNumba(unittest.TestCase):
-    """
-    Unit test for the DBSCAN clustering class using Numba.
-    """
+    """Unit test for the DBSCAN clustering class using Numba."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting DBSCAN Numba", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Sets up synthetic data and initializes the DBSCAN instance with Numba."""
         # Generate synthetic data for testing
         self.X = np.array(

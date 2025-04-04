@@ -13,6 +13,8 @@ from tests.utils import suppress_print, synthetic_data_regression
 
 
 class TestRegressorTreeUtility(unittest.TestCase):
+    """Set up the RegressorTreeUtility instance for testing."""
+
     @classmethod
     def setUpClass(cls):
         """Initializes a new instance of the Index class before each test method is run."""
@@ -191,6 +193,8 @@ class TestRegressorTreeUtility(unittest.TestCase):
 
 
 class TestRegressorTree(unittest.TestCase):
+    """Set up the RegressorTree instance for testing."""
+
     @classmethod
     def setUpClass(cls):
         """Initializes a new instance of the Index class before each test method is run."""
@@ -291,12 +295,14 @@ class TestRegressorTree(unittest.TestCase):
 
 
 class TestRandomForestRegressor(unittest.TestCase):
+    """Set up the RandomForestRegressor instance for testing."""
+
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting Random Forest Regressor", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Sets up the RandomForestRegressor instance for testing."""
         X, y = synthetic_data_regression(n_samples=100, n_features=3)
         self.rf = RandomForestRegressor(
@@ -423,12 +429,14 @@ class TestRandomForestRegressor(unittest.TestCase):
 
 
 class TestGradientBoostedRegressor(unittest.TestCase):
+    """Set up the GradientBoostedRegressor instance for testing."""
+
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
         print("\nTesting Gradient Boosted Regressor", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Sets up the GradientBoostedRegressor instance for testing."""
         X, y = synthetic_data_regression(n_samples=100, n_features=3)
         self.gbr = GradientBoostedRegressor(
