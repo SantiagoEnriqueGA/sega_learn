@@ -86,7 +86,7 @@ best_model = sega_search.fit(X, y, verbose=True)
 ```
 
 ### Data Augmentation
-The `dataAugmentation` module provides a class for imbalanced classification tasks using SMOTE (Synthetic Minority Over-sampling Technique), Under-sampling, Over-sampling, and/or a combination of each. 
+The `dataAugmentation` module provides a class for imbalanced classification tasks using SMOTE (Synthetic Minority Over-sampling Technique), Under-sampling, Over-sampling, and/or a combination of each.
 
 #### SMOTE
 SMOTE is a technique used to create synthetic samples for the minority class in imbalanced datasets. It works by selecting a minority class sample and creating new samples along the line segments connecting it to its nearest neighbors. In this way, it generates new samples that are similar to the existing minority class samples, helping to balance the dataset.

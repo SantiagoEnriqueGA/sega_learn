@@ -1,5 +1,5 @@
 # Find TODO comments in Python files, excluding paths containing "__archive"
-$todoComments = Get-ChildItem -Recurse -Filter *.py | Where-Object { 
+$todoComments = Get-ChildItem -Recurse -Filter *.py | Where-Object {
     -not ($_.FullName -like "*_archive*") -and -not ($_.FullName -like "*.venv*")
 } | ForEach-Object {
     $file = $_

@@ -12,13 +12,13 @@ Neural networks are a class of machine learning models inspired by the human bra
 
 ## Architecture
 
-- **Layers & Weight Initialization:**  
+- **Layers & Weight Initialization:**
   The module provides a `Layer` class (and its Numba counterpart `JITLayer`) that encapsulates the weights, biases, and activation functions for a network layer. Weight initialization uses He initialization for ReLU and Leaky ReLU activations and a scaled approach for others.
 
-- **Forward & Backward Propagation:**  
+- **Forward & Backward Propagation:**
   The `BaseBackendNeuralNetwork` and `NumbaBackendNeuralNetwork` classes orchestrate the forward pass, computing activations for each layer (with optional dropout during training), and the backward pass, where gradients are calculated layer by layer. Utility functions (in `numba_utils.py`) support these operations with Numba-compiled versions for faster computations.
 
-- **Dual Backend Support:**  
+- **Dual Backend Support:**
   Users can choose between a pure NumPy backend (`BaseBackendNeuralNetwork`) or a Numba-accelerated version (`NumbaBackendNeuralNetwork`) by selecting the appropriate class. This design allows for both ease of debugging and high-performance training.
 
 ---
@@ -27,22 +27,22 @@ Neural networks are a class of machine learning models inspired by the human bra
 
 The module provides a robust set of activation functions along with their derivatives for backpropagation:
 
-- **ReLU (Rectified Linear Unit):**  
-  $` \text{ReLU}(z) = \max(0, z) `$  
+- **ReLU (Rectified Linear Unit):**
+  $` \text{ReLU}(z) = \max(0, z) `$
   Derivative: $` f'(z) = \begin{cases} 1 & z > 0 \\ 0 & z \leq 0 \end{cases} `$
 
-- **Leaky ReLU:**  
-  $` \text{LeakyReLU}(z) = \begin{cases} z & z > 0 \\ \alpha z & z \leq 0 \end{cases} `$  
+- **Leaky ReLU:**
+  $` \text{LeakyReLU}(z) = \begin{cases} z & z > 0 \\ \alpha z & z \leq 0 \end{cases} `$
   Derivative: $` f'(z) = \begin{cases} 1 & z > 0 \\ \alpha & z \leq 0 \end{cases} `$
 
-- **Tanh:**  
+- **Tanh:**
   $` \tanh(z) `$ maps inputs to the range $`[-1, 1] `$.
 
-- **Sigmoid:**  
+- **Sigmoid:**
   $` \sigma(z) = \frac{1}{1+\exp(-z)} `$ maps inputs to $`[0, 1] `$.
 
-- **Softmax:**  
-  Converts logits into a probability distribution across classes:  
+- **Softmax:**
+  Converts logits into a probability distribution across classes:
   $` \text{softmax}(z)_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)} `$
 
 These functions are implemented in both standard (in `activations.py`) and Numba-compatible forms (in `numba_utils.py` and used by `JITLayer`).
@@ -51,10 +51,10 @@ These functions are implemented in both standard (in `activations.py`) and Numba
 
 ## Layers
 
-- **Standard Layers:**  
+- **Standard Layers:**
   The `Layer` class (in `layers.py`) sets up a single layer with its weight matrix, bias vector, and chosen activation function. It includes methods to reset gradients, apply the activation function, and compute the derivative during backpropagation.
 
-- **Numba-Accelerated Layers:**  
+- **Numba-Accelerated Layers:**
   For performance-critical applications, `JITLayer` (in `layers_jit.py`) uses Numba’s jitclass decorator to compile layer operations, including weight initialization, activation, and gradient resetting.
 
 ---
@@ -63,13 +63,13 @@ These functions are implemented in both standard (in `activations.py`) and Numba
 
 Two primary loss functions are provided:
 
-- **CrossEntropyLoss:**  
-  Used for multi-class classification, it computes the loss as:  
-  $` \text{Loss} = -\frac{1}{m} \sum \left(y \cdot \log(p + \epsilon)\right) `$  
+- **CrossEntropyLoss:**
+  Used for multi-class classification, it computes the loss as:
+  $` \text{Loss} = -\frac{1}{m} \sum \left(y \cdot \log(p + \epsilon)\right) `$
   where targets are one-hot encoded and $` p `$ are the probabilities obtained via softmax.
 
-- **BCEWithLogitsLoss:**  
-  Designed for binary classification, combining a sigmoid activation with binary cross-entropy:  
+- **BCEWithLogitsLoss:**
+  Designed for binary classification, combining a sigmoid activation with binary cross-entropy:
   $` \text{Loss} = -\frac{1}{m} \sum \left(y \cdot \log(p + \epsilon) + (1-y) \cdot \log(1-p + \epsilon)\right) `$
 
 Both standard implementations (in `loss.py`) and Numba-compiled versions (in `loss_jit.py`) are included.
@@ -80,24 +80,24 @@ Both standard implementations (in `loss.py`) and Numba-compiled versions (in `lo
 
 The module supports several optimizers, each with its own update formula:
 
-- **AdamOptimizer:**  
-  Combines momentum and adaptive learning rates using first and second moment estimates.  
-  Update rule:  
-  $` w = w - \alpha \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon} - \lambda w `$  
+- **AdamOptimizer:**
+  Combines momentum and adaptive learning rates using first and second moment estimates.
+  Update rule:
+  $` w = w - \alpha \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon} - \lambda w `$
   Standard implementation is in `optimizers.py`, while `JITAdamOptimizer` (in `optimizers_jit.py`) offers a Numba-accelerated alternative.
 
-- **SGDOptimizer:**  
-  Implements basic stochastic gradient descent, optionally with momentum:  
-  $` w = w - \text{learning rate} \times dW - \lambda w, \quad b = b - \text{learning rate} \times db `$  
+- **SGDOptimizer:**
+  Implements basic stochastic gradient descent, optionally with momentum:
+  $` w = w - \text{learning rate} \times dW - \lambda w, \quad b = b - \text{learning rate} \times db `$
   Also available in a Numba version as `JITSGDOptimizer`.
 
-- **AdadeltaOptimizer:**  
-  Adjusts learning rates based on a moving window of gradient updates:  
-  $` E[g^2]_t = \rho E[g^2]_{t-1} + (1 - \rho) g^2 `$  
+- **AdadeltaOptimizer:**
+  Adjusts learning rates based on a moving window of gradient updates:
+  $` E[g^2]_t = \rho E[g^2]_{t-1} + (1 - \rho) g^2 `$
 
-  $` \Delta x = - \frac{\sqrt{E[\Delta x^2]_{t-1} + \epsilon}}{\sqrt{E[g^2]_t + \epsilon}} g `$  
-  
-  $` E[\Delta x^2]_t = \rho E[\Delta x^2]_{t-1} + (1 - \rho) \Delta x^2 `$  
+  $` \Delta x = - \frac{\sqrt{E[\Delta x^2]_{t-1} + \epsilon}}{\sqrt{E[g^2]_t + \epsilon}} g `$
+
+  $` E[\Delta x^2]_t = \rho E[\Delta x^2]_{t-1} + (1 - \rho) \Delta x^2 `$
   Implemented in both standard (`optimizers.py`) and Numba (`optimizers_jit.py`) versions.
 
 ---
@@ -106,13 +106,13 @@ The module supports several optimizers, each with its own update formula:
 
 The module provides multiple strategies to adjust the learning rate during training:
 
-- **Step Scheduler (`lr_scheduler_step`):**  
+- **Step Scheduler (`lr_scheduler_step`):**
   Reduces the learning rate by a fixed factor every set number of epochs.
 
-- **Exponential Scheduler (`lr_scheduler_exp`):**  
+- **Exponential Scheduler (`lr_scheduler_exp`):**
   Applies an exponential decay to the learning rate at defined intervals.
 
-- **Plateau Scheduler (`lr_scheduler_plateau`):**  
+- **Plateau Scheduler (`lr_scheduler_plateau`):**
   Monitors the loss and reduces the learning rate when improvements plateau.
 
 All scheduler classes are defined in `schedulers.py` with user-friendly messages to track adjustments.
@@ -123,16 +123,16 @@ All scheduler classes are defined in `schedulers.py` with user-friendly messages
 
 The `numba_utils.py` module contains helper functions that accelerate various operations via Numba, including:
 
-- **Forward & Backward Passes:**  
+- **Forward & Backward Passes:**
   Functions such as `forward_jit` and `backward_jit` manage data propagation and gradient computation in a highly optimized manner.
 
-- **Activation Functions:**  
+- **Activation Functions:**
   Numba-compatible versions of ReLU, Leaky ReLU, Tanh, Sigmoid, and Softmax are provided for rapid computation.
 
-- **Regularization & Dropout:**  
+- **Regularization & Dropout:**
   Functions to compute L2 regularization and apply dropout (e.g., `apply_dropout_jit`) are also included.
 
-- **Batch Processing:**  
+- **Batch Processing:**
   The `process_batches` function allows for efficient mini-batch training with parallel processing support.
 
 ---
@@ -141,19 +141,19 @@ The `numba_utils.py` module contains helper functions that accelerate various op
 
 The core classes, `BaseBackendNeuralNetwork` and `NumbaBackendNeuralNetwork`, integrate all the above components:
 
-- **Model Construction:**  
+- **Model Construction:**
   Accepts a list of layer sizes and optionally a list of activation functions. It builds the network by stacking layers (using either the standard or Numba-accelerated version).
 
-- **Forward Propagation:**  
+- **Forward Propagation:**
   Computes predictions by propagating input data through the layers. Dropout is applied during training to help regularize the model.
 
-- **Backward Propagation:**  
+- **Backward Propagation:**
   Calculates gradients for all parameters using the chain rule and updates them via the chosen optimizer.
 
-- **Training Methods:**  
+- **Training Methods:**
   Provides a `train` method for standard training and a `train_numba` method for accelerated training. It supports mini-batch gradient descent, parallel batch processing (via joblib), early stopping, and integration with learning rate schedulers.
 
-- **Evaluation:**  
+- **Evaluation:**
   Methods to compute loss and accuracy on training or validation data are included.
 
 ---

@@ -160,8 +160,26 @@ To automate these checks before each commit, we use `pre-commit`.
     *   If any unfixable errors are found, the commit will be aborted, and the errors will be printed. Fix them manually, `git add`, and commit again.
     *   If all checks pass, your commit will proceed.
 
-Using `pre-commit` significantly reduces the chance of pushing code that fails CI checks.
+3.  **Ensure Pre-commit Hooks Match `pyproject.toml`:**
+    The `ruff` pre-commit hooks are configured to use the settings defined in `pyproject.toml`. By default, `ruff` automatically detects and uses this file. However, the `.pre-commit-config.yaml` explicitly specifies the configuration file to ensure consistency:
+    ```yaml
+    - id: ruff
+        name: Run Ruff Linter (with auto-fix)
+        args: [--fix, --exit-non-zero-on-fix] # Uses pyproject.toml by default
+    - id: ruff-format
+        name: Run Ruff Formatter
+        args: [--config=pyproject.toml] # Explicitly specify config file (optional)
+    ```
+    This ensures that the pre-commit hooks use the same linting and formatting rules as defined in `pyproject.toml`.
 
+4.  **Test Pre-commit Hooks Manually:**
+    You can manually test the pre-commit hooks on all files by running:
+    ```bash
+    pre-commit run --all-files
+    ```
+    This will apply the hooks to all files in the repository and ensure they behave as expected.
+
+Using `pre-commit` ensures that your code adheres to the project's style and quality standards before committing, reducing the chance of CI failures.
 ## Running Tests
 
 The project contains unit tests in the `tests/` directory. Use the provided scripts to run them:

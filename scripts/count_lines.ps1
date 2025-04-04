@@ -10,7 +10,7 @@ $output += "Lines per Python file, sorted by descending order:"
 $output += $separator
 
 # Collect file info in an array, filtering out paths containing "_archive" or ".venv"
-$files = Get-ChildItem -Recurse -Filter *.py | Where-Object { 
+$files = Get-ChildItem -Recurse -Filter *.py | Where-Object {
     -not ($_.FullName -like "*_archive*") -and -not ($_.FullName -like "*.venv*")
 } | ForEach-Object {
     $filePath = $_.FullName -replace ".*sega_learn", "`tsega_learn"
@@ -30,7 +30,7 @@ $sortedFiles | ForEach-Object {
 }
 
 # Calculate the total number of lines, excluding paths with "_archive"
-$totalLines = Get-ChildItem -Recurse -Filter *.py | Where-Object { 
+$totalLines = Get-ChildItem -Recurse -Filter *.py | Where-Object {
     -not ($_.FullName -like "*_archive*") -and -not ($_.FullName -like "*.venv*")
 } | Get-Content | Measure-Object -Line | Select-Object -ExpandProperty Lines
 

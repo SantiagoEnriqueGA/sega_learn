@@ -1,6 +1,6 @@
 # Nearest Neighbors Module
 
-The `nearest_neighbors` module implements the Nearest Neighbors algorithm for classification and regression tasks. 
+The `nearest_neighbors` module implements the Nearest Neighbors algorithm for classification and regression tasks.
 It implements the K-Nearest Neighbors (KNN) algorithm, which is a simple yet effective method for making predictions based on the proximity of data points in feature space.
 It has classes for both classification and regression tasks, allowing users to choose the appropriate method based on their needs.
 
@@ -58,4 +58,3 @@ knn_regressor.fit(X_train, y_train)
 # Predict values for new data
 predictions = knn_regressor.predict(X_test)
 ```
-

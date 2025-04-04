@@ -9,7 +9,7 @@ from libc.math cimport fabs
 def fit_ols(np.ndarray[np.double_t, ndim=2] X, np.ndarray[np.double_t, ndim=1] y, bint fit_intercept):
     """
     Compute OLS coefficients.
-    
+
     If fit_intercept is True, a column of ones is prepended to X.
     Returns a 1D array of coefficients (with the first element being the intercept, if applicable).
     """
@@ -28,7 +28,7 @@ def fit_ols(np.ndarray[np.double_t, ndim=2] X, np.ndarray[np.double_t, ndim=1] y
     # Compute X_design^T * X_design and X_design^T * y
     cdef np.ndarray[np.double_t, ndim=2] XtX = np.dot(X_design.T, X_design)
     cdef np.ndarray[np.double_t, ndim=1] Xty = np.dot(X_design.T, y)
-    
+
     # Solve the linear system XtX * coef = Xty
     cdef np.ndarray[np.double_t, ndim=1] coef = np.linalg.solve(XtX, Xty)
     return coef
@@ -40,7 +40,7 @@ def fit_ridge(np.ndarray[np.double_t, ndim=2] X, np.ndarray[np.double_t, ndim=1]
               double alpha, bint fit_intercept, int max_iter=10000, double tol=1e-4):
     """
     Compute Ridge regression coefficients using coordinate descent.
-    
+
     Args:
     - X: Feature matrix.
     - y: Target vector.
@@ -48,7 +48,7 @@ def fit_ridge(np.ndarray[np.double_t, ndim=2] X, np.ndarray[np.double_t, ndim=1]
     - fit_intercept: Whether to include an intercept.
     - max_iter: Maximum iterations.
     - tol: Convergence tolerance.
-    
+
     Returns a 1D array of coefficients (with intercept in position 0 if fit_intercept is True).
     """
     # Explicit cast to int
@@ -99,7 +99,7 @@ def fit_lasso(np.ndarray[np.double_t, ndim=2] X, np.ndarray[np.double_t, ndim=1]
               double alpha, bint fit_intercept, int max_iter=10000, double tol=1e-4):
     """
     Compute Lasso regression coefficients using coordinate descent.
-    
+
     Args:
     - X: Feature matrix.
     - y: Target vector.
@@ -107,12 +107,12 @@ def fit_lasso(np.ndarray[np.double_t, ndim=2] X, np.ndarray[np.double_t, ndim=1]
     - fit_intercept: Whether to include an intercept.
     - max_iter: Maximum iterations.
     - tol: Convergence tolerance.
-    
+
     Returns a 1D array of coefficients (with intercept in position 0 if fit_intercept is True).
     """
     # Explicit cast to int
     cdef int n_samples = <int>X.shape[0]
-    cdef int n_features = <int>X.shape[1]   
+    cdef int n_features = <int>X.shape[1]
     cdef np.ndarray[np.double_t, ndim=2] X_design
 
     if fit_intercept:

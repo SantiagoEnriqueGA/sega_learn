@@ -1,6 +1,6 @@
 # Trees Module
 
-The trees module in SEGA_LEARN provides implementations of decision tree algorithms for both classification and regression tasks. 
+The trees module in SEGA_LEARN provides implementations of decision tree algorithms for both classification and regression tasks.
 These algorithms are designed to create tree-based models that can be used for predicting target values based on input features.
 Trees are a popular choice for machine learning tasks due to their interpretability and ability to handle both numerical and categorical data.
 
@@ -16,7 +16,7 @@ A key difference is in the way they handle the target variable:
 ### Difference in How Trees are Split
 - **Classifier Trees**: Use entropy to measure the quality of a split. The best split is the one that maximizes the information.
     - **Entropy**: Measures the impurity of a dataset. Lower entropy indicates higher purity.
-        - $\text{Entropy}(S) = -\sum_{i=1}^{c} p_i \log_2(p_i)$ 
+        - $\text{Entropy}(S) = -\sum_{i=1}^{c} p_i \log_2(p_i)$
         - where $S$ is the dataset, $c$ is the number of classes, and $p_i$ is the proportion of instances in class $i$.
   - **Information Gain**: The reduction in entropy after a dataset is split on an attribute.
 
@@ -31,7 +31,7 @@ A key difference is in the way they handle the target variable:
 
 
 ## Gradient Boosted Trees
-Gradient Boosted Trees are an ensemble learning method that builds multiple decision trees sequentially. 
+Gradient Boosted Trees are an ensemble learning method that builds multiple decision trees sequentially.
 By combining the predictions of multiple weak learners (single trees), it creates a strong predictive model.
 Each tree tries to correct the errors of the previous tree, resulting in a strong predictive model. This method is particularly effective for regression tasks.
 

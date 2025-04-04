@@ -67,6 +67,7 @@ exclude = [
     "build",                # Exclude the build directory
     "sega_learn.egg-info",  # Exclude egg info
     "docs/*",               # Exclude all generated HTML docs
+    ".html",                # Exclude HTML files
     "_archive/",            # Exclude the archive directory
     "__pycache__/",         # Exclude python cache
     "scripts/*",            # Exclude scripts directory

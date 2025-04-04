@@ -1,16 +1,16 @@
 # SEGA_LEARN
 
-SEGA_LEARN is a custom package implementating machine learning algorithms built from the Python standard library as well as NumPy and SciPy. 
-It includes scratch implementations of various machine learning algorithms, including clustering, linear models, neural networks, and trees. 
+SEGA_LEARN is a custom package implementating machine learning algorithms built from the Python standard library as well as NumPy and SciPy.
+It includes scratch implementations of various machine learning algorithms, including clustering, linear models, neural networks, and trees.
 The project also includes scripts for testing, documentation generation, and other tasks.
 
-The project is organized into several directories, each with its own purpose. 
-The `SEGA_LEARN/` directory contains the main library code, while the `tests/` directory contains unit and performance tests. 
-The `examples/` directory contains example usages of the library, and the `docs/` directory contains the generated documentation. 
+The project is organized into several directories, each with its own purpose.
+The `SEGA_LEARN/` directory contains the main library code, while the `tests/` directory contains unit and performance tests.
+The `examples/` directory contains example usages of the library, and the `docs/` directory contains the generated documentation.
 The `scripts/` directory contains PowerShell scripts to help with various tasks.
 
 This project was created with the goal of learning about the internals of machine learning algorithms and how they work under the hood.
-It is not intended for production use and should be used for educational purposes only (See performance tests). 
+It is not intended for production use and should be used for educational purposes only (See performance tests).
 Many of the algorithms are not optimized for performance and may not be suitable for large datasets.
 
 This project was heavily inspired by [scikit-learn](https://scikit-learn.org/stable/), and [pytorch](https://pytorch.org/).
@@ -158,18 +158,18 @@ The following PowerShell scripts are included in the `scripts/` folder to help w
 
 ## Documentation
 ### HTML Documentation
-Pydoc documentation is generated from the PowerShell script `documentation_html.ps1`.  
-To see live version: https://santiagoenriquega.github.io/sega_learn/sega_learn  
+Pydoc documentation is generated from the PowerShell script `documentation_html.ps1`.
+To see live version: https://santiagoenriquega.github.io/sega_learn/sega_learn
 
-Self host documentation, run the following command in the terminal: `python -m pydoc -p 8080`  
+Self host documentation, run the following command in the terminal: `python -m pydoc -p 8080`
 Then open a web browser and navigate to http://localhost:8080/SEGA_LEARN.html
 
 ### Markdown Documentation
-Pydoc Markdown is also availible and is generated from the PowerShell script `documentation_md.ps1`.  
+Pydoc Markdown is also availible and is generated from the PowerShell script `documentation_md.ps1`.
 The output file is located in [`docs/documentation.md`](docs/documentation.md)
 
 ## Tests
-To run the tests, use the following command: `python -m unittest discover -s tests`  
+To run the tests, use the following command: `python -m unittest discover -s tests`
 Or run the all tests file: `python run_all_tests.py`
 
 ### Test Results
@@ -285,7 +285,7 @@ To set up the project environment, you can use the provided `environment.yml` fi
 
 1. Open a terminal or command prompt.
 2. Navigate to the directory where your repository is located.
-3. Run the following command to create the conda environment: `conda env create -f environment.yml`  
+3. Run the following command to create the conda environment: `conda env create -f environment.yml`
 4. Activate the newly created environment: `conda activate sega_learn`
 
 ## File Structure
@@ -389,7 +389,7 @@ The project directory structure is as follows:
     - [`dataAugmentation_randUnder.py`](examples/utils/dataAugmentation_randUnder.py): Demonstrates Random Under Sampling for imbalanced classification tasks.
     - [`dataAugmentation_smote.py`](examples/utils/dataAugmentation_smote.py): Demonstrates SMOTE (Synthetic Minority Over-Sampling Technique) for imbalanced classification tasks.
     - [`dataAugmentation_combined.py`](examples/utils/dataAugmentation_combined.py): Demonstrates a combination of Random Over Sampling and SMOTE for imbalanced classification tasks.
-  
+
 - **docs/**: Contains the generated documentation for the SEGA_LEARN library.
   - [`documentation.md`](docs/documentation.md): Contains the generated documentation for the SEGA_LEARN library.
   - **HTML Documentation**: Contains the generated HTML documentation for the SEGA_LEARN library.
