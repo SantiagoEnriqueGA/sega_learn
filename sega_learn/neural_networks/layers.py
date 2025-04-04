@@ -94,6 +94,7 @@ class DenseLayer:
             "tanh": Activation.tanh,
             "sigmoid": Activation.sigmoid,
             "softmax": Activation.softmax,
+            "linear": lambda Z: Z,
             "none": lambda Z: Z,
         }
 
@@ -115,7 +116,7 @@ class DenseLayer:
         elif self.activation == "softmax":
             # Softmax derivative handled in loss function
             return np.ones_like(Z)  # Identity for compatibility
-        elif self.activation == "none":
+        elif self.activation in ["none", "linear"]:
             return np.ones_like(Z)  # Identity for compatibility
         else:
             raise ValueError(f"Unsupported activation: {self.activation}")

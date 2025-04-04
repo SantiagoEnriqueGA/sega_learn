@@ -86,8 +86,19 @@ class MeanSquaredErrorLoss:
         Returns:
             float: The mean squared error loss.
         """
-        loss = np.mean((y_true - y_pred) ** 2)  # Mean squared error loss
+        # Ensure inputs are numpy arrays and have compatible shapes
+        y_true = np.asarray(y_true)
+        y_pred = np.asarray(y_pred)
+        if y_true.shape != y_pred.shape:
+            # Attempt to reshape if y_true is 1D and y_pred is (n, 1) or vice-versa
+            if y_true.ndim == 1 and y_pred.ndim == 2 and y_pred.shape[1] == 1:
+                y_true = y_true.ravel()
+            else:
+                raise ValueError(
+                    f"Shape mismatch: y_true {y_true.shape} vs y_pred {y_pred.shape}"
+                )
 
+        loss = np.mean((y_true - y_pred) ** 2)  # Mean squared error loss
         return loss
 
 
@@ -110,15 +121,28 @@ class MeanAbsoluteErrorLoss:
         Returns:
             float: The mean absolute error loss.
         """
-        loss = np.mean(np.abs(y_true - y_pred))  # Mean absolute error loss
+        # Ensure inputs are numpy arrays and have compatible shapes
+        y_true = np.asarray(y_true)
+        y_pred = np.asarray(y_pred)
+        if y_true.shape != y_pred.shape:
+            # Attempt to reshape if y_true is 1D and y_pred is (n, 1) or vice-versa
+            if y_true.ndim == 1 and y_pred.ndim == 2 and y_pred.shape[1] == 1:
+                y_pred = y_pred.ravel()
+            elif y_pred.ndim == 1 and y_true.ndim == 2 and y_true.shape[1] == 1:
+                y_true = y_true.ravel()
+            else:
+                raise ValueError(
+                    f"Shape mismatch: y_true {y_true.shape} vs y_pred {y_pred.shape}"
+                )
 
+        loss = np.mean(np.abs(y_true - y_pred))  # Mean absolute error loss
         return loss
 
 
 class HuberLoss:
     """Custom Huber loss implementation using numpy.
 
-    Formula: mean(delta * (abs(y_true - y_pred) - delta / 2)) if abs(y_true - y_pred) <= delta else mean(abs(y_true - y_pred))
+    Formula: mean(0.5 * (y_true - y_pred)**2) if abs(y_true - y_pred) <= delta else mean(delta * (abs(y_true - y_pred) - delta / 2))
 
     Methods:
         __call__(self, y_true, y_pred, delta=1.0): Calculate the Huber loss.
@@ -135,6 +159,20 @@ class HuberLoss:
         Returns:
             float: The Huber loss.
         """
+        # Ensure inputs are numpy arrays and have compatible shapes
+        y_true = np.asarray(y_true)
+        y_pred = np.asarray(y_pred)
+        if y_true.shape != y_pred.shape:
+            # Attempt to reshape if y_true is 1D and y_pred is (n, 1) or vice-versa
+            if y_true.ndim == 1 and y_pred.ndim == 2 and y_pred.shape[1] == 1:
+                y_pred = y_pred.ravel()
+            elif y_pred.ndim == 1 and y_true.ndim == 2 and y_true.shape[1] == 1:
+                y_true = y_true.ravel()
+            else:
+                raise ValueError(
+                    f"Shape mismatch: y_true {y_true.shape} vs y_pred {y_pred.shape}"
+                )
+
         error = y_true - y_pred
         is_small_error = np.abs(error) <= delta
         squared_loss = 0.5 * error**2
