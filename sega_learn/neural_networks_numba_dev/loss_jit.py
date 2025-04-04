@@ -3,13 +3,15 @@ from numba import njit, prange
 
 CACHE = False
 
+
 class JITCrossEntropyLoss:
     def __init__(self):
         self.logits = np.zeros((1, 1))
         self.targets = np.zeros((1, 1))
 
     def calculate_loss(self, logits, targets):
-        return calculate_cross_entropy_loss(logits, targets)  
+        return calculate_cross_entropy_loss(logits, targets)
+
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def calculate_cross_entropy_loss(logits, targets):
@@ -26,7 +28,6 @@ def calculate_cross_entropy_loss(logits, targets):
     return loss / n
 
 
-
 class JITBCEWithLogitsLoss:
     def __init__(self):
         self.logits = np.zeros((1, 1))
@@ -34,9 +35,12 @@ class JITBCEWithLogitsLoss:
 
     def calculate_loss(self, logits, targets):
         return calculate_bce_with_logits_loss(logits, targets)
-    
+
+
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def calculate_bce_with_logits_loss(logits, targets):
     probs = 1 / (1 + np.exp(-logits))  # Apply sigmoid to logits to get probabilities
-    loss = -np.mean(targets * np.log(probs + 1e-15) + (1 - targets) * np.log(1 - probs + 1e-15))  # Binary cross-entropy loss
+    loss = -np.mean(
+        targets * np.log(probs + 1e-15) + (1 - targets) * np.log(1 - probs + 1e-15)
+    )  # Binary cross-entropy loss
     return loss

@@ -1,0 +1,26 @@
+# .pre-commit-config.yaml
+
+# Optional: Set minimum pre-commit version if needed
+# minimum_pre_commit_version: 2.9.0
+
+repos:
+  # Standard hooks useful for most Python projects
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0 # Use the latest stable tag
+    hooks:
+      - id: check-yaml           # Checks YAML files for parseable syntax.
+      - id: check-toml           # Checks TOML files for parseable syntax.
+      - id: end-of-file-fixer    # Ensures files end with a newline.
+      - id: trailing-whitespace  # Trims trailing whitespace.
+
+  # Ruff hooks (Linter and Formatter)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Find the latest revision tag here:
+    # https://github.com/astral-sh/ruff-pre-commit/releases
+    rev: v0.11.2 # Replace with the latest stable tag when setting up
+    hooks:
+      - id: ruff
+        name: Run Ruff Linter (with auto-fix)
+        args: [--fix, --exit-non-zero-on-fix] # --fix attempts to fix issues, --exit-non-zero-on-fix fails commit if fixes are made
+      - id: ruff-format
+        name: Run Ruff Formatter

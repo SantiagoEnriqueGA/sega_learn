@@ -41,7 +41,7 @@ def fit_ridge(np.ndarray[np.double_t, ndim=2] X, np.ndarray[np.double_t, ndim=1]
     """
     Compute Ridge regression coefficients using coordinate descent.
     
-    Parameters:
+    Args:
     - X: Feature matrix.
     - y: Target vector.
     - alpha: Regularization strength.
@@ -100,7 +100,7 @@ def fit_lasso(np.ndarray[np.double_t, ndim=2] X, np.ndarray[np.double_t, ndim=1]
     """
     Compute Lasso regression coefficients using coordinate descent.
     
-    Parameters:
+    Args:
     - X: Feature matrix.
     - y: Target vector.
     - alpha: Regularization strength.

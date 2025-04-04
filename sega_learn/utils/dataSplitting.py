@@ -1,40 +1,47 @@
 import numpy as np
 from scipy import sparse
 
-def train_test_split(*arrays, test_size=None, train_size=None, random_state=None, shuffle=True, stratify=None):
-    """
-    Split arrays or matrices into random train and test subsets.
-    
+
+def train_test_split(
+    *arrays,
+    test_size=None,
+    train_size=None,
+    random_state=None,
+    shuffle=True,
+    stratify=None,
+):
+    """Split arrays or matrices into random train and test subsets.
+
     Parameters
     ----------
     *arrays : sequence of arrays
         Allowed inputs are lists, numpy arrays, scipy-sparse matrices or pandas DataFrames.
-    
+
     test_size : float or int, default=None
         If float, should be between 0.0 and 1.0 and represent the proportion
         of the dataset to include in the test split. If int, represents the
         absolute number of test samples.
-        
+
     train_size : float or int, default=None
         If float, should be between 0.0 and 1.0 and represent the
         proportion of the dataset to include in the train split. If int,
         represents the absolute number of train samples. If None, the value is
         automatically computed as the complement of the test size (unless both
         are None, in which case test_size defaults to 0.25).
-        
+
     random_state : int, RandomState instance or None, default=None
         Controls the shuffling applied to the data before applying the split.
         Pass an int for reproducible output across multiple function calls.
-        
+
     shuffle : bool, default=True
         Whether or not to shuffle the data before splitting. If shuffle=False
         then stratify must be None.
-        
+
     stratify : array-like, default=None
         If not None, data is split in a stratified fashion, using this as
         the class labels.
-        
-    Returns
+
+    Returns:
     -------
     splitting : list, length=2 * len(arrays)
         List containing train-test split of inputs.
@@ -42,50 +49,49 @@ def train_test_split(*arrays, test_size=None, train_size=None, random_state=None
     # Initialize random number generator
     if random_state is not None:
         np.random.seed(random_state)
-    
+
     # Input validation
     if len(arrays) == 0:
         raise ValueError("At least one array required as input")
-    
+
     # Get number of samples
     first_array = arrays[0]
-    if sparse.issparse(first_array):
-        n_samples = first_array.shape[0]
-    elif hasattr(first_array, 'shape'):
+    if sparse.issparse(first_array) or hasattr(first_array, "shape"):
         n_samples = first_array.shape[0]
     else:
         n_samples = len(first_array)
-    
+
     # Validate array lengths
     for array in arrays:
-        if sparse.issparse(array):
-            if array.shape[0] != n_samples:
-                raise ValueError("Arrays must have the same length")
-        elif hasattr(array, 'shape'):
+        if sparse.issparse(array) or hasattr(array, "shape"):
             if array.shape[0] != n_samples:
                 raise ValueError("Arrays must have the same length")
         elif len(array) != n_samples:
             raise ValueError("Arrays must have the same length")
-    
+
     # Handle stratification
     if stratify is not None:
         if not shuffle:
-            raise ValueError("Stratified train/test split is not implemented for shuffle=False")
-        
+            raise ValueError(
+                "Stratified train/test split is not implemented for shuffle=False"
+            )
+
         stratify = np.asarray(stratify)
         if stratify.shape[0] != n_samples:
             raise ValueError("Stratify labels must have the same length as the arrays")
-        
+
         classes, stratify_indices = np.unique(stratify, return_inverse=True)
         n_classes = len(classes)
-        
+
         if n_classes < 2:
-            raise ValueError("Stratify labels array must have at least two unique values")
-    
+            raise ValueError(
+                "Stratify labels array must have at least two unique values"
+            )
+
     # Set default test_size if both test_size and train_size are None
     if test_size is None and train_size is None:
         test_size = 0.25
-    
+
     # Calculate train and test sizes
     if train_size is None:
         if isinstance(test_size, float):
@@ -106,7 +112,7 @@ def train_test_split(*arrays, test_size=None, train_size=None, random_state=None
             if train_size < 0 or train_size > n_samples:
                 raise ValueError(f"train_size must be between 0 and {n_samples}")
             n_train = train_size
-        
+
         if test_size is None:
             n_test = n_samples - n_train
         else:
@@ -114,17 +120,19 @@ def train_test_split(*arrays, test_size=None, train_size=None, random_state=None
                 n_test = int(np.ceil(test_size * n_samples))
             else:
                 n_test = test_size
-            
+
             if n_train + n_test > n_samples:
-                raise ValueError("The sum of train_size and test_size cannot exceed the number of samples")
-    
+                raise ValueError(
+                    "The sum of train_size and test_size cannot exceed the number of samples"
+                )
+
     # Determine indices for the split
     if shuffle:
         if stratify is None:
             # Simple random shuffling
             indices = np.random.permutation(n_samples)
             train_indices = indices[:n_train]
-            test_indices = indices[n_train:n_train+n_test]
+            test_indices = indices[n_train : n_train + n_test]
         else:
             # Stratified shuffle splitting using proportional allocation
             train_indices = []
@@ -141,18 +149,20 @@ def train_test_split(*arrays, test_size=None, train_size=None, random_state=None
                 base = int(np.floor(desired))
                 base_train_counts[cls] = base
                 remainders[cls] = desired - base
-            
+
             sum_base = sum(base_train_counts.values())
             extra = n_train - sum_base
-            extra_alloc = {cls: 0 for cls in unique_classes}
+            extra_alloc = dict.fromkeys(unique_classes, 0)
             # Distribute extra samples based on remainders
-            for cls in sorted(unique_classes, key=lambda x: remainders[x], reverse=True):
+            for cls in sorted(
+                unique_classes, key=lambda x: remainders[x], reverse=True
+            ):
                 if extra <= 0:
                     break
                 if base_train_counts[cls] + extra_alloc[cls] < class_counts[cls]:
                     extra_alloc[cls] += 1
                     extra -= 1
-            
+
             # Now assign indices for each class
             for cls in unique_classes:
                 cls_idx = np.where(stratify == cls)[0]
@@ -161,10 +171,10 @@ def train_test_split(*arrays, test_size=None, train_size=None, random_state=None
                 # Ensure at least one sample goes to the test set if possible
                 if class_counts[cls] > 1 and (class_counts[cls] - n_train_cls) < 1:
                     n_train_cls = class_counts[cls] - 1
-                n_test_cls = class_counts[cls] - n_train_cls
+                _n_test_cls = class_counts[cls] - n_train_cls
                 train_indices.extend(cls_idx[:n_train_cls])
                 test_indices.extend(cls_idx[n_train_cls:])
-            
+
             train_indices = np.array(train_indices)
             test_indices = np.array(test_indices)
             # If numbers don't match exactly due to rounding, adjust randomly
@@ -177,25 +187,27 @@ def train_test_split(*arrays, test_size=None, train_size=None, random_state=None
     else:
         indices = np.arange(n_samples)
         train_indices = indices[:n_train]
-        test_indices = indices[n_train:n_train+n_test]
-    
+        test_indices = indices[n_train : n_train + n_test]
+
     # Split the arrays while preserving their type (especially for numpy arrays)
     result = []
     for array in arrays:
         if sparse.issparse(array):
             train = array[train_indices]
             test = array[test_indices]
-        elif hasattr(array, 'iloc'):  # pandas DataFrame or Series
+        elif hasattr(array, "iloc"):  # pandas DataFrame or Series
             train = array.iloc[train_indices]
             test = array.iloc[test_indices]
-        elif isinstance(array, np.ndarray):  # handles 1D and multi-dimensional NumPy arrays
+        elif isinstance(
+            array, np.ndarray
+        ):  # handles 1D and multi-dimensional NumPy arrays
             train = array[train_indices]
             test = array[test_indices]
         else:  # list or other sequence
             train = [array[i] for i in train_indices]
             test = [array[i] for i in test_indices]
-        
+
         result.append(train)
         result.append(test)
-    
+
     return result

@@ -1,12 +1,12 @@
 import numpy as np
 from numba import njit, prange
 
+
 @njit(fastmath=True)
 def _linearSVC_minibatches(X, y, w, b, C, beta, learning_rate, batch_size):
-    """
-    Process all mini-batches for LinearSVC using gradient descent with momentum.
+    """Process all mini-batches for LinearSVC using gradient descent with momentum.
 
-    Parameters:
+    Args:
         X (ndarray): Training data of shape (n_samples, n_features).
         y (ndarray): Target labels of shape (n_samples,).
         w (ndarray): Weight vector of shape (n_features,).
@@ -62,10 +62,9 @@ def _linearSVC_minibatches(X, y, w, b, C, beta, learning_rate, batch_size):
 
 @njit(fastmath=True)
 def _linearSVR_minibatches(X, y, w, b, C, beta, learning_rate, batch_size, epsilon):
-    """
-    Process all mini-batches for LinearSVR using gradient descent with momentum.
+    """Process all mini-batches for LinearSVR using gradient descent with momentum.
 
-    Parameters:
+    Args:
         X (ndarray): Training data of shape (n_samples, n_features).
         y (ndarray): Target values of shape (n_samples,).
         w (ndarray): Weight vector of shape (n_features,).

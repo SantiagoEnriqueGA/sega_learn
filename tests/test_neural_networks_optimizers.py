@@ -1,32 +1,32 @@
-import unittest
-import sys
 import os
-import numpy as np
-import warnings
+import sys
+import unittest
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import numpy as np
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.neural_networks import *
-from tests.utils import suppress_print
 
 
 class MockLayer:
-    """ Mock layer class for testing optimizers. """
+    """Mock layer class for testing optimizers."""
+
     def __init__(self, input_size, output_size):
+        """Initialize the MockLayer class."""
         self.weights = np.random.randn(input_size, output_size) * 0.01
         self.biases = np.zeros((1, output_size))
 
+
 class TestAdamOptimizer(unittest.TestCase):
-    """
-    Unit tests for the AdamOptimizer class.
-    """
+    """Unit tests for the AdamOptimizer class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Print message before running tests."""
         print("\nTesting the AdamOptimizer Class", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Initialize the AdamOptimizer class and layers."""
         self.optimizer = AdamOptimizer()
         self.layers = [MockLayer(3, 2), MockLayer(2, 1)]
@@ -36,7 +36,9 @@ class TestAdamOptimizer(unittest.TestCase):
         """Test the initialize method."""
         self.assertEqual(len(self.optimizer.m), len(self.layers))
         self.assertEqual(len(self.optimizer.v), len(self.layers))
-        for m, v, layer in zip(self.optimizer.m, self.optimizer.v, self.layers):
+        for m, v, layer in zip(
+            self.optimizer.m, self.optimizer.v, self.layers, strict=False
+        ):
             np.testing.assert_array_equal(m, np.zeros_like(layer.weights))
             np.testing.assert_array_equal(v, np.zeros_like(layer.weights))
 
@@ -51,17 +53,16 @@ class TestAdamOptimizer(unittest.TestCase):
         self.assertFalse(np.array_equal(layer.weights, initial_weights))
         self.assertFalse(np.array_equal(layer.biases, initial_biases))
 
+
 class TestSGDOptimizer(unittest.TestCase):
-    """
-    Unit tests for the SGDOptimizer class.
-    """
+    """Unit tests for the SGDOptimizer class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Print message before running tests."""
         print("\nTesting the SGDOptimizer Class", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Initialize the SGDOptimizer class and layers."""
         self.optimizer = SGDOptimizer()
         self.layers = [MockLayer(3, 2), MockLayer(2, 1)]
@@ -70,7 +71,7 @@ class TestSGDOptimizer(unittest.TestCase):
     def test_initialize(self):
         """Test the initialize method."""
         self.assertEqual(len(self.optimizer.velocity), len(self.layers))
-        for v, layer in zip(self.optimizer.velocity, self.layers):
+        for v, layer in zip(self.optimizer.velocity, self.layers, strict=False):
             np.testing.assert_array_equal(v, np.zeros_like(layer.weights))
 
     def test_update(self):
@@ -84,17 +85,16 @@ class TestSGDOptimizer(unittest.TestCase):
         self.assertFalse(np.array_equal(layer.weights, initial_weights))
         self.assertFalse(np.array_equal(layer.biases, initial_biases))
 
+
 class TestAdadeltaOptimizer(unittest.TestCase):
-    """
-    Unit tests for the AdadeltaOptimizer class.
-    """
+    """Unit tests for the AdadeltaOptimizer class."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):  # NOQA D201
         """Print message before running tests."""
         print("\nTesting the AdadeltaOptimizer Class", end="", flush=True)
 
-    def setUp(self):
+    def setUp(self):  # NOQA D201
         """Initialize the AdadeltaOptimizer class and layers."""
         self.optimizer = AdadeltaOptimizer()
         self.layers = [MockLayer(3, 2), MockLayer(2, 1)]
@@ -104,7 +104,9 @@ class TestAdadeltaOptimizer(unittest.TestCase):
         """Test the initialize method."""
         self.assertEqual(len(self.optimizer.E_g2), len(self.layers))
         self.assertEqual(len(self.optimizer.E_delta_x2), len(self.layers))
-        for E_g2, E_delta_x2, layer in zip(self.optimizer.E_g2, self.optimizer.E_delta_x2, self.layers):
+        for E_g2, E_delta_x2, layer in zip(
+            self.optimizer.E_g2, self.optimizer.E_delta_x2, self.layers, strict=False
+        ):
             np.testing.assert_array_equal(E_g2, np.zeros_like(layer.weights))
             np.testing.assert_array_equal(E_delta_x2, np.zeros_like(layer.weights))
 
@@ -120,5 +122,5 @@ class TestAdadeltaOptimizer(unittest.TestCase):
         self.assertFalse(np.array_equal(layer.biases, initial_biases))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

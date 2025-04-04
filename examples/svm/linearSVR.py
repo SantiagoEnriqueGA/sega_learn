@@ -1,19 +1,21 @@
-import numpy as np
-import matplotlib.pyplot as plt
-
-import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+import sys
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from sega_learn.svm import *
-from sega_learn.utils import make_regression
-from sega_learn.utils import Scaler
+from sega_learn.utils import Scaler, make_regression
 
 # Set random seed for reproducibility
 np.random.seed(42)
 
 # Generate a regression dataset
-X, y = make_regression(n_samples=200, n_features=1, n_informative=1, noise=.1, random_state=42)
+X, y = make_regression(
+    n_samples=200, n_features=1, n_informative=1, noise=0.1, random_state=42
+)
 
 # # Add some outliers
 outlier_indices = np.random.choice(len(X), size=10, replace=False)
@@ -52,8 +54,8 @@ epsilon = svr.epsilon * scaler_y.std[0]  # Convert scaled epsilon back to origin
 
 # Create plot
 plt.figure(figsize=(10, 8))
-plt.scatter(X, y, c='b', label='Data')
-plt.plot(x_mesh, y_mesh, color='g', linewidth=2, label='SVR model')
+plt.scatter(X, y, c="b", label="Data")
+plt.plot(x_mesh, y_mesh, color="g", linewidth=2, label="SVR model")
 
 # Plot epsilon tube
 plt.fill_between(
@@ -61,19 +63,25 @@ plt.fill_between(
     y_mesh - epsilon,
     y_mesh + epsilon,
     alpha=0.3,
-    color='g',
-    label=f'ε-bounds (ε={svr.epsilon:.2f})'
+    color="g",
+    label=f"ε-bounds (ε={svr.epsilon:.2f})",
 )
 
 # Highlight outliers
-plt.scatter(X[outlier_indices], y[outlier_indices],
-            c='purple', s=80, marker='*', label='Added Outliers')
+plt.scatter(
+    X[outlier_indices],
+    y[outlier_indices],
+    c="purple",
+    s=80,
+    marker="*",
+    label="Added Outliers",
+)
 
 plt.xlim(x_min, x_max)
-plt.title('LinearSVR Regression with ε-bounds')
-plt.xlabel('Feature')
-plt.ylabel('Target')
-plt.legend(loc='best')
+plt.title("LinearSVR Regression with ε-bounds")
+plt.xlabel("Feature")
+plt.ylabel("Target")
+plt.legend(loc="best")
 plt.tight_layout()
 # plt.show()
-plt.savefig('examples/svm/plots/linear_svr.png', dpi=300)
+plt.savefig("examples/svm/plots/linear_svr.png", dpi=300)

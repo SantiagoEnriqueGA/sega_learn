@@ -1,48 +1,76 @@
-from sklearn.metrics import classification_report
-import numpy as np
-import random
-
-import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+import sys
 
-from sega_learn.utils import train_test_split
-from sega_learn.utils import make_classification
+import numpy as np
+from sklearn.metrics import classification_report
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
 from sega_learn.neural_networks import *
+from sega_learn.utils import make_classification, train_test_split
 
 # Define parameter grid and tuning ranges
 dropout = 0.1
-reg_lambda=  0.0
+reg_lambda = 0.0
 lr = 0.0001
 layers = [250, 50, 25]
 
 # Get training and test data
-X, y = make_classification(n_samples=3000, n_features=20, n_classes=3, n_informative=18,random_state=42, class_sep=.5)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X, y = make_classification(
+    n_samples=3000,
+    n_features=20,
+    n_classes=3,
+    n_informative=18,
+    random_state=42,
+    class_sep=0.5,
+)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
 input_size = X_train.shape[1]
 output_size = len(np.unique(y_train))
 
 print(f"Input size: {input_size}, Output size: {output_size}")
 
+
 # Function to train and evaluate a model with a given optimizer
 def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
+    """Function to train and evaluate a model with a given optimizer."""
     print(f"\n--- Training with {optimizer_name} ---")
 
     layers_list = [
         DenseLayer(input_size, layers[0], activation="relu"),
         DenseLayer(layers[0], layers[1], activation="relu"),
         DenseLayer(layers[1], layers[2], activation="relu"),
-        DenseLayer(layers[2], output_size, activation="softmax" if output_size > 2 else "sigmoid"),
+        DenseLayer(
+            layers[2],
+            output_size,
+            activation="softmax" if output_size > 2 else "sigmoid",
+        ),
     ]
 
-    nn = BaseBackendNeuralNetwork(layers=layers_list, dropout_rate=dropout, reg_lambda=reg_lambda)
+    nn = BaseBackendNeuralNetwork(
+        layers=layers_list, dropout_rate=dropout, reg_lambda=reg_lambda
+    )
 
-    nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=lr_scheduler, 
-             epochs=100, batch_size=32, early_stopping_threshold=10, 
-             track_metrics=True, track_adv_metrics=True,
-             save_animation=True, save_path=f"examples/neural_networks/plots/neuralNetwork_classifier_{optimizer_name}.mp4",
-             fps=1, dpi=100, frame_every=1,
-             )
+    nn.train(
+        X_train,
+        y_train,
+        X_test,
+        y_test,
+        optimizer=optimizer,
+        lr_scheduler=lr_scheduler,
+        epochs=100,
+        batch_size=32,
+        early_stopping_threshold=10,
+        track_metrics=True,
+        track_adv_metrics=True,
+        save_animation=True,
+        save_path=f"examples/neural_networks/plots/neuralNetwork_classifier_{optimizer_name}.mp4",
+        fps=1,
+        dpi=100,
+        frame_every=1,
+    )
 
     test_accuracy, y_pred = nn.evaluate(X_test, y_test)
     print(f"Test Accuracy: {test_accuracy:.4f}")
@@ -50,30 +78,54 @@ def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
     print("Classification Report:")
     print(classification_report(y_test, y_pred, zero_division=0))
 
+
 def train_and_evaluate_numba(optimizer, lr_scheduler, optimizer_name):
+    """Function to train and evaluate a model with a given optimizer, using Numba."""
     print(f"\n--- Training Numba NN with {optimizer_name} ---")
 
     layers_list = [
         JITDenseLayer(input_size, layers[0], activation="relu"),
         JITDenseLayer(layers[0], layers[1], activation="relu"),
         JITDenseLayer(layers[1], layers[2], activation="relu"),
-        JITDenseLayer(layers[2], output_size, activation="softmax" if output_size > 2 else "sigmoid"),
+        JITDenseLayer(
+            layers[2],
+            output_size,
+            activation="softmax" if output_size > 2 else "sigmoid",
+        ),
     ]
 
-    nn = NumbaBackendNeuralNetwork(layers=layers_list, dropout_rate=dropout, reg_lambda=reg_lambda, compile_numba=True)
+    nn = NumbaBackendNeuralNetwork(
+        layers=layers_list,
+        dropout_rate=dropout,
+        reg_lambda=reg_lambda,
+        compile_numba=True,
+    )
 
-    nn.train(X_train, y_train, X_test, y_test, optimizer=optimizer, lr_scheduler=lr_scheduler, 
-             epochs=100, batch_size=32, early_stopping_threshold=10, 
-             track_metrics=True, track_adv_metrics=True,
-             save_animation=True, save_path=f"examples/neural_networks/plots/neuralNetwork_classifier_{optimizer_name}_numba.mp4",
-             fps=1, dpi=100, frame_every=1,
-             )
+    nn.train(
+        X_train,
+        y_train,
+        X_test,
+        y_test,
+        optimizer=optimizer,
+        lr_scheduler=lr_scheduler,
+        epochs=100,
+        batch_size=32,
+        early_stopping_threshold=10,
+        track_metrics=True,
+        track_adv_metrics=True,
+        save_animation=True,
+        save_path=f"examples/neural_networks/plots/neuralNetwork_classifier_{optimizer_name}_numba.mp4",
+        fps=1,
+        dpi=100,
+        frame_every=1,
+    )
 
     test_accuracy, y_pred = nn.evaluate(X_test, y_test)
     print(f"Test Accuracy: {test_accuracy:.4f}")
 
     print("Classification Report:")
     print(classification_report(y_test, y_pred, zero_division=0))
+
 
 # AdamOptimizer
 # --------------------------------------------------------------------------------------------------------------------------

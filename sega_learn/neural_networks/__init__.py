@@ -1,67 +1,76 @@
-from .optimizers import AdamOptimizer, SGDOptimizer, AdadeltaOptimizer
-from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
-from .loss import CrossEntropyLoss, BCEWithLogitsLoss
-from .layers import DenseLayer, FlattenLayer,ConvLayer, RNNLayer
+from tkinter import E
 from .activations import Activation
+from .layers import ConvLayer, DenseLayer, FlattenLayer, RNNLayer
+from .loss import BCEWithLogitsLoss, CrossEntropyLoss
 from .neuralNetworkBase import NeuralNetworkBase
 from .neuralNetworkBaseBackend import BaseBackendNeuralNetwork
+from .optimizers import AdadeltaOptimizer, AdamOptimizer, SGDOptimizer
+from .schedulers import lr_scheduler_exp, lr_scheduler_plateau, lr_scheduler_step
 
 __all__ = [
-    'AdamOptimizer',
-    'SGDOptimizer',
-    'AdadeltaOptimizer',
-    'lr_scheduler_exp',
-    'lr_scheduler_plateau',
-    'lr_scheduler_step',
-    'CrossEntropyLoss',
-    'BCEWithLogitsLoss',
-    'DenseLayer',
-    'FlattenLayer',
-    'ConvLayer',
-    'RNNLayer',
-    'Activation',
-    'NeuralNetworkBase',
-    'BaseBackendNeuralNetwork',
+    "AdamOptimizer",
+    "SGDOptimizer",
+    "AdadeltaOptimizer",
+    "lr_scheduler_exp",
+    "lr_scheduler_plateau",
+    "lr_scheduler_step",
+    "CrossEntropyLoss",
+    "BCEWithLogitsLoss",
+    "DenseLayer",
+    "FlattenLayer",
+    "ConvLayer",
+    "RNNLayer",
+    "Activation",
+    "NeuralNetworkBase",
+    "BaseBackendNeuralNetwork",
 ]
 
 try:
-    from .numba_utils import *
-    from .optimizers_jit import JITAdamOptimizer, JITSGDOptimizer, JITAdadeltaOptimizer
+    from .layers_jit import JITConvLayer, JITDenseLayer, JITFlattenLayer, JITRNNLayer
     from .loss_jit import JITBCEWithLogitsLoss, JITCrossEntropyLoss
-    from .layers_jit import JITDenseLayer, JITFlattenLayer, JITConvLayer, JITRNNLayer
     from .neuralNetworkNumbaBackend import NumbaBackendNeuralNetwork
+    from .numba_utils import *
+    from .optimizers_jit import JITAdadeltaOptimizer, JITAdamOptimizer, JITSGDOptimizer
 
-    __all__.extend([
-        'JITAdamOptimizer',
-        'JITSGDOptimizer',
-        'JITAdadeltaOptimizer',
-        'JITBCEWithLogitsLoss',
-        'JITCrossEntropyLoss',
-        'JITDenseLayer',
-        'JITFlattenLayer',
-        'JITConvLayer',
-        'JITRNNLayer',
-        'NumbaBackendNeuralNetwork',
-    ])
-except:
+    __all__.extend(
+        [
+            "JITAdamOptimizer",
+            "JITSGDOptimizer",
+            "JITAdadeltaOptimizer",
+            "JITBCEWithLogitsLoss",
+            "JITCrossEntropyLoss",
+            "JITDenseLayer",
+            "JITFlattenLayer",
+            "JITConvLayer",
+            "JITRNNLayer",
+            "NumbaBackendNeuralNetwork",
+        ]
+    )
+except Exception as _e:
     pass
 
 try:
-    from .neuralNetworkCuPyBackend import CuPyBackendNeuralNetwork
     from .layers_cupy import CuPyActivation, CuPyDenseLayer
-    from .optimizers_cupy import CuPyAdamOptimizer, CuPySGDOptimizer, CuPyAdadeltaOptimizer
     from .loss_cupy import CuPyBCEWithLogitsLoss, CuPyCrossEntropyLoss
+    from .neuralNetworkCuPyBackend import CuPyBackendNeuralNetwork
+    from .optimizers_cupy import (
+        CuPyAdadeltaOptimizer,
+        CuPyAdamOptimizer,
+        CuPySGDOptimizer,
+    )
 
-    __all__.extend([
-        'CuPyBackendNeuralNetwork',
-        'CuPyActivation',
-        'CuPyDenseLayer',
-        'CuPyAdamOptimizer',
-        'CuPySGDOptimizer',
-        'CuPyAdadeltaOptimizer',
-        'CuPyBCEWithLogitsLoss',        
-        'CuPyCrossEntropyLoss', 
-        'CuPyDenseLayer',
-    ])
-except:
+    __all__.extend(
+        [
+            "CuPyBackendNeuralNetwork",
+            "CuPyActivation",
+            "CuPyDenseLayer",
+            "CuPyAdamOptimizer",
+            "CuPySGDOptimizer",
+            "CuPyAdadeltaOptimizer",
+            "CuPyBCEWithLogitsLoss",
+            "CuPyCrossEntropyLoss",
+            "CuPyDenseLayer",
+        ]
+    )
+except Exception as _e:
     pass

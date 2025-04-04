@@ -1,25 +1,39 @@
-import numpy as np
-import matplotlib.pyplot as plt
-
-import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+import sys
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+import matplotlib.pyplot as plt
+import numpy as np
 from sega_learn.svm import *
-from sega_learn.utils import make_classification
-from sega_learn.utils import Scaler
+from sega_learn.utils import Scaler, make_classification
 
 # Set random seed for reproducibility
 np.random.seed(42)
 
 try:
     from sklearn.datasets import make_classification
-    X, y = make_classification(n_samples=1000, n_features=2, n_redundant=0, n_informative=2,
-                         random_state=42, n_clusters_per_class=1)
-except:
+
+    X, y = make_classification(
+        n_samples=1000,
+        n_features=2,
+        n_redundant=0,
+        n_informative=2,
+        random_state=42,
+        n_clusters_per_class=1,
+    )
+except Exception:
     from sega_learn.utils import make_classification
-    X, y = make_classification(n_samples=1000, n_features=2, n_redundant=0, n_informative=2,
-                            random_state=42, n_clusters_per_class=10, class_sep=1.5)
+
+    X, y = make_classification(
+        n_samples=1000,
+        n_features=2,
+        n_redundant=0,
+        n_informative=2,
+        random_state=42,
+        n_clusters_per_class=10,
+        class_sep=1.5,
+    )
 
 # Convert labels to -1 and 1
 y = np.where(y == 0, -1, 1)
@@ -39,8 +53,7 @@ accuracy = svc.score(X_scaled, y)
 # Create a mesh to plot decision boundary
 x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
 y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02),
-                     np.arange(y_min, y_max, 0.02))
+xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
 
 # Scale mesh points
 mesh_points = np.c_[xx.ravel(), yy.ravel()]
@@ -53,7 +66,7 @@ Z = Z.reshape(xx.shape)
 # Create plot
 plt.figure(figsize=(10, 8))
 plt.contourf(xx, yy, Z, alpha=0.3, cmap=plt.cm.RdBu)
-plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.RdBu, edgecolors='k')
+plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.RdBu, edgecolors="k")
 
 # Plot the SVM decision boundary (the line where w·x + b = 0)
 w_original = svc.w
@@ -68,20 +81,20 @@ slope = -w[0] / w[1]
 intercept = -b / w[1]
 x_support = np.linspace(x_min, x_max, 2)
 y_support = slope * x_support + intercept
-plt.plot(x_support, y_support, 'k-', linewidth=2)
+plt.plot(x_support, y_support, "k-", linewidth=2)
 
 # Plot the margins
 margin_width = 1 / np.linalg.norm(w)
 margin_top = y_support + margin_width
 margin_bottom = y_support - margin_width
-plt.plot(x_support, margin_top, 'k--', linewidth=1)
-plt.plot(x_support, margin_bottom, 'k--', linewidth=1)
+plt.plot(x_support, margin_top, "k--", linewidth=1)
+plt.plot(x_support, margin_bottom, "k--", linewidth=1)
 
 plt.xlim(x_min, x_max)
 plt.ylim(y_min, y_max)
-plt.title(f'LinearSVC Decision Boundary - Accuracy: {accuracy:.4f}')
-plt.xlabel('Feature 1')
-plt.ylabel('Feature 2')
+plt.title(f"LinearSVC Decision Boundary - Accuracy: {accuracy:.4f}")
+plt.xlabel("Feature 1")
+plt.ylabel("Feature 2")
 plt.tight_layout()
 # plt.show()
-plt.savefig('examples/svm/plots/linear_svc_binary.png', dpi=300)
+plt.savefig("examples/svm/plots/linear_svc_binary.png", dpi=300)

@@ -1,4 +1,3 @@
-
 from .voting import VotingRegressor
 from .polynomialTransform import PolynomialTransform
 from .dataPrep import DataPrep
@@ -12,7 +11,7 @@ from .dataAugmentation import (
     RandomUnderSampler,
     SMOTE,
     Augmenter,
- )
+)
 from .dataPreprocessing import (
     one_hot_encode,
     normalize,

@@ -3,16 +3,43 @@ from numba import njit, prange
 
 CACHE = False
 
+
 class JITCrossEntropyLoss:
+    """Custom cross entropy loss implementation using numba for multi-class classification.
+
+    Formula: -sum(y * log(p) + (1 - y) * log(1 - p)) / m
+    Methods:
+        calculate_loss(self, logits, targets): Calculate the cross entropy loss.
+    """
+
     def __init__(self):
+        """Initializes the instance variables for the class.
+
+        Args:
+            logits: (np.ndarray) - A 2D array initialized to zeros with shape (1, 1),
+                       representing the predicted values or outputs of the model.
+            targets: (np.ndarray) - A 2D array initialized to zeros with shape (1, 1),
+                        representing the ground truth or target values.
+        """
         self.logits = np.zeros((1, 1))
         self.targets = np.zeros((1, 1))
 
     def calculate_loss(self, logits, targets):
-        return calculate_cross_entropy_loss(logits, targets)  
+        """Calculate the cross entropy loss.
+
+        Args:
+            logits (np.ndarray): The logits (predicted values) of shape (num_samples, num_classes).
+            targets (np.ndarray): The target labels of shape (num_samples,).
+
+        Returns:
+            float: The cross entropy loss.
+        """
+        return calculate_cross_entropy_loss(logits, targets)
+
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def calculate_cross_entropy_loss(logits, targets):
+    """Helper function to calculate the cross entropy loss."""
     n = logits.shape[0]
     loss = 0.0
     for i in prange(n):
@@ -26,17 +53,45 @@ def calculate_cross_entropy_loss(logits, targets):
     return loss / n
 
 
-
 class JITBCEWithLogitsLoss:
+    """Custom binary cross entropy loss with logits implementation using numba.
+
+    Formula: -mean(y * log(p) + (1 - y) * log(1 - p))
+
+    Methods:
+        calculate_loss(self, logits, targets): Calculate the binary cross entropy loss.
+    """
+
     def __init__(self):
+        """Initializes the class with default values for logits and targets.
+
+        Attributes:
+            logits (numpy.ndarray): A 2D array initialized to zeros with shape (1, 1),
+                                    representing the predicted values.
+            targets (numpy.ndarray): A 2D array initialized to zeros with shape (1, 1),
+                                     representing the true target values.
+        """
         self.logits = np.zeros((1, 1))
         self.targets = np.zeros((1, 1))
 
     def calculate_loss(self, logits, targets):
+        """Calculate the binary cross entropy loss.
+
+        Args:
+            logits (np.ndarray): The logits (predicted values) of shape (num_samples,).
+            targets (np.ndarray): The target labels of shape (num_samples,).
+
+        Returns:
+            float: The binary cross entropy loss.
+        """
         return calculate_bce_with_logits_loss(logits, targets)
-    
+
+
 @njit(fastmath=True, nogil=True, cache=CACHE)
 def calculate_bce_with_logits_loss(logits, targets):
+    """Helper function to calculate the binary cross entropy loss."""
     probs = 1 / (1 + np.exp(-logits))  # Apply sigmoid to logits to get probabilities
-    loss = -np.mean(targets * np.log(probs + 1e-15) + (1 - targets) * np.log(1 - probs + 1e-15))  # Binary cross-entropy loss
+    loss = -np.mean(
+        targets * np.log(probs + 1e-15) + (1 - targets) * np.log(1 - probs + 1e-15)
+    )  # Binary cross-entropy loss
     return loss

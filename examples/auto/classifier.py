@@ -1,16 +1,20 @@
-import sys
 import os
-from unittest import result
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from sega_learn.auto import AutoClassifier
 from sega_learn.utils import make_classification
 from sega_learn.utils.metrics import Metrics
+
 accuracy = Metrics.accuracy
 precision = Metrics.precision
 recall = Metrics.recall
 f1 = Metrics.f1_score
+
+
 def run_example(verbose=False):
+    """Runs the example."""
     X, y = make_classification(n_samples=1_000, n_features=5, random_state=42)
 
     # Create and fit the AutoClassifier
@@ -22,7 +26,6 @@ def run_example(verbose=False):
     # Print the summary of all models
     reg.summary()
 
-
     # Predict using all models or a specific model
     predictions = reg.predict(X[:3])
     ols_pred = reg.predict(X[:3], model="ClassifierTree")
@@ -31,7 +34,6 @@ def run_example(verbose=False):
     for model, pred in predictions.items():
         print(f"\t{model}: {pred}")
     print(f"Classifier Tree Predictions: {ols_pred}")
-
 
     # Evaluate all or a specific model, can also use custom metrics {str: callable}
     results = reg.evaluate(y)

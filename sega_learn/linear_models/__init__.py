@@ -1,15 +1,15 @@
-from .linearModels import (
-    OrdinaryLeastSquares,
-    Ridge,
-    Lasso,
-    Bayesian,
-    RANSAC,
-    PassiveAggressiveRegressor,
-)
 from .discriminantAnalysis import (
     LinearDiscriminantAnalysis,
     QuadraticDiscriminantAnalysis,
-    make_sample_data
+    make_sample_data,
+)
+from .linearModels import (
+    RANSAC,
+    Bayesian,
+    Lasso,
+    OrdinaryLeastSquares,
+    PassiveAggressiveRegressor,
+    Ridge,
 )
 
 __all__ = [
@@ -20,8 +20,8 @@ __all__ = [
     "Bayesian",
     "RANSAC",
     "PassiveAggressiveRegressor",
-    
     # Discriminant Analysis
     "LinearDiscriminantAnalysis",
-    "QuadraticDiscriminantAnalysis"
+    "QuadraticDiscriminantAnalysis",
+    "make_sample_data",
 ]
