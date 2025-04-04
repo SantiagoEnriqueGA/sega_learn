@@ -5,6 +5,7 @@ import numpy as np
 
 class RegressorTreeUtility:
     """Utility class for computing variance, partitioning classes, and calculating information gain."""
+
     def calculate_variance(self, y):
         """Calculate the variance of a dataset.
 

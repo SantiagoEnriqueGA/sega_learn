@@ -156,6 +156,7 @@ class JITFlattenLayer:
 
     Useful for transitioning from convolutional layers to dense layers.
     """
+
     def __init__(self):
         """Initializes the layer with placeholder values for input and output dimensions.
 
@@ -262,6 +263,7 @@ conv_spec = [
 @jitclass(conv_spec)
 class JITConvLayer:
     """A convolutional layer implementation for neural networks using Numba JIT compilation."""
+
     def __init__(
         self,
         in_channels,
@@ -621,6 +623,7 @@ class JITConvLayer:
 
 class JITRNNLayer:
     """A recurrent layer implementation for neural networks using Numba JIT compilation."""
+
     def __init__(self, input_size, hidden_size, activation="tanh"):
         """Will be implemented later."""
         pass

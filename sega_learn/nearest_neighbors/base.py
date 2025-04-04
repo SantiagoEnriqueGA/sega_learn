@@ -47,6 +47,7 @@ class KNeighborsBase(ABC):
         predict(X):
             Abstract method to be implemented by subclasses for making predictions based on input data.
     """
+
     def __init__(
         self,
         n_neighbors=5,

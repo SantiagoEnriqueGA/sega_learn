@@ -86,6 +86,7 @@ class CuPyDenseLayer:
 
 class CuPyActivation:
     """Activation functions for neural networks using CuPy."""
+
     @staticmethod
     def relu(z):
         """ReLU (Rectified Linear Unit) activation function: f(z) = max(0, z).

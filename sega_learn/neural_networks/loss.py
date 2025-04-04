@@ -8,6 +8,7 @@ class CrossEntropyLoss:
     Methods:
         __call__(self, logits, targets): Calculate the cross entropy loss.
     """
+
     def __call__(self, logits, targets):
         """Calculate the cross entropy loss.
 
@@ -43,6 +44,7 @@ class BCEWithLogitsLoss:
     Methods:
         __call__(self, logits, targets): Calculate the binary cross entropy loss.
     """
+
     def __call__(self, logits, targets):
         """Calculate the binary cross entropy loss.
 

@@ -74,6 +74,7 @@ class CuPyBackendNeuralNetwork(NeuralNetworkBase):
         _create_optimizer(optimizer_type, learning_rate, JIT=False):
             Helper method to create optimizer instances based on the specified type and learning rate.
     """
+
     def __init__(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None):
         """Initializes the CuPy backend neural network.
 

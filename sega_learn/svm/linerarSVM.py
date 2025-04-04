@@ -34,6 +34,7 @@ class LinearSVC(BaseSVM):
         _score_multiclass(self, X, y):
             Computes the mean accuracy of predictions for multi-class classification.
     """
+
     def __init__(self, C=1.0, tol=1e-4, max_iter=1000, learning_rate=0.01, numba=False):
         """Initializes the LinearSVC instance with hyperparameters and checks for Numba availability.
 
@@ -258,6 +259,7 @@ class LinearSVR(BaseSVM):
     Raises:
         ValueError: If a non-linear kernel is specified, as LinearSVR only supports linear kernels.
     """
+
     def __init__(
         self,
         C=1.0,

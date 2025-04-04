@@ -5,6 +5,7 @@ import numpy as np
 
 class ClassifierTreeUtility:
     """Utility class for computing entropy, partitioning classes, and calculating information gain."""
+
     def entropy(self, class_y):
         """Computes the entropy for a given class.
 
@@ -201,6 +202,7 @@ class ClassifierTree:
         learn(X, y, par_node={}, depth=0): Builds the decision tree based on the given training data.
         classify(record): Classifies a record using the decision tree.
     """
+
     def __init__(self, max_depth=5):
         """Initializes the ClassifierTree with a maximum depth."""
         self.tree = {}  # Initialize the tree as an empty dictionary

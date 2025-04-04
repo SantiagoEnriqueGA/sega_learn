@@ -66,6 +66,7 @@ class IsolationTree:
             Computes the path length for a given sample by traversing the tree
             structure. The path length is used to determine how isolated a sample is.
     """
+
     def __init__(self, max_depth=10, force_true_length=False):
         """Initializes the Isolation Forest with specified parameters.
 
@@ -189,6 +190,7 @@ class IsolationForest:
             Checks if the model has been fitted.
                 bool: True if the model is fitted, False otherwise.
     """
+
     def __init__(
         self,
         n_trees=100,

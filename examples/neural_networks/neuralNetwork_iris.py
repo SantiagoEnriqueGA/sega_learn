@@ -79,4 +79,5 @@ def test_model(load_data_func, nn_layers, dropout_rate, reg_lambda, test_size=0.
 
     print(f"End Neural Network State: \n{str(nn)}")
 
+
 test_model(load_iris, [4, 100, 25, 3], dropout_rate=0.1, reg_lambda=0.0, test_size=0.1)

@@ -313,7 +313,9 @@ class QuadraticDiscriminantAnalysis:
         ).T  # Return the scores as a numpy array, with each row corresponding to a sample and each column corresponding to a class
 
 
-def make_sample_data(    n_samples, n_features, cov_class_1, cov_class_2, shift=None, seed=0):
+def make_sample_data(
+    n_samples, n_features, cov_class_1, cov_class_2, shift=None, seed=0
+):
     """Generates sample data for testing LDA and QDA models.
 
     Args:

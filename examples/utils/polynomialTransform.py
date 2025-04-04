@@ -43,7 +43,6 @@ print(
 )
 
 
-
 plt.figure(figsize=(10, 6))
 plt.scatter(X, y, color="blue", label="Data Points", alpha=0.5)
 plt.plot(

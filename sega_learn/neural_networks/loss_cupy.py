@@ -8,6 +8,7 @@ class CuPyCrossEntropyLoss:
     Methods:
         __call__(self, logits, targets): Calculate the cross entropy loss.
     """
+
     def __call__(self, logits, targets):
         """Calculate the cross entropy loss.
 

@@ -69,6 +69,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         train_with_animation_capture(X_train, y_train, X_val=None, y_val=None, ...):
             Trains the neural network while capturing training metrics in real-time animation.
     """
+
     def __init__(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None):
         """Initializes the Numba backend neural network.
 
@@ -752,9 +753,13 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                             # Update progress
                             pbar.update(1)
 
-        print(f"\nBest configuration: {best_optimizer_type} optimizer with lr={best_params['learning_rate']}")
+        print(
+            f"\nBest configuration: {best_optimizer_type} optimizer with lr={best_params['learning_rate']}"
+        )
         print(f"Layers: {best_params['layers']}")
-        print(f"Parameters: dropout={best_params['dropout_rate']}, reg_lambda={best_params['reg_lambda']}")
+        print(
+            f"Parameters: dropout={best_params['dropout_rate']}, reg_lambda={best_params['reg_lambda']}"
+        )
         print(f"Validation accuracy: {best_accuracy:.4f}")
 
         # Add best optimizer type to best_params

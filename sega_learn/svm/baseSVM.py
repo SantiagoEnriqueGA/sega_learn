@@ -45,6 +45,7 @@ class BaseSVM:
         __sklearn_is_fitted__(self):
             Checks if the model has been fitted (for sklearn compatibility).
     """
+
     def __init__(
         self,
         C=1.0,

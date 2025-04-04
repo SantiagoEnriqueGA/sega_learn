@@ -8,6 +8,7 @@ from .metrics import Metrics
 
 class ModelSelectionUtility:
     """A utility class for hyperparameter tuning and cross-validation of machine learning models."""
+
     @staticmethod
     def get_param_combinations(param_grid):
         """Generates all possible combinations of hyperparameters.
@@ -98,6 +99,7 @@ class ModelSelectionUtility:
 
 class GridSearchCV:
     """Implements a grid search cross-validation for hyperparameter tuning."""
+
     def __init__(self, model, param_grid, cv=5, metric="mse", direction="minimize"):
         """Initializes the GridSearchCV object.
 
@@ -170,6 +172,7 @@ class GridSearchCV:
 
 class RandomSearchCV:
     """Implements a random search cross-validation for hyperparameter tuning."""
+
     def __init__(
         self, model, param_grid, iter=10, cv=5, metric="mse", direction="minimize"
     ):
@@ -263,6 +266,7 @@ class RandomSearchCV:
 
 class segaSearchCV:
     """Implements a custom search cross-validation for hyperparameter tuning."""
+
     def __init__(
         self, model, param_space, iter=10, cv=5, metric="mse", direction="minimize"
     ):

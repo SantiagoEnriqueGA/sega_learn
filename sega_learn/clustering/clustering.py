@@ -183,7 +183,9 @@ class KMeans:
             labels: The predicted cluster labels.
         """
         # Validate input data
-        if not isinstance(new_X, np.ndarray | list | pd.DataFrame):  # Check if input is a valid type
+        if not isinstance(
+            new_X, np.ndarray | list | pd.DataFrame
+        ):  # Check if input is a valid type
             raise ValueError(
                 "Unsupported input type. Input must be a list, NumPy array, or DataFrame."
             )
@@ -572,7 +574,9 @@ class DBSCAN:
                     "Numba is required for faster computation. Please install numba first."
                 ) from None
             except Exception as e:
-                raise RuntimeError(f"An error occurred while importing Numba: {e}") from None
+                raise RuntimeError(
+                    f"An error occurred while importing Numba: {e}"
+                ) from None
 
     def _handle_categorical(self, X):
         """Handle categorical columns by one-hot encoding.
@@ -724,7 +728,9 @@ class DBSCAN:
             labels: The predicted cluster labels (-1 for noise).
         """
         # Validate input parameters
-        if not isinstance(new_X, np.ndarray | list | pd.DataFrame):  # Check if input is a valid type
+        if not isinstance(
+            new_X, np.ndarray | list | pd.DataFrame
+        ):  # Check if input is a valid type
             raise ValueError(
                 "Unsupported input type. Input must be a list, NumPy array, or DataFrame."
             )

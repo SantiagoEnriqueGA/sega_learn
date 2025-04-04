@@ -31,6 +31,7 @@ class OneClassSVM(BaseSVM):
         __sklearn_is_fitted__():
             Check if the model has been fitted. For compatibility with sklearn.
     """
+
     def __init__(
         self,
         C=1.0,

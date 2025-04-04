@@ -3,6 +3,7 @@ import numpy as np
 
 class PCA:
     """Principal Component Analysis (PCA) implementation."""
+
     def __init__(self, n_components):
         """Initializes the PCA model.
 
@@ -124,6 +125,7 @@ class PCA:
 
 class SVD:
     """Singular Value Decomposition (SVD) implementation."""
+
     def __init__(self, n_components):
         """Initializes the SVD model.
 

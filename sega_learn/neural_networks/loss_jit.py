@@ -11,6 +11,7 @@ class JITCrossEntropyLoss:
     Methods:
         calculate_loss(self, logits, targets): Calculate the cross entropy loss.
     """
+
     def __init__(self):
         """Initializes the instance variables for the class.
 
@@ -60,6 +61,7 @@ class JITBCEWithLogitsLoss:
     Methods:
         calculate_loss(self, logits, targets): Calculate the binary cross entropy loss.
     """
+
     def __init__(self):
         """Initializes the class with default values for logits and targets.
 

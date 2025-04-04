@@ -79,6 +79,7 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         compile_numba_functions(progress_bar):
             Compiles all Numba JIT functions to improve performance.
     """
+
     def __init__(
         self,
         layers,
@@ -112,7 +113,10 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         ]
 
         if progress_bar and not TQDM_AVAILABLE:
-            warnings.warn("tqdm is not installed. Progress bar will not be displayed.", stacklevel=2)
+            warnings.warn(
+                "tqdm is not installed. Progress bar will not be displayed.",
+                stacklevel=2,
+            )
             self.progress_bar = False
         else:
             self.progress_bar = progress_bar

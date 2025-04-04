@@ -35,6 +35,7 @@ class GeneralizedSVR(BaseSVM):
     Raises:
         ValueError: If numerical instability is detected during training.
     """
+
     def __init__(
         self,
         C=1.0,
@@ -226,6 +227,7 @@ class GeneralizedSVC(BaseSVM):
     Raises:
         ValueError: If numerical instability is detected during training.
     """
+
     def __init__(
         self,
         C=1.0,

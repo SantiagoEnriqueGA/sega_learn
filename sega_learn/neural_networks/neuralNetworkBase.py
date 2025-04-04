@@ -62,6 +62,7 @@ class NeuralNetworkBase:
             Plots the training and validation metrics, including loss, accuracy,
             learning rate, and optionally precision, recall, and F1 score.
     """
+
     def __init__(self, layers, dropout_rate=0.0, reg_lambda=0.0, activations=None):
         """Initializes the neural network with the specified layers, dropout rate, regularization, and activations.
 

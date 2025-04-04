@@ -3,6 +3,7 @@ import numpy as np
 
 class Metrics:
     """Implements various regression and classification metrics."""
+
     @classmethod
     def mean_squared_error(cls, y_true, y_pred):
         """Calculates the mean squared error between the true and predicted values.

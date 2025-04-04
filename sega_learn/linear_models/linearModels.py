@@ -79,7 +79,8 @@ class OrdinaryLeastSquares:
                 self.intercept_ = 0.0  # No intercept
         except Exception as _e:
             warnings.warn(
-                "Tried to use C compiled code, but failed. Using Python code instead.", stacklevel=2
+                "Tried to use C compiled code, but failed. Using Python code instead.",
+                stacklevel=2,
             )
 
             if self.fit_intercept:  # If fit_intercept is True
@@ -252,7 +253,8 @@ class Ridge:
                 return
             except Exception as _e:
                 warnings.warn(
-                    "Tried to use C compiled code, but failed. Using Python code instead.", stacklevel=2
+                    "Tried to use C compiled code, but failed. Using Python code instead.",
+                    stacklevel=2,
                 )
 
         if numba:
@@ -486,7 +488,8 @@ class Lasso:
                 return
             except Exception as _e:
                 warnings.warn(
-                    "Tried to use C compiled code, but failed. Using Python code instead.", stacklevel=2
+                    "Tried to use C compiled code, but failed. Using Python code instead.",
+                    stacklevel=2,
                 )
 
         if numba:

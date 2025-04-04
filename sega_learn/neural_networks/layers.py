@@ -67,14 +67,14 @@ class DenseLayer:
         self.bias_gradients = None
 
     def forward(self, X):
-        """"Forward pass of the layer."""
+        """Forward pass of the layer."""
         Z = np.dot(X, self.weights) + self.biases
         self.input_cache = X
         self.output_cache = self.activate(Z)
         return self.output_cache
 
     def backward(self, dA, reg_lambda):
-        """"Backward pass of the layer."""
+        """Backward pass of the layer."""
         m = self.input_cache.shape[0]
         dZ = dA * self.activation_derivative(self.output_cache)
         dW = np.dot(self.input_cache.T, dZ) / m + reg_lambda * self.weights
@@ -227,6 +227,7 @@ class ConvLayer:
         _col2im(dcol, x_shape): Convert column back to image format for the backward pass.
         backward(d_out, reg_lambda=0): Perform backward pass of the convolutional layer.
     """
+
     def __init__(
         self,
         in_channels,
@@ -460,6 +461,7 @@ class ConvLayer:
 
 class RNNLayer:
     """Will be implemented later."""
+
     def __init__(self, input_size, hidden_size, activation="tanh"):
         """Will be implemented later."""
         pass

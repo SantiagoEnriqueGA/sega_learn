@@ -242,7 +242,8 @@ class TrainingAnimator:
                 self.writer = FFMpegWriter(
                     fps=fps,
                     metadata={
-                        "title": "Model Training Progress", "artist": "TrainingAnimator"
+                        "title": "Model Training Progress",
+                        "artist": "TrainingAnimator",
                     },
                     bitrate=1800,
                 )
@@ -260,7 +261,8 @@ class TrainingAnimator:
                 self.writer = PillowWriter(
                     fps=fps,
                     metadata={
-                        "title": "Model Training Progress", "artist": "TrainingAnimator"
+                        "title": "Model Training Progress",
+                        "artist": "TrainingAnimator",
                     },
                 )
 

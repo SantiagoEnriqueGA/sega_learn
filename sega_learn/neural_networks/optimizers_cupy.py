@@ -15,7 +15,9 @@ class CuPyAdamOptimizer:
         reg_lambda (float, optional): The regularization parameter. Defaults to 0.01.
     """
 
-    def __init__(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8, reg_lambda=0.01):
+    def __init__(
+        self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8, reg_lambda=0.01
+    ):
         """Initializes the optimizer with the specified hyperparameters.
 
         Args:

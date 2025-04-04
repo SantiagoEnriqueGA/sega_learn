@@ -99,6 +99,7 @@ class RandomForestClassifier:
         get_stats(verbose=False):
             Returns the evaluation metrics (accuracy, precision, recall, F1 score, and log loss) as a dictionary.
     """
+
     def __init__(
         self, forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None
     ):
