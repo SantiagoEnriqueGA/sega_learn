@@ -7,6 +7,7 @@ from ..nearest_neighbors import *
 from ..neural_networks import *
 from ..svm import *
 from ..trees import *
+from ..utils import Scaler
 from ..utils.metrics import Metrics
 
 try:
@@ -47,8 +48,10 @@ class AutoRegressor:
             "RegressorTree": RegressorTree(),
             "RandomForestRegressor": RandomForestRegressor(),
             "GradientBoostedRegressor": GradientBoostedRegressor(),
-            # Neural Networks - Not yet implemented
-            # "NeuralNetworkRegressor": NeuralNetworkRegressor(),
+            # Neural Networks
+            #   Cannot be initialized here as it requires layer size (input/output size)
+            #   We can initialize it in the fit method and add it to the models dictionary
+            "BaseBackendNeuralNetwork": None,
         }
         # Add model classes for better categorization in the summary
         self.model_classes = {
@@ -68,6 +71,8 @@ class AutoRegressor:
             "RegressorTree": "Trees",
             "RandomForestRegressor": "Trees",
             "GradientBoostedRegressor": "Trees",
+            # Neural Networks
+            "BaseBackendNeuralNetwork": "Neural Networks",
         }
         self.predictions = {}
         self.results = []
@@ -111,6 +116,33 @@ class AutoRegressor:
         if np.any(np.isinf(X_train)) or np.any(np.isinf(y_train)):
             raise ValueError("X_train and y_train cannot contain infinite values.")
 
+        # Initialize neural network if not already set
+        if self.models["BaseBackendNeuralNetwork"] is None:
+            input_size = X_train.shape[1]
+            output_size = 1
+            layers = [128, 64]
+            dropout_rate = 0.1
+            reg_lambda = 0.01
+            learning_rate = 0.00001
+            epochs = 1000
+            batch_size = 32
+            optimizer = AdamOptimizer(learning_rate=learning_rate)
+            sub_scheduler = lr_scheduler_step(
+                optimizer, lr_decay=0.1, lr_decay_epoch=10
+            )
+            scheduler = lr_scheduler_plateau(sub_scheduler, patience=5, threshold=0.001)
+            loss_func = MeanSquaredErrorLoss()
+            activations = ["relu"] * len(layers) + ["none"]
+            self.models["BaseBackendNeuralNetwork"] = BaseBackendNeuralNetwork(
+                [input_size] + layers + [output_size],
+                dropout_rate=dropout_rate,
+                reg_lambda=reg_lambda,
+                activations=activations,
+                loss_function=loss_func,
+                regressor=True,
+            )
+
+        # Initialize progress bar if TQDM is available
         progress_bar = (
             tqdm(
                 self.models.items(),
@@ -121,32 +153,74 @@ class AutoRegressor:
             else self.models.items()
         )
 
+        # For each model, fit the data and evaluate
         for name, model in progress_bar:
             if TQDM_AVAILABLE:
                 progress_bar.set_description(f"Fitting {name}")
             start_time = time.time()
 
-            if X_test is not None and y_test is not None:
-                try:
-                    # Attempt to fit using both training and testing data if the model supports it
-                    model.fit(X_train, y_train, X_test, y_test)
-                except (TypeError, ValueError):
-                    # If the model does not support separate test data, combine train and test
-                    X_combined = np.vstack((X_train, X_test))
-                    y_combined = np.hstack((y_train, y_test))
-                    model.fit(X_combined, y_combined)
+            # Scale the data if needed - Neural Network requires scaling
+            if name == "BaseBackendNeuralNetwork":
+                scaler_X = Scaler(method="standard")
+                X_train_scaled = scaler_X.fit_transform(X_train)
+                if X_test is not None:
+                    X_test_scaled = scaler_X.transform(X_test)
+
+                scaler_y = Scaler(method="standard")
+                y_train_scaled = scaler_y.fit_transform(
+                    y_train.reshape(-1, 1)
+                ).flatten()
+                if y_test is not None:
+                    y_test_scaled = scaler_y.transform(y_test.reshape(-1, 1)).flatten()
+
+                # Use scaled data for training
+                if X_test is not None and y_test is not None:
+                    model.train(
+                        X_train_scaled,
+                        y_train_scaled,
+                        X_test_scaled,
+                        y_test_scaled,
+                        optimizer=optimizer,
+                        lr_scheduler=scheduler,
+                        epochs=epochs,
+                        batch_size=batch_size,
+                        early_stopping_threshold=10,
+                        p=False,
+                        use_tqdm=False,
+                    )
+                else:
+                    model.train(
+                        X_train_scaled,
+                        y_train_scaled,
+                        optimizer=optimizer,
+                        lr_scheduler=scheduler,
+                        epochs=epochs,
+                        batch_size=batch_size,
+                        early_stopping_threshold=10,
+                        p=False,
+                        use_tqdm=False,
+                    )
             else:
+                scaler_X = scaler_y = None
                 # Fit using only training data
                 model.fit(X_train, y_train)
 
             try:
-                y_pred = model.predict(X_test if X_test is not None else X_train)
+                if name == "BaseBackendNeuralNetwork" and scaler_y:
+                    y_pred = scaler_y.inverse_transform(
+                        model.predict(
+                            X_test_scaled if X_test is not None else X_train_scaled
+                        ).reshape(-1, 1)
+                    ).flatten()
+                else:
+                    y_pred = model.predict(X_test if X_test is not None else X_train)
             except IndexError as e:
                 raise ValueError(
                     f"Model '{name}' encountered an error during prediction: {e}"
                 ) from None
             elapsed_time = time.time() - start_time
 
+            # Evaluate metrics
             metrics = {}
             if custom_metrics:
                 for metric_name, metric_func in custom_metrics.items():

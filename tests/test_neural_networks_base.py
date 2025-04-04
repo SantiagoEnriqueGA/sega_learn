@@ -25,11 +25,17 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
         """Initialize test fixtures."""
         # Binary classification network
         self.nn_binary = BaseBackendNeuralNetwork(
-            [2, 100, 25, 1], dropout_rate=0.2, reg_lambda=0.01
+            [2, 100, 25, 1],
+            dropout_rate=0.2,
+            reg_lambda=0.01,
+            loss_function=BCEWithLogitsLoss(),
         )
         # Multi-class classification network
         self.nn_multi = BaseBackendNeuralNetwork(
-            [2, 100, 25, 10], dropout_rate=0.2, reg_lambda=0.01
+            [2, 100, 25, 10],
+            dropout_rate=0.2,
+            reg_lambda=0.01,
+            loss_function=CrossEntropyLoss(),
         )
         self.optimizer = AdamOptimizer(learning_rate=0.01)
         np.random.seed(42)
@@ -40,7 +46,9 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
     ### Initialization Tests ###
     def test_initialization(self):
         """Test layer initialization with custom sizes and activations."""
-        nn = BaseBackendNeuralNetwork([3, 4, 2], activations=["tanh", "sigmoid"])
+        nn = BaseBackendNeuralNetwork(
+            [3, 4, 2], activations=["tanh", "sigmoid"], loss_function=CrossEntropyLoss()
+        )
         self.assertEqual(len(nn.layers), 2)
         self.assertEqual(nn.layers[0].activation, "tanh")
         self.assertEqual(nn.layers[1].activation, "sigmoid")
@@ -48,16 +56,17 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
         self.assertEqual(nn.layers[1].weights.shape, (4, 2))
         self.assertEqual(nn.layers[0].biases.shape, (1, 4))
         self.assertEqual(nn.layers[1].biases.shape, (1, 2))
+        self.assertIsNotNone(nn.loss_function)
 
     def test_default_activations(self):
         """Test default activation settings."""
-        nn = BaseBackendNeuralNetwork([3, 4, 5, 2])
+        nn = BaseBackendNeuralNetwork([3, 4, 5, 2], loss_function=CrossEntropyLoss())
         self.assertEqual(nn.activations, ["relu", "relu", "softmax"])
 
     def test_initialize_layers(self):
         """Test layer initialization."""
         layers = [DenseLayer(2, 4, "relu"), DenseLayer(4, 2, "sigmoid")]
-        nn = BaseBackendNeuralNetwork(layers)
+        nn = BaseBackendNeuralNetwork(layers, loss_function=CrossEntropyLoss())
         self.assertEqual(len(nn.layers), 2)
         self.assertEqual(nn.layers[0].activation, "relu")
         self.assertEqual(nn.layers[1].activation, "sigmoid")
@@ -85,7 +94,9 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
 
     def test_apply_dropout_zero(self):
         """Test dropout with rate=0 (no dropout)."""
-        nn = BaseBackendNeuralNetwork([2, 100, 1], dropout_rate=0)
+        nn = BaseBackendNeuralNetwork(
+            [2, 100, 1], dropout_rate=0, loss_function=CrossEntropyLoss()
+        )
         A = np.random.randn(10, 10)
         A_dropped = nn.apply_dropout(A)
         np.testing.assert_array_equal(A, A_dropped)
@@ -204,7 +215,7 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
         nn.forward(X_single)
         nn.backward(y_single)
         accuracy, predicted = nn.evaluate(X_single, y_single)
-        self.assertEqual(predicted.shape, (1,))
+        self.assertEqual(predicted.shape, (1, 1))
 
     def test_lr_scheduler(self):
         """Test learning rate scheduler integration."""

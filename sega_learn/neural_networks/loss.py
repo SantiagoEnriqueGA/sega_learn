@@ -1,6 +1,7 @@
 import numpy as np
 
 
+# Classifications loss functions
 class CrossEntropyLoss:
     """Custom cross entropy loss implementation using numpy for multi-class classification.
 
@@ -63,3 +64,119 @@ class BCEWithLogitsLoss:
         )  # Binary cross-entropy loss
 
         return loss
+
+
+# Regression loss functions
+class MeanSquaredErrorLoss:
+    """Custom mean squared error loss implementation using numpy.
+
+    Formula: mean((y_true - y_pred) ** 2)
+
+    Methods:
+        __call__(self, y_true, y_pred): Calculate the mean squared error loss.
+    """
+
+    def __call__(self, y_true, y_pred):
+        """Calculate the mean squared error loss.
+
+        Args:
+            y_true (np.ndarray): The true labels of shape (num_samples,).
+            y_pred (np.ndarray): The predicted values of shape (num_samples,).
+
+        Returns:
+            float: The mean squared error loss.
+        """
+        # Ensure inputs are numpy arrays and have compatible shapes
+        y_true = np.asarray(y_true)
+        y_pred = np.asarray(y_pred)
+        if y_true.shape != y_pred.shape:
+            # Attempt to reshape if y_true is 1D and y_pred is (n, 1) or vice-versa
+            if y_true.ndim == 1 and y_pred.ndim == 2 and y_pred.shape[1] == 1:
+                y_true = y_true.ravel()
+            else:
+                raise ValueError(
+                    f"Shape mismatch: y_true {y_true.shape} vs y_pred {y_pred.shape}"
+                )
+
+        loss = np.mean((y_true - y_pred) ** 2)  # Mean squared error loss
+        return loss
+
+
+class MeanAbsoluteErrorLoss:
+    """Custom mean absolute error loss implementation using numpy.
+
+    Formula: mean(abs(y_true - y_pred))
+
+    Methods:
+        __call__(self, y_true, y_pred): Calculate the mean absolute error loss.
+    """
+
+    def __call__(self, y_true, y_pred):
+        """Calculate the mean absolute error loss.
+
+        Args:
+            y_true (np.ndarray): The true labels of shape (num_samples,).
+            y_pred (np.ndarray): The predicted values of shape (num_samples,).
+
+        Returns:
+            float: The mean absolute error loss.
+        """
+        # Ensure inputs are numpy arrays and have compatible shapes
+        y_true = np.asarray(y_true)
+        y_pred = np.asarray(y_pred)
+        if y_true.shape != y_pred.shape:
+            # Attempt to reshape if y_true is 1D and y_pred is (n, 1) or vice-versa
+            if y_true.ndim == 1 and y_pred.ndim == 2 and y_pred.shape[1] == 1:
+                y_pred = y_pred.ravel()
+            elif y_pred.ndim == 1 and y_true.ndim == 2 and y_true.shape[1] == 1:
+                y_true = y_true.ravel()
+            else:
+                raise ValueError(
+                    f"Shape mismatch: y_true {y_true.shape} vs y_pred {y_pred.shape}"
+                )
+
+        loss = np.mean(np.abs(y_true - y_pred))  # Mean absolute error loss
+        return loss
+
+
+class HuberLoss:
+    """Custom Huber loss implementation using numpy.
+
+    Formula: mean(0.5 * (y_true - y_pred)**2) if abs(y_true - y_pred) <= delta else mean(delta * (abs(y_true - y_pred) - delta / 2))
+
+    Methods:
+        __call__(self, y_true, y_pred, delta=1.0): Calculate the Huber loss.
+    """
+
+    def __call__(self, y_true, y_pred, delta=1.0):
+        """Calculate the Huber loss.
+
+        Args:
+            y_true (np.ndarray): The true labels of shape (num_samples,).
+            y_pred (np.ndarray): The predicted values of shape (num_samples,).
+            delta (float): The threshold for the Huber loss.
+
+        Returns:
+            float: The Huber loss.
+        """
+        # Ensure inputs are numpy arrays and have compatible shapes
+        y_true = np.asarray(y_true)
+        y_pred = np.asarray(y_pred)
+        if y_true.shape != y_pred.shape:
+            # Attempt to reshape if y_true is 1D and y_pred is (n, 1) or vice-versa
+            if y_true.ndim == 1 and y_pred.ndim == 2 and y_pred.shape[1] == 1:
+                y_pred = y_pred.ravel()
+            elif y_pred.ndim == 1 and y_true.ndim == 2 and y_true.shape[1] == 1:
+                y_true = y_true.ravel()
+            else:
+                raise ValueError(
+                    f"Shape mismatch: y_true {y_true.shape} vs y_pred {y_pred.shape}"
+                )
+
+        error = y_true - y_pred
+        is_small_error = np.abs(error) <= delta
+        squared_loss = 0.5 * error**2
+        linear_loss = delta * (np.abs(error) - 0.5 * delta)
+        loss = np.where(is_small_error, squared_loss, linear_loss)
+
+        return np.mean(loss)  # Mean Huber loss

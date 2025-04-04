@@ -32,7 +32,7 @@ class NeuralNetworkBase:
         is_binary (bool): Whether the network is for binary classification.
 
     Methods:
-        __init__(layers, dropout_rate=0.0, reg_lambda=0.0, activations=None):
+        __init__(layers, dropout_rate=0.0, reg_lambda=0.0, activations=None, loss_function=None, regressor=False):
             Initializes the neural network with the given layers and parameters.
         initialize_layers():
             Abstract method to initialize the weights and biases of the layers.
@@ -63,7 +63,15 @@ class NeuralNetworkBase:
             learning rate, and optionally precision, recall, and F1 score.
     """
 
-    def __init__(self, layers, dropout_rate=0.0, reg_lambda=0.0, activations=None):
+    def __init__(
+        self,
+        layers,
+        dropout_rate=0.0,
+        reg_lambda=0.0,
+        activations=None,
+        loss_function=None,
+        regressor=False,
+    ):
         """Initializes the neural network with the specified layers, dropout rate, regularization, and activations.
 
         Args:
@@ -71,6 +79,8 @@ class NeuralNetworkBase:
             dropout_rate: (float), optional - The dropout rate for regularization (default is 0.0).
             reg_lambda: (float), optional - The regularization strength (default is 0.0).
             activations: (list of str), optional - A list of activation functions for each layer (default is None, which sets "relu" for hidden layers and "softmax" for the output layer).
+            loss_function: (callable), optional - Custom loss function to use (default is None, which uses the default calculate_loss implementation).
+            regressor: (bool), optional - If True, the network is treated as a regressor (default is False).
 
         Raises:
             ValueError: If `layers` is not a list of integers or a list of Layer objects.
@@ -79,6 +89,43 @@ class NeuralNetworkBase:
         _layers_jit = [JITDenseLayer, JITFlattenLayer, JITConvLayer, JITRNNLayer]
         _cupy_layers = [CuPyDenseLayer]
         available_layers = tuple(_layers + _layers_jit + _cupy_layers)
+
+        self.is_binary = (
+            layers[-1] == 1
+            if isinstance(layers[0], int)
+            else layers[-1].output_size == 1
+        ) and not regressor
+        self.is_regressor = regressor  # ADDED is_regressor attribute
+
+        if activations is None and isinstance(layers[0], int):
+            # If regression, default output is 'none', else 'softmax'/'sigmoid'
+            if regressor:
+                default_output_activation = "none"
+            else:
+                default_output_activation = "sigmoid" if self.is_binary else "softmax"
+
+            self.activations = ["relu"] * (len(layers) - 2) + [
+                default_output_activation
+            ]
+
+        if loss_function is None:
+            if self.is_regressor:
+                # Default loss function for regression is MSE
+                from .loss import MeanSquaredErrorLoss
+
+                self.loss_function = MeanSquaredErrorLoss()
+            elif self.is_binary:
+                #  Default loss function for binary classification is BCE
+                from .loss import BCEWithLogitsLoss
+
+                self.loss_function = BCEWithLogitsLoss()
+            else:
+                #  Default loss function for multi-class classification is CrossEntropy
+                from .loss import CrossEntropyLoss
+
+                self.loss_function = CrossEntropyLoss()
+        else:
+            self.loss_function = loss_function
 
         # iF all layers are integers, initialize the layers as DenseLayers
         if all(isinstance(layer, int) for layer in layers):
@@ -94,7 +141,6 @@ class NeuralNetworkBase:
             self.weights = []
             self.biases = []
             self.layer_outputs = None
-            self.is_binary = layers[-1] == 1
 
         # Else if all layers are Layer objects, use them directly
         elif all(isinstance(layer, available_layers) for layer in layers):
@@ -104,7 +150,7 @@ class NeuralNetworkBase:
             ]
             self.dropout_rate = dropout_rate
             self.reg_lambda = reg_lambda
-            self.is_binary = layers[-1].output_size == 1
+
         else:
             raise ValueError(
                 "layers must be a list of integers or a list of Layer objects."
@@ -227,86 +273,70 @@ class NeuralNetworkBase:
                 "No training history available. Please set track_metrics=True during training."
             ) from None
 
-        # Different number of plots for metrics vs metrics/adv_metrics
+        # --- MODIFIED: Determine metrics to plot and layout ---
+        metrics_to_plot = []
+        if hasattr(self, "train_loss"):
+            metrics_to_plot.append("loss")
+        if hasattr(self, "train_metric"):  # Use the generic metric name
+            metric_label = (
+                "MSE" if self.is_regressor else "Accuracy"
+            )  # Label appropriately
+            metrics_to_plot.append(
+                ("metric", metric_label)
+            )  # Tuple: (attribute_suffix, plot_label)
+        if hasattr(self, "learning_rates"):
+            metrics_to_plot.append("learning_rate")
 
-        # If ONLY metrics are tracked OR ONLY adv_metrics are tracked
-        if (hasattr(self, "train_loss") + hasattr(self, "train_precision")) == 1:
-            cnt = 1
-            plt.figure(
-                figsize=(16, 5)
-            )  # Adjust the figure size to accommodate three plots
+        # Add adv metrics only if not regressor and tracked
+        if not self.is_regressor:
+            if hasattr(self, "train_precision"):
+                metrics_to_plot.append("precision")
+            if hasattr(self, "train_recall"):
+                metrics_to_plot.append("recall")
+            if hasattr(self, "train_f1"):
+                metrics_to_plot.append("f1")
 
-        elif (hasattr(self, "train_loss") + hasattr(self, "train_precision")) == 2:
-            cnt = 2
-            plt.figure(figsize=(16, 8))
+        n_metrics = len(metrics_to_plot)
+        if n_metrics == 0:
+            print("No metrics tracked for plotting.")
+            return
 
-        # Plot Loss
-        if cnt == 1:
-            plt.subplot(1, 3, 1)
-        if cnt == 2:
-            plt.subplot(2, 3, 1)
-        plt.plot(self.train_loss, label="Train Loss")
-        if hasattr(self, "val_loss"):
-            plt.plot(self.val_loss, label="Val Loss")
-        plt.title("Loss")
-        plt.xlabel("Epoch")
-        plt.ylabel("Loss")
-        plt.legend()
+        cols = min(n_metrics, 3)
+        rows = (n_metrics + cols - 1) // cols
 
-        # Plot Accuracy
-        if cnt == 1:
-            plt.subplot(1, 3, 2)
-        if cnt == 2:
-            plt.subplot(2, 3, 2)
-        plt.plot(self.train_accuracy, label="Train Accuracy")
-        if hasattr(self, "val_accuracy"):
-            plt.plot(self.val_accuracy, label="Val Accuracy")
-        plt.title("Accuracy")
-        plt.xlabel("Epoch")
-        plt.ylabel("Accuracy")
-        plt.legend()
+        plt.figure(figsize=(6 * cols, 5 * rows))
 
-        # Plot Learning Rate
-        if cnt == 1:
-            plt.subplot(1, 3, 3)
-        if cnt == 2:
-            plt.subplot(2, 3, 3)
-        plt.plot(self.learning_rates, label="Learning Rate")
-        plt.title("Learning Rate")
-        plt.xlabel("Epoch")
-        plt.ylabel("Learning Rate")
-        plt.legend()
+        plot_idx = 1
+        for metric_info in metrics_to_plot:
+            if isinstance(metric_info, tuple):
+                metric_attr, metric_label = metric_info
+            else:
+                metric_attr = metric_info
+                metric_label = metric_attr.replace("_", " ").title()
 
-        if cnt == 2:
-            # Plot Precision
-            plt.subplot(2, 3, 4)
-            plt.plot(self.train_precision, label="Train Precision")
-            if hasattr(self, "val_precision"):
-                plt.plot(self.val_precision, label="Val Precision")
-            plt.title("Precision")
-            plt.xlabel("Epoch")
-            plt.ylabel("Precision")
-            plt.legend()
+            ax = plt.subplot(rows, cols, plot_idx)
 
-            # Plot Recall
-            plt.subplot(2, 3, 5)
-            plt.plot(self.train_recall, label="Train Recall")
-            if hasattr(self, "val_recall"):
-                plt.plot(self.val_recall, label="Val Recall")
-            plt.title("Recall")
-            plt.xlabel("Epoch")
-            plt.ylabel("Recall")
-            plt.legend()
+            train_attr = f"train_{metric_attr}"
+            val_attr = f"val_{metric_attr}"
 
-            # Plot F1 Score
-            plt.subplot(2, 3, 6)
-            plt.plot(self.train_f1, label="Train F1 Score")
-            if hasattr(self, "val_f1"):
-                plt.plot(self.val_f1, label="Val F1 Score")
-            plt.title("F1 Score")
-            plt.xlabel("Epoch")
-            plt.ylabel("F1 Score")
-            plt.legend()
+            if metric_attr == "learning_rate":
+                ax.plot(self.learning_rates, label="Learning Rate", color="red")
+                ax.set_ylim(
+                    [-min(self.learning_rates), max(self.learning_rates) * 1.1]
+                )  # Adjust y-axis limits
+
+            if hasattr(self, train_attr):
+                ax.plot(getattr(self, train_attr), label=f"Train {metric_label}")
+            if hasattr(self, val_attr):
+                ax.plot(getattr(self, val_attr), label=f"Val {metric_label}")
+
+            ax.set_title(metric_label)
+            ax.set_xlabel("Epoch")
+            ax.set_ylabel(metric_label)
+            if hasattr(self, train_attr) or hasattr(self, val_attr):
+                ax.legend()
+            ax.grid(True)
+            plot_idx += 1
 
         plt.tight_layout()
 
@@ -314,3 +344,4 @@ class NeuralNetworkBase:
             plt.savefig(save_dir, dpi=600)
         else:
             plt.show()
+        # --- END MODIFIED plotting logic ---
