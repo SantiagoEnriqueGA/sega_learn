@@ -698,7 +698,9 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         """
         outputs = self.forward(X, training=False)
         if self.is_regressor:
-            return outputs  # Return raw continuous output for regression
+            return (
+                outputs.flatten()
+            )  # Ensure predictions are returned as a 1D array for regression
 
         elif self.is_binary:
             return (outputs > 0.5).astype(int)  # Return class labels 0 or 1
