@@ -115,6 +115,8 @@ class DenseLayer:
         elif self.activation == "softmax":
             # Softmax derivative handled in loss function
             return np.ones_like(Z)  # Identity for compatibility
+        elif self.activation == "none":
+            return np.ones_like(Z)  # Identity for compatibility
         else:
             raise ValueError(f"Unsupported activation: {self.activation}")
 

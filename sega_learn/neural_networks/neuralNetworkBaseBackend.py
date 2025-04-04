@@ -43,9 +43,9 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         learning_rates (list): Learning rates over epochs.
 
     Methods:
-        __init__(layers, dropout_rate=0.2, reg_lambda=0.01, activations=None):
+        __init__(layers, dropout_rate=0.2, reg_lambda=0.01, activations=None, loss_function=None, regressor=False):
             Initializes the neural network with the specified layers, dropout rate,
-            regularization parameter, and activation functions.
+            regularization parameter, activation functions, and optional loss function.
         initialize_new_layers():
             Initializes the layers of the neural network with random weights and biases.
         forward(X, training=True):
@@ -70,16 +70,28 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             Trains the neural network while capturing training metrics in real-time animation.
     """
 
-    def __init__(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None):
+    def __init__(
+        self,
+        layers,
+        dropout_rate=0.2,
+        reg_lambda=0.01,
+        activations=None,
+        loss_function=None,
+        regressor=False,
+    ):
         """Initializes the Numba backend neural network.
 
         Args:
-            layers (list): List of layer sizes or Layer objects.
-            dropout_rate (float): Dropout rate for regularization.
-            reg_lambda (float): L2 regularization parameter.
-            activations (list): List of activation functions for each layer.
+            layers: (list) - List of layer sizes or Layer objects.
+            dropout_rate: (float) - Dropout rate for regularization.
+            reg_lambda: (float) - L2 regularization parameter.
+            activations: (list) - List of activation functions for each layer.
+            loss_function: (callable) optional - Custom loss function to use (default is None, which uses the default calculate_loss implementation).
+            regressor: (bool) - Whether the model is a regressor (default is False).
         """
-        super().__init__(layers, dropout_rate, reg_lambda, activations)
+        super().__init__(
+            layers, dropout_rate, reg_lambda, activations, loss_function, regressor
+        )
 
         # if layers are empty list, initialize them
         if len(self.layers) == 0:
@@ -555,18 +567,25 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             y: (np.ndarray) - True target labels corresponding to the input data.
 
         Returns:
-            accuracy: (float) - The accuracy of the model's predictions.
-            predicted: (np.ndarray) - The predicted labels or classes for the input data.
+            metric: (float) - The evaluation metric (accuracy for classification, MSE for regression).
+            predicted: (np.ndarray) - The predicted labels or values for the input data.
         """
         y_hat = self.forward(X, training=False)
+
         if self.is_binary:
+            # Binary classification
             predicted = (y_hat > 0.5).astype(int)
             predicted = predicted.reshape(y.shape)
-            accuracy = float(np.mean(predicted.flatten() == y.reshape(-1, 1).flatten()))
-        else:
+            metric = float(np.mean(predicted.flatten() == y.reshape(-1, 1).flatten()))
+        elif not self.is_binary and len(y.shape) == 1:  # Multi-class classification
             predicted = np.argmax(y_hat, axis=1)
-            accuracy = float(np.mean(predicted == y))
-        return accuracy, predicted
+            metric = float(np.mean(predicted == y))
+        else:
+            # Regression task
+            predicted = y_hat
+            metric = float(np.mean((predicted - y) ** 2))  # Mean Squared Error (MSE)
+
+        return metric, predicted
 
     def predict(self, X):
         """Generates predictions for the given input data.
@@ -594,14 +613,19 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         # Get the output of the network (forward pass w/o dropout)
         outputs = self.forward(X, training=False)
 
-        # For binary classification, use binary cross-entropy loss
-        if self.is_binary:
-            loss_fn = BCEWithLogitsLoss()
-            loss = loss_fn(outputs, y.reshape(-1, 1))
-        # For multi-class classification, use categorical cross-entropy loss
+        # If self.loss_function is provided, use it to calculate loss
+        if self.loss_function:
+            return self.loss_function(outputs, y)
+
         else:
-            loss_fn = CrossEntropyLoss()
-            loss = loss_fn(outputs, y)
+            # For binary classification, use binary cross-entropy loss
+            if self.is_binary:
+                loss_fn = BCEWithLogitsLoss()
+                loss = loss_fn(outputs, y.reshape(-1, 1))
+            # For multi-class classification, use categorical cross-entropy loss
+            else:
+                loss_fn = CrossEntropyLoss()
+                loss = loss_fn(outputs, y)
 
         # Add L2 regularization term to the loss
         l2_reg = self.reg_lambda * self.compute_l2_reg(

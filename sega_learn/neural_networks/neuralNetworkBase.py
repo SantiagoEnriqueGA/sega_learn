@@ -32,7 +32,7 @@ class NeuralNetworkBase:
         is_binary (bool): Whether the network is for binary classification.
 
     Methods:
-        __init__(layers, dropout_rate=0.0, reg_lambda=0.0, activations=None):
+        __init__(layers, dropout_rate=0.0, reg_lambda=0.0, activations=None, loss_function=None, regressor=False):
             Initializes the neural network with the given layers and parameters.
         initialize_layers():
             Abstract method to initialize the weights and biases of the layers.
@@ -63,7 +63,15 @@ class NeuralNetworkBase:
             learning rate, and optionally precision, recall, and F1 score.
     """
 
-    def __init__(self, layers, dropout_rate=0.0, reg_lambda=0.0, activations=None):
+    def __init__(
+        self,
+        layers,
+        dropout_rate=0.0,
+        reg_lambda=0.0,
+        activations=None,
+        loss_function=None,
+        regressor=False,
+    ):
         """Initializes the neural network with the specified layers, dropout rate, regularization, and activations.
 
         Args:
@@ -71,6 +79,8 @@ class NeuralNetworkBase:
             dropout_rate: (float), optional - The dropout rate for regularization (default is 0.0).
             reg_lambda: (float), optional - The regularization strength (default is 0.0).
             activations: (list of str), optional - A list of activation functions for each layer (default is None, which sets "relu" for hidden layers and "softmax" for the output layer).
+            loss_function: (callable), optional - Custom loss function to use (default is None, which uses the default calculate_loss implementation).
+            regressor: (bool), optional - If True, the network is treated as a regressor (default is False).
 
         Raises:
             ValueError: If `layers` is not a list of integers or a list of Layer objects.
@@ -94,7 +104,8 @@ class NeuralNetworkBase:
             self.weights = []
             self.biases = []
             self.layer_outputs = None
-            self.is_binary = layers[-1] == 1
+            self.is_binary = layers[-1] == 1 if not regressor else False
+            self.is_regressor = regressor
 
         # Else if all layers are Layer objects, use them directly
         elif all(isinstance(layer, available_layers) for layer in layers):
@@ -104,11 +115,16 @@ class NeuralNetworkBase:
             ]
             self.dropout_rate = dropout_rate
             self.reg_lambda = reg_lambda
-            self.is_binary = layers[-1].output_size == 1
+            self.is_binary = (
+                layers[-1].output_size == 1 if not self.is_regressor else False
+            )
+            self.is_regressor = self.is_regressor
         else:
             raise ValueError(
                 "layers must be a list of integers or a list of Layer objects."
             )
+
+        self.loss_function = loss_function if loss_function else None
 
     def initialize_layers(self):
         """Initializes the weights and biases of the layers."""

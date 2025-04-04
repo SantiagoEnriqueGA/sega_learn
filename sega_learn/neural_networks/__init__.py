@@ -1,7 +1,13 @@
 from tkinter import E
 from .activations import Activation
 from .layers import ConvLayer, DenseLayer, FlattenLayer, RNNLayer
-from .loss import BCEWithLogitsLoss, CrossEntropyLoss
+from .loss import (
+    BCEWithLogitsLoss,
+    CrossEntropyLoss,
+    MeanAbsoluteErrorLoss,
+    MeanSquaredErrorLoss,
+    HuberLoss,
+)
 from .neuralNetworkBase import NeuralNetworkBase
 from .neuralNetworkBaseBackend import BaseBackendNeuralNetwork
 from .optimizers import AdadeltaOptimizer, AdamOptimizer, SGDOptimizer
@@ -16,6 +22,9 @@ __all__ = [
     "lr_scheduler_step",
     "CrossEntropyLoss",
     "BCEWithLogitsLoss",
+    "MeanSquaredErrorLoss",
+    "MeanAbsoluteErrorLoss",
+    "HuberLoss",
     "DenseLayer",
     "FlattenLayer",
     "ConvLayer",

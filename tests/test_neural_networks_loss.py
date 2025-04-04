@@ -85,5 +85,69 @@ class TestBCEWithLogitsLoss(unittest.TestCase):
         self.assertAlmostEqual(loss, expected_loss, places=5)
 
 
+class TestMeanSquaredErrorLoss(unittest.TestCase):
+    """Unit tests for the MeanSquaredErrorLoss class."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        print("\nTesting the MeanSquaredErrorLoss class", end="", flush=True)
+
+    def test_mean_squared_error_loss(self):
+        """Test the mean squared error loss."""
+        loss_fn = MeanSquaredErrorLoss()
+        y_true = np.array([1.0, 2.0, 3.0])
+        y_pred = np.array([1.5, 2.5, 3.5])
+        loss = loss_fn(y_true, y_pred)
+        expected_loss = np.mean((y_true - y_pred) ** 2)
+        self.assertAlmostEqual(loss, expected_loss, places=5)
+
+
+class TestMeanAbsoluteErrorLoss(unittest.TestCase):
+    """Unit tests for the MeanAbsoluteErrorLoss class."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        print("\nTesting the MeanAbsoluteErrorLoss class", end="", flush=True)
+
+    def test_mean_absolute_error_loss(self):
+        """Test the mean absolute error loss."""
+        loss_fn = MeanAbsoluteErrorLoss()
+        y_true = np.array([1.0, 2.0, 3.0])
+        y_pred = np.array([1.5, 2.5, 3.5])
+        loss = loss_fn(y_true, y_pred)
+        expected_loss = np.mean(np.abs(y_true - y_pred))
+        self.assertAlmostEqual(loss, expected_loss, places=5)
+
+
+class TestHuberLoss(unittest.TestCase):
+    """Unit tests for the HuberLoss class."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        print("\nTesting the HuberLoss class", end="", flush=True)
+
+    def test_huber_loss_small_error(self):
+        """Test the Huber loss for small errors."""
+        loss_fn = HuberLoss()
+        y_true = np.array([1.0, 2.0, 3.0])
+        y_pred = np.array([1.1, 2.1, 3.1])
+        delta = 1.0
+        loss = loss_fn(y_true, y_pred, delta)
+        error = y_true - y_pred
+        expected_loss = np.mean(0.5 * error**2)
+        self.assertAlmostEqual(loss, expected_loss, places=5)
+
+    def test_huber_loss_large_error(self):
+        """Test the Huber loss for large errors."""
+        loss_fn = HuberLoss()
+        y_true = np.array([1.0, 2.0, 3.0])
+        y_pred = np.array([4.0, 5.0, 6.0])
+        delta = 1.0
+        loss = loss_fn(y_true, y_pred, delta)
+        error = y_true - y_pred
+        expected_loss = np.mean(delta * (np.abs(error) - 0.5 * delta))
+        self.assertAlmostEqual(loss, expected_loss, places=5)
+
+
 if __name__ == "__main__":
     unittest.main()
