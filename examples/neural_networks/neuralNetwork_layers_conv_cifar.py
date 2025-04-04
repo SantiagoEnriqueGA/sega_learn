@@ -61,7 +61,6 @@ def load_cifar10(path, subset=None):
 
 def preprocess_cifar10(train_data, test_data):
     """Preprocesses CIFAR-10 data."""
-
     # Reshape data to (num_samples, channels, height, width)
     train_data = train_data.reshape(-1, 3, 32, 32).astype(np.float32)
     test_data = test_data.reshape(-1, 3, 32, 32).astype(np.float32)

@@ -93,10 +93,7 @@ exclude = [
     # SIM = flake8-simplify (simplifies code)
     # TID = flake8-tidy-imports
     # D = pydocstyle (docstring style checker)
-
-# TODO: Add and fix D (pydocstyle) errors in tests/ folder
-select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "TID"]
-# select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "TID", "D"]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "TID", "D"]
 
 
 # Add the specific codes to ignore
@@ -115,11 +112,13 @@ convention = "google" # <- Using Google style guide for docstrings (not "numpy" 
 
 # Optional: per-file ignores
 [tool.ruff.lint.per-file-ignores]
-"sega_learn/__init__.py" = ["F401"]   # This has to remain unsorted to avoid circular imports
-"sega_learn/utils/__init__.py" = ["I001"]   # This has to remain unsorted to avoid circular imports
-"sega_learn/neural_networks/__init__.py" = ["I001", "F401"]   # This has to remain unsorted to avoid circular imports
-"sega_learn/auto/regressor.py" = ["TID252"]  # This has to remain unsorted to avoid circular imports
-"sega_learn/auto/classifier.py" = ["TID252"]  # This has to remain unsorted to avoid circular imports
+# These are excluded because the order of imports is important
+# Linting errors for order of imports are ignored
+"sega_learn/__init__.py" = ["F401"]
+"sega_learn/utils/__init__.py" = ["I001"]
+"sega_learn/neural_networks/__init__.py" = ["I001", "F401"]
+"sega_learn/auto/regressor.py" = ["TID252"]
+"sega_learn/auto/classifier.py" = ["TID252"]
 
 [tool.ruff.format]
 # Enable the formatter (similar to Black)

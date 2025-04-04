@@ -19,7 +19,6 @@ np.random.seed(0)
 
 def fig_add_iso_forest(X, y, threshold, isolation_forest, ax):
     """Add a fitted isolation forest plot to a figure by threshold."""
-
     # Predict anomalies based on the anomaly scores
     _y_pred = isolation_forest.predict(X, threshold)
 

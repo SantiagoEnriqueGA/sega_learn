@@ -25,8 +25,7 @@ def train_and_evaluate_model(
     epochs=100,
     batch_size=32,
 ):
-    """Function to train and evaluate the Neural Network"""
-
+    """Function to train and evaluate the Neural Network."""
     input_size = X_train.shape[1]
 
     activations = [hidden_activation] * len(layers) + [output_activation]
@@ -92,8 +91,7 @@ def train_and_evaluate_model_numba(
     epochs=100,
     batch_size=32,
 ):
-    """Function to train and evaluate the Neural Network"""
-
+    """Function to train and evaluate the Neural Network."""
     input_size = X_train.shape[1]
 
     activations = [hidden_activation] * len(layers) + [output_activation]
@@ -147,6 +145,7 @@ def train_and_evaluate_model_numba(
 
 
 def main():
+    """Main function to train and evaluate the Neural Network."""
     import random
 
     np.random.seed(1)

@@ -46,6 +46,7 @@ ax = fig.add_subplot(111, projection="3d")
 
 
 def update(frame):
+    """Update the plot with the current frame."""
     ax.clear()
     labels = labels_list[frame]
     scatter = ax.scatter(

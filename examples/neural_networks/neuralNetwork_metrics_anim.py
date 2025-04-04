@@ -35,6 +35,7 @@ print(f"Input size: {input_size}, Output size: {output_size}")
 
 # Function to train and evaluate a model with a given optimizer
 def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
+    """Function to train and evaluate a model with a given optimizer."""
     print(f"\n--- Training with {optimizer_name} ---")
 
     layers_list = [
@@ -79,6 +80,7 @@ def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
 
 
 def train_and_evaluate_numba(optimizer, lr_scheduler, optimizer_name):
+    """Function to train and evaluate a model with a given optimizer, using Numba."""
     print(f"\n--- Training Numba NN with {optimizer_name} ---")
 
     layers_list = [

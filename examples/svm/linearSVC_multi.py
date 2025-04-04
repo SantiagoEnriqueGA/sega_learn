@@ -39,6 +39,7 @@ accuracy = svc.score(X_scaled, y)
 
 # Plotting the decision boundary
 def plot_decision_boundary(X, y, model, ax):
+    """Plot the decision boundary of a LinearSVC model."""
     cmap = plt.cm.cividis
 
     x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1

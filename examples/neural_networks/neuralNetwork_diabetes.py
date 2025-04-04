@@ -12,7 +12,7 @@ from sega_learn.utils import Scaler, train_test_split
 
 
 def load_pima_diabetes_data(file_path):
-    """Function to load and preprocess Pima Indians Diabetes dataset"""
+    """Function to load and preprocess Pima Indians Diabetes dataset."""
     df = pd.read_csv(file_path)
     X = df.drop("y", axis=1).to_numpy()
     y = df["y"].to_numpy().reshape(-1, 1)
@@ -45,8 +45,7 @@ def train_and_evaluate_model(
     epochs=100,
     batch_size=32,
 ):
-    """Function to train and evaluate the Neural Network"""
-
+    """Function to train and evaluate the Neural Network."""
     input_size = X_train.shape[1]
 
     activations = [hidden_activation] * len(layers) + [output_activation]
@@ -92,6 +91,7 @@ def train_and_evaluate_model(
 
 
 def run_diabetes():
+    """Run the example with the Pima Indians Diabetes dataset."""
     import random
 
     np.random.seed(41)

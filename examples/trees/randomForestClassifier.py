@@ -20,9 +20,7 @@ X, y = dp.DataPrep.df_to_ndarray(df, y_col=-1)
 
 
 def basic_example(num_trees=10, max_depth=5):
-    """
-    Basic example of using the Random Forest Classifier on a synthetic dataset.
-    """
+    """Basic example of using the Random Forest Classifier on a synthetic dataset."""
     print("\n\nRandom Forest Classifier on Synthetic Dataset\n")
 
     from sega_learn.utils import make_classification
@@ -43,9 +41,7 @@ def basic_example(num_trees=10, max_depth=5):
 
 
 def cancer_example(num_trees=10, max_depth=5):
-    """
-    Basic example of using the Random Forest Classifier on the Wisconsin Breast Prognostic dataset.
-    """
+    """Basic example of using the Random Forest Classifier on the Wisconsin Breast Prognostic dataset."""
     print("\n\nRandom Forest Classifier on Wisconsin Breast Prognostic dataset\n")
 
     # Initialize random forest object
@@ -60,9 +56,7 @@ def cancer_example(num_trees=10, max_depth=5):
 
 
 def grid_search():
-    """
-    Grid search example to find the best hyperparameters for the Random Forest Classifier model.
-    """
+    """Grid search example to find the best hyperparameters for the Random Forest Classifier model."""
     print(
         "\n\nRandom Forest Classifier Grid Search on Wisconsin Breast Prognostic dataset\n"
     )

@@ -12,6 +12,7 @@ root_mean_squared_error = Metrics.root_mean_squared_error
 
 
 def run_example(verbose=False):
+    """Runs the example."""
     X, y = make_regression(n_samples=1_000, n_features=5, noise=0.5, random_state=42)
 
     # Create and fit the AutoRegressor

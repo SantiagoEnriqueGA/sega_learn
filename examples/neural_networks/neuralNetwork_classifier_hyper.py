@@ -22,8 +22,7 @@ def hyper_train_and_evaluate_model(
     epochs=100,
     batch_size=32,
 ):
-    """Function to train and evaluate the Neural Network with hyperparameter tuning"""
-
+    """Function to train and evaluate the Neural Network with hyperparameter tuning."""
     input_size = X_train.shape[1]
     output_size = 1
 
@@ -92,8 +91,7 @@ def hyper_train_and_evaluate_model_numba(
     epochs=100,
     batch_size=32,
 ):
-    """Function to train and evaluate the Neural Network with hyperparameter tuning"""
-
+    """Function to train and evaluate the Neural Network with hyperparameter tuning."""
     input_size = X_train.shape[1]
     output_size = 1
 
@@ -154,6 +152,7 @@ def hyper_train_and_evaluate_model_numba(
 
 
 def main(test_case=True):
+    """Main function to train and evaluate the Neural Network with hyperparameter tuning."""
     # Define parameter grid and tuning ranges
     param_grid = {
         "dropout_rate": [0, 0.1, 0.2, 0.3],

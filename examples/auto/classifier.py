@@ -14,6 +14,7 @@ f1 = Metrics.f1_score
 
 
 def run_example(verbose=False):
+    """Runs the example."""
     X, y = make_classification(n_samples=1_000, n_features=5, random_state=42)
 
     # Create and fit the AutoClassifier

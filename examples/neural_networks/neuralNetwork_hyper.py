@@ -11,7 +11,7 @@ from sega_learn.utils import Scaler, train_test_split
 
 
 def load_pima_diabetes_data(file_path):
-    """Function to load and preprocess Pima Indians Diabetes dataset"""
+    """Function to load and preprocess Pima Indians Diabetes dataset."""
     df = pd.read_csv(file_path)
     X = df.drop("y", axis=1).to_numpy()
     y = df["y"].to_numpy().reshape(-1, 1)
@@ -30,7 +30,7 @@ def load_pima_diabetes_data(file_path):
 
 
 def load_breast_prognostic_data(file_path):
-    """Function to load and preprocess Wisconsin Breast Prognostic dataset"""
+    """Function to load and preprocess Wisconsin Breast Prognostic dataset."""
     df = pd.read_csv(file_path)
     X = df.drop("diagnosis", axis=1).to_numpy()
     y = df["diagnosis"].to_numpy().reshape(-1, 1)
@@ -62,8 +62,7 @@ def hyper_train_and_evaluate_model(
     epochs=100,
     batch_size=32,
 ):
-    """Function to train and evaluate the Neural Network with hyperparameter tuning"""
-
+    """Function to train and evaluate the Neural Network with hyperparameter tuning."""
     input_size = X_train.shape[1]
     output_size = 1
 
@@ -117,6 +116,7 @@ def hyper_train_and_evaluate_model(
 
 
 def main(diabetes=True, cancer=True, test_case=True):
+    """Main function to train and evaluate the Neural Network with hyperparameter tuning."""
     # Define parameter grid and tuning ranges
     param_grid = {"dropout_rate": [0.1, 0.2, 0.3], "reg_lambda": [0.0, 0.01]}
     layers = [[100, 50, 25], [50, 25, 10], [100, 100, 50, 25]]
