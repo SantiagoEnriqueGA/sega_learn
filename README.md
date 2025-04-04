@@ -10,7 +10,12 @@ The `examples/` directory contains example usages of the library, and the `docs/
 The `scripts/` directory contains PowerShell scripts to help with various tasks.
 
 This project was created with the goal of learning about the internals of machine learning algorithms and how they work under the hood.
+<<<<<<< Updated upstream
 It is not intended for production use and should be used for educational purposes only (See performance tests).
+=======
+As well as for exploration of Python packages for speed and performance.
+It is not intended for production use and should be used for educational purposes only (See performance tests for scalability).
+>>>>>>> Stashed changes
 Many of the algorithms are not optimized for performance and may not be suitable for large datasets.
 
 This project was heavily inspired by [scikit-learn](https://scikit-learn.org/stable/), and [pytorch](https://pytorch.org/).
@@ -18,25 +23,29 @@ This project was heavily inspired by [scikit-learn](https://scikit-learn.org/sta
 ## Navigation
 <!-- Add Links to Other Sections Here! -->
 - [Features](#features)
-- [Usage Example](#usage-examples)
+- [Project Structure](#project-structure)
+- [Usage Examples](#usage-examples)
 - [Scripts](#scripts)
 - [Documentation](#documentation)
 - [Tests](#tests)
 - [Installation](#installation)
-- [File Structure](#file-structure)
 
 ### Module Level READMEs
 For more detailed information on each module, see the following READMEs:
-- [Linear Models Module](sega_learn/linear_models/README.md)
+- [Automated Machine Learning Module](sega_learn/auto/README.md)
 - [Clustering Module](sega_learn/clustering/README.md)
-- [Trees Module](sega_learn/trees/README.md)
+- [Linear Models Module](sega_learn/linear_models/README.md)
 - [Nearest Neighbors Module](sega_learn/nearest_neighbors/README.MD)
 - [Neural Networks Module](sega_learn/neural_networks/README.md)
+- [Trees Module](sega_learn/trees/README.md)
+- [SVM Module](sega_learn/svm/README.md)
 - [Utilities Module](sega_learn/utils/README.md)
-- [Automated Machine Learning Module](sega_learn/auto/README.md)
 
 ## Features
 The SEGA_LEARN library includes the following features:
+
+### Automated Machine Learning
+*   **Automated ML (`auto`)**: Simplified `AutoClassifier` and `AutoRegressor` interfaces for automatically selecting and training suitable models from the Sega Learn library, providing quick baselines for classification and regression tasks.
 
 ### Clustering
 - **DBSCAN**: Density-Based Spatial Clustering of Applications with Noise (DBSCAN) is a clustering algorithm that groups together points that are closely packed, marking as outliers points that lie alone in low-density regions.
@@ -52,6 +61,9 @@ The SEGA_LEARN library includes the following features:
 - **Quadratic Discriminant Analysis**: Quadratic Discriminant Analysis (QDA) is a classification algorithm that finds the quadratic combination of features that best separates two or more classes.
 - **RANSAC Regression**: Random Sample Consensus (RANSAC) regression is a linear regression model that fits a model to the data by iteratively selecting a subset of inliers and estimating the model parameters.
 
+### Nearest Neighbors
+- **KNeighborsClassifier**: Implements the K-Nearest Neighbors algorithm for classification tasks.
+- **KNeighborsRegressor**: Implements the K-Nearest Neighbors algorithm for regression tasks.
 
 ### Neural Networks
 - **NeuralNetwork**: Implements a neural network class that can be used to create and train neural networks with multiple layers and activation functions.
@@ -60,16 +72,20 @@ The SEGA_LEARN library includes the following features:
   - **Schedulers**: Implements learning rate schedulers like StepLR and ReduceLROnPlateau.
   - **Activation Functions**: Implements activation functions like ReLU, Sigmoid, Softmax and more.
 
+### Support Vector Machines (SVMs)
+- **Linear SVM Classifier**: A linear SVM classifier for binary and multi-class classification tasks.
+- **Linear SVM Regressor**: A linear SVM regressor for predicting continuous target values.
+- **Generalized SVM Classifier**: Supports multiple kernels (e.g., RBF, polynomial) for binary and multi-class classification.
+- **Generalized SVM Regressor**: Supports multiple kernels for regression tasks.
+- **One-Class SVM**: Used for anomaly detection by identifying inliers and outliers in the data.
+- **Kernel Functions**: Includes linear, polynomial, RBF, and sigmoid kernels for handling non-linear problems.
+
 ### Trees
 - **Classifier Tree**: Implements a decision tree classifier that recursively splits the data based on the feature that maximizes the information gain.
 - **Regressor Tree**: Implements a decision tree regressor that recursively splits the data based on the feature that minimizes the variance.
 - **Random Forest Classifier**: Implements an ensemble classifier that fits multiple decision trees on random subsets of the data and averages their predictions.
 - **Random Forest Regressor**: Implements an ensemble regressor that fits multiple decision trees on random subsets of the data and averages their predictions.
 - **Gradient Boosted Regressor**: Implements a gradient boosted regressor that fits multiple decision trees sequentially, each one correcting the errors of the previous trees.
-
-### Nearest Neighbors
-- **KNeighborsClassifier**: Implements the K-Nearest Neighbors algorithm for classification tasks.
-- **KNeighborsRegressor**: Implements the K-Nearest Neighbors algorithm for regression tasks.
 
 ### Utilities
 - **Data Preparation**: Implements utility functions for data preparation like train-test split, normalization, and standardization.
@@ -79,17 +95,59 @@ The SEGA_LEARN library includes the following features:
 - **Model Selection Algorithms**: Implements model selection algorithms like Grid Search Cross Validation and Random Search Cross Validation.
 - **Data Augmentation**: Implements data augmentation for imbalanced classification tasks using SMOTE (Synthetic Minority Over-sampling Technique), Under-sampling, Over-sampling, and/or a combination of each.
 
-### Automated Machine Learning
-*   **Automated ML (`auto`)**: Simplified `AutoClassifier` and `AutoRegressor` interfaces for automatically selecting and training suitable models from the Sega Learn library, providing quick baselines for classification and regression tasks.
-
 
 ### Planned Features - Future Work
-- Implement dimensionality reduction algorithms like Principal Component Analysis (PCA), truncated Singular Value Decomposition (t-SVD)
 - Implement OPTICS clustering algorithm
 - Implement new model selection algorithms like Bayesian Optimization, Bayesian Model Averaging, and Bayesian Model Selection.
 
 
+## Project Structure
+The project directory structure is as follows:
+
+```
+sega_learn/
+|
+├── sega_learn/      # Main library source code
+│   ├── auto/               # Automated model selection
+│   ├── clustering/         # Clustering algorithms
+│   ├── linear_models/      # Linear models
+│   ├── nearest_neighbors/  # K-Nearest Neighbors
+│   ├── neural_networks/    # Neural Network components
+│   ├── svm/                # Support Vector Machines
+│   ├── trees/              # Tree-based models
+│   └── utils/              # Utility functions (metrics, data prep, etc.)
+|
+├── examples/           # Usage examples for different modules
+|
+├── tests/              # Unit tests for the library code
+|
+├── tests_performance/  # Performance benchmark tests
+|
+├── docs/               # Documentation source files (e.g., Markdown)
+|
+├── scripts/            # Helper scripts (e.g., for building docs, environment setup)
+|
+├── .github/            # GitHub specific files (workflows for CI)
+│   └── workflows/
+│       └── lint-format.yml # Ruff CI check workflow
+|
+├── .gitattributes          # Git attributes for the repository
+├── .gitignore              # Files/directories ignored by Git
+├── .pre-commit-config.yaml # Configuration for pre-commit hooks
+├── DEVELOPMENT.md          # This file: Guide for developers
+├── environment.yml         # Conda environment definition
+├── environment_pypy.yml    # Conda environment definition for pypy
+├── pyproject.toml          # Project metadata, build config, Ruff config
+├── pypdoc-markdown.yml     # Pydoc markdown config
+├── README.md               # Main project README for users
+└── uv.lock                 # Lock file for uv
+```
+
 ## Usage Examples
+
+### Automated Machine Learning
+- [`classifier.py`](examples/auto/classifier.py): Demonstrates the AutoClassifier on a simple classification problem.
+- [`regressor.py`](examples/auto/regressor.py): Demonstrates the AutoRegressor on a simple regression problem.
 
 ### Clustering
 - [`kmeans.py`](examples/clustering/kmeans.py): Demonstrates KMeans.
@@ -109,41 +167,63 @@ The SEGA_LEARN library includes the following features:
 - [`lda.py`](examples/linear_models/lda.py): Demonstrates Linear Discriminant Analysis.
 - [`qda.py`](examples/linear_models/qda.py): Demonstrates Quadratic Discriminant Analysis.
 
-### Neural Networks
-- [`neuralNetwork.py`](examples/neural_networks/neuralNetwork.py): Demonstrates the NeuralNetwork class.
-- [`neuralNetwork_hyper.py`](examples/neural_networks/neuralNetwork_hyper.py): Demonstrates the NeuralNetwork class with hyper-parameter tuning.
-
-### Trees
-- [`gradientBoostedRegressor.py`](examples/trees/gradientBoostedRegressor.py): Demonstrates Gradient Boosted Regressor.
-- [`randomForestClassifier.py`](examples/trees/randomForestClassifier.py): Demonstrates Random Forest Classifier.
-- [`randomForestRegressor.py`](examples/trees/randomForestRegressor.py): Demonstrates Random Forest Regressor.
-- [`regressorTree.py`](examples/trees/regressorTree.py): Demonstrates Regressor Tree.
-
 ### Nearest Neighbors
 - [`nearestNeighborsClassifier.py`](examples/nearest_neighbors/nearestNeighborsClassifier.py): Demonstrates KNeighborsClassifier.
 - [`nearestNeighborsRegressor.py`](examples/nearest_neighbors/nearestNeighborsRegressor.py): Demonstrates KNeighborsRegressor.
 
+### Neural Networks
+- [`neuralNetwork_cancer.py`](examples/neural_networks/neuralNetwork_cancer.py): Demonstrates the NeuralNetwork class on the breast cancer dataset.
+- [`neuralNetwork_classifier_hyper.py`](examples/neural_networks/neuralNetwork_classifier_hyper.py): Demonstrates the NeuralNetwork class for hyper-parameter tuning on classification tasks.
+- [`neuralNetwork_classifier.py`](examples/neural_networks/neuralNetwork_classifier.py): Demonstrates the NeuralNetwork class for classification tasks.
+- [`neuralNetwork_diabetes.py`](examples/neural_networks/neuralNetwork_diabetes.py): Demonstrates the NeuralNetwork class on the diabetes dataset.
+- [`neuralNetwork_hyper.py`](examples/neural_networks/neuralNetwork_hyper.py): Demonstrates the NeuralNetwork class for hyper-parameter tuning on regression tasks.
+- [`neuralNetwork_iris.py`](examples/neural_networks/neuralNetwork_iris.py): Demonstrates the NeuralNetwork class on the iris dataset.
+- [`neuralNetwork_layers_conv_cifar.py`](examples/neural_networks/neuralNetwork_layers_conv_cifar.py): Demonstrates the NeuralNetwork class with convolutional layers on CIFAR dataset.
+- [`neuralNetwork_layers_conv.py`](examples/neural_networks/neuralNetwork_layers_conv.py): Demonstrates the NeuralNetwork class with convolutional layers.
+- [`neuralNetwork_layers_numba.py`](examples/neural_networks/neuralNetwork_layers_numba.py): Demonstrates the NeuralNetwork class with Numba optimization.
+- [`neuralNetwork_layers.py`](examples/neural_networks/neuralNetwork_layers.py): Demonstrates the NeuralNetwork class with multiple layer creation.
+
+### SVM
+- [`generalizedSCV_binary.py`](examples/svm/generalizedSVC_binary.py): Demonstrates the Generalized SVC for binary classification.
+- [`generalizedSCV_multi.py`](examples/svm/generalizedSVC_multi.py): Demonstrates the Generalized SVC for multi-class classification.
+- [`generalizedSVR.py`](examples/svm/generalizedSVR.py): Demonstrates the Generalized SVR for regression tasks.
+- [`linearSVC_binary.py`](examples/svm/linearSVC_binary.py): Demonstrates the Linear SVC for binary classification.
+- [`linearSVC_multi.py`](examples/svm/linearSVC_multi.py): Demonstrates the Linear SVC for multi-class classification.
+- [`linearSVR.py`](examples/svm/linearSVR.py): Demonstrates the Linear SVR for regression tasks.
+- [`oneClassSVM.py`](examples/svm/oneClassSVM.py): Demonstrates the One-Class SVM for anomaly detection.
+
+### Trees
+- [`gradientBoostedRegressor.py`](examples/trees/gradientBoostedRegressor.py): Demonstrates Gradient Boosted Regressor.
+- [`isolationForest_blob.py`](examples/utils/isolationForest_blob.py): Demonstrates Isolation Forest for anomaly detection.
+- [`isolationForest_boundary.py`](examples/utils/isolationForest_boundary.py): Demonstrates Isolation Forest for anomaly detection with boundary visualization.
+- [`isolationForest_reg.py`](examples/utils/isolationForest_reg.py): Demonstrates Isolation Forest for regression tasks.
+- [`randomForestClassifier.py`](examples/trees/randomForestClassifier.py): Demonstrates Random Forest Classifier.
+- [`randomForestRegressor.py`](examples/trees/randomForestRegressor.py): Demonstrates Random Forest Regressor.
+
 ### Utils
-- [`votingRegressor.py`](examples/utils/votingRegressor.py): Demonstrates Voting Regressor.
-- [`polynomialTransform.py`](examples/utils/polynomialTransform.py): Demonstrates Polynomial Transform.
+- [`dataAugmentation_combined.py`](examples/utils/dataAugmentation_combined.py): Demonstrates a combination of Random Over Sampling and SMOTE for imbalanced classification tasks.
+- [`dataAugmentation_randOver.py`](examples/utils/dataAugmentation_randOver.py): Demonstrates Random Over Sampling for imbalanced classification tasks.
+- [`dataAugmentation_randUnder.py`](examples/utils/dataAugmentation_randUnder.py): Demonstrates Random Under Sampling for imbalanced classification tasks.
+- [`dataAugmentation_smote.py`](examples/utils/dataAugmentation_smote.py): Demonstrates SMOTE (Synthetic Minority Over-sampling Technique) for imbalanced classification tasks.
+- ['dataPreprocessing.py'](examples/utils/dataPreprocessing.py): Demonstrates data preprocessing techniques.
 - [`gridSearchCV_bayes.py`](examples/utils/gridSearchCV_bayes.py): Demonstrates Grid Search Cross Validation with Bayesian Regression.
 - [`gridSearchCV_gbr.py`](examples/utils/gridSearchCV_gbr.py): Demonstrates Grid Search Cross Validation with Gradient Boosted Regressor.
 - [`gridSearchCV_passiveAggressive.py`](examples/utils/gridSearchCV_passiveAggressive.py): Demonstrates Grid Search Cross Validation with Passive Aggressive Regressor.
 - [`gridSearchCV_rfc.py`](examples/utils/gridSearchCV_rfc.py): Demonstrates Grid Search Cross Validation with Random Forest Classifier.
 - [`gridSearchCV_rfr.py`](examples/utils/gridSearchCV_rfr.py): Demonstrates Grid Search Cross Validation with Random Forest Regressor.
+- [`makeData.py`](examples/utils/makeData.py): Demonstrates data generation for testing purposes.
+- [`pca_classification.py`](examples/utils/pca_classification.py): Demonstrates PCA for classification tasks.
+- [`pca_regression.py`](examples/utils/pca_regression.py): Demonstrates PCA for regression tasks.
+- [`polynomialTransform.py`](examples/utils/polynomialTransform.py): Demonstrates Polynomial Transform.
 - [`randomSearchCV_bayes.py`](examples/utils/randomSearchCV_bayes.py): Demonstrates Random Search Cross Validation with Bayesian Regression.
 - [`randomSearchCV_gbr.py`](examples/utils/randomSearchCV_gbr.py): Demonstrates Random Search Cross Validation with Gradient Boosted Regressor.
 - [`randomSearchCV_passiveAggressive.py`](examples/utils/randomSearchCV_passiveAggressive.py): Demonstrates Random Search Cross Validation with Passive Aggressive Regressor.
 - [`randomSearchCV_rfc.py`](examples/utils/randomSearchCV_rfc.py): Demonstrates Random Search Cross Validation with Random Forest Classifier.
 - [`randomSearchCV_rfr.py`](examples/utils/randomSearchCV_rfr.py): Demonstrates Random Search Cross Validation with Random Forest Regressor.
-- [`dataAugmentation_randOver.py`](examples/utils/dataAugmentation_randOver.py): Demonstrates Random Over Sampling for imbalanced classification tasks.
-- [`dataAugmentation_randUnder.py`](examples/utils/dataAugmentation_randUnder.py): Demonstrates Random Under Sampling for imbalanced classification tasks.
-- [`dataAugmentation_smote.py`](examples/utils/dataAugmentation_smote.py): Demonstrates SMOTE (Synthetic Minority Over-sampling Technique) for imbalanced classification tasks.
-- [`dataAugmentation_combined.py`](examples/utils/dataAugmentation_combined.py): Demonstrates a combination of Random Over Sampling and SMOTE for imbalanced classification tasks.
-
-### Automated Machine Learning
-- [`classifier.py`](examples/auto/classifier.py): Demonstrates the AutoClassifier on a simple classification problem.
-- [`regressor.py`](examples/auto/regressor.py): Demonstrates the AutoRegressor on a simple regression problem.
+- ['segaSearchCV_rfr.py'](examples/utils/segaSearchCV_rfr.py): Demonstrates SEGA Search Cross Validation with Random Forest Regressor.
+- [`svd_classification.py`](examples/utils/svd_classification.py): Demonstrates SVD for classification tasks.
+- [`svd_regression.py`](examples/utils/svd_regression.py): Demonstrates SVD for regression tasks.
+- [`votingRegressor.py`](examples/utils/votingRegressor.py): Demonstrates Voting Regressor.
 
 ## Scripts
 The following PowerShell scripts are included in the `scripts/` folder to help with various tasks:
@@ -155,6 +235,7 @@ The following PowerShell scripts are included in the `scripts/` folder to help w
 - **documentation_html.ps1**: Generates HTML documentation for Python files in the `SEGA_LEARN/` folder, and moves the generated HTML files to the `docs/` folder.
 - **documentation_md.ps1**: Generates markdown documentation for Python files in the `SEGA_LEARN/` folder.
 - **export_env.ps1**: Exports the conda environment to a YAML file. Remove the prefix from the environment name to make it compatible with other systems.
+- **file_contents.ps1**: Exports the contents of all python files in the `SEGA_LEARN/` folder to a text file.
 
 ## Documentation
 ### HTML Documentation
@@ -169,112 +250,157 @@ Pydoc Markdown is also availible and is generated from the PowerShell script `do
 The output file is located in [`docs/documentation.md`](docs/documentation.md)
 
 ## Tests
+<<<<<<< Updated upstream
 To run the tests, use the following command: `python -m unittest discover -s tests`
+=======
+An extensive suite of unit tests is included in the `tests/` directory.
+These tests ensure the functionality and reliability of each module in the library, as well as the overall package.
+The tests are organized into subdirectories based on the module they test. Each module is tested for imports, functionality, and example usage.
+
+### Test Logic
+- **Imports**: Tests to ensure that all modules can be imported without errors.
+- **Functionality**: Tests to ensure that the functions and classes in each module work as expected.
+- **Examples**: Tests to ensure that the example scripts run without errors.
+
+### Running Tests
+To run the tests, use the following command: `python -m unittest discover -s tests`
+>>>>>>> Stashed changes
 Or run the all tests file: `python run_all_tests.py`
 
 ### Test Results
 The following are the results of running the tests:
-```sh
+```
 (sega_learn) PS .../sega_learn/tests/run_all_tests.py
-Testing Imports - Clustering
-..Testing Imports - Main Package
-..Testing Imports - Linear Models
-..Testing Imports - Nearest Neighbors
-..Testing Imports - Neural Networks
-..Testing Imports - Trees
-..Testing DBSCAN
-.....Testing KMeans
-..................................Testing Bayesian Regression Model
-..........Testing Lasso Regression Model
-.........Testing Linear Discriminant Analysis
-.......Testing Ordinary Least Squares Model
-.......Testing Passive Aggressive Regressor Model
-..........Testing Quadratic Discriminant Analysis
-.......Testing RANSAC Regression Model
-...........Testing Ridge Regression Model
-.........Testing KNeighborsClassifierKNeighborsBase Class
-............Testing KNeighborsRegressor Class
-............Testing the BCEWithLogitsLoss class
-..Testing the CrossEntropyLoss class
-..Testing NeuralNetwork class with use_numba=True
-.................Testing the AdadeltaOptimizer class
-..Testing the AdamOptimizer class
-..Testing the SGDOptimizer class
-..Testing NeuralNetwork class with use_numba=False
-.................Testing Classifier Tree
-....Testing Classifier Tree Utility
-.....Testing Random Forest Classifier
-...........Testing Gradient Boosted Regressor
-............Testing Random Forest Regressor
-..............Testing Regressor Tree
-.....Testing Regressor Tree Utility
-.................Testing Data Augmentation
-......................Testing Decomposition
-.....Testing Data Prep
-...............Testing GridSearchCV
-...........Testing Metrics
-...............Testing Model Selection Utils
-..........Testing Polynomial Transform
-....Testing RandomSearchCV
-.............Testing Voting Regressor
-....Testing makeData utilities
-............................Testing example file: dbscan.py
-.Testing example file: dbscan_3d.py
-.Testing example file: dbscan_3d_aimated.py
-.Testing example file: kmeans.py
-.Testing example file: bayes.py
-.Testing example file: lasso.py
-.Testing example file: lda.py
-.Testing example file: ols.py
-.Testing example file: passiveAggressive.py
-.Testing example file: passiveAggressive_vis.py
-.Testing example file: qda.py
-.Testing example file: ransac.py
-.Testing example file: ransac_vis.py
-.Testing example file: ridge.py
-.Testing example file: nearestNeighborsClassifier.py
-.Testing example file: nearestNeighborsRegressor.py
-.Testing example file: neuralNetwork_cancer.py
-.Testing example file: neuralNetwork_classifier.py
-.Testing example file: neuralNetwork_classifier_hyper.py
-Tuning Hyperparameters: 100%|█████| 2/2 [00:02<00:00,  1.50s/it]
-Epoch 100/100 - Loss: 0.7441, Acc: 0.7087, Val Loss: 0.7619, Val Acc: 0.6950: 100%|█████| 100/100 [00:02<00:00, 35.35it/s]
-.Testing example file: neuralNetwork_diabetes.py
-.Testing example file: neuralNetwork_hyper.py
-Tuning Hyperparameters: 100%|█████| 1/1 [00:01<00:00,  1.05s/it]
-Epoch 100/100 - Loss: 0.7709, Acc: 0.6787, Val Loss: 0.7545, Val Acc: 0.6364: 100%|█████| 100/100 [00:01<00:00, 92.35it/s]
-Tuning Hyperparameters: 100%|█████| 1/1 [00:00<00:00,  1.24it/s]
-Epoch 100/100 - Loss: 0.7087, Acc: 0.9023, Val Loss: 0.7012, Val Acc: 0.8596: 100%|█████| 100/100 [00:00<00:00, 119.95it/s]
-.Testing example file: neuralNetwork_iris.py
-Epoch 100/100 - Loss: 0.7051, Acc: 0.8593, Val Loss: 0.7022, Val Acc: 0.9333: 100%|█████| 100/100 [00:00<00:00, 315.15it/s]
-.Testing example file: gradientBoostedRegressor.py
-.Testing example file: randomForestClassifier.py
-.Testing example file: randomForestRegressor.py
-.Testing example file: dataAugmentation_combined.py
-.Testing example file: dataAugmentation_randOver.py
-.Testing example file: dataAugmentation_randUnder.py
-.Testing example file: dataAugmentation_smote.py
-.Testing example file: gridSearchCV_bayes.py
-.Testing example file: gridSearchCV_gbr.py
-.Testing example file: gridSearchCV_passiveAggReg.py
-.Testing example file: gridSearchCV_rfc.py
-.Testing example file: gridSearchCV_rfr.py
-.Testing example file: makeData.py
-.Testing example file: pca_classification.py
-.Testing example file: pca_regression.py
-.Testing example file: polynomialTransform.py
-.Testing example file: randomSearchCV_bayes.py
-.Testing example file: randomSearchCV_gbr.py
-.Testing example file: randomSearchCV_passiveAggReg.py
-.Testing example file: randomSearchCV_rfc.py
-.Testing example file: randomSearchCV_rfr.py
-.Testing example file: segaSearchCV_rfr.py
-.Testing example file: svd_classification.py
-.Testing example file: svd_regression.py
-.Testing example file: votingRegressor.py
-.
+Testing Imports - Auto..
+Testing Imports - Clustering..
+Testing Imports - Main Package..
+Testing Imports - Linear Models..
+Testing Imports - Nearest Neighbors..
+Testing Imports - Neural Networks......
+Testing Imports - SVM..
+Testing Imports - Trees..
+Testing AutoClassifier Model.................
+Testing AutoRegressor Model.....................
+Testing DBSCAN...............
+Testing DBSCAN Numba...............
+Testing KMeans..................................
+Testing Bayesian Regression Model..........
+Testing Lasso Regression Model............
+Testing Linear Discriminant Analysis.......
+Testing Ordinary Least Squares Model.......
+Testing Passive Aggressive Regressor Model..........
+Testing Quadratic Discriminant Analysis.......
+Testing RANSAC Regression Model...........
+Testing Ridge Regression Model............
+Testing KNeighborsClassifierKNeighborsBase Class............
+Testing KNeighborsRegressor Class............
+Testing the TrainingAnimator Class...........
+Testing NeuralNetwork class with base backend..................
+Testing ConvLayer class...
+Testing DenseLayer class...
+Testing FlattenLayer class..
+Testing the BCEWithLogitsLoss class..
+Testing the CrossEntropyLoss class..
+Testing the BCEWithLogitsLoss class..
+Testing the JITCrossEntropyLoss class..
+Testing NeuralNetwork class with Numba backend...................
+Testing the AdadeltaOptimizer Class..
+Testing the AdamOptimizer Class..
+Testing the SGDOptimizer Class..
+Testing GeneralizedSVC...........
+Testing GeneralizedSVR........
+Testing LinearSVC...........
+Testing LinearSVR........
+Testing OneClassSVM......
+Testing Classifier Tree...........
+Testing Classifier Tree Utility.............
+Testing Random Forest Classifier.............
+Testing Isolation Forest.....
+Testing Isolation Tree....
+Testing Isolation Tree Utility.
+Testing Gradient Boosted Regressor............
+Testing Random Forest Regressor...............
+Testing Regressor Tree............
+Testing Regressor Tree Utility.................
+Testing Data Augmentation......................
+Testing Decomposition.....
+Testing Data Prep...............
+Testing GridSearchCV...........
+Testing Metrics...............
+Testing Model Selection Utils..........
+Testing Polynomial Transform....
+Testing RandomSearchCV.............
+Testing Voting Regressor....
+Testing Categorical Preprocessing Functions.........
+Testing Scaler Class..........
+Testing train_test_split function..........
+Testing makeData Utilities............................
+Testing example file: classifier.py.
+Testing example file: regressor.py.
+Testing example file: dbscan.py.
+Testing example file: dbscan_3d.py.
+Testing example file: dbscan_3d_aimated.py.
+Testing example file: kmeans.py.
+Testing example file: bayes.py.
+Testing example file: lasso.py.
+Testing example file: lda.py.
+Testing example file: lda_comparison.py.
+Testing example file: lda_vs_qda_comparison.py.
+Testing example file: ols.py.
+Testing example file: passiveAggressive.py.
+Testing example file: passiveAggressive_vis.py.
+Testing example file: qda.py.
+Testing example file: ransac.py.
+Testing example file: ransac_vis.py.
+Testing example file: ridge.py.
+Testing example file: nearestNeighborsClassifier.py.
+Testing example file: nearestNeighborsRegressor.py.
+Testing example file: neuralNetwork_cancer.py.
+Testing example file: neuralNetwork_classifier.py.
+Testing example file: neuralNetwork_classifier_hyper.py.
+Testing example file: neuralNetwork_diabetes.py.
+Testing example file: neuralNetwork_hyper.py.
+Testing example file: neuralNetwork_iris.py.
+Testing example file: neuralNetwork_layers.py...
+Testing example file: neuralNetwork_layers_numba.py..
+Testing example file: generalizedSVC_binary.py.
+Testing example file: generalizedSVC_multi.py.
+Testing example file: generalizedSVR.py.
+Testing example file: linearSVC_binary.py.
+Testing example file: linearSVC_multi.py.
+Testing example file: linearSVR.py.
+Testing example file: oneClassSVM.py.
+Testing example file: gradientBoostedRegressor.py.
+Testing example file: isolationForest_blob.py.
+Testing example file: isolationForest_boundary.py.
+Testing example file: isolationForest_reg.py.
+Testing example file: randomForestClassifier.py.
+Testing example file: randomForestRegressor.py.
+Testing example file: dataAugmentation_combined.py.
+Testing example file: dataAugmentation_randOver.py.
+Testing example file: dataAugmentation_randUnder.py.
+Testing example file: dataAugmentation_smote.py.
+Testing example file: dataPreprocessing.py.
+Testing example file: gridSearchCV_bayes.py.
+Testing example file: gridSearchCV_gbr.py.
+Testing example file: gridSearchCV_passiveAggReg.py.
+Testing example file: gridSearchCV_rfc.py.
+Testing example file: gridSearchCV_rfr.py.
+Testing example file: makeData.py.
+Testing example file: pca_classification.py.
+Testing example file: pca_regression.py.
+Testing example file: polynomialTransform.py.
+Testing example file: randomSearchCV_bayes.py.
+Testing example file: randomSearchCV_gbr.py.
+Testing example file: randomSearchCV_passiveAggReg.py.
+Testing example file: randomSearchCV_rfc.py.
+Testing example file: randomSearchCV_rfr.py.
+Testing example file: segaSearchCV_rfr.py.
+Testing example file: svd_classification.py.
+Testing example file: svd_regression.py.
+Testing example file: votingRegressor.py.
 ----------------------------------------------------------------------
-Ran 431 tests in 197.768s
+Ran 662 tests in 374.162s
 
 OK
 ```
@@ -288,6 +414,7 @@ To set up the project environment, you can use the provided `environment.yml` fi
 3. Run the following command to create the conda environment: `conda env create -f environment.yml`
 4. Activate the newly created environment: `conda activate sega_learn`
 
+<<<<<<< Updated upstream
 ## File Structure
 The project directory structure is as follows:
 
@@ -404,3 +531,5 @@ The project directory structure is as follows:
   - [`documentation_html.ps1`](scripts/documentation_html.ps1): Generates HTML documentation.
   - [`documentation_md.ps1`](scripts/documentation_md.ps1): Generates markdown documentation.
   - [`export_env.ps1`](scripts/export_env.ps1): Exports the conda environment to a YAML file.
+=======
+>>>>>>> Stashed changes
