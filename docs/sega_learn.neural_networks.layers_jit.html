@@ -41,7 +41,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
 </td><td class="multicolumn"><a href="numba.core.types.html">numba.core.types</a><br>
@@ -49,7 +49,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -81,7 +81,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="JITConvLayer">class <strong>JITConvLayer</strong></a>(JITConvLayer)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#JITConvLayer">JITConvLayer</a>(*args,&nbsp;**kwargs)<br>
 &nbsp;<br>
@@ -94,11 +94,33 @@ A&nbsp;convolutional&nbsp;layer&nbsp;implementation&nbsp;for&nbsp;neural&nbsp;ne
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>class_type</strong> = jitclass.JITConvLayer#18ced832e10&lt;in_channels:in...2,w_out:int32,input_size:int32,output_size:int32&gt;</dl>
+<dl><dt><strong>class_type</strong> = jitclass.JITConvLayer#16fc5477310&lt;in_channels:in...2,w_out:int32,input_size:int32,output_size:int32&gt;</dl>
 
 <hr>
 Methods inherited from JITConvLayer:<br>
-<dl><dt><a name="JITConvLayer-__init__"><strong>__init__</strong></a>(self, in_channels, out_channels, kernel_size, stride=1, padding=0, activation='relu')</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="JITConvLayer-__init__"><strong>__init__</strong></a>(self, in_channels, out_channels, kernel_size, stride=1, padding=0, activation='relu')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;convolutional&nbsp;layer&nbsp;with&nbsp;weights,&nbsp;biases,&nbsp;and&nbsp;activation&nbsp;function.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;in_channels:&nbsp;(int)&nbsp;-&nbsp;Number&nbsp;of&nbsp;input&nbsp;channels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;out_channels:&nbsp;(int)&nbsp;-&nbsp;Number&nbsp;of&nbsp;output&nbsp;channels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kernel_size:&nbsp;(int)&nbsp;-&nbsp;Size&nbsp;of&nbsp;the&nbsp;convolutional&nbsp;kernel&nbsp;(assumes&nbsp;square&nbsp;kernels).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;stride:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;Stride&nbsp;of&nbsp;the&nbsp;convolution&nbsp;(default&nbsp;is&nbsp;1).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;padding:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;Padding&nbsp;added&nbsp;to&nbsp;the&nbsp;input&nbsp;(default&nbsp;is&nbsp;0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activation:&nbsp;(str),&nbsp;optional&nbsp;-&nbsp;Activation&nbsp;function&nbsp;to&nbsp;use&nbsp;(default&nbsp;is&nbsp;"relu").<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weights:&nbsp;(np.ndarray)&nbsp;-&nbsp;Convolutional&nbsp;weight&nbsp;matrix&nbsp;initialized&nbsp;using&nbsp;He&nbsp;initialization.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;biases:&nbsp;(np.ndarray)&nbsp;-&nbsp;Bias&nbsp;vector&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activation:&nbsp;(str)&nbsp;-&nbsp;Activation&nbsp;function&nbsp;for&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weight_gradients:&nbsp;(np.ndarray)&nbsp;-&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;weights,&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bias_gradients:&nbsp;(np.ndarray)&nbsp;-&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;biases,&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_cache:&nbsp;(np.ndarray)&nbsp;-&nbsp;Cached&nbsp;input&nbsp;values&nbsp;for&nbsp;backpropagation,&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_cols:&nbsp;(np.ndarray)&nbsp;-&nbsp;Cached&nbsp;column-transformed&nbsp;input&nbsp;for&nbsp;backpropagation,&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_padded:&nbsp;(np.ndarray)&nbsp;-&nbsp;Cached&nbsp;padded&nbsp;input&nbsp;for&nbsp;backpropagation,&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;h_out:&nbsp;(int)&nbsp;-&nbsp;Height&nbsp;of&nbsp;the&nbsp;output&nbsp;feature&nbsp;map,&nbsp;initialized&nbsp;to&nbsp;0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;w_out:&nbsp;(int)&nbsp;-&nbsp;Width&nbsp;of&nbsp;the&nbsp;output&nbsp;feature&nbsp;map,&nbsp;initialized&nbsp;to&nbsp;0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_size:&nbsp;(int)&nbsp;-&nbsp;Number&nbsp;of&nbsp;input&nbsp;channels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_size:&nbsp;(int)&nbsp;-&nbsp;Number&nbsp;of&nbsp;output&nbsp;channels.</span></dd></dl>
 
 <dl><dt><a name="JITConvLayer-activate"><strong>activate</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;function.</span></dd></dl>
 
@@ -109,7 +131,7 @@ Methods inherited from JITConvLayer:<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;d_out&nbsp;(np.ndarray):&nbsp;Gradient&nbsp;of&nbsp;the&nbsp;loss&nbsp;with&nbsp;respect&nbsp;to&nbsp;the&nbsp;layer&nbsp;output<br>
 &nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;Regularization&nbsp;parameter<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;dX:&nbsp;Gradient&nbsp;with&nbsp;respect&nbsp;to&nbsp;the&nbsp;input&nbsp;X</span></dd></dl>
 
@@ -117,7 +139,7 @@ Returns:<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;with&nbsp;shape&nbsp;(batch_size,&nbsp;in_channels,&nbsp;height,&nbsp;width)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Output&nbsp;feature&nbsp;maps&nbsp;after&nbsp;convolution&nbsp;and&nbsp;activation.</span></dd></dl>
 
@@ -135,17 +157,19 @@ Data descriptors inherited from JITConvLayer:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="JITDenseLayer">class <strong>JITDenseLayer</strong></a>(JITDenseLayer)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#JITDenseLayer">JITDenseLayer</a>(*args,&nbsp;**kwargs)<br>
 &nbsp;<br>
 Initializes&nbsp;a&nbsp;fully&nbsp;connected&nbsp;layer&nbsp;<a href="builtins.html#object">object</a>,&nbsp;where&nbsp;each&nbsp;neuron&nbsp;is&nbsp;connected&nbsp;to&nbsp;all&nbsp;neurons&nbsp;in&nbsp;the&nbsp;previous&nbsp;layer.<br>
+&nbsp;<br>
 Each&nbsp;layer&nbsp;consists&nbsp;of&nbsp;weights,&nbsp;biases,&nbsp;and&nbsp;an&nbsp;activation&nbsp;function.<br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;input_size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;input&nbsp;to&nbsp;the&nbsp;layer.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;output_size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;output&nbsp;from&nbsp;the&nbsp;layer.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;activation&nbsp;(str):&nbsp;The&nbsp;activation&nbsp;function&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;the&nbsp;layer.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;<br>
 Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;weights&nbsp;(np.ndarray):&nbsp;Weights&nbsp;of&nbsp;the&nbsp;layer.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;biases&nbsp;(np.ndarray):&nbsp;Biases&nbsp;of&nbsp;the&nbsp;layer.<br>
@@ -154,7 +178,7 @@ Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;bias_gradients&nbsp;(np.ndarray):&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;biases.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;input_cache&nbsp;(np.ndarray):&nbsp;Cached&nbsp;input&nbsp;for&nbsp;backpropagation.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;output_cache&nbsp;(np.ndarray):&nbsp;Cached&nbsp;output&nbsp;for&nbsp;backpropagation.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;<br>
 Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#JITDenseLayer-zero_grad">zero_grad</a>():&nbsp;Resets&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#JITDenseLayer-forward">forward</a>(X):&nbsp;Performs&nbsp;the&nbsp;forward&nbsp;pass&nbsp;of&nbsp;the&nbsp;layer.<br>
@@ -169,19 +193,36 @@ Methods:<br>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>class_type</strong> = jitclass.JITDenseLayer#18ced81e1d0&lt;weights:array...oat64, 2d, C),input_size:int32,output_size:int32&gt;</dl>
+<dl><dt><strong>class_type</strong> = jitclass.JITDenseLayer#16fc544ee50&lt;weights:array...oat64, 2d, C),input_size:int32,output_size:int32&gt;</dl>
 
 <hr>
 Methods inherited from JITDenseLayer:<br>
-<dl><dt><a name="JITDenseLayer-__init__"><strong>__init__</strong></a>(self, input_size, output_size, activation='relu')</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="JITDenseLayer-__init__"><strong>__init__</strong></a>(self, input_size, output_size, activation='relu')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;layer&nbsp;with&nbsp;weights,&nbsp;biases,&nbsp;and&nbsp;activation&nbsp;function.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_size:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;input&nbsp;features&nbsp;to&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_size:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;output&nbsp;features&nbsp;from&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activation:&nbsp;(str),&nbsp;optional&nbsp;-&nbsp;The&nbsp;activation&nbsp;function&nbsp;to&nbsp;use&nbsp;(default&nbsp;is&nbsp;"relu").<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weights:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;weight&nbsp;matrix&nbsp;initialized&nbsp;using&nbsp;He&nbsp;initialization&nbsp;for&nbsp;ReLU&nbsp;or&nbsp;Leaky&nbsp;ReLU,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or&nbsp;Xavier&nbsp;initialization&nbsp;for&nbsp;other&nbsp;activations.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;biases:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;bias&nbsp;vector&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activation:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;activation&nbsp;function&nbsp;for&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weight_gradients:&nbsp;(np.ndarray)&nbsp;-&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;weights,&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bias_gradients:&nbsp;(np.ndarray)&nbsp;-&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;biases,&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_cache:&nbsp;(np.ndarray)&nbsp;-&nbsp;Cached&nbsp;input&nbsp;values&nbsp;for&nbsp;backpropagation,&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_cache:&nbsp;(np.ndarray)&nbsp;-&nbsp;Cached&nbsp;output&nbsp;values&nbsp;for&nbsp;backpropagation,&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_size:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;input&nbsp;features&nbsp;to&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_size:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;output&nbsp;features&nbsp;from&nbsp;the&nbsp;layer.</span></dd></dl>
 
 <dl><dt><a name="JITDenseLayer-activate"><strong>activate</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;function.</span></dd></dl>
 
 <dl><dt><a name="JITDenseLayer-activation_derivative"><strong>activation_derivative</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;derivative.</span></dd></dl>
 
-<dl><dt><a name="JITDenseLayer-backward"><strong>backward</strong></a>(self, dA, reg_lambda)</dt></dl>
+<dl><dt><a name="JITDenseLayer-backward"><strong>backward</strong></a>(self, dA, reg_lambda)</dt><dd><span class="code">Perform&nbsp;the&nbsp;backward&nbsp;pass&nbsp;of&nbsp;the&nbsp;layer.</span></dd></dl>
 
-<dl><dt><a name="JITDenseLayer-forward"><strong>forward</strong></a>(self, X)</dt></dl>
+<dl><dt><a name="JITDenseLayer-forward"><strong>forward</strong></a>(self, X)</dt><dd><span class="code">Perform&nbsp;the&nbsp;forward&nbsp;pass&nbsp;of&nbsp;the&nbsp;layer.</span></dd></dl>
 
 <dl><dt><a name="JITDenseLayer-zero_grad"><strong>zero_grad</strong></a>(self)</dt><dd><span class="code">Reset&nbsp;the&nbsp;gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;to&nbsp;zero.</span></dd></dl>
 
@@ -197,11 +238,12 @@ Data descriptors inherited from JITDenseLayer:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="JITFlattenLayer">class <strong>JITFlattenLayer</strong></a>(JITFlattenLayer)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#JITFlattenLayer">JITFlattenLayer</a>(*args,&nbsp;**kwargs)<br>
 &nbsp;<br>
 A&nbsp;layer&nbsp;that&nbsp;flattens&nbsp;multi-dimensional&nbsp;input&nbsp;into&nbsp;a&nbsp;2D&nbsp;array&nbsp;(batch_size,&nbsp;flattened_size).<br>
+&nbsp;<br>
 Useful&nbsp;for&nbsp;transitioning&nbsp;from&nbsp;convolutional&nbsp;layers&nbsp;to&nbsp;dense&nbsp;layers.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn"><dl><dt>Method resolution order:</dt>
@@ -211,11 +253,20 @@ Useful&nbsp;for&nbsp;transitioning&nbsp;from&nbsp;convolutional&nbsp;layers&nbsp
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>class_type</strong> = jitclass.JITFlattenLayer#18ced8301d0&lt;input_shape...put_cache:array(float64, 4d, A),input_size:int32&gt;</dl>
+<dl><dt><strong>class_type</strong> = jitclass.JITFlattenLayer#16fc5474890&lt;input_shape...put_cache:array(float64, 4d, A),input_size:int32&gt;</dl>
 
 <hr>
 Methods inherited from JITFlattenLayer:<br>
-<dl><dt><a name="JITFlattenLayer-__init__"><strong>__init__</strong></a>(self)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="JITFlattenLayer-__init__"><strong>__init__</strong></a>(self)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;layer&nbsp;with&nbsp;placeholder&nbsp;values&nbsp;for&nbsp;input&nbsp;and&nbsp;output&nbsp;dimensions.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_shape:&nbsp;(tuple)&nbsp;-&nbsp;Shape&nbsp;of&nbsp;the&nbsp;input&nbsp;data,&nbsp;initialized&nbsp;to&nbsp;(0,&nbsp;0,&nbsp;0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This&nbsp;will&nbsp;be&nbsp;set&nbsp;during&nbsp;the&nbsp;forward&nbsp;pass.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_size:&nbsp;(int)&nbsp;-&nbsp;Size&nbsp;of&nbsp;the&nbsp;output,&nbsp;initialized&nbsp;to&nbsp;0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This&nbsp;will&nbsp;be&nbsp;set&nbsp;during&nbsp;the&nbsp;forward&nbsp;pass.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_size:&nbsp;(int)&nbsp;-&nbsp;Size&nbsp;of&nbsp;the&nbsp;input,&nbsp;initialized&nbsp;to&nbsp;0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This&nbsp;will&nbsp;be&nbsp;set&nbsp;during&nbsp;the&nbsp;forward&nbsp;pass.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_cache:&nbsp;(any)&nbsp;-&nbsp;Cache&nbsp;for&nbsp;input&nbsp;data,&nbsp;to&nbsp;be&nbsp;set&nbsp;during&nbsp;the&nbsp;forward&nbsp;pass.</span></dd></dl>
 
 <dl><dt><a name="JITFlattenLayer-backward"><strong>backward</strong></a>(self, dA, reg_lambda=0)</dt><dd><span class="code">Reshapes&nbsp;the&nbsp;gradient&nbsp;back&nbsp;to&nbsp;the&nbsp;original&nbsp;input&nbsp;shape.<br>
 &nbsp;<br>
@@ -247,14 +298,14 @@ Data descriptors inherited from JITFlattenLayer:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="JITRNNLayer">class <strong>JITRNNLayer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#JITRNNLayer">JITRNNLayer</a>(input_size,&nbsp;hidden_size,&nbsp;activation='tanh')<br>
 &nbsp;<br>
-<br>&nbsp;</span></td></tr>
+A&nbsp;recurrent&nbsp;layer&nbsp;implementation&nbsp;for&nbsp;neural&nbsp;networks&nbsp;using&nbsp;Numba&nbsp;JIT&nbsp;compilation.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="JITRNNLayer-__init__"><strong>__init__</strong></a>(self, input_size, hidden_size, activation='tanh')</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="JITRNNLayer-__init__"><strong>__init__</strong></a>(self, input_size, hidden_size, activation='tanh')</dt><dd><span class="code">Will&nbsp;be&nbsp;implemented&nbsp;later.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -268,7 +319,7 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor data-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
-    
+
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><strong>CACHE</strong> = False<br>
 <strong>conv_spec</strong> = [('in_channels', int32), ('out_channels', int32), ('kernel_size', int32), ('stride', int32), ('padding', int32), ('weights', Array(float64, 4, 'A', False, aligned=True)), ('biases', Array(float64, 2, 'A', False, aligned=True)), ('activation', unicode_type), ('weight_gradients', Array(float64, 4, 'A', False, aligned=True)), ('bias_gradients', Array(float64, 2, 'A', False, aligned=True)), ('input_cache', Array(float64, 4, 'A', False, aligned=True)), ('X_cols', Array(float64, 3, 'A', False, aligned=True)), ('X_padded', Array(float64, 4, 'A', False, aligned=True)), ('h_out', int32), ('w_out', int32), ('input_size', int32), ('output_size', int32)]<br>

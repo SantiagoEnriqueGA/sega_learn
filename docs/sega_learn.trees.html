@@ -41,7 +41,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Package Contents</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="sega_learn.trees.gradientBoostedRegressor.html">gradientBoostedRegressor</a><br>
 <a href="sega_learn.trees.isolationForest.html">isolationForest</a><br>
@@ -53,7 +53,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -76,40 +76,57 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="ClassifierTree">class <strong>ClassifierTree</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#ClassifierTree">ClassifierTree</a>(max_depth=5)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;representing&nbsp;a&nbsp;decision&nbsp;tree.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;decision&nbsp;tree.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;decision&nbsp;tree.<br>
 &nbsp;<br>
 Methods:<br>
--&nbsp;<a href="#ClassifierTree-learn">learn</a>(X,&nbsp;y,&nbsp;par_node={},&nbsp;depth=0):&nbsp;Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
--&nbsp;<a href="#ClassifierTree-classify">classify</a>(record):&nbsp;Classifies&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#ClassifierTree-learn">learn</a>(X,&nbsp;y,&nbsp;par_node={},&nbsp;depth=0):&nbsp;Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#ClassifierTree-classify">classify</a>(record):&nbsp;Classifies&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="ClassifierTree-__init__"><strong>__init__</strong></a>(self, max_depth=5)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="ClassifierTree-__init__"><strong>__init__</strong></a>(self, max_depth=5)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#ClassifierTree">ClassifierTree</a>&nbsp;with&nbsp;a&nbsp;maximum&nbsp;depth.</span></dd></dl>
 
-<dl><dt><a name="ClassifierTree-classify"><strong>classify</strong></a>(self, record)</dt><dd><span class="code">Classifies&nbsp;a&nbsp;given&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
+<dl><dt><a name="ClassifierTree-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fits&nbsp;the&nbsp;decision&nbsp;tree&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;record:&nbsp;A&nbsp;dictionary&nbsp;representing&nbsp;the&nbsp;record&nbsp;to&nbsp;be&nbsp;classified.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.</span></dd></dl>
+
+<dl><dt><a name="ClassifierTree-learn"><strong>learn</strong></a>(self, X, y, par_node=None, depth=0)</dt><dd><span class="code">Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;par_node:&nbsp;(dict)&nbsp;-&nbsp;The&nbsp;parent&nbsp;node&nbsp;of&nbsp;the&nbsp;current&nbsp;subtree&nbsp;(default:&nbsp;{}).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;depth:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;subtree&nbsp;(default:&nbsp;0).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;The&nbsp;label&nbsp;assigned&nbsp;to&nbsp;the&nbsp;record&nbsp;based&nbsp;on&nbsp;the&nbsp;decision&nbsp;tree.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;decision&nbsp;tree.</span></dd></dl>
 
-<dl><dt><a name="ClassifierTree-learn"><strong>learn</strong></a>(self, X, y, par_node={}, depth=0)</dt><dd><span class="code">Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
+<dl><dt><a name="ClassifierTree-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;the&nbsp;labels&nbsp;for&nbsp;a&nbsp;given&nbsp;set&nbsp;of&nbsp;records&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
--&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;labels.<br>
--&nbsp;par_node&nbsp;(dict):&nbsp;The&nbsp;parent&nbsp;node&nbsp;of&nbsp;the&nbsp;current&nbsp;subtree&nbsp;(default:&nbsp;{}).<br>
--&nbsp;depth&nbsp;(int):&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;subtree&nbsp;(default:&nbsp;0).<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;decision&nbsp;tree.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;list:&nbsp;A&nbsp;list&nbsp;of&nbsp;predicted&nbsp;labels&nbsp;for&nbsp;each&nbsp;record.</span></dd></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="ClassifierTree-classify"><strong>classify</strong></a>(tree, record)</dt><dd><span class="code">Classifies&nbsp;a&nbsp;given&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tree:&nbsp;(dict)&nbsp;-&nbsp;The&nbsp;decision&nbsp;tree.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;record:&nbsp;(dict)&nbsp;-&nbsp;A&nbsp;dictionary&nbsp;representing&nbsp;the&nbsp;record&nbsp;to&nbsp;be&nbsp;classified.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;label&nbsp;assigned&nbsp;to&nbsp;the&nbsp;record&nbsp;based&nbsp;on&nbsp;the&nbsp;decision&nbsp;tree.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -123,51 +140,51 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="ClassifierTreeUtility">class <strong>ClassifierTreeUtility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code">Utility&nbsp;class&nbsp;for&nbsp;computing&nbsp;entropy,&nbsp;partitioning&nbsp;classes,&nbsp;and&nbsp;calculating&nbsp;information&nbsp;gain.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="ClassifierTreeUtility-best_split"><strong>best_split</strong></a>(self, X, y)</dt><dd><span class="code">Finds&nbsp;the&nbsp;best&nbsp;attribute&nbsp;and&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;data&nbsp;based&nbsp;on&nbsp;information&nbsp;gain.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
--&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;variable.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;variable.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;dict:&nbsp;A&nbsp;dictionary&nbsp;containing&nbsp;the&nbsp;best&nbsp;split&nbsp;attribute,&nbsp;split&nbsp;value,&nbsp;left&nbsp;and&nbsp;right&nbsp;subsets&nbsp;of&nbsp;X&nbsp;and&nbsp;y,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;the&nbsp;information&nbsp;gain&nbsp;achieved&nbsp;by&nbsp;the&nbsp;split.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;A&nbsp;dictionary&nbsp;containing&nbsp;the&nbsp;best&nbsp;split&nbsp;attribute,&nbsp;split&nbsp;value,&nbsp;left&nbsp;and&nbsp;right&nbsp;subsets&nbsp;of&nbsp;X&nbsp;and&nbsp;y,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;the&nbsp;information&nbsp;gain&nbsp;achieved&nbsp;by&nbsp;the&nbsp;split.</span></dd></dl>
 
 <dl><dt><a name="ClassifierTreeUtility-entropy"><strong>entropy</strong></a>(self, class_y)</dt><dd><span class="code">Computes&nbsp;the&nbsp;entropy&nbsp;for&nbsp;a&nbsp;given&nbsp;class.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;class_y&nbsp;(array-like):&nbsp;The&nbsp;class&nbsp;labels.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;class_y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;class&nbsp;labels.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;float:&nbsp;The&nbsp;entropy&nbsp;value.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;entropy&nbsp;value.</span></dd></dl>
 
 <dl><dt><a name="ClassifierTreeUtility-information_gain"><strong>information_gain</strong></a>(self, previous_y, current_y)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;information&nbsp;gain&nbsp;between&nbsp;the&nbsp;previous&nbsp;and&nbsp;current&nbsp;values&nbsp;of&nbsp;y.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;previous_y&nbsp;(array-like):&nbsp;The&nbsp;previous&nbsp;values&nbsp;of&nbsp;y.<br>
--&nbsp;current_y&nbsp;(array-like):&nbsp;The&nbsp;current&nbsp;values&nbsp;of&nbsp;y.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;previous_y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;previous&nbsp;values&nbsp;of&nbsp;y.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;current_y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;current&nbsp;values&nbsp;of&nbsp;y.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;float:&nbsp;The&nbsp;information&nbsp;gain&nbsp;between&nbsp;the&nbsp;previous&nbsp;and&nbsp;current&nbsp;values&nbsp;of&nbsp;y.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;information&nbsp;gain&nbsp;between&nbsp;the&nbsp;previous&nbsp;and&nbsp;current&nbsp;values&nbsp;of&nbsp;y.</span></dd></dl>
 
 <dl><dt><a name="ClassifierTreeUtility-partition_classes"><strong>partition_classes</strong></a>(self, X, y, split_attribute, split_val)</dt><dd><span class="code">Partitions&nbsp;the&nbsp;dataset&nbsp;into&nbsp;two&nbsp;subsets&nbsp;based&nbsp;on&nbsp;a&nbsp;given&nbsp;split&nbsp;attribute&nbsp;and&nbsp;value.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
--&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;labels.<br>
--&nbsp;split_attribute&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;attribute&nbsp;to&nbsp;split&nbsp;on.<br>
--&nbsp;split_val&nbsp;(float):&nbsp;The&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;attribute&nbsp;on.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;split_attribute:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;attribute&nbsp;to&nbsp;split&nbsp;on.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;split_val:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;attribute&nbsp;on.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;X_left&nbsp;&nbsp;(array-like):&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;less&nbsp;than&nbsp;or&nbsp;equal&nbsp;to&nbsp;the&nbsp;split&nbsp;value.<br>
--&nbsp;X_right&nbsp;(array-like):&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;greater&nbsp;than&nbsp;the&nbsp;split&nbsp;value.<br>
--&nbsp;y_left&nbsp;&nbsp;(array-like):&nbsp;The&nbsp;subset&nbsp;of&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;X_left.<br>
--&nbsp;y_right&nbsp;(array-like):&nbsp;The&nbsp;subset&nbsp;of&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;X_right.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X_left:&nbsp;&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;less&nbsp;than&nbsp;or&nbsp;equal&nbsp;to&nbsp;the&nbsp;split&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_right:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;greater&nbsp;than&nbsp;the&nbsp;split&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_left:&nbsp;&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;X_left.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_right:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;X_right.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -181,7 +198,7 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="GradientBoostedRegressor">class <strong>GradientBoostedRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#GradientBoostedRegressor">GradientBoostedRegressor</a>(X=None,&nbsp;y=None,&nbsp;num_trees:&nbsp;int&nbsp;=&nbsp;10,&nbsp;max_depth:&nbsp;int&nbsp;=&nbsp;10,&nbsp;random_seed:&nbsp;int&nbsp;=&nbsp;0)<br>
 &nbsp;<br>
@@ -205,18 +222,28 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#GradientBoostedRegressor-get_stats">get_stats</a>(y_predicted):&nbsp;Calculates&nbsp;various&nbsp;evaluation&nbsp;metrics&nbsp;for&nbsp;the&nbsp;predicted&nbsp;target&nbsp;values.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="GradientBoostedRegressor-__init__"><strong>__init__</strong></a>(self, X=None, y=None, num_trees: int = 10, max_depth: int = 10, random_seed: int = 0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="GradientBoostedRegressor-__init__"><strong>__init__</strong></a>(self, X=None, y=None, num_trees: int = 10, max_depth: int = 10, random_seed: int = 0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;Gradient&nbsp;Boosted&nbsp;Decision&nbsp;Tree&nbsp;Regressor.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray),&nbsp;optional&nbsp;-&nbsp;Input&nbsp;feature&nbsp;data&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(np.ndarray),&nbsp;optional&nbsp;-&nbsp;Target&nbsp;data&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;num_trees:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;Number&nbsp;of&nbsp;trees&nbsp;in&nbsp;the&nbsp;ensemble&nbsp;(default&nbsp;is&nbsp;10).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;Maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;tree&nbsp;(default&nbsp;is&nbsp;10).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;random_seed:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;Random&nbsp;seed&nbsp;for&nbsp;reproducibility&nbsp;(default&nbsp;is&nbsp;0).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;None</span></dd></dl>
 
 <dl><dt><a name="GradientBoostedRegressor-fit"><strong>fit</strong></a>(self, X=None, y=None, stats=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;gradient&nbsp;boosted&nbsp;decision&nbsp;tree&nbsp;regressor&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
 &nbsp;<br>
 This&nbsp;method&nbsp;trains&nbsp;the&nbsp;ensemble&nbsp;of&nbsp;decision&nbsp;trees&nbsp;by&nbsp;iteratively&nbsp;fitting&nbsp;each&nbsp;tree&nbsp;to&nbsp;the&nbsp;residuals<br>
 of&nbsp;the&nbsp;previous&nbsp;iteration.&nbsp;The&nbsp;residuals&nbsp;are&nbsp;updated&nbsp;after&nbsp;each&nbsp;iteration&nbsp;by&nbsp;subtracting&nbsp;the&nbsp;predictions<br>
-made&nbsp;by&nbsp;the&nbsp;current&nbsp;tree&nbsp;from&nbsp;the&nbsp;target&nbsp;values.<br>
+made&nbsp;by&nbsp;the&nbsp;current&nbsp;tree&nbsp;from&nbsp;the&nbsp;:target&nbsp;values.<br>
 &nbsp;<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;input&nbsp;data&nbsp;features.&nbsp;Default&nbsp;is&nbsp;None.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;stats&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;decide&nbsp;whether&nbsp;to&nbsp;return&nbsp;stats&nbsp;or&nbsp;not.&nbsp;Default&nbsp;is&nbsp;False.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;An&nbsp;array&nbsp;of&nbsp;input&nbsp;:data&nbsp;features.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;An&nbsp;array&nbsp;of&nbsp;target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;stats:&nbsp;(bool)&nbsp;-&nbsp;A&nbsp;flag&nbsp;to&nbsp;decide&nbsp;whether&nbsp;to&nbsp;return&nbsp;stats&nbsp;or&nbsp;not.&nbsp;Default&nbsp;is&nbsp;False.<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;None</span></dd></dl>
@@ -236,13 +263,13 @@ Returns:<br>
 
 <dl><dt><a name="GradientBoostedRegressor-predict"><strong>predict</strong></a>(self, X=None)</dt><dd><span class="code">Predicts&nbsp;the&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data&nbsp;using&nbsp;the&nbsp;gradient&nbsp;boosted&nbsp;decision&nbsp;tree&nbsp;regressor.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;input&nbsp;data&nbsp;features.&nbsp;Default&nbsp;is&nbsp;None.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;An&nbsp;array&nbsp;of&nbsp;input&nbsp;data&nbsp;features.&nbsp;Default&nbsp;is&nbsp;None.<br>
 &nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;predictions&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;predicted&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;predictions:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;An&nbsp;array&nbsp;of&nbsp;predicted&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
 
-<dl><dt><a name="GradientBoostedRegressor-reset"><strong>reset</strong></a>(self)</dt></dl>
+<dl><dt><a name="GradientBoostedRegressor-reset"><strong>reset</strong></a>(self)</dt><dd><span class="code">Resets&nbsp;the&nbsp;GBDT&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;its&nbsp;initial&nbsp;state.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -256,38 +283,88 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="IsolationForest">class <strong>IsolationForest</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#IsolationForest">IsolationForest</a>(n_trees=100,&nbsp;max_samples=None,&nbsp;max_depth=10,&nbsp;n_jobs=1,&nbsp;force_true_length=False)<br>
 &nbsp;<br>
-Isolation&nbsp;Forest&nbsp;for&nbsp;anomaly&nbsp;detection.<br>&nbsp;</span></td></tr>
+<a href="#IsolationForest">IsolationForest</a>&nbsp;is&nbsp;an&nbsp;implementation&nbsp;of&nbsp;the&nbsp;Isolation&nbsp;Forest&nbsp;algorithm&nbsp;for&nbsp;anomaly&nbsp;detection.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_trees&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;isolation&nbsp;trees&nbsp;to&nbsp;build.&nbsp;Default&nbsp;is&nbsp;100.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_samples&nbsp;(int&nbsp;or&nbsp;None):&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;samples&nbsp;to&nbsp;draw&nbsp;for&nbsp;each&nbsp;tree.&nbsp;If&nbsp;None,&nbsp;defaults&nbsp;to&nbsp;the&nbsp;minimum&nbsp;of&nbsp;256&nbsp;or&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;in&nbsp;the&nbsp;dataset.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;isolation&nbsp;tree.&nbsp;Default&nbsp;is&nbsp;10.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_jobs&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;parallel&nbsp;jobs&nbsp;to&nbsp;run.&nbsp;Set&nbsp;to&nbsp;-1&nbsp;to&nbsp;use&nbsp;all&nbsp;available&nbsp;cores.&nbsp;Default&nbsp;is&nbsp;1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;force_true_length&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;force&nbsp;the&nbsp;true&nbsp;path&nbsp;length&nbsp;calculation.&nbsp;Default&nbsp;is&nbsp;False.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;trees&nbsp;(list):&nbsp;A&nbsp;list&nbsp;to&nbsp;store&nbsp;the&nbsp;trained&nbsp;isolation&nbsp;trees.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;classes_&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;representing&nbsp;the&nbsp;classes&nbsp;(0&nbsp;for&nbsp;normal,&nbsp;1&nbsp;for&nbsp;anomaly).<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#IsolationForest-__init__">__init__</a>(n_trees=100,&nbsp;max_samples=None,&nbsp;max_depth=10,&nbsp;n_jobs=1,&nbsp;force_true_length=False):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;<a href="#IsolationForest">IsolationForest</a>&nbsp;with&nbsp;the&nbsp;specified&nbsp;parameters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#IsolationForest-fit">fit</a>(X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fits&nbsp;the&nbsp;isolation&nbsp;forest&nbsp;to&nbsp;the&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_fit_tree(X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fits&nbsp;a&nbsp;single&nbsp;isolation&nbsp;tree&nbsp;to&nbsp;a&nbsp;subset&nbsp;of&nbsp;the&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#IsolationTree">IsolationTree</a>:&nbsp;A&nbsp;trained&nbsp;isolation&nbsp;tree.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#IsolationForest-anomaly_score">anomaly_score</a>(X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes&nbsp;the&nbsp;anomaly&nbsp;scores&nbsp;for&nbsp;given&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numpy.ndarray:&nbsp;An&nbsp;array&nbsp;of&nbsp;anomaly&nbsp;scores.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#IsolationForest-predict">predict</a>(X,&nbsp;threshold=0.5):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predicts&nbsp;whether&nbsp;samples&nbsp;are&nbsp;anomalies.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;threshold&nbsp;(float):&nbsp;The&nbsp;threshold&nbsp;for&nbsp;classifying&nbsp;anomalies&nbsp;(default:&nbsp;0.5).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numpy.ndarray:&nbsp;An&nbsp;array&nbsp;of&nbsp;predictions&nbsp;(1&nbsp;if&nbsp;the&nbsp;sample&nbsp;is&nbsp;an&nbsp;anomaly,&nbsp;0&nbsp;otherwise).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#IsolationForest-__sklearn_is_fitted__">__sklearn_is_fitted__</a>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool:&nbsp;True&nbsp;if&nbsp;the&nbsp;model&nbsp;is&nbsp;fitted,&nbsp;False&nbsp;otherwise.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="IsolationForest-__init__"><strong>__init__</strong></a>(self, n_trees=100, max_samples=None, max_depth=10, n_jobs=1, force_true_length=False)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="IsolationForest-__init__"><strong>__init__</strong></a>(self, n_trees=100, max_samples=None, max_depth=10, n_jobs=1, force_true_length=False)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#IsolationForest">IsolationForest</a>&nbsp;with&nbsp;the&nbsp;specified&nbsp;parameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_trees:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;isolation&nbsp;trees&nbsp;to&nbsp;build&nbsp;(default:&nbsp;100).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_samples:&nbsp;(int&nbsp;or&nbsp;None),&nbsp;optional&nbsp;-&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;samples&nbsp;to&nbsp;draw&nbsp;for&nbsp;each&nbsp;tree.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;None,&nbsp;defaults&nbsp;to&nbsp;the&nbsp;minimum&nbsp;of&nbsp;256&nbsp;or&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;in&nbsp;the&nbsp;dataset&nbsp;(default:&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;isolation&nbsp;tree&nbsp;(default:&nbsp;10).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_jobs:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;parallel&nbsp;jobs&nbsp;to&nbsp;run.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set&nbsp;to&nbsp;-1&nbsp;to&nbsp;use&nbsp;all&nbsp;available&nbsp;cores&nbsp;(default:&nbsp;1).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;force_true_length:&nbsp;(bool),&nbsp;optional&nbsp;-&nbsp;Whether&nbsp;to&nbsp;force&nbsp;the&nbsp;true&nbsp;path&nbsp;length&nbsp;calculation&nbsp;(default:&nbsp;False).<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_trees:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;isolation&nbsp;trees.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_samples:&nbsp;(int&nbsp;or&nbsp;None)&nbsp;-&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;samples&nbsp;for&nbsp;each&nbsp;tree.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;trees.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;force_true_length:&nbsp;(bool)&nbsp;-&nbsp;Indicates&nbsp;whether&nbsp;to&nbsp;use&nbsp;the&nbsp;true&nbsp;path&nbsp;length&nbsp;for&nbsp;scoring.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;trees:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;to&nbsp;store&nbsp;the&nbsp;trained&nbsp;isolation&nbsp;trees.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_jobs:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;parallel&nbsp;jobs&nbsp;to&nbsp;run.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;classes_:&nbsp;(np.ndarray)&nbsp;-&nbsp;An&nbsp;array&nbsp;representing&nbsp;the&nbsp;classes&nbsp;(0&nbsp;for&nbsp;normal,&nbsp;1&nbsp;for&nbsp;anomaly).</span></dd></dl>
 
-<dl><dt><a name="IsolationForest-__sklearn_is_fitted__"><strong>__sklearn_is_fitted__</strong></a>(self)</dt></dl>
+<dl><dt><a name="IsolationForest-__sklearn_is_fitted__"><strong>__sklearn_is_fitted__</strong></a>(self)</dt><dd><span class="code">Checks&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted.</span></dd></dl>
 
 <dl><dt><a name="IsolationForest-anomaly_score"><strong>anomaly_score</strong></a>(self, X)</dt><dd><span class="code">Computes&nbsp;the&nbsp;anomaly&nbsp;scores&nbsp;for&nbsp;given&nbsp;samples.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;samples.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;samples.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;array:&nbsp;An&nbsp;array&nbsp;of&nbsp;anomaly&nbsp;scores.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;array:&nbsp;An&nbsp;array&nbsp;of&nbsp;anomaly&nbsp;scores.</span></dd></dl>
 
 <dl><dt><a name="IsolationForest-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fits&nbsp;the&nbsp;isolation&nbsp;forest&nbsp;to&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.</span></dd></dl>
 
 <dl><dt><a name="IsolationForest-predict"><strong>predict</strong></a>(self, X, threshold=0.5)</dt><dd><span class="code">Predicts&nbsp;whether&nbsp;samples&nbsp;are&nbsp;anomalies.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;samples.<br>
--&nbsp;threshold&nbsp;(float):&nbsp;The&nbsp;threshold&nbsp;for&nbsp;classifying&nbsp;anomalies&nbsp;(default:&nbsp;0.5).<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;threshold:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;threshold&nbsp;for&nbsp;classifying&nbsp;anomalies&nbsp;(default:&nbsp;0.5).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;array:&nbsp;An&nbsp;array&nbsp;of&nbsp;predictions&nbsp;(1&nbsp;if&nbsp;the&nbsp;sample&nbsp;is&nbsp;an&nbsp;anomaly,&nbsp;0&nbsp;otherwise).</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;array:&nbsp;An&nbsp;array&nbsp;of&nbsp;predictions&nbsp;(1&nbsp;if&nbsp;the&nbsp;sample&nbsp;is&nbsp;an&nbsp;anomaly,&nbsp;0&nbsp;otherwise).</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -301,33 +378,61 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="IsolationTree">class <strong>IsolationTree</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#IsolationTree">IsolationTree</a>(max_depth=10,&nbsp;force_true_length=False)<br>
 &nbsp;<br>
-An&nbsp;isolation&nbsp;tree&nbsp;for&nbsp;anomaly&nbsp;detection.<br>&nbsp;</span></td></tr>
+<a href="#IsolationTree">IsolationTree</a>&nbsp;is&nbsp;a&nbsp;class&nbsp;that&nbsp;implements&nbsp;an&nbsp;isolation&nbsp;tree,&nbsp;which&nbsp;is&nbsp;a&nbsp;fundamental&nbsp;building&nbsp;block&nbsp;of&nbsp;the&nbsp;Isolation&nbsp;Forest&nbsp;algorithm.<br>
+&nbsp;<br>
+The&nbsp;Isolation&nbsp;Forest&nbsp;is&nbsp;an&nbsp;unsupervised&nbsp;learning&nbsp;method&nbsp;used&nbsp;for&nbsp;anomaly&nbsp;detection.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;tree.&nbsp;Default&nbsp;is&nbsp;10.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tree&nbsp;(dict):&nbsp;The&nbsp;learned&nbsp;isolation&nbsp;tree&nbsp;structure.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;force_true_length&nbsp;(bool):&nbsp;If&nbsp;True,&nbsp;the&nbsp;true&nbsp;path&nbsp;length&nbsp;is&nbsp;used&nbsp;for&nbsp;scoring<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instead&nbsp;of&nbsp;the&nbsp;average&nbsp;path&nbsp;length.<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#IsolationTree-__init__">__init__</a>(max_depth=10,&nbsp;force_true_length=False):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;<a href="#IsolationTree">IsolationTree</a>&nbsp;with&nbsp;the&nbsp;specified&nbsp;maximum&nbsp;depth&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scoring&nbsp;method.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#IsolationTree-fit">fit</a>(X,&nbsp;depth=0):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fits&nbsp;the&nbsp;isolation&nbsp;tree&nbsp;to&nbsp;the&nbsp;input&nbsp;data&nbsp;by&nbsp;recursively&nbsp;partitioning<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;data&nbsp;based&nbsp;on&nbsp;randomly&nbsp;selected&nbsp;features&nbsp;and&nbsp;split&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#IsolationTree-path_length">path_length</a>(X,&nbsp;tree=None,&nbsp;depth=0):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes&nbsp;the&nbsp;path&nbsp;length&nbsp;for&nbsp;a&nbsp;given&nbsp;sample&nbsp;by&nbsp;traversing&nbsp;the&nbsp;tree<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;structure.&nbsp;The&nbsp;path&nbsp;length&nbsp;is&nbsp;used&nbsp;to&nbsp;determine&nbsp;how&nbsp;isolated&nbsp;a&nbsp;sample&nbsp;is.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="IsolationTree-__init__"><strong>__init__</strong></a>(self, max_depth=10, force_true_length=False)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="IsolationTree-__init__"><strong>__init__</strong></a>(self, max_depth=10, force_true_length=False)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;Isolation&nbsp;Forest&nbsp;with&nbsp;specified&nbsp;parameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;Maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default&nbsp;is&nbsp;10).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;force_true_length:&nbsp;(bool),&nbsp;optional&nbsp;-&nbsp;If&nbsp;True,&nbsp;use&nbsp;the&nbsp;true&nbsp;path&nbsp;length&nbsp;for&nbsp;scoring&nbsp;(default&nbsp;is&nbsp;False).<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth:&nbsp;(int)&nbsp;-&nbsp;Maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;tree.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tree:&nbsp;(<a href="builtins.html#object">object</a>&nbsp;or&nbsp;None)&nbsp;-&nbsp;The&nbsp;tree&nbsp;structure&nbsp;used&nbsp;in&nbsp;the&nbsp;Isolation&nbsp;Forest&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;force_true_length:&nbsp;(bool)&nbsp;-&nbsp;Indicates&nbsp;whether&nbsp;to&nbsp;use&nbsp;the&nbsp;true&nbsp;path&nbsp;length&nbsp;for&nbsp;scoring.</span></dd></dl>
 
 <dl><dt><a name="IsolationTree-fit"><strong>fit</strong></a>(self, X, depth=0)</dt><dd><span class="code">Fits&nbsp;the&nbsp;isolation&nbsp;tree&nbsp;to&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
--&nbsp;depth&nbsp;(int):&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default:&nbsp;0).<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;depth:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default:&nbsp;0).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;isolation&nbsp;tree.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;isolation&nbsp;tree.</span></dd></dl>
 
 <dl><dt><a name="IsolationTree-path_length"><strong>path_length</strong></a>(self, X, tree=None, depth=0)</dt><dd><span class="code">Computes&nbsp;the&nbsp;path&nbsp;length&nbsp;for&nbsp;a&nbsp;given&nbsp;sample.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;sample.<br>
--&nbsp;tree&nbsp;(dict):&nbsp;The&nbsp;current&nbsp;node&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default:&nbsp;None).<br>
--&nbsp;depth&nbsp;(int):&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default:&nbsp;0).<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;sample.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tree:&nbsp;(dict)&nbsp;-&nbsp;The&nbsp;current&nbsp;node&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default:&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;depth:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;tree&nbsp;(default:&nbsp;0).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;int:&nbsp;The&nbsp;path&nbsp;length.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;int:&nbsp;The&nbsp;path&nbsp;length.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -341,18 +446,18 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="IsolationUtils">class <strong>IsolationUtils</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code">Utility&nbsp;functions&nbsp;for&nbsp;the&nbsp;Isolation&nbsp;Forest&nbsp;algorithm.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Static methods defined here:<br>
 <dl><dt><a name="IsolationUtils-compute_avg_path_length"><strong>compute_avg_path_length</strong></a>(size)</dt><dd><span class="code">Computes&nbsp;the&nbsp;average&nbsp;path&nbsp;length&nbsp;of&nbsp;unsuccessful&nbsp;searches&nbsp;in&nbsp;a&nbsp;binary&nbsp;search&nbsp;tree.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;tree.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;size:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;tree.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;float:&nbsp;The&nbsp;average&nbsp;path&nbsp;length.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;average_path_length:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;average&nbsp;path&nbsp;length.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -366,72 +471,49 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomForestClassifier">class <strong>RandomForestClassifier</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestClassifier">RandomForestClassifier</a>(X=None,&nbsp;y=None,&nbsp;max_depth=5,&nbsp;forest_size=5,&nbsp;display=False,&nbsp;random_seed=0)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestClassifier">RandomForestClassifier</a>(forest_size=100,&nbsp;max_depth=10,&nbsp;n_jobs=-1,&nbsp;random_seed=None,&nbsp;X=None,&nbsp;y=None)<br>
 &nbsp;<br>
-Random&nbsp;Forest&nbsp;classifier.<br>
+<a href="#RandomForestClassifier">RandomForestClassifier</a>&nbsp;is&nbsp;a&nbsp;custom&nbsp;implementation&nbsp;of&nbsp;a&nbsp;Random&nbsp;Forest&nbsp;classifier.<br>
 &nbsp;<br>
 Attributes:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;num_trees&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;decision_trees&nbsp;(list):&nbsp;List&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;bootstraps_datasets&nbsp;(list):&nbsp;List&nbsp;of&nbsp;bootstrapped&nbsp;datasets&nbsp;for&nbsp;each&nbsp;tree.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;bootstraps_labels&nbsp;(list):&nbsp;List&nbsp;of&nbsp;true&nbsp;class&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;records&nbsp;in&nbsp;the&nbsp;bootstrapped&nbsp;datasets.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_estimators&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;trees&nbsp;in&nbsp;the&nbsp;forest.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;tree.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_jobs&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;jobs&nbsp;to&nbsp;run&nbsp;in&nbsp;parallel.&nbsp;Defaults&nbsp;to&nbsp;-1&nbsp;(use&nbsp;all&nbsp;available&nbsp;processors).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;random_state&nbsp;(int&nbsp;or&nbsp;None):&nbsp;The&nbsp;seed&nbsp;for&nbsp;random&nbsp;number&nbsp;generation.&nbsp;Defaults&nbsp;to&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;trees&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;trained&nbsp;decision&nbsp;trees.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bootstraps&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;bootstrapped&nbsp;indices&nbsp;for&nbsp;out-of-bag&nbsp;(OOB)&nbsp;scoring.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(numpy.ndarray&nbsp;or&nbsp;None):&nbsp;The&nbsp;feature&nbsp;matrix&nbsp;used&nbsp;for&nbsp;training.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(numpy.ndarray&nbsp;or&nbsp;None):&nbsp;The&nbsp;target&nbsp;labels&nbsp;used&nbsp;for&nbsp;training.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;model&nbsp;after&nbsp;fitting.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;precision&nbsp;(float):&nbsp;The&nbsp;precision&nbsp;of&nbsp;the&nbsp;model&nbsp;after&nbsp;fitting.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;recall&nbsp;(float):&nbsp;The&nbsp;recall&nbsp;of&nbsp;the&nbsp;model&nbsp;after&nbsp;fitting.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;f1_score&nbsp;(float):&nbsp;The&nbsp;F1&nbsp;score&nbsp;of&nbsp;the&nbsp;model&nbsp;after&nbsp;fitting.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;log_loss&nbsp;(float&nbsp;or&nbsp;None):&nbsp;The&nbsp;log&nbsp;loss&nbsp;of&nbsp;the&nbsp;model&nbsp;after&nbsp;fitting&nbsp;(only&nbsp;for&nbsp;binary&nbsp;classification).<br>
 &nbsp;<br>
 Methods:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestClassifier-__init__">__init__</a>(self,&nbsp;num_trees,&nbsp;max_depth):&nbsp;Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;_reset(self):&nbsp;Resets&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;_bootstrapping(self,&nbsp;XX,&nbsp;n):&nbsp;Performs&nbsp;bootstrapping&nbsp;on&nbsp;the&nbsp;dataset.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestClassifier-bootstrapping">bootstrapping</a>(self,&nbsp;XX):&nbsp;Initializes&nbsp;the&nbsp;bootstrapped&nbsp;datasets&nbsp;for&nbsp;each&nbsp;tree.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestClassifier-fitting">fitting</a>(self):&nbsp;Fits&nbsp;the&nbsp;decision&nbsp;trees&nbsp;to&nbsp;the&nbsp;bootstrapped&nbsp;datasets.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestClassifier-voting">voting</a>(self,&nbsp;X):&nbsp;Performs&nbsp;voting&nbsp;to&nbsp;classify&nbsp;the&nbsp;input&nbsp;records.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestClassifier-__init__">__init__</a>(forest_size=100,&nbsp;max_depth=10,&nbsp;n_jobs=-1,&nbsp;random_seed=None,&nbsp;X=None,&nbsp;y=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;<a href="#RandomForestClassifier">RandomForestClassifier</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;specified&nbsp;parameters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestClassifier-fit">fit</a>(X=None,&nbsp;y=None,&nbsp;verbose=False):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fits&nbsp;the&nbsp;random&nbsp;forest&nbsp;model&nbsp;to&nbsp;the&nbsp;provided&nbsp;data&nbsp;using&nbsp;parallel&nbsp;processing.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestClassifier-calculate_metrics">calculate_metrics</a>(y_true,&nbsp;y_pred):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;evaluation&nbsp;metrics&nbsp;(accuracy,&nbsp;precision,&nbsp;recall,&nbsp;F1&nbsp;score,&nbsp;and&nbsp;log&nbsp;loss)&nbsp;for&nbsp;classification.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestClassifier-predict">predict</a>(X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predicts&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;provided&nbsp;data&nbsp;using&nbsp;the&nbsp;trained&nbsp;random&nbsp;forest.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestClassifier-get_stats">get_stats</a>(verbose=False):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns&nbsp;the&nbsp;evaluation&nbsp;metrics&nbsp;(accuracy,&nbsp;precision,&nbsp;recall,&nbsp;F1&nbsp;score,&nbsp;and&nbsp;log&nbsp;loss)&nbsp;as&nbsp;a&nbsp;dictionary.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RandomForestClassifier-__init__"><strong>__init__</strong></a>(self, X=None, y=None, max_depth=5, forest_size=5, display=False, random_seed=0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;num_trees&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.</span></dd></dl>
+<dl><dt><a name="RandomForestClassifier-__init__"><strong>__init__</strong></a>(self, forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
 
-<dl><dt><a name="RandomForestClassifier-bootstrapping"><strong>bootstrapping</strong></a>(self, XX)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;bootstrapped&nbsp;datasets&nbsp;for&nbsp;each&nbsp;tree.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;XX&nbsp;(list):&nbsp;The&nbsp;dataset.</span></dd></dl>
+<dl><dt><a name="RandomForestClassifier-calculate_metrics"><strong>calculate_metrics</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculate&nbsp;evaluation&nbsp;metrics&nbsp;for&nbsp;classification.</span></dd></dl>
 
-<dl><dt><a name="RandomForestClassifier-display_info_gains"><strong>display_info_gains</strong></a>(self)</dt><dd><span class="code">Displays&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.</span></dd></dl>
+<dl><dt><a name="RandomForestClassifier-fit"><strong>fit</strong></a>(self, X=None, y=None, verbose=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;random&nbsp;forest&nbsp;with&nbsp;parallel&nbsp;processing.</span></dd></dl>
 
-<dl><dt><a name="RandomForestClassifier-fit"><strong>fit</strong></a>(self, X=None, y=None, verbose=False)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>&nbsp;and&nbsp;the&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.<br>
-&nbsp;<br>
-Raises:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;FileNotFoundError:&nbsp;If&nbsp;the&nbsp;file&nbsp;specified&nbsp;by&nbsp;file_loc&nbsp;does&nbsp;not&nbsp;exist.</span></dd></dl>
+<dl><dt><a name="RandomForestClassifier-get_stats"><strong>get_stats</strong></a>(self, verbose=False)</dt><dd><span class="code">Return&nbsp;the&nbsp;evaluation&nbsp;metrics.</span></dd></dl>
 
-<dl><dt><a name="RandomForestClassifier-fitting"><strong>fitting</strong></a>(self)</dt><dd><span class="code">Fits&nbsp;the&nbsp;decision&nbsp;trees&nbsp;to&nbsp;the&nbsp;bootstrapped&nbsp;datasets.</span></dd></dl>
-
-<dl><dt><a name="RandomForestClassifier-plot_info_gains"><strong>plot_info_gains</strong></a>(self)</dt><dd><span class="code">Plots&nbsp;the&nbsp;information&nbsp;gain&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree&nbsp;separately.</span></dd></dl>
-
-<dl><dt><a name="RandomForestClassifier-plot_info_gains_together"><strong>plot_info_gains_together</strong></a>(self)</dt><dd><span class="code">Plots&nbsp;the&nbsp;information&nbsp;gains&nbsp;of&nbsp;all&nbsp;decision&nbsp;trees&nbsp;together.</span></dd></dl>
-
-<dl><dt><a name="RandomForestClassifier-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;the&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;records.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(list):&nbsp;The&nbsp;input&nbsp;records.<br>
-&nbsp;<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;list:&nbsp;The&nbsp;predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;records.</span></dd></dl>
-
-<dl><dt><a name="RandomForestClassifier-reset"><strong>reset</strong></a>(self)</dt><dd><span class="code">Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
-
-<dl><dt><a name="RandomForestClassifier-voting"><strong>voting</strong></a>(self, X)</dt><dd><span class="code">Performs&nbsp;voting&nbsp;to&nbsp;classify&nbsp;the&nbsp;input&nbsp;records.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(list):&nbsp;The&nbsp;input&nbsp;records.<br>
-&nbsp;<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;list:&nbsp;The&nbsp;predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;records.</span></dd></dl>
+<dl><dt><a name="RandomForestClassifier-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;provided&nbsp;data.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -441,89 +523,40 @@ Data descriptors defined here:<br>
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
 </dl>
-<hr>
-Data and other attributes defined here:<br>
-<dl><dt><strong>X</strong> = []</dl>
-
-<dl><dt><strong>XX</strong> = []</dl>
-
-<dl><dt><strong>bootstraps_datasets</strong> = []</dl>
-
-<dl><dt><strong>bootstraps_labels</strong> = []</dl>
-
-<dl><dt><strong>decision_trees</strong> = []</dl>
-
-<dl><dt><strong>display</strong> = False</dl>
-
-<dl><dt><strong>forest_size</strong> = 10</dl>
-
-<dl><dt><strong>max_depth</strong> = 10</dl>
-
-<dl><dt><strong>num_trees</strong> = 0</dl>
-
-<dl><dt><strong>numerical_cols</strong> = 0</dl>
-
-<dl><dt><strong>random_seed</strong> = 0</dl>
-
-<dl><dt><strong>y</strong> = []</dl>
-
 </td></tr></table> <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomForestRegressor">class <strong>RandomForestRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestRegressor">RandomForestRegressor</a>(X=None,&nbsp;y=None,&nbsp;forest_size=10,&nbsp;random_seed=0,&nbsp;max_depth=10)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestRegressor">RandomForestRegressor</a>(forest_size=100,&nbsp;max_depth=10,&nbsp;n_jobs=-1,&nbsp;random_seed=None,&nbsp;X=None,&nbsp;y=None)<br>
 &nbsp;<br>
-A&nbsp;class&nbsp;representing&nbsp;a&nbsp;Random&nbsp;Forest&nbsp;model.<br>
+A&nbsp;class&nbsp;representing&nbsp;a&nbsp;Random&nbsp;Forest&nbsp;model&nbsp;for&nbsp;regression.<br>
 &nbsp;<br>
-Attributes:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;num_trees&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;decision_trees&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;bootstraps_datasets&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;bootstrapped&nbsp;datasets&nbsp;for&nbsp;each&nbsp;tree.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;bootstraps_labels&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;corresponding&nbsp;labels&nbsp;for&nbsp;each&nbsp;bootstrapped&nbsp;dataset.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.<br>
+Atributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;forest_size&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;trees&nbsp;in&nbsp;the&nbsp;forest.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;tree.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_jobs&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;jobs&nbsp;to&nbsp;run&nbsp;in&nbsp;parallel.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;random_seed&nbsp;(int):&nbsp;Seed&nbsp;for&nbsp;random&nbsp;number&nbsp;generation.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;labels.<br>
 &nbsp;<br>
 Methods:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestRegressor-__init__">__init__</a>(num_trees,&nbsp;max_depth):&nbsp;Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;_bootstrapping(XX,&nbsp;n):&nbsp;Performs&nbsp;bootstrapping&nbsp;on&nbsp;the&nbsp;dataset.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestRegressor-bootstrapping">bootstrapping</a>(XX):&nbsp;Initializes&nbsp;the&nbsp;bootstrapped&nbsp;datasets&nbsp;for&nbsp;each&nbsp;tree.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestRegressor-fitting">fitting</a>():&nbsp;Fits&nbsp;the&nbsp;decision&nbsp;trees&nbsp;to&nbsp;the&nbsp;bootstrapped&nbsp;datasets.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestRegressor-voting">voting</a>(X):&nbsp;Performs&nbsp;voting&nbsp;to&nbsp;predict&nbsp;the&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;records.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;user():&nbsp;Returns&nbsp;the&nbsp;user's&nbsp;GTUsername.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestRegressor-fit">fit</a>(X=None,&nbsp;y=None,&nbsp;verbose=False):&nbsp;Fits&nbsp;the&nbsp;random&nbsp;forest&nbsp;to&nbsp;the&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestRegressor-calculate_metrics">calculate_metrics</a>(y_true,&nbsp;y_pred):&nbsp;Calculates&nbsp;the&nbsp;evaluation&nbsp;metrics.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestRegressor-predict">predict</a>(X):&nbsp;Predicts&nbsp;the&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RandomForestRegressor-get_stats">get_stats</a>(verbose=False):&nbsp;Returns&nbsp;the&nbsp;evaluation&nbsp;metrics.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RandomForestRegressor-__init__"><strong>__init__</strong></a>(self, X=None, y=None, forest_size=10, random_seed=0, max_depth=10)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(ndarray):&nbsp;The&nbsp;input&nbsp;data&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(ndarray):&nbsp;The&nbsp;target&nbsp;values.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;forest_size&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;decision&nbsp;trees&nbsp;in&nbsp;the&nbsp;random&nbsp;forest.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;random_seed&nbsp;(int):&nbsp;The&nbsp;random&nbsp;seed&nbsp;for&nbsp;reproducibility.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;decision&nbsp;tree.</span></dd></dl>
+<dl><dt><a name="RandomForestRegressor-__init__"><strong>__init__</strong></a>(self, forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;Random&nbsp;Forest&nbsp;Regressor&nbsp;with&nbsp;optimized&nbsp;parameters.</span></dd></dl>
 
-<dl><dt><a name="RandomForestRegressor-bootstrapping"><strong>bootstrapping</strong></a>(self, XX)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;bootstrapped&nbsp;datasets&nbsp;for&nbsp;each&nbsp;tree.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;XX&nbsp;(list):&nbsp;The&nbsp;dataset.</span></dd></dl>
+<dl><dt><a name="RandomForestRegressor-calculate_metrics"><strong>calculate_metrics</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculate&nbsp;evaluation&nbsp;metrics.</span></dd></dl>
 
-<dl><dt><a name="RandomForestRegressor-fit"><strong>fit</strong></a>(self, X=None, y=None, verbose=False)</dt><dd><span class="code">Runs&nbsp;the&nbsp;random&nbsp;forest&nbsp;algorithm.</span></dd></dl>
+<dl><dt><a name="RandomForestRegressor-fit"><strong>fit</strong></a>(self, X=None, y=None, verbose=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;random&nbsp;forest&nbsp;with&nbsp;parallel&nbsp;processing.</span></dd></dl>
 
-<dl><dt><a name="RandomForestRegressor-fitting"><strong>fitting</strong></a>(self)</dt><dd><span class="code">Fits&nbsp;the&nbsp;decision&nbsp;trees&nbsp;to&nbsp;the&nbsp;bootstrapped&nbsp;datasets.</span></dd></dl>
+<dl><dt><a name="RandomForestRegressor-get_stats"><strong>get_stats</strong></a>(self, verbose=False)</dt><dd><span class="code">Return&nbsp;the&nbsp;evaluation&nbsp;metrics.</span></dd></dl>
 
-<dl><dt><a name="RandomForestRegressor-get_stats"><strong>get_stats</strong></a>(self, verbose=True)</dt><dd><span class="code">Returns&nbsp;the&nbsp;evaluation&nbsp;metrics.</span></dd></dl>
-
-<dl><dt><a name="RandomForestRegressor-predict"><strong>predict</strong></a>(self, X=None)</dt><dd><span class="code">Predicts&nbsp;the&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
-
-<dl><dt><a name="RandomForestRegressor-reset"><strong>reset</strong></a>(self)</dt><dd><span class="code">Resets&nbsp;the&nbsp;random&nbsp;forest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
-
-<dl><dt><a name="RandomForestRegressor-voting"><strong>voting</strong></a>(self, X)</dt><dd><span class="code">Performs&nbsp;voting&nbsp;to&nbsp;predict&nbsp;the&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;records.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(list):&nbsp;The&nbsp;input&nbsp;records.<br>
-&nbsp;<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;list:&nbsp;The&nbsp;predicted&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;records.</span></dd></dl>
+<dl><dt><a name="RandomForestRegressor-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;using&nbsp;the&nbsp;trained&nbsp;random&nbsp;forest.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -533,70 +566,57 @@ Data descriptors defined here:<br>
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
 </dl>
-<hr>
-Data and other attributes defined here:<br>
-<dl><dt><strong>X</strong> = []</dl>
-
-<dl><dt><strong>XX</strong> = []</dl>
-
-<dl><dt><strong>bootstraps_datasets</strong> = []</dl>
-
-<dl><dt><strong>bootstraps_labels</strong> = []</dl>
-
-<dl><dt><strong>decision_trees</strong> = []</dl>
-
-<dl><dt><strong>display</strong> = False</dl>
-
-<dl><dt><strong>forest_size</strong> = 10</dl>
-
-<dl><dt><strong>max_depth</strong> = 10</dl>
-
-<dl><dt><strong>num_trees</strong> = 0</dl>
-
-<dl><dt><strong>numerical_cols</strong> = 0</dl>
-
-<dl><dt><strong>random_seed</strong> = 0</dl>
-
-<dl><dt><strong>y</strong> = []</dl>
-
 </td></tr></table> <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="RegressorTree">class <strong>RegressorTree</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#RegressorTree">RegressorTree</a>(max_depth=5)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;representing&nbsp;a&nbsp;decision&nbsp;tree&nbsp;for&nbsp;regression.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;decision&nbsp;tree.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;decision&nbsp;tree.<br>
 &nbsp;<br>
 Methods:<br>
--&nbsp;<a href="#RegressorTree-learn">learn</a>(X,&nbsp;y,&nbsp;par_node={},&nbsp;depth=0):&nbsp;Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
--&nbsp;classify(record):&nbsp;Predicts&nbsp;the&nbsp;target&nbsp;value&nbsp;for&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RegressorTree-learn">learn</a>(X,&nbsp;y,&nbsp;par_node={},&nbsp;depth=0):&nbsp;Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;classify(record):&nbsp;Predicts&nbsp;the&nbsp;target&nbsp;value&nbsp;for&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RegressorTree-__init__"><strong>__init__</strong></a>(self, max_depth=5)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="RegressorTree-__init__"><strong>__init__</strong></a>(self, max_depth=5)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;decision&nbsp;tree.</span></dd></dl>
 
-<dl><dt><a name="RegressorTree-learn"><strong>learn</strong></a>(self, X, y, par_node={}, depth=0)</dt><dd><span class="code">Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
+<dl><dt><a name="RegressorTree-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;decision&nbsp;tree&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
--&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;labels.<br>
--&nbsp;par_node&nbsp;(dict):&nbsp;The&nbsp;parent&nbsp;node&nbsp;of&nbsp;the&nbsp;current&nbsp;subtree&nbsp;(default:&nbsp;{}).<br>
--&nbsp;depth&nbsp;(int):&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;subtree&nbsp;(default:&nbsp;0).<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;decision&nbsp;tree.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;decision&nbsp;tree.</span></dd></dl>
 
-<dl><dt><a name="RegressorTree-predict"><strong>predict</strong></a>(self, record)</dt><dd><span class="code">Predicts&nbsp;a&nbsp;given&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
+<dl><dt><a name="RegressorTree-learn"><strong>learn</strong></a>(self, X, y, par_node=None, depth=0)</dt><dd><span class="code">Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;record:&nbsp;A&nbsp;dictionary&nbsp;representing&nbsp;the&nbsp;record&nbsp;to&nbsp;be&nbsp;classified.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;par_node:&nbsp;(dict)&nbsp;-&nbsp;The&nbsp;parent&nbsp;node&nbsp;of&nbsp;the&nbsp;current&nbsp;subtree&nbsp;(default:&nbsp;{}).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;depth:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;subtree&nbsp;(default:&nbsp;0).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;Returns&nbsp;the&nbsp;mean&nbsp;of&nbsp;the&nbsp;target&nbsp;values.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;decision&nbsp;tree.</span></dd></dl>
+
+<dl><dt><a name="RegressorTree-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;the&nbsp;target&nbsp;value&nbsp;for&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;predicted&nbsp;target&nbsp;value.</span></dd></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="RegressorTree-evaluate_tree"><strong>evaluate_tree</strong></a>(tree, record)</dt><dd><span class="code">Make&nbsp;a&nbsp;prediction&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -610,40 +630,40 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="RegressorTreeUtility">class <strong>RegressorTreeUtility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code">Utility&nbsp;class&nbsp;for&nbsp;computing&nbsp;variance,&nbsp;partitioning&nbsp;classes,&nbsp;and&nbsp;calculating&nbsp;information&nbsp;gain.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="RegressorTreeUtility-best_split"><strong>best_split</strong></a>(self, X, y)</dt><dd><span class="code">Finds&nbsp;the&nbsp;best&nbsp;attribute&nbsp;and&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;data&nbsp;based&nbsp;on&nbsp;information&nbsp;gain.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
--&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;variable.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;variable.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;dict:&nbsp;A&nbsp;dictionary&nbsp;containing&nbsp;the&nbsp;best&nbsp;split&nbsp;attribute,&nbsp;split&nbsp;value,&nbsp;left&nbsp;and&nbsp;right&nbsp;subsets&nbsp;of&nbsp;X&nbsp;and&nbsp;y,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;A&nbsp;dictionary&nbsp;containing&nbsp;the&nbsp;best&nbsp;split&nbsp;attribute,&nbsp;split&nbsp;value,&nbsp;left&nbsp;and&nbsp;right&nbsp;subsets&nbsp;of&nbsp;X&nbsp;and&nbsp;y,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;the&nbsp;information&nbsp;gain&nbsp;achieved&nbsp;by&nbsp;the&nbsp;split.</span></dd></dl>
 
 <dl><dt><a name="RegressorTreeUtility-calculate_variance"><strong>calculate_variance</strong></a>(self, y)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;variance&nbsp;of&nbsp;a&nbsp;dataset.<br>
+&nbsp;<br>
 Variance&nbsp;is&nbsp;used&nbsp;as&nbsp;the&nbsp;measure&nbsp;of&nbsp;impurity&nbsp;in&nbsp;the&nbsp;case&nbsp;of&nbsp;regression.</span></dd></dl>
 
-<dl><dt><a name="RegressorTreeUtility-information_gain"><strong>information_gain</strong></a>(self, previous_y, current_y)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;information&nbsp;gain&nbsp;from&nbsp;a&nbsp;split&nbsp;by&nbsp;subtracting&nbsp;the&nbsp;variance&nbsp;of<br>
-child&nbsp;nodes&nbsp;from&nbsp;the&nbsp;variance&nbsp;of&nbsp;the&nbsp;parent&nbsp;node.</span></dd></dl>
+<dl><dt><a name="RegressorTreeUtility-information_gain"><strong>information_gain</strong></a>(self, previous_y, current_y)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;information&nbsp;gain&nbsp;from&nbsp;a&nbsp;split&nbsp;by&nbsp;subtracting&nbsp;the&nbsp;variance&nbsp;of&nbsp;child&nbsp;nodes&nbsp;from&nbsp;the&nbsp;variance&nbsp;of&nbsp;the&nbsp;parent&nbsp;node.</span></dd></dl>
 
 <dl><dt><a name="RegressorTreeUtility-partition_classes"><strong>partition_classes</strong></a>(self, X, y, split_attribute, split_val)</dt><dd><span class="code">Partitions&nbsp;the&nbsp;dataset&nbsp;into&nbsp;two&nbsp;subsets&nbsp;based&nbsp;on&nbsp;a&nbsp;given&nbsp;split&nbsp;attribute&nbsp;and&nbsp;value.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
--&nbsp;y&nbsp;(array-like):&nbsp;The&nbsp;target&nbsp;labels.<br>
--&nbsp;split_attribute&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;attribute&nbsp;to&nbsp;split&nbsp;on.<br>
--&nbsp;split_val&nbsp;(float):&nbsp;The&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;attribute&nbsp;on.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;split_attribute:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;attribute&nbsp;to&nbsp;split&nbsp;on.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;split_val:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;attribute&nbsp;on.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;X_left&nbsp;(array-like):&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;less&nbsp;than&nbsp;or&nbsp;equal&nbsp;to&nbsp;the&nbsp;split&nbsp;value.<br>
--&nbsp;X_right&nbsp;(array-like):&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;greater&nbsp;than&nbsp;the&nbsp;split&nbsp;value.<br>
--&nbsp;y_left&nbsp;(array-like):&nbsp;The&nbsp;subset&nbsp;of&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;X_left.<br>
--&nbsp;y_right&nbsp;(array-like):&nbsp;The&nbsp;subset&nbsp;of&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;X_right.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X_left:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;less&nbsp;than&nbsp;or&nbsp;equal&nbsp;to&nbsp;the&nbsp;split&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_right:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;greater&nbsp;than&nbsp;the&nbsp;split&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_left:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;X_left.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_right:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;X_right.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -657,7 +677,7 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor data-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
-    
+
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><strong>__all__</strong> = ['ClassifierTreeUtility', 'ClassifierTree', 'RegressorTreeUtility', 'RegressorTree', 'RandomForestClassifier', 'RandomForestRegressor', 'GradientBoostedRegressor', 'IsolationForest', 'IsolationTree', 'IsolationUtils']</td></tr></table>
 </body></html>

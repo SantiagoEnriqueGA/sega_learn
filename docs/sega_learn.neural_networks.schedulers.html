@@ -41,14 +41,14 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
 </td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -64,21 +64,28 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="lr_scheduler_exp">class <strong>lr_scheduler_exp</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#lr_scheduler_exp">lr_scheduler_exp</a>(optimizer,&nbsp;lr_decay=0.1,&nbsp;lr_decay_epoch=10)<br>
 &nbsp;<br>
 Learning&nbsp;rate&nbsp;scheduler&nbsp;class&nbsp;for&nbsp;training&nbsp;neural&nbsp;networks.<br>
+&nbsp;<br>
 Reduces&nbsp;the&nbsp;learning&nbsp;rate&nbsp;exponentially&nbsp;by&nbsp;lr_decay&nbsp;every&nbsp;lr_decay_epoch&nbsp;epochs.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="lr_scheduler_exp-__init__"><strong>__init__</strong></a>(self, optimizer, lr_decay=0.1, lr_decay_epoch=10)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="lr_scheduler_exp-__init__"><strong>__init__</strong></a>(self, optimizer, lr_decay=0.1, lr_decay_epoch=10)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;scheduler&nbsp;with&nbsp;the&nbsp;given&nbsp;optimizer&nbsp;and&nbsp;learning&nbsp;rate&nbsp;decay&nbsp;parameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;optimizer&nbsp;(Optimizer):&nbsp;The&nbsp;optimizer&nbsp;whose&nbsp;learning&nbsp;rate&nbsp;will&nbsp;be&nbsp;scheduled.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lr_decay&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;factor&nbsp;by&nbsp;which&nbsp;the&nbsp;learning&nbsp;rate&nbsp;will&nbsp;be&nbsp;multiplied&nbsp;at&nbsp;each&nbsp;decay&nbsp;step.&nbsp;Default&nbsp;is&nbsp;0.1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lr_decay_epoch&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;number&nbsp;of&nbsp;epochs&nbsp;after&nbsp;which&nbsp;the&nbsp;learning&nbsp;rate&nbsp;will&nbsp;be&nbsp;decayed.&nbsp;Default&nbsp;is&nbsp;10.</span></dd></dl>
 
-<dl><dt><a name="lr_scheduler_exp-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;repr(self).</span></dd></dl>
+<dl><dt><a name="lr_scheduler_exp-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><span class="code">Returns&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;the&nbsp;scheduler.</span></dd></dl>
 
-<dl><dt><a name="lr_scheduler_exp-reduce"><strong>reduce</strong></a>(self)</dt></dl>
+<dl><dt><a name="lr_scheduler_exp-reduce"><strong>reduce</strong></a>(self)</dt><dd><span class="code">Reduces&nbsp;the&nbsp;learning&nbsp;rate&nbsp;exponentially.</span></dd></dl>
 
 <dl><dt><a name="lr_scheduler_exp-step"><strong>step</strong></a>(self, epoch)</dt><dd><span class="code">Adjusts&nbsp;the&nbsp;learning&nbsp;rate&nbsp;based&nbsp;on&nbsp;the&nbsp;current&nbsp;epoch.&nbsp;Decays&nbsp;the&nbsp;learning&nbsp;rate&nbsp;by&nbsp;lr_decay&nbsp;every&nbsp;lr_decay_epoch&nbsp;epochs.<br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;epoch&nbsp;(int):&nbsp;The&nbsp;current&nbsp;epoch&nbsp;number.<br>
 Returns:&nbsp;None</span></dd></dl>
@@ -95,25 +102,34 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="lr_scheduler_plateau">class <strong>lr_scheduler_plateau</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#lr_scheduler_plateau">lr_scheduler_plateau</a>(lr_scheduler,&nbsp;patience=5,&nbsp;threshold=0.01)<br>
 &nbsp;<br>
 A&nbsp;custom&nbsp;learning&nbsp;rate&nbsp;scheduler&nbsp;that&nbsp;adjusts&nbsp;the&nbsp;learning&nbsp;rate&nbsp;based&nbsp;on&nbsp;the&nbsp;plateau&nbsp;of&nbsp;the&nbsp;loss&nbsp;function.<br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;lr_scheduler&nbsp;(<a href="builtins.html#object">object</a>):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;scheduler&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;patience&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;epochs&nbsp;to&nbsp;wait&nbsp;for&nbsp;improvement&nbsp;before&nbsp;reducing&nbsp;the&nbsp;learning&nbsp;rate.&nbsp;Default&nbsp;is&nbsp;5.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;threshold&nbsp;(float):&nbsp;The&nbsp;minimum&nbsp;improvement&nbsp;threshold&nbsp;required&nbsp;to&nbsp;update&nbsp;the&nbsp;best&nbsp;loss.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;<br>
 Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#lr_scheduler_plateau-step">step</a>(loss):&nbsp;Updates&nbsp;the&nbsp;learning&nbsp;rate&nbsp;based&nbsp;on&nbsp;the&nbsp;loss&nbsp;value.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="lr_scheduler_plateau-__init__"><strong>__init__</strong></a>(self, lr_scheduler, patience=5, threshold=0.01)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="lr_scheduler_plateau-__init__"><strong>__init__</strong></a>(self, lr_scheduler, patience=5, threshold=0.01)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;scheduler&nbsp;with&nbsp;the&nbsp;given&nbsp;learning&nbsp;rate&nbsp;scheduler,&nbsp;patience,&nbsp;and&nbsp;threshold.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lr_scheduler&nbsp;(torch.optim.lr_scheduler):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;scheduler&nbsp;to&nbsp;be&nbsp;used.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;patience&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;epochs&nbsp;to&nbsp;wait&nbsp;for&nbsp;improvement&nbsp;before&nbsp;taking&nbsp;action.&nbsp;Defaults&nbsp;to&nbsp;5.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;threshold&nbsp;(float,&nbsp;optional):&nbsp;Minimum&nbsp;change&nbsp;in&nbsp;the&nbsp;monitored&nbsp;value&nbsp;to&nbsp;qualify&nbsp;as&nbsp;an&nbsp;improvement.&nbsp;Defaults&nbsp;to&nbsp;0.01.</span></dd></dl>
 
-<dl><dt><a name="lr_scheduler_plateau-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;repr(self).</span></dd></dl>
+<dl><dt><a name="lr_scheduler_plateau-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><span class="code">Returns&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;the&nbsp;scheduler.</span></dd></dl>
 
 <dl><dt><a name="lr_scheduler_plateau-step"><strong>step</strong></a>(self, epoch, loss)</dt><dd><span class="code">Updates&nbsp;the&nbsp;learning&nbsp;rate&nbsp;based&nbsp;on&nbsp;the&nbsp;loss&nbsp;value.<br>
+&nbsp;<br>
 Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epoch&nbsp;(int):&nbsp;The&nbsp;current&nbsp;epoch&nbsp;number.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(float):&nbsp;The&nbsp;current&nbsp;loss&nbsp;value.</span></dd></dl>
 
 <hr>
@@ -128,28 +144,38 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="lr_scheduler_step">class <strong>lr_scheduler_step</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#lr_scheduler_step">lr_scheduler_step</a>(optimizer,&nbsp;lr_decay=0.1,&nbsp;lr_decay_epoch=10)<br>
 &nbsp;<br>
 Learning&nbsp;rate&nbsp;scheduler&nbsp;class&nbsp;for&nbsp;training&nbsp;neural&nbsp;networks.<br>
+&nbsp;<br>
 Reduces&nbsp;the&nbsp;learning&nbsp;rate&nbsp;by&nbsp;a&nbsp;factor&nbsp;of&nbsp;lr_decay&nbsp;every&nbsp;lr_decay_epoch&nbsp;epochs.<br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;optimizer&nbsp;(Optimizer):&nbsp;The&nbsp;optimizer&nbsp;to&nbsp;adjust&nbsp;the&nbsp;learning&nbsp;rate&nbsp;for.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;lr_decay&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;factor&nbsp;to&nbsp;reduce&nbsp;the&nbsp;learning&nbsp;rate&nbsp;by.&nbsp;Defaults&nbsp;to&nbsp;0.1.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;lr_decay_epoch&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;number&nbsp;of&nbsp;epochs&nbsp;to&nbsp;wait&nbsp;before&nbsp;decaying&nbsp;the&nbsp;learning&nbsp;rate.&nbsp;Defaults&nbsp;to&nbsp;10<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="lr_scheduler_step-__init__"><strong>__init__</strong></a>(self, optimizer, lr_decay=0.1, lr_decay_epoch=10)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="lr_scheduler_step-__init__"><strong>__init__</strong></a>(self, optimizer, lr_decay=0.1, lr_decay_epoch=10)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;scheduler&nbsp;with&nbsp;the&nbsp;given&nbsp;optimizer&nbsp;and&nbsp;learning&nbsp;rate&nbsp;decay&nbsp;parameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;optimizer&nbsp;(Optimizer):&nbsp;The&nbsp;optimizer&nbsp;whose&nbsp;learning&nbsp;rate&nbsp;will&nbsp;be&nbsp;scheduled.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lr_decay&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;factor&nbsp;by&nbsp;which&nbsp;the&nbsp;learning&nbsp;rate&nbsp;will&nbsp;be&nbsp;multiplied&nbsp;at&nbsp;each&nbsp;decay&nbsp;step.&nbsp;Default&nbsp;is&nbsp;0.1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lr_decay_epoch&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;number&nbsp;of&nbsp;epochs&nbsp;after&nbsp;which&nbsp;the&nbsp;learning&nbsp;rate&nbsp;will&nbsp;be&nbsp;decayed.&nbsp;Default&nbsp;is&nbsp;10.</span></dd></dl>
 
-<dl><dt><a name="lr_scheduler_step-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;repr(self).</span></dd></dl>
+<dl><dt><a name="lr_scheduler_step-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><span class="code">Returns&nbsp;a&nbsp;string&nbsp;representation&nbsp;of&nbsp;the&nbsp;scheduler.</span></dd></dl>
 
-<dl><dt><a name="lr_scheduler_step-reduce"><strong>reduce</strong></a>(self)</dt></dl>
+<dl><dt><a name="lr_scheduler_step-reduce"><strong>reduce</strong></a>(self)</dt><dd><span class="code">Reduces&nbsp;the&nbsp;learning&nbsp;rate&nbsp;by&nbsp;the&nbsp;decay&nbsp;factor.</span></dd></dl>
 
 <dl><dt><a name="lr_scheduler_step-step"><strong>step</strong></a>(self, epoch)</dt><dd><span class="code">Adjusts&nbsp;the&nbsp;learning&nbsp;rate&nbsp;based&nbsp;on&nbsp;the&nbsp;current&nbsp;epoch.&nbsp;Decays&nbsp;the&nbsp;learning&nbsp;rate&nbsp;by&nbsp;lr_decay&nbsp;every&nbsp;lr_decay_epoch&nbsp;epochs.<br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;epoch&nbsp;(int):&nbsp;The&nbsp;current&nbsp;epoch&nbsp;number.<br>
-Returns:&nbsp;None</span></dd></dl>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;None</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>

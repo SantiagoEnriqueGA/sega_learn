@@ -66,13 +66,16 @@ exclude = [
     "venv",
     "build",                # Exclude the build directory
     "sega_learn.egg-info",  # Exclude egg info
-    "docs/**/*.html",       # Exclude generated HTML docs
+    "docs/*",               # Exclude all generated HTML docs
     "_archive/",            # Exclude the archive directory
     "__pycache__/",         # Exclude python cache
+    "scripts/*",            # Exclude scripts directory
+    "scripts/out/*",        # Exclude scripts/out directory
     "*.pyc",
     "*.pyo",
     "*.pyd",
     "*_dev/",               # Exclude any folder ending in _dev
+    "*.txt",                # Exclude any .txt file
     # Exclude performance test logs/plots
     "tests_performance/",
     "examples/**/plots/",

@@ -41,14 +41,14 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="cupy.html">cupy</a><br>
 </td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -63,34 +63,45 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="CuPyActivation">class <strong>CuPyActivation</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
-<tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Activation&nbsp;functions&nbsp;for&nbsp;neural&nbsp;networks&nbsp;using&nbsp;CuPy.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
 <td class="singlecolumn">Static methods defined here:<br>
-<dl><dt><a name="CuPyActivation-leaky_relu"><strong>leaky_relu</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Leaky&nbsp;ReLU&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;z&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;alpha&nbsp;*&nbsp;z<br>
+<dl><dt><a name="CuPyActivation-leaky_relu"><strong>leaky_relu</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Leaky&nbsp;ReLU&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;z&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;alpha&nbsp;*&nbsp;z.<br>
+&nbsp;<br>
 Allows&nbsp;a&nbsp;small,&nbsp;non-zero&nbsp;gradient&nbsp;when&nbsp;the&nbsp;input&nbsp;is&nbsp;negative&nbsp;to&nbsp;address&nbsp;the&nbsp;dying&nbsp;ReLU&nbsp;problem.</span></dd></dl>
 
-<dl><dt><a name="CuPyActivation-leaky_relu_derivative"><strong>leaky_relu_derivative</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;Leaky&nbsp;ReLU&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;alpha<br>
+<dl><dt><a name="CuPyActivation-leaky_relu_derivative"><strong>leaky_relu_derivative</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;Leaky&nbsp;ReLU&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;alpha.<br>
+&nbsp;<br>
 Returns&nbsp;1&nbsp;for&nbsp;positive&nbsp;input,&nbsp;and&nbsp;alpha&nbsp;for&nbsp;negative&nbsp;input.</span></dd></dl>
 
-<dl><dt><a name="CuPyActivation-relu"><strong>relu</strong></a>(z)</dt><dd><span class="code">ReLU&nbsp;(Rectified&nbsp;Linear&nbsp;Unit)&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;max(0,&nbsp;z)<br>
+<dl><dt><a name="CuPyActivation-relu"><strong>relu</strong></a>(z)</dt><dd><span class="code">ReLU&nbsp;(Rectified&nbsp;Linear&nbsp;Unit)&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;max(0,&nbsp;z).<br>
+&nbsp;<br>
 Returns&nbsp;the&nbsp;input&nbsp;directly&nbsp;if&nbsp;it's&nbsp;positive,&nbsp;otherwise&nbsp;returns&nbsp;0.</span></dd></dl>
 
-<dl><dt><a name="CuPyActivation-relu_derivative"><strong>relu_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;ReLU&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;0<br>
+<dl><dt><a name="CuPyActivation-relu_derivative"><strong>relu_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;ReLU&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;0.<br>
+&nbsp;<br>
 Returns&nbsp;1&nbsp;for&nbsp;positive&nbsp;input,&nbsp;and&nbsp;0&nbsp;for&nbsp;negative&nbsp;input.</span></dd></dl>
 
-<dl><dt><a name="CuPyActivation-sigmoid"><strong>sigmoid</strong></a>(z)</dt><dd><span class="code">Sigmoid&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;1&nbsp;/&nbsp;(1&nbsp;+&nbsp;exp(-z))<br>
+<dl><dt><a name="CuPyActivation-sigmoid"><strong>sigmoid</strong></a>(z)</dt><dd><span class="code">Sigmoid&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;1&nbsp;/&nbsp;(1&nbsp;+&nbsp;exp(-z)).<br>
+&nbsp;<br>
 Maps&nbsp;input&nbsp;to&nbsp;the&nbsp;range&nbsp;[0,&nbsp;1],&nbsp;commonly&nbsp;used&nbsp;for&nbsp;binary&nbsp;classification.</span></dd></dl>
 
-<dl><dt><a name="CuPyActivation-sigmoid_derivative"><strong>sigmoid_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;sigmoid&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;<a href="#CuPyActivation-sigmoid">sigmoid</a>(z)&nbsp;*&nbsp;(1&nbsp;-&nbsp;<a href="#CuPyActivation-sigmoid">sigmoid</a>(z))<br>
+<dl><dt><a name="CuPyActivation-sigmoid_derivative"><strong>sigmoid_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;sigmoid&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;<a href="#CuPyActivation-sigmoid">sigmoid</a>(z)&nbsp;*&nbsp;(1&nbsp;-&nbsp;<a href="#CuPyActivation-sigmoid">sigmoid</a>(z)).<br>
+&nbsp;<br>
 Used&nbsp;for&nbsp;backpropagation&nbsp;through&nbsp;the&nbsp;sigmoid&nbsp;activation.</span></dd></dl>
 
-<dl><dt><a name="CuPyActivation-softmax"><strong>softmax</strong></a>(z)</dt><dd><span class="code">Softmax&nbsp;activation&nbsp;function:&nbsp;f(z)_i&nbsp;=&nbsp;exp(z_i)&nbsp;/&nbsp;sum(exp(z_j))&nbsp;for&nbsp;all&nbsp;j<br>
+<dl><dt><a name="CuPyActivation-softmax"><strong>softmax</strong></a>(z)</dt><dd><span class="code">Softmax&nbsp;activation&nbsp;function:&nbsp;f(z)_i&nbsp;=&nbsp;exp(z_i)&nbsp;/&nbsp;sum(exp(z_j))&nbsp;for&nbsp;all&nbsp;j.<br>
+&nbsp;<br>
 Maps&nbsp;input&nbsp;into&nbsp;a&nbsp;probability&nbsp;distribution&nbsp;over&nbsp;multiple&nbsp;classes.&nbsp;Used&nbsp;for&nbsp;multiclass&nbsp;classification.</span></dd></dl>
 
-<dl><dt><a name="CuPyActivation-tanh"><strong>tanh</strong></a>(z)</dt><dd><span class="code">Hyperbolic&nbsp;tangent&nbsp;(tanh)&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;(exp(z)&nbsp;-&nbsp;exp(-z))&nbsp;/&nbsp;(exp(z)&nbsp;+&nbsp;exp(-z))<br>
+<dl><dt><a name="CuPyActivation-tanh"><strong>tanh</strong></a>(z)</dt><dd><span class="code">Hyperbolic&nbsp;tangent&nbsp;(tanh)&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;(exp(z)&nbsp;-&nbsp;exp(-z))&nbsp;/&nbsp;(exp(z)&nbsp;+&nbsp;exp(-z)).<br>
+&nbsp;<br>
 Maps&nbsp;input&nbsp;to&nbsp;the&nbsp;range&nbsp;[-1,&nbsp;1],&nbsp;typically&nbsp;used&nbsp;for&nbsp;normalized&nbsp;input.</span></dd></dl>
 
-<dl><dt><a name="CuPyActivation-tanh_derivative"><strong>tanh_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;tanh&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;-&nbsp;<a href="#CuPyActivation-tanh">tanh</a>(z)^2<br>
+<dl><dt><a name="CuPyActivation-tanh_derivative"><strong>tanh_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;tanh&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;-&nbsp;<a href="#CuPyActivation-tanh">tanh</a>(z)^2.<br>
+&nbsp;<br>
 Used&nbsp;for&nbsp;backpropagation&nbsp;through&nbsp;the&nbsp;tanh&nbsp;activation.</span></dd></dl>
 
 <hr>
@@ -105,18 +116,34 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="CuPyDenseLayer">class <strong>CuPyDenseLayer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#CuPyDenseLayer">CuPyDenseLayer</a>(input_size,&nbsp;output_size,&nbsp;activation='relu')<br>
 &nbsp;<br>
 Initializes&nbsp;a&nbsp;Layer&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;input_size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;input&nbsp;to&nbsp;the&nbsp;layer.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;output_size&nbsp;(int):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;output&nbsp;from&nbsp;the&nbsp;layer.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;activation&nbsp;(str):&nbsp;The&nbsp;activation&nbsp;function&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;the&nbsp;layer.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="CuPyDenseLayer-__init__"><strong>__init__</strong></a>(self, input_size, output_size, activation='relu')</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="CuPyDenseLayer-__init__"><strong>__init__</strong></a>(self, input_size, output_size, activation='relu')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;layer&nbsp;with&nbsp;weights,&nbsp;biases,&nbsp;and&nbsp;activation&nbsp;function.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_size:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;input&nbsp;features&nbsp;to&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_size:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;output&nbsp;features&nbsp;from&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activation:&nbsp;(str),&nbsp;optional&nbsp;-&nbsp;The&nbsp;activation&nbsp;function&nbsp;to&nbsp;use&nbsp;(default&nbsp;is&nbsp;"relu").<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Supported&nbsp;values:&nbsp;"relu",&nbsp;"leaky_relu",&nbsp;or&nbsp;others.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weights:&nbsp;(cp.ndarray)&nbsp;-&nbsp;The&nbsp;weight&nbsp;matrix&nbsp;initialized&nbsp;using&nbsp;He&nbsp;initialization&nbsp;for&nbsp;"relu"&nbsp;or&nbsp;"leaky_relu".<br>
+&nbsp;&nbsp;&nbsp;&nbsp;biases:&nbsp;(cp.ndarray)&nbsp;-&nbsp;The&nbsp;bias&nbsp;vector&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weight_gradients:&nbsp;(cp.ndarray)&nbsp;-&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;weights,&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bias_gradients:&nbsp;(cp.ndarray)&nbsp;-&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;biases,&nbsp;initialized&nbsp;to&nbsp;zeros.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;input_size:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;input&nbsp;features&nbsp;to&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;output_size:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;output&nbsp;features&nbsp;from&nbsp;the&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activation:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;activation&nbsp;function&nbsp;used&nbsp;in&nbsp;the&nbsp;layer.</span></dd></dl>
 
 <dl><dt><a name="CuPyDenseLayer-activate"><strong>activate</strong></a>(self, Z)</dt><dd><span class="code">Apply&nbsp;activation&nbsp;function.</span></dd></dl>
 

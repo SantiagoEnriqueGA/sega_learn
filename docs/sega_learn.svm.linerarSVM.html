@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.svm.linerarSVM</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.svm.html" class="white">svm</a>.linerarSVM</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>(<a href="builtins.html#object">builtins.object</a>)
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.svm.linerarSVM.html#LinearSVC">LinearSVC</a>
+</dt><dt class="heading-text"><a href="sega_learn.svm.linerarSVM.html#LinearSVR">LinearSVR</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="LinearSVC">class <strong>LinearSVC</strong></a>(<a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#LinearSVC">LinearSVC</a>(C=1.0,&nbsp;tol=0.0001,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;numba=False)<br>
+&nbsp;<br>
+<a href="#LinearSVC">LinearSVC</a>&nbsp;is&nbsp;a&nbsp;linear&nbsp;Support&nbsp;Vector&nbsp;Classifier&nbsp;(SVC)&nbsp;implementation&nbsp;that&nbsp;uses&nbsp;gradient&nbsp;descent&nbsp;for&nbsp;optimization.<br>
+&nbsp;<br>
+It&nbsp;supports&nbsp;binary&nbsp;and&nbsp;multi-class&nbsp;classification&nbsp;using&nbsp;a&nbsp;one-vs-rest&nbsp;strategy.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;(float):&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol&nbsp;(float):&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter&nbsp;(int):&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float):&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;use&nbsp;Numba-accelerated&nbsp;computations.&nbsp;Default&nbsp;is&nbsp;False.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;(ndarray):&nbsp;Weight&nbsp;vector&nbsp;for&nbsp;the&nbsp;linear&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;(float):&nbsp;Bias&nbsp;term&nbsp;for&nbsp;the&nbsp;linear&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba_available&nbsp;(bool):&nbsp;Indicates&nbsp;if&nbsp;Numba&nbsp;is&nbsp;available&nbsp;for&nbsp;use.<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LinearSVC-__init__">__init__</a>(self,&nbsp;C=1.0,&nbsp;tol=1e-4,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;numba=False):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;<a href="#LinearSVC">LinearSVC</a>&nbsp;instance&nbsp;with&nbsp;hyperparameters&nbsp;and&nbsp;checks&nbsp;for&nbsp;Numba&nbsp;availability.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_fit(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fits&nbsp;the&nbsp;<a href="#LinearSVC">LinearSVC</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data&nbsp;using&nbsp;gradient&nbsp;descent.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_predict_binary(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predicts&nbsp;class&nbsp;labels&nbsp;{-1,&nbsp;1}&nbsp;for&nbsp;binary&nbsp;classification.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_predict_multiclass(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predicts&nbsp;class&nbsp;labels&nbsp;for&nbsp;multi-class&nbsp;classification&nbsp;using&nbsp;one-vs-rest&nbsp;strategy.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LinearSVC-decision_function">decision_function</a>(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes&nbsp;raw&nbsp;decision&nbsp;function&nbsp;values&nbsp;before&nbsp;thresholding.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_score_binary(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes&nbsp;the&nbsp;mean&nbsp;accuracy&nbsp;of&nbsp;predictions&nbsp;for&nbsp;binary&nbsp;classification.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_score_multiclass(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes&nbsp;the&nbsp;mean&nbsp;accuracy&nbsp;of&nbsp;predictions&nbsp;for&nbsp;multi-class&nbsp;classification.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.svm.linerarSVM.html#LinearSVC">LinearSVC</a></dd>
+<dd><a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="LinearSVC-__init__"><strong>__init__</strong></a>(self, C=1.0, tol=0.0001, max_iter=1000, learning_rate=0.01, numba=False)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#LinearSVC">LinearSVC</a>&nbsp;instance&nbsp;with&nbsp;hyperparameters&nbsp;and&nbsp;checks&nbsp;for&nbsp;Numba&nbsp;availability.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C:&nbsp;(float)&nbsp;-&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol:&nbsp;(float)&nbsp;-&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter:&nbsp;(int)&nbsp;-&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float)&nbsp;-&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;to&nbsp;use&nbsp;Numba-accelerated&nbsp;computations.&nbsp;Default&nbsp;is&nbsp;False.</span></dd></dl>
+
+<dl><dt><a name="LinearSVC-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Compute&nbsp;raw&nbsp;decision&nbsp;function&nbsp;values&nbsp;before&nbsp;thresholding.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)):&nbsp;Input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;scores&nbsp;(array&nbsp;of&nbsp;shape&nbsp;(n_samples,)):&nbsp;Decision&nbsp;function&nbsp;values.</span></dd></dl>
+
+<hr>
+Methods inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><a name="LinearSVC-__sklearn_is_fitted__"><strong>__sklearn_is_fitted__</strong></a>(self)</dt><dd><span class="code">Checks&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted&nbsp;(for&nbsp;sklearn&nbsp;compatibility).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fitted:&nbsp;(bool)&nbsp;-&nbsp;True&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted,&nbsp;otherwise&nbsp;False.</span></dd></dl>
+
+<dl><dt><a name="LinearSVC-fit"><strong>fit</strong></a>(self, X, y=None)</dt><dd><span class="code">Fits&nbsp;the&nbsp;SVM&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Training&nbsp;vectors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="sega_learn.svm.baseSVM.html#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;fitted&nbsp;instance.</span></dd></dl>
+
+<dl><dt><a name="LinearSVC-get_params"><strong>get_params</strong></a>(self, deep=True)</dt><dd><span class="code">Retrieves&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;deep:&nbsp;(bool)&nbsp;-&nbsp;If&nbsp;True,&nbsp;returns&nbsp;parameters&nbsp;of&nbsp;subobjects&nbsp;as&nbsp;well.&nbsp;Default&nbsp;is&nbsp;True.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params:&nbsp;(dict)&nbsp;-&nbsp;Dictionary&nbsp;of&nbsp;hyperparameter&nbsp;names&nbsp;and&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="LinearSVC-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;class&nbsp;labels&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;predicted_labels:&nbsp;(ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Predicted&nbsp;class&nbsp;labels.</span></dd></dl>
+
+<dl><dt><a name="LinearSVC-score"><strong>score</strong></a>(self, X, y)</dt><dd><span class="code">Computes&nbsp;the&nbsp;mean&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;model&nbsp;on&nbsp;the&nbsp;given&nbsp;test&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Test&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;True&nbsp;class&nbsp;labels.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;score:&nbsp;(float)&nbsp;-&nbsp;Mean&nbsp;accuracy&nbsp;of&nbsp;predictions.</span></dd></dl>
+
+<dl><dt><a name="LinearSVC-set_params"><strong>set_params</strong></a>(self, **parameters)</dt><dd><span class="code">Sets&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;**parameters:&nbsp;(dict)&nbsp;-&nbsp;Hyperparameter&nbsp;names&nbsp;and&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="sega_learn.svm.baseSVM.html#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;updated&nbsp;estimator&nbsp;instance.</span></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="LinearSVR">class <strong>LinearSVR</strong></a>(<a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#LinearSVR">LinearSVR</a>(C=1.0,&nbsp;tol=0.0001,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;epsilon=0.1,&nbsp;numba=False)<br>
+&nbsp;<br>
+<a href="#LinearSVR">LinearSVR</a>:&nbsp;A&nbsp;linear&nbsp;Support&nbsp;Vector&nbsp;Regression&nbsp;(SVR)&nbsp;model&nbsp;using&nbsp;epsilon-insensitive&nbsp;loss.<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;implements&nbsp;a&nbsp;linear&nbsp;SVR&nbsp;model&nbsp;with&nbsp;support&nbsp;for&nbsp;mini-batch&nbsp;gradient&nbsp;descent<br>
+and&nbsp;optional&nbsp;acceleration&nbsp;using&nbsp;Numba.&nbsp;It&nbsp;is&nbsp;designed&nbsp;for&nbsp;regression&nbsp;tasks&nbsp;and&nbsp;uses<br>
+epsilon-insensitive&nbsp;loss&nbsp;to&nbsp;handle&nbsp;errors&nbsp;within&nbsp;a&nbsp;specified&nbsp;margin.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;(float):&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol&nbsp;(float):&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter&nbsp;(int):&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float):&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon&nbsp;(float):&nbsp;Epsilon&nbsp;parameter&nbsp;for&nbsp;epsilon-insensitive&nbsp;loss.&nbsp;Default&nbsp;is&nbsp;0.1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;use&nbsp;Numba&nbsp;for&nbsp;acceleration.&nbsp;Default&nbsp;is&nbsp;False.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;(ndarray):&nbsp;Weight&nbsp;vector&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;(float):&nbsp;Bias&nbsp;term&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba_available&nbsp;(bool):&nbsp;Indicates&nbsp;if&nbsp;Numba&nbsp;is&nbsp;available&nbsp;for&nbsp;acceleration.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_train&nbsp;(ndarray):&nbsp;Training&nbsp;data&nbsp;used&nbsp;for&nbsp;fitting.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_train&nbsp;(ndarray):&nbsp;Target&nbsp;values&nbsp;used&nbsp;for&nbsp;fitting.<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LinearSVR-__init__">__init__</a>(self,&nbsp;C=1.0,&nbsp;tol=1e-4,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;epsilon=0.1,&nbsp;numba=False):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initialize&nbsp;the&nbsp;<a href="#LinearSVR">LinearSVR</a>&nbsp;model&nbsp;with&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_fit(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fit&nbsp;the&nbsp;<a href="#LinearSVR">LinearSVR</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data&nbsp;using&nbsp;mini-batch&nbsp;gradient&nbsp;descent.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LinearSVR-predict">predict</a>(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predict&nbsp;continuous&nbsp;target&nbsp;values&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LinearSVR-decision_function">decision_function</a>(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute&nbsp;raw&nbsp;decision&nbsp;function&nbsp;values&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LinearSVR-score">score</a>(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute&nbsp;the&nbsp;coefficient&nbsp;of&nbsp;determination&nbsp;(R²&nbsp;score)&nbsp;for&nbsp;the&nbsp;model's&nbsp;predictions.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;a&nbsp;non-linear&nbsp;kernel&nbsp;is&nbsp;specified,&nbsp;as&nbsp;<a href="#LinearSVR">LinearSVR</a>&nbsp;only&nbsp;supports&nbsp;linear&nbsp;kernels.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.svm.linerarSVM.html#LinearSVR">LinearSVR</a></dd>
+<dd><a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="LinearSVR-__init__"><strong>__init__</strong></a>(self, C=1.0, tol=0.0001, max_iter=1000, learning_rate=0.01, epsilon=0.1, numba=False)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#LinearSVR">LinearSVR</a>&nbsp;instance&nbsp;with&nbsp;hyperparameters&nbsp;and&nbsp;checks&nbsp;for&nbsp;Numba&nbsp;availability.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C:&nbsp;(float)&nbsp;-&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol:&nbsp;(float)&nbsp;-&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter:&nbsp;(int)&nbsp;-&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float)&nbsp;-&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon:&nbsp;(float)&nbsp;-&nbsp;Epsilon&nbsp;parameter&nbsp;for&nbsp;epsilon-insensitive&nbsp;loss.&nbsp;Default&nbsp;is&nbsp;0.1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;to&nbsp;use&nbsp;Numba-accelerated&nbsp;computations.&nbsp;Default&nbsp;is&nbsp;False.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;None</span></dd></dl>
+
+<dl><dt><a name="LinearSVR-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Compute&nbsp;raw&nbsp;decision&nbsp;function&nbsp;values.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;scores:&nbsp;(array&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Predicted&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="LinearSVR-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;continuous&nbsp;target&nbsp;values&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(array&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Predicted&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="LinearSVR-score"><strong>score</strong></a>(self, X, y)</dt><dd><span class="code">Compute&nbsp;the&nbsp;coefficient&nbsp;of&nbsp;determination&nbsp;(R²&nbsp;score).<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Test&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;True&nbsp;target&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;score:&nbsp;(float)&nbsp;-&nbsp;R²&nbsp;score&nbsp;of&nbsp;predictions.</span></dd></dl>
+
+<hr>
+Methods inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><a name="LinearSVR-__sklearn_is_fitted__"><strong>__sklearn_is_fitted__</strong></a>(self)</dt><dd><span class="code">Checks&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted&nbsp;(for&nbsp;sklearn&nbsp;compatibility).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fitted:&nbsp;(bool)&nbsp;-&nbsp;True&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted,&nbsp;otherwise&nbsp;False.</span></dd></dl>
+
+<dl><dt><a name="LinearSVR-fit"><strong>fit</strong></a>(self, X, y=None)</dt><dd><span class="code">Fits&nbsp;the&nbsp;SVM&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Training&nbsp;vectors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="sega_learn.svm.baseSVM.html#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;fitted&nbsp;instance.</span></dd></dl>
+
+<dl><dt><a name="LinearSVR-get_params"><strong>get_params</strong></a>(self, deep=True)</dt><dd><span class="code">Retrieves&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;deep:&nbsp;(bool)&nbsp;-&nbsp;If&nbsp;True,&nbsp;returns&nbsp;parameters&nbsp;of&nbsp;subobjects&nbsp;as&nbsp;well.&nbsp;Default&nbsp;is&nbsp;True.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params:&nbsp;(dict)&nbsp;-&nbsp;Dictionary&nbsp;of&nbsp;hyperparameter&nbsp;names&nbsp;and&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="LinearSVR-set_params"><strong>set_params</strong></a>(self, **parameters)</dt><dd><span class="code">Sets&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;**parameters:&nbsp;(dict)&nbsp;-&nbsp;Hyperparameter&nbsp;names&nbsp;and&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="sega_learn.svm.baseSVM.html#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;updated&nbsp;estimator&nbsp;instance.</span></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>

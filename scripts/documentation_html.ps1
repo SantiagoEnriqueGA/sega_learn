@@ -26,13 +26,23 @@ $nearestNeighborsFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/n
     "sega_learn.nearest_neighbors.$($_.BaseName)"
 }
 
+# Get all Python files in the sega_learn/svm folder
+$svmFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/svm" | ForEach-Object {
+    "sega_learn.svm.$($_.BaseName)"
+}
+
+# Get all Python files in the sega_learn/auto folder
+$autoFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/auto" | ForEach-Object {
+    "sega_learn.auto.$($_.BaseName)"
+}
+
 # Get all Python files in the sega_learn/utils folder
 $utilsFiles = Get-ChildItem -Recurse -Filter *.py -Path "sega_learn/utils" | ForEach-Object {
     "sega_learn.utils.$($_.BaseName)"
 }
 
 # Combine the lists of files
-$files = $clusteringFiles + $linearModelsFiles + $utilsFiles + $treesFiles + $neuralNetworksFiles + $nearestNeighborsFiles
+$files = $clusteringFiles + $linearModelsFiles + $utilsFiles + $treesFiles + $neuralNetworksFiles + $nearestNeighborsFiles + $svmFiles + $autoFiles
 
 # Add the main sega_learn modules to the list of files to document
 $files += "sega_learn"
@@ -40,6 +50,9 @@ $files += "sega_learn.clustering"
 $files += "sega_learn.linear_models"
 $files += "sega_learn.trees"
 $files += "sega_learn.neural_networks"
+$files += "sega_learn.nearest_neighbors"
+$files += "sega_learn.svm"
+$files += "sega_learn.auto"
 $files += "sega_learn.utils"
 
 # Generate documentation for each Python file

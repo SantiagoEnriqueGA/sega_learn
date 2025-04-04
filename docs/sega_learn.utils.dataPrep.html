@@ -41,7 +41,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
 </td><td class="multicolumn"><a href="pandas.html">pandas</a><br>
@@ -49,7 +49,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -63,68 +63,69 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="DataPrep">class <strong>DataPrep</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code">A&nbsp;class&nbsp;for&nbsp;preparing&nbsp;data&nbsp;for&nbsp;machine&nbsp;learning&nbsp;models.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="DataPrep-df_to_ndarray"><strong>df_to_ndarray</strong></a>(df, y_col=0)</dt><dd><span class="code">Converts&nbsp;a&nbsp;DataFrame&nbsp;to&nbsp;a&nbsp;NumPy&nbsp;array.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;DataFrame&nbsp;to&nbsp;be&nbsp;converted.<br>
--&nbsp;y_col&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;label&nbsp;column.&nbsp;Default&nbsp;is&nbsp;0.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;(pandas.DataFrame)&nbsp;-&nbsp;The&nbsp;DataFrame&nbsp;to&nbsp;be&nbsp;converted.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_col:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;label&nbsp;column&nbsp;(default&nbsp;is&nbsp;0).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.<br>
--&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;feature&nbsp;columns&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;label&nbsp;column&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.</span></dd></dl>
 
 <dl><dt><a name="DataPrep-find_categorical_columns"><strong>find_categorical_columns</strong></a>(data)</dt><dd><span class="code">Finds&nbsp;the&nbsp;indices&nbsp;of&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame&nbsp;or&nbsp;numpy&nbsp;array.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;data&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;checked.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray)&nbsp;-&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;checked.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;categorical_cols&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;indices&nbsp;of&nbsp;non-numerical&nbsp;columns.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;categorical_cols:&nbsp;(list)&nbsp;-&nbsp;The&nbsp;list&nbsp;of&nbsp;indices&nbsp;of&nbsp;non-numerical&nbsp;columns.</span></dd></dl>
 
 <dl><dt><a name="DataPrep-k_split"><strong>k_split</strong></a>(X, y, k=5)</dt><dd><span class="code">Splits&nbsp;the&nbsp;data&nbsp;into&nbsp;k&nbsp;folds&nbsp;for&nbsp;cross-validation.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
--&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
--&nbsp;k&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds.&nbsp;Default&nbsp;is&nbsp;5.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;feature&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;label&nbsp;column.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;k:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;(default&nbsp;is&nbsp;5).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;X_folds&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;feature&nbsp;columns.<br>
--&nbsp;y_folds&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;label&nbsp;columns.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X_folds:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;feature&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_folds:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;label&nbsp;columns.</span></dd></dl>
 
 <dl><dt><a name="DataPrep-one_hot_encode"><strong>one_hot_encode</strong></a>(data, cols)</dt><dd><span class="code">One-hot&nbsp;encodes&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame&nbsp;or&nbsp;numpy&nbsp;array.<br>
+&nbsp;<br>
 Drops&nbsp;the&nbsp;original&nbsp;columns&nbsp;after&nbsp;encoding.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;data&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;encoded.<br>
--&nbsp;cols&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;column&nbsp;indices&nbsp;to&nbsp;be&nbsp;encoded.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray)&nbsp;-&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;encoded.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cols:&nbsp;(list)&nbsp;-&nbsp;The&nbsp;list&nbsp;of&nbsp;column&nbsp;indices&nbsp;to&nbsp;be&nbsp;encoded.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;data&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;with&nbsp;one-hot&nbsp;encoded&nbsp;columns.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray)&nbsp;-&nbsp;The&nbsp;data&nbsp;with&nbsp;one-hot&nbsp;encoded&nbsp;columns.</span></dd></dl>
 
-<dl><dt><a name="DataPrep-prepare_data"><strong>prepare_data</strong></a>(csv_file, label_col_index, cols_to_encode=[], write_to_csv=True)</dt><dd><span class="code">Prepares&nbsp;the&nbsp;data&nbsp;by&nbsp;loading&nbsp;a&nbsp;CSV&nbsp;file,&nbsp;one-hot&nbsp;encoding&nbsp;non-numerical&nbsp;columns,<br>
-and&nbsp;optionally&nbsp;writing&nbsp;the&nbsp;prepared&nbsp;data&nbsp;to&nbsp;a&nbsp;new&nbsp;CSV&nbsp;file.<br>
+<dl><dt><a name="DataPrep-prepare_data"><strong>prepare_data</strong></a>(csv_file, label_col_index, cols_to_encode=None, write_to_csv=True)</dt><dd><span class="code">Prepares&nbsp;the&nbsp;data&nbsp;by&nbsp;loading&nbsp;a&nbsp;CSV&nbsp;file,&nbsp;one-hot&nbsp;encoding&nbsp;non-numerical&nbsp;columns,&nbsp;and&nbsp;optionally&nbsp;writing&nbsp;the&nbsp;prepared&nbsp;data&nbsp;to&nbsp;a&nbsp;new&nbsp;CSV&nbsp;file.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;csv_file&nbsp;(str):&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;CSV&nbsp;file&nbsp;to&nbsp;load.<br>
--&nbsp;label_col_index&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;label&nbsp;column.<br>
--&nbsp;cols_to_encode&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;column&nbsp;indices&nbsp;to&nbsp;one-hot&nbsp;encode.&nbsp;Default&nbsp;is&nbsp;an&nbsp;empty&nbsp;list.<br>
--&nbsp;write_to_csv&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;write&nbsp;the&nbsp;prepared&nbsp;data&nbsp;to&nbsp;a&nbsp;new&nbsp;CSV&nbsp;file.&nbsp;Default&nbsp;is&nbsp;True.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;csv_file:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;CSV&nbsp;file&nbsp;to&nbsp;load.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;label_col_index:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;label&nbsp;column.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cols_to_encode:&nbsp;(list),&nbsp;optional&nbsp;-&nbsp;The&nbsp;list&nbsp;of&nbsp;column&nbsp;indices&nbsp;to&nbsp;one-hot&nbsp;encode&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;write_to_csv:&nbsp;(bool),&nbsp;optional&nbsp;-&nbsp;Whether&nbsp;to&nbsp;write&nbsp;the&nbsp;prepared&nbsp;data&nbsp;to&nbsp;a&nbsp;new&nbsp;CSV&nbsp;file&nbsp;(default&nbsp;is&nbsp;True).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;prepared&nbsp;DataFrame.<br>
--&nbsp;prepared_csv_file&nbsp;(str):&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;prepared&nbsp;CSV&nbsp;file.&nbsp;If&nbsp;write_to_csv&nbsp;is&nbsp;False,&nbsp;returns&nbsp;"N/A".</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;(pandas.DataFrame)&nbsp;-&nbsp;The&nbsp;prepared&nbsp;DataFrame.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;prepared_csv_file:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;prepared&nbsp;CSV&nbsp;file.&nbsp;If&nbsp;write_to_csv&nbsp;is&nbsp;False,&nbsp;returns&nbsp;"N/A".</span></dd></dl>
 
 <dl><dt><a name="DataPrep-write_data"><strong>write_data</strong></a>(df, csv_file, print_path=False)</dt><dd><span class="code">Writes&nbsp;the&nbsp;DataFrame&nbsp;to&nbsp;a&nbsp;CSV&nbsp;file.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;DataFrame&nbsp;to&nbsp;be&nbsp;written.<br>
--&nbsp;csv_file&nbsp;(str):&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;CSV&nbsp;file&nbsp;to&nbsp;write&nbsp;to.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;(pandas.DataFrame)&nbsp;-&nbsp;The&nbsp;DataFrame&nbsp;to&nbsp;be&nbsp;written.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;csv_file:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;CSV&nbsp;file&nbsp;to&nbsp;write&nbsp;to.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print_path:&nbsp;(bool),&nbsp;optional&nbsp;-&nbsp;If&nbsp;True,&nbsp;prints&nbsp;the&nbsp;file&nbsp;path&nbsp;(default&nbsp;is&nbsp;False).</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>

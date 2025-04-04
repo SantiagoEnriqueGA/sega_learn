@@ -41,14 +41,14 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
 </td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -62,41 +62,52 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="Activation">class <strong>Activation</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code">This&nbsp;class&nbsp;contains&nbsp;various&nbsp;activation&nbsp;functions&nbsp;and&nbsp;their&nbsp;corresponding&nbsp;derivatives&nbsp;for&nbsp;use&nbsp;in&nbsp;neural&nbsp;networks.<br>
-relu:&nbsp;Rectified&nbsp;Linear&nbsp;Unit&nbsp;activation&nbsp;function.&nbsp;Returns&nbsp;the&nbsp;input&nbsp;directly&nbsp;if&nbsp;it's&nbsp;positive,&nbsp;otherwise&nbsp;returns&nbsp;0.<br>
-leaky_relu:&nbsp;Leaky&nbsp;ReLU&nbsp;activation&nbsp;function.&nbsp;A&nbsp;variant&nbsp;of&nbsp;ReLU&nbsp;that&nbsp;allows&nbsp;a&nbsp;small&nbsp;gradient&nbsp;when&nbsp;the&nbsp;input&nbsp;is&nbsp;negative.&nbsp;<br>
-tanh:&nbsp;Hyperbolic&nbsp;tangent&nbsp;activation&nbsp;function.&nbsp;Maps&nbsp;input&nbsp;to&nbsp;range&nbsp;[-1,&nbsp;1].&nbsp;Commonly&nbsp;used&nbsp;for&nbsp;normalized&nbsp;input.<br>
-sigmoid:&nbsp;Sigmoid&nbsp;activation&nbsp;function.&nbsp;Maps&nbsp;input&nbsp;to&nbsp;range&nbsp;[0,&nbsp;1].&nbsp;Commonly&nbsp;used&nbsp;for&nbsp;binary&nbsp;classification.<br>
-softmax:&nbsp;Softmax&nbsp;activation&nbsp;function.&nbsp;Maps&nbsp;input&nbsp;into&nbsp;a&nbsp;probability&nbsp;distribution&nbsp;over&nbsp;multiple&nbsp;classes.<br>&nbsp;</span></td></tr>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;relu:&nbsp;Rectified&nbsp;Linear&nbsp;Unit&nbsp;activation&nbsp;function.&nbsp;Returns&nbsp;the&nbsp;input&nbsp;directly&nbsp;if&nbsp;it's&nbsp;positive,&nbsp;otherwise&nbsp;returns&nbsp;0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;leaky_relu:&nbsp;Leaky&nbsp;ReLU&nbsp;activation&nbsp;function.&nbsp;A&nbsp;variant&nbsp;of&nbsp;ReLU&nbsp;that&nbsp;allows&nbsp;a&nbsp;small&nbsp;gradient&nbsp;when&nbsp;the&nbsp;input&nbsp;is&nbsp;negative.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tanh:&nbsp;Hyperbolic&nbsp;tangent&nbsp;activation&nbsp;function.&nbsp;Maps&nbsp;input&nbsp;to&nbsp;range&nbsp;[-1,&nbsp;1].&nbsp;Commonly&nbsp;used&nbsp;for&nbsp;normalized&nbsp;input.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sigmoid:&nbsp;Sigmoid&nbsp;activation&nbsp;function.&nbsp;Maps&nbsp;input&nbsp;to&nbsp;range&nbsp;[0,&nbsp;1].&nbsp;Commonly&nbsp;used&nbsp;for&nbsp;binary&nbsp;classification.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;softmax:&nbsp;Softmax&nbsp;activation&nbsp;function.&nbsp;Maps&nbsp;input&nbsp;into&nbsp;a&nbsp;probability&nbsp;distribution&nbsp;over&nbsp;multiple&nbsp;classes.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Static methods defined here:<br>
-<dl><dt><a name="Activation-leaky_relu"><strong>leaky_relu</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Leaky&nbsp;ReLU&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;z&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;alpha&nbsp;*&nbsp;z<br>
+<dl><dt><a name="Activation-leaky_relu"><strong>leaky_relu</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Leaky&nbsp;ReLU&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;z&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;alpha&nbsp;*&nbsp;z.<br>
+&nbsp;<br>
 Allows&nbsp;a&nbsp;small,&nbsp;non-zero&nbsp;gradient&nbsp;when&nbsp;the&nbsp;input&nbsp;is&nbsp;negative&nbsp;to&nbsp;address&nbsp;the&nbsp;dying&nbsp;ReLU&nbsp;problem.</span></dd></dl>
 
-<dl><dt><a name="Activation-leaky_relu_derivative"><strong>leaky_relu_derivative</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;Leaky&nbsp;ReLU&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;alpha<br>
+<dl><dt><a name="Activation-leaky_relu_derivative"><strong>leaky_relu_derivative</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;Leaky&nbsp;ReLU&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;alpha.<br>
+&nbsp;<br>
 Returns&nbsp;1&nbsp;for&nbsp;positive&nbsp;input,&nbsp;and&nbsp;alpha&nbsp;for&nbsp;negative&nbsp;input.</span></dd></dl>
 
-<dl><dt><a name="Activation-relu"><strong>relu</strong></a>(z)</dt><dd><span class="code">ReLU&nbsp;(Rectified&nbsp;Linear&nbsp;Unit)&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;max(0,&nbsp;z)<br>
+<dl><dt><a name="Activation-relu"><strong>relu</strong></a>(z)</dt><dd><span class="code">ReLU&nbsp;(Rectified&nbsp;Linear&nbsp;Unit)&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;max(0,&nbsp;z).<br>
+&nbsp;<br>
 Returns&nbsp;the&nbsp;input&nbsp;directly&nbsp;if&nbsp;it's&nbsp;positive,&nbsp;otherwise&nbsp;returns&nbsp;0.</span></dd></dl>
 
-<dl><dt><a name="Activation-relu_derivative"><strong>relu_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;ReLU&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;0<br>
+<dl><dt><a name="Activation-relu_derivative"><strong>relu_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;ReLU&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;if&nbsp;z&nbsp;&gt;&nbsp;0,&nbsp;else&nbsp;0.<br>
+&nbsp;<br>
 Returns&nbsp;1&nbsp;for&nbsp;positive&nbsp;input,&nbsp;and&nbsp;0&nbsp;for&nbsp;negative&nbsp;input.</span></dd></dl>
 
-<dl><dt><a name="Activation-sigmoid"><strong>sigmoid</strong></a>(z)</dt><dd><span class="code">Sigmoid&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;1&nbsp;/&nbsp;(1&nbsp;+&nbsp;exp(-z))<br>
+<dl><dt><a name="Activation-sigmoid"><strong>sigmoid</strong></a>(z)</dt><dd><span class="code">Sigmoid&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;1&nbsp;/&nbsp;(1&nbsp;+&nbsp;exp(-z)).<br>
+&nbsp;<br>
 Maps&nbsp;input&nbsp;to&nbsp;the&nbsp;range&nbsp;[0,&nbsp;1],&nbsp;commonly&nbsp;used&nbsp;for&nbsp;binary&nbsp;classification.</span></dd></dl>
 
-<dl><dt><a name="Activation-sigmoid_derivative"><strong>sigmoid_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;sigmoid&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;<a href="#Activation-sigmoid">sigmoid</a>(z)&nbsp;*&nbsp;(1&nbsp;-&nbsp;<a href="#Activation-sigmoid">sigmoid</a>(z))<br>
+<dl><dt><a name="Activation-sigmoid_derivative"><strong>sigmoid_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;sigmoid&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;<a href="#Activation-sigmoid">sigmoid</a>(z)&nbsp;*&nbsp;(1&nbsp;-&nbsp;<a href="#Activation-sigmoid">sigmoid</a>(z)).<br>
+&nbsp;<br>
 Used&nbsp;for&nbsp;backpropagation&nbsp;through&nbsp;the&nbsp;sigmoid&nbsp;activation.</span></dd></dl>
 
-<dl><dt><a name="Activation-softmax"><strong>softmax</strong></a>(z)</dt><dd><span class="code">Softmax&nbsp;activation&nbsp;function:&nbsp;f(z)_i&nbsp;=&nbsp;exp(z_i)&nbsp;/&nbsp;sum(exp(z_j))&nbsp;for&nbsp;all&nbsp;j<br>
+<dl><dt><a name="Activation-softmax"><strong>softmax</strong></a>(z)</dt><dd><span class="code">Softmax&nbsp;activation&nbsp;function:&nbsp;f(z)_i&nbsp;=&nbsp;exp(z_i)&nbsp;/&nbsp;sum(exp(z_j))&nbsp;for&nbsp;all&nbsp;j.<br>
+&nbsp;<br>
 Maps&nbsp;input&nbsp;into&nbsp;a&nbsp;probability&nbsp;distribution&nbsp;over&nbsp;multiple&nbsp;classes.&nbsp;Used&nbsp;for&nbsp;multiclass&nbsp;classification.</span></dd></dl>
 
-<dl><dt><a name="Activation-tanh"><strong>tanh</strong></a>(z)</dt><dd><span class="code">Hyperbolic&nbsp;tangent&nbsp;(tanh)&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;(exp(z)&nbsp;-&nbsp;exp(-z))&nbsp;/&nbsp;(exp(z)&nbsp;+&nbsp;exp(-z))<br>
+<dl><dt><a name="Activation-tanh"><strong>tanh</strong></a>(z)</dt><dd><span class="code">Hyperbolic&nbsp;tangent&nbsp;(tanh)&nbsp;activation&nbsp;function:&nbsp;f(z)&nbsp;=&nbsp;(exp(z)&nbsp;-&nbsp;exp(-z))&nbsp;/&nbsp;(exp(z)&nbsp;+&nbsp;exp(-z)).<br>
+&nbsp;<br>
 Maps&nbsp;input&nbsp;to&nbsp;the&nbsp;range&nbsp;[-1,&nbsp;1],&nbsp;typically&nbsp;used&nbsp;for&nbsp;normalized&nbsp;input.</span></dd></dl>
 
-<dl><dt><a name="Activation-tanh_derivative"><strong>tanh_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;tanh&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;-&nbsp;<a href="#Activation-tanh">tanh</a>(z)^2<br>
+<dl><dt><a name="Activation-tanh_derivative"><strong>tanh_derivative</strong></a>(z)</dt><dd><span class="code">Derivative&nbsp;of&nbsp;the&nbsp;tanh&nbsp;function:&nbsp;f'(z)&nbsp;=&nbsp;1&nbsp;-&nbsp;<a href="#Activation-tanh">tanh</a>(z)^2.<br>
+&nbsp;<br>
 Used&nbsp;for&nbsp;backpropagation&nbsp;through&nbsp;the&nbsp;tanh&nbsp;activation.</span></dd></dl>
 
 <hr>

@@ -41,14 +41,14 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
 </td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -65,7 +65,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="GridSearchCV">class <strong>GridSearchCV</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#GridSearchCV">GridSearchCV</a>(model,&nbsp;param_grid,&nbsp;cv=5,&nbsp;metric='mse',&nbsp;direction='minimize')<br>
 &nbsp;<br>
@@ -74,24 +74,24 @@ Implements&nbsp;a&nbsp;grid&nbsp;search&nbsp;cross-validation&nbsp;for&nbsp;hype
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="GridSearchCV-__init__"><strong>__init__</strong></a>(self, model, param_grid, cv=5, metric='mse', direction='minimize')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#GridSearchCV">GridSearchCV</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;param_grid&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
--&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;Metrics:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;Metrics:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
--&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;param_grid:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;metric:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;Metrics:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;Metrics:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direction:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
 
 <dl><dt><a name="GridSearchCV-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;for&nbsp;all&nbsp;hyperparameter&nbsp;combinations.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
--&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
--&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;feature&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;label&nbsp;column.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;verbose:&nbsp;(bool)&nbsp;-&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;model:&nbsp;The&nbsp;best&nbsp;model&nbsp;with&nbsp;the&nbsp;optimal&nbsp;hyperparameters.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;model:&nbsp;The&nbsp;best&nbsp;model&nbsp;with&nbsp;the&nbsp;optimal&nbsp;hyperparameters.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -105,30 +105,32 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="ModelSelectionUtility">class <strong>ModelSelectionUtility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
-<tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">A&nbsp;utility&nbsp;class&nbsp;for&nbsp;hyperparameter&nbsp;tuning&nbsp;and&nbsp;cross-validation&nbsp;of&nbsp;machine&nbsp;learning&nbsp;models.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
 <td class="singlecolumn">Static methods defined here:<br>
 <dl><dt><a name="ModelSelectionUtility-cross_validate"><strong>cross_validate</strong></a>(model, X, y, params, cv=5, metric='mse', direction='minimize', verbose=False)</dt><dd><span class="code">Implements&nbsp;a&nbsp;custom&nbsp;cross-validation&nbsp;for&nbsp;hyperparameter&nbsp;tuning.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
--&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
--&nbsp;params&nbsp;(dict):&nbsp;The&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
--&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;Metrics:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;Metrics:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
--&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.<br>
--&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;False.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;feature&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;label&nbsp;column.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params:&nbsp;(dict)&nbsp;-&nbsp;The&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;metric:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;Metrics:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;Metrics:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direction:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;verbose:&nbsp;(bool)&nbsp;-&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;False.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;the&nbsp;scores&nbsp;(list)&nbsp;and&nbsp;the&nbsp;trained&nbsp;model.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;the&nbsp;scores&nbsp;(list)&nbsp;and&nbsp;the&nbsp;trained&nbsp;model.</span></dd></dl>
 
 <dl><dt><a name="ModelSelectionUtility-get_param_combinations"><strong>get_param_combinations</strong></a>(param_grid)</dt><dd><span class="code">Generates&nbsp;all&nbsp;possible&nbsp;combinations&nbsp;of&nbsp;hyperparameters.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;param_combinations&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameter&nbsp;combinations.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;param_combinations&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameter&nbsp;combinations.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -142,7 +144,7 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomSearchCV">class <strong>RandomSearchCV</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#RandomSearchCV">RandomSearchCV</a>(model,&nbsp;param_grid,&nbsp;iter=10,&nbsp;cv=5,&nbsp;metric='mse',&nbsp;direction='minimize')<br>
 &nbsp;<br>
@@ -151,25 +153,25 @@ Implements&nbsp;a&nbsp;random&nbsp;search&nbsp;cross-validation&nbsp;for&nbsp;hy
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="RandomSearchCV-__init__"><strong>__init__</strong></a>(self, model, param_grid, iter=10, cv=5, metric='mse', direction='minimize')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#RandomSearchCV">RandomSearchCV</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;param_grid&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;iter&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;random&nbsp;search.&nbsp;Default&nbsp;is&nbsp;10.<br>
--&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
--&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;Metrics:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;Metrics:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
--&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;param_grid:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;iter:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;random&nbsp;search.&nbsp;Default&nbsp;is&nbsp;10.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;metric:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;Metrics:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;Metrics:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direction:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
 
 <dl><dt><a name="RandomSearchCV-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;for&nbsp;iter&nbsp;random&nbsp;hyperparameter&nbsp;combinations.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
--&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
--&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;feature&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;label&nbsp;column.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;verbose:&nbsp;(bool)&nbsp;-&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;model:&nbsp;The&nbsp;best&nbsp;model&nbsp;with&nbsp;the&nbsp;optimal&nbsp;hyperparameters.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;model:&nbsp;The&nbsp;best&nbsp;model&nbsp;with&nbsp;the&nbsp;optimal&nbsp;hyperparameters.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -183,7 +185,7 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="segaSearchCV">class <strong>segaSearchCV</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#segaSearchCV">segaSearchCV</a>(model,&nbsp;param_space,&nbsp;iter=10,&nbsp;cv=5,&nbsp;metric='mse',&nbsp;direction='minimize')<br>
 &nbsp;<br>
@@ -192,23 +194,23 @@ Implements&nbsp;a&nbsp;custom&nbsp;search&nbsp;cross-validation&nbsp;for&nbsp;hy
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="segaSearchCV-__init__"><strong>__init__</strong></a>(self, model, param_space, iter=10, cv=5, metric='mse', direction='minimize')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#segaSearchCV">segaSearchCV</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;param_space&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Should&nbsp;be&nbsp;in&nbsp;the&nbsp;format:&nbsp;[{'param':&nbsp;[type,&nbsp;min,&nbsp;max]},&nbsp;...]<br>
--&nbsp;iter&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;random&nbsp;search.&nbsp;Default&nbsp;is&nbsp;10.<br>
--&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
--&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;Metrics:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;Metrics:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
--&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;param_space&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should&nbsp;be&nbsp;in&nbsp;the&nbsp;format:&nbsp;[{'param':&nbsp;[type,&nbsp;min,&nbsp;max]},&nbsp;...]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;iter&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;random&nbsp;search.&nbsp;Default&nbsp;is&nbsp;10.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;Metrics:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;Metrics:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
 
 <dl><dt><a name="segaSearchCV-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;for&nbsp;iter&nbsp;random&nbsp;hyperparameter&nbsp;combinations.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
--&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
--&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)-&nbsp;The&nbsp;feature&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)-&nbsp;The&nbsp;label&nbsp;column.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;verbose:&nbsp;(bool)&nbsp;-&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>

@@ -41,14 +41,14 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
 </td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -64,16 +64,18 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="AdadeltaOptimizer">class <strong>AdadeltaOptimizer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#AdadeltaOptimizer">AdadeltaOptimizer</a>(learning_rate=1.0,&nbsp;rho=0.95,&nbsp;epsilon=1e-06,&nbsp;reg_lambda=0.0)<br>
 &nbsp;<br>
 Adadelta&nbsp;optimizer&nbsp;class&nbsp;for&nbsp;training&nbsp;neural&nbsp;networks.<br>
-Formula:&nbsp;<br>
+&nbsp;<br>
+Formula:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;E[g^2]_t&nbsp;=&nbsp;rho&nbsp;*&nbsp;E[g^2]_{t-1}&nbsp;+&nbsp;(1&nbsp;-&nbsp;rho)&nbsp;*&nbsp;g^2<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Delta_x&nbsp;=&nbsp;-&nbsp;(sqrt(E[delta_x^2]_{t-1}&nbsp;+&nbsp;epsilon)&nbsp;/&nbsp;sqrt(E[g^2]_t&nbsp;+&nbsp;epsilon))&nbsp;*&nbsp;g<br>
 &nbsp;&nbsp;&nbsp;&nbsp;E[delta_x^2]_t&nbsp;=&nbsp;rho&nbsp;*&nbsp;E[delta_x^2]_{t-1}&nbsp;+&nbsp;(1&nbsp;-&nbsp;rho)&nbsp;*&nbsp;Delta_x^2<br>
 Derived&nbsp;from:&nbsp;<a href="https://arxiv.org/abs/1212.5701">https://arxiv.org/abs/1212.5701</a><br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer.&nbsp;Defaults&nbsp;to&nbsp;1.0.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;rho&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;decay&nbsp;rate.&nbsp;Defaults&nbsp;to&nbsp;0.95.<br>
@@ -81,19 +83,32 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;regularization&nbsp;parameter.&nbsp;Defaults&nbsp;to&nbsp;0.0.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="AdadeltaOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=1.0, rho=0.95, epsilon=1e-06, reg_lambda=0.0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="AdadeltaOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=1.0, rho=0.95, epsilon=1e-06, reg_lambda=0.0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;optimizer&nbsp;with&nbsp;the&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer.&nbsp;Defaults&nbsp;to&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;rho&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;running&nbsp;averages.&nbsp;Defaults&nbsp;to&nbsp;0.95.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon&nbsp;(float,&nbsp;optional):&nbsp;A&nbsp;small&nbsp;value&nbsp;to&nbsp;prevent&nbsp;division&nbsp;by&nbsp;zero.&nbsp;Defaults&nbsp;to&nbsp;1e-6.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;regularization&nbsp;parameter&nbsp;for&nbsp;weight&nbsp;decay.&nbsp;Defaults&nbsp;to&nbsp;0.0.</span></dd></dl>
 
 <dl><dt><a name="AdadeltaOptimizer-initialize"><strong>initialize</strong></a>(self, layers)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;running&nbsp;averages&nbsp;for&nbsp;each&nbsp;layer's&nbsp;weights.<br>
-Args:&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layers&nbsp;in&nbsp;the&nbsp;neural&nbsp;network.<br>
-Returns:&nbsp;None</span></dd></dl>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layers&nbsp;in&nbsp;the&nbsp;neural&nbsp;network.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;None</span></dd></dl>
 
 <dl><dt><a name="AdadeltaOptimizer-update"><strong>update</strong></a>(self, layer, dW, db, index)</dt><dd><span class="code">Updates&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;of&nbsp;a&nbsp;layer&nbsp;using&nbsp;the&nbsp;Adadelta&nbsp;optimization&nbsp;algorithm.<br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;layer&nbsp;(Layer):&nbsp;The&nbsp;layer&nbsp;to&nbsp;update.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;dW&nbsp;(ndarray):&nbsp;The&nbsp;gradient&nbsp;of&nbsp;the&nbsp;weights.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;(ndarray):&nbsp;The&nbsp;gradient&nbsp;of&nbsp;the&nbsp;biases.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;layer.<br>
-Returns:&nbsp;None</span></dd></dl>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;None</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -107,13 +122,15 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="AdamOptimizer">class <strong>AdamOptimizer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#AdamOptimizer">AdamOptimizer</a>(learning_rate=0.001,&nbsp;beta1=0.9,&nbsp;beta2=0.999,&nbsp;epsilon=1e-08,&nbsp;reg_lambda=0.01)<br>
 &nbsp;<br>
 Adam&nbsp;optimizer&nbsp;class&nbsp;for&nbsp;training&nbsp;neural&nbsp;networks.<br>
-Formula:&nbsp;w&nbsp;=&nbsp;w&nbsp;-&nbsp;alpha&nbsp;*&nbsp;m_hat&nbsp;/&nbsp;(sqrt(v_hat)&nbsp;+&nbsp;epsilon)&nbsp;-&nbsp;lambda&nbsp;*&nbsp;w&nbsp;<br>
+&nbsp;<br>
+Formula:&nbsp;w&nbsp;=&nbsp;w&nbsp;-&nbsp;alpha&nbsp;*&nbsp;m_hat&nbsp;/&nbsp;(sqrt(v_hat)&nbsp;+&nbsp;epsilon)&nbsp;-&nbsp;lambda&nbsp;*&nbsp;w<br>
 Derived&nbsp;from:&nbsp;<a href="https://arxiv.org/abs/1412.6980">https://arxiv.org/abs/1412.6980</a><br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer.&nbsp;Defaults&nbsp;to&nbsp;0.001.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;beta1&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;exponential&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;first&nbsp;moment&nbsp;estimates.&nbsp;Defaults&nbsp;to&nbsp;0.9.<br>
@@ -122,13 +139,35 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;regularization&nbsp;parameter.&nbsp;Defaults&nbsp;to&nbsp;0.01.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="AdamOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-08, reg_lambda=0.01)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="AdamOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-08, reg_lambda=0.01)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;optimizer&nbsp;with&nbsp;the&nbsp;given&nbsp;hyperparameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;(alpha)&nbsp;for&nbsp;the&nbsp;optimizer.&nbsp;Defaults&nbsp;to&nbsp;0.001.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;beta1&nbsp;(float,&nbsp;optional):&nbsp;Exponential&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;first&nbsp;moment&nbsp;estimates.&nbsp;Defaults&nbsp;to&nbsp;0.9.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;beta2&nbsp;(float,&nbsp;optional):&nbsp;Exponential&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;second&nbsp;moment&nbsp;estimates.&nbsp;Defaults&nbsp;to&nbsp;0.999.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon&nbsp;(float,&nbsp;optional):&nbsp;A&nbsp;small&nbsp;value&nbsp;to&nbsp;prevent&nbsp;division&nbsp;by&nbsp;zero.&nbsp;Defaults&nbsp;to&nbsp;1e-8.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;Regularization&nbsp;parameter;&nbsp;higher&nbsp;values&nbsp;indicate&nbsp;stronger&nbsp;regularization.&nbsp;Defaults&nbsp;to&nbsp;0.01.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;beta1&nbsp;(float):&nbsp;Exponential&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;first&nbsp;moment&nbsp;estimates.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;beta2&nbsp;(float):&nbsp;Exponential&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;second&nbsp;moment&nbsp;estimates.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon&nbsp;(float):&nbsp;A&nbsp;small&nbsp;value&nbsp;to&nbsp;prevent&nbsp;division&nbsp;by&nbsp;zero.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float):&nbsp;Regularization&nbsp;parameter&nbsp;for&nbsp;controlling&nbsp;overfitting.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;m&nbsp;(list):&nbsp;List&nbsp;to&nbsp;store&nbsp;first&nbsp;moment&nbsp;estimates&nbsp;for&nbsp;each&nbsp;parameter.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;v&nbsp;(list):&nbsp;List&nbsp;to&nbsp;store&nbsp;second&nbsp;moment&nbsp;estimates&nbsp;for&nbsp;each&nbsp;parameter.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;t&nbsp;(int):&nbsp;Time&nbsp;step&nbsp;counter&nbsp;for&nbsp;the&nbsp;optimizer.</span></dd></dl>
 
 <dl><dt><a name="AdamOptimizer-initialize"><strong>initialize</strong></a>(self, layers)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;first&nbsp;and&nbsp;second&nbsp;moment&nbsp;estimates&nbsp;for&nbsp;each&nbsp;layer's&nbsp;weights.<br>
-Args:&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layers&nbsp;in&nbsp;the&nbsp;neural&nbsp;network.<br>
-Returns:&nbsp;None</span></dd></dl>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layers&nbsp;in&nbsp;the&nbsp;neural&nbsp;network.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;None</span></dd></dl>
 
 <dl><dt><a name="AdamOptimizer-update"><strong>update</strong></a>(self, layer, dW, db, index)</dt><dd><span class="code">Updates&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;of&nbsp;a&nbsp;layer&nbsp;using&nbsp;the&nbsp;Adam&nbsp;optimization&nbsp;algorithm.<br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;layer&nbsp;(Layer):&nbsp;The&nbsp;layer&nbsp;to&nbsp;update.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;dW&nbsp;(ndarray):&nbsp;The&nbsp;gradient&nbsp;of&nbsp;the&nbsp;weights.<br>
@@ -148,31 +187,45 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="SGDOptimizer">class <strong>SGDOptimizer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#SGDOptimizer">SGDOptimizer</a>(learning_rate=0.001,&nbsp;momentum=0.0,&nbsp;reg_lambda=0.0)<br>
 &nbsp;<br>
 Stochastic&nbsp;Gradient&nbsp;Descent&nbsp;(SGD)&nbsp;optimizer&nbsp;class&nbsp;for&nbsp;training&nbsp;neural&nbsp;networks.<br>
+&nbsp;<br>
 Formula:&nbsp;w&nbsp;=&nbsp;w&nbsp;-&nbsp;learning_rate&nbsp;*&nbsp;dW,&nbsp;b&nbsp;=&nbsp;b&nbsp;-&nbsp;learning_rate&nbsp;*&nbsp;db<br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer.&nbsp;Defaults&nbsp;to&nbsp;0.001.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;momentum&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;momentum&nbsp;factor.&nbsp;Defaults&nbsp;to&nbsp;0.0.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;regularization&nbsp;parameter.&nbsp;Defaults&nbsp;to&nbsp;0.0.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="SGDOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=0.001, momentum=0.0, reg_lambda=0.0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="SGDOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=0.001, momentum=0.0, reg_lambda=0.0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;optimizer&nbsp;with&nbsp;specified&nbsp;parameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;step&nbsp;size&nbsp;for&nbsp;updating&nbsp;weights.&nbsp;Defaults&nbsp;to&nbsp;0.001.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;momentum&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;momentum&nbsp;factor&nbsp;to&nbsp;accelerate&nbsp;gradient&nbsp;descent.&nbsp;Defaults&nbsp;to&nbsp;0.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;regularization&nbsp;parameter&nbsp;to&nbsp;prevent&nbsp;overfitting.&nbsp;Defaults&nbsp;to&nbsp;0.0.</span></dd></dl>
 
 <dl><dt><a name="SGDOptimizer-initialize"><strong>initialize</strong></a>(self, layers)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;velocity&nbsp;for&nbsp;each&nbsp;layer's&nbsp;weights.<br>
-Args:&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layers&nbsp;in&nbsp;the&nbsp;neural&nbsp;network.<br>
-Returns:&nbsp;None</span></dd></dl>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layers&nbsp;in&nbsp;the&nbsp;neural&nbsp;network.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;None</span></dd></dl>
 
 <dl><dt><a name="SGDOptimizer-update"><strong>update</strong></a>(self, layer, dW, db, index)</dt><dd><span class="code">Updates&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;of&nbsp;a&nbsp;layer&nbsp;using&nbsp;the&nbsp;SGD&nbsp;optimization&nbsp;algorithm.<br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;layer&nbsp;(Layer):&nbsp;The&nbsp;layer&nbsp;to&nbsp;update.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;dW&nbsp;(ndarray):&nbsp;The&nbsp;gradient&nbsp;of&nbsp;the&nbsp;weights.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;(ndarray):&nbsp;The&nbsp;gradient&nbsp;of&nbsp;the&nbsp;biases.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;layer.<br>
-Returns:&nbsp;None</span></dd></dl>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;None</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>

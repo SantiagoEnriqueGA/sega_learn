@@ -41,17 +41,14 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="ast.html">ast</a><br>
-</td><td class="multicolumn"><a href="csv.html">csv</a><br>
-</td><td class="multicolumn"><a href="sega_learn.utils.dataPrep.html">sega_learn.utils.dataPrep</a><br>
-</td><td class="multicolumn"><a href="numpy.html">numpy</a><br>
-</td></tr></table></td></tr></table><p>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -65,7 +62,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="GradientBoostedRegressor">class <strong>GradientBoostedRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#GradientBoostedRegressor">GradientBoostedRegressor</a>(X=None,&nbsp;y=None,&nbsp;num_trees:&nbsp;int&nbsp;=&nbsp;10,&nbsp;max_depth:&nbsp;int&nbsp;=&nbsp;10,&nbsp;random_seed:&nbsp;int&nbsp;=&nbsp;0)<br>
 &nbsp;<br>
@@ -89,18 +86,28 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#GradientBoostedRegressor-get_stats">get_stats</a>(y_predicted):&nbsp;Calculates&nbsp;various&nbsp;evaluation&nbsp;metrics&nbsp;for&nbsp;the&nbsp;predicted&nbsp;target&nbsp;values.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="GradientBoostedRegressor-__init__"><strong>__init__</strong></a>(self, X=None, y=None, num_trees: int = 10, max_depth: int = 10, random_seed: int = 0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="GradientBoostedRegressor-__init__"><strong>__init__</strong></a>(self, X=None, y=None, num_trees: int = 10, max_depth: int = 10, random_seed: int = 0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;Gradient&nbsp;Boosted&nbsp;Decision&nbsp;Tree&nbsp;Regressor.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray),&nbsp;optional&nbsp;-&nbsp;Input&nbsp;feature&nbsp;data&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(np.ndarray),&nbsp;optional&nbsp;-&nbsp;Target&nbsp;data&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;num_trees:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;Number&nbsp;of&nbsp;trees&nbsp;in&nbsp;the&nbsp;ensemble&nbsp;(default&nbsp;is&nbsp;10).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;Maximum&nbsp;depth&nbsp;of&nbsp;each&nbsp;tree&nbsp;(default&nbsp;is&nbsp;10).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;random_seed:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;Random&nbsp;seed&nbsp;for&nbsp;reproducibility&nbsp;(default&nbsp;is&nbsp;0).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;None</span></dd></dl>
 
 <dl><dt><a name="GradientBoostedRegressor-fit"><strong>fit</strong></a>(self, X=None, y=None, stats=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;gradient&nbsp;boosted&nbsp;decision&nbsp;tree&nbsp;regressor&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
 &nbsp;<br>
 This&nbsp;method&nbsp;trains&nbsp;the&nbsp;ensemble&nbsp;of&nbsp;decision&nbsp;trees&nbsp;by&nbsp;iteratively&nbsp;fitting&nbsp;each&nbsp;tree&nbsp;to&nbsp;the&nbsp;residuals<br>
 of&nbsp;the&nbsp;previous&nbsp;iteration.&nbsp;The&nbsp;residuals&nbsp;are&nbsp;updated&nbsp;after&nbsp;each&nbsp;iteration&nbsp;by&nbsp;subtracting&nbsp;the&nbsp;predictions<br>
-made&nbsp;by&nbsp;the&nbsp;current&nbsp;tree&nbsp;from&nbsp;the&nbsp;target&nbsp;values.<br>
+made&nbsp;by&nbsp;the&nbsp;current&nbsp;tree&nbsp;from&nbsp;the&nbsp;:target&nbsp;values.<br>
 &nbsp;<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;input&nbsp;data&nbsp;features.&nbsp;Default&nbsp;is&nbsp;None.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;stats&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;decide&nbsp;whether&nbsp;to&nbsp;return&nbsp;stats&nbsp;or&nbsp;not.&nbsp;Default&nbsp;is&nbsp;False.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;An&nbsp;array&nbsp;of&nbsp;input&nbsp;:data&nbsp;features.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;An&nbsp;array&nbsp;of&nbsp;target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;stats:&nbsp;(bool)&nbsp;-&nbsp;A&nbsp;flag&nbsp;to&nbsp;decide&nbsp;whether&nbsp;to&nbsp;return&nbsp;stats&nbsp;or&nbsp;not.&nbsp;Default&nbsp;is&nbsp;False.<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;None</span></dd></dl>
@@ -120,13 +127,13 @@ Returns:<br>
 
 <dl><dt><a name="GradientBoostedRegressor-predict"><strong>predict</strong></a>(self, X=None)</dt><dd><span class="code">Predicts&nbsp;the&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data&nbsp;using&nbsp;the&nbsp;gradient&nbsp;boosted&nbsp;decision&nbsp;tree&nbsp;regressor.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;input&nbsp;data&nbsp;features.&nbsp;Default&nbsp;is&nbsp;None.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;An&nbsp;array&nbsp;of&nbsp;input&nbsp;data&nbsp;features.&nbsp;Default&nbsp;is&nbsp;None.<br>
 &nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;predictions&nbsp;(numpy.ndarray):&nbsp;An&nbsp;array&nbsp;of&nbsp;predicted&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;predictions:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;An&nbsp;array&nbsp;of&nbsp;predicted&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
 
-<dl><dt><a name="GradientBoostedRegressor-reset"><strong>reset</strong></a>(self)</dt></dl>
+<dl><dt><a name="GradientBoostedRegressor-reset"><strong>reset</strong></a>(self)</dt><dd><span class="code">Resets&nbsp;the&nbsp;GBDT&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;its&nbsp;initial&nbsp;state.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>

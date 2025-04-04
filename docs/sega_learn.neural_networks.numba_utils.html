@@ -41,53 +41,42 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
 </td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor functions-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
-    
+
 <tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt><a name="-apply_dropout_jit"><strong>apply_dropout_jit</strong></a>(X, dropout_rate)</dt><dd><span class="code">Numba&nbsp;JIT-compiled&nbsp;function&nbsp;to&nbsp;apply&nbsp;dropout.<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(ndarray):&nbsp;Activation&nbsp;values.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;dropout_rate&nbsp;(float):&nbsp;Dropout&nbsp;rate.<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;ndarray:&nbsp;Activation&nbsp;values&nbsp;after&nbsp;applying&nbsp;dropout.</span></dd></dl>
- <dl><dt><a name="-calculate_bce_with_logits_loss"><strong>calculate_bce_with_logits_loss</strong></a>(logits, targets)</dt></dl>
- <dl><dt><a name="-calculate_cross_entropy_loss"><strong>calculate_cross_entropy_loss</strong></a>(logits, targets)</dt></dl>
- <dl><dt><a name="-calculate_loss_from_outputs_binary"><strong>calculate_loss_from_outputs_binary</strong></a>(outputs, y, weights, reg_lambda)</dt></dl>
- <dl><dt><a name="-calculate_loss_from_outputs_multi"><strong>calculate_loss_from_outputs_multi</strong></a>(outputs, y, weights, reg_lambda)</dt></dl>
- <dl><dt><a name="-compute_l2_reg"><strong>compute_l2_reg</strong></a>(weights)</dt></dl>
- <dl><dt><a name="-evaluate_batch"><strong>evaluate_batch</strong></a>(y_hat, y_true, is_binary)</dt></dl>
- <dl><dt><a name="-evaluate_jit"><strong>evaluate_jit</strong></a>(y_hat, y_true, is_binary)</dt><dd><span class="code">Numba&nbsp;JIT-compiled&nbsp;function&nbsp;to&nbsp;evaluate&nbsp;model&nbsp;performance.<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y_hat&nbsp;(ndarray):&nbsp;Model&nbsp;predictions.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;is_binary&nbsp;(bool):&nbsp;Whether&nbsp;the&nbsp;model&nbsp;is&nbsp;binary&nbsp;or&nbsp;multi-class.<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;Accuracy&nbsp;and&nbsp;predicted&nbsp;labels.</span></dd></dl>
- <dl><dt><a name="-leaky_relu"><strong>leaky_relu</strong></a>(z, alpha=0.01)</dt></dl>
- <dl><dt><a name="-leaky_relu_derivative"><strong>leaky_relu_derivative</strong></a>(z, alpha=0.01)</dt></dl>
- <dl><dt><a name="-one_hot_encode"><strong>one_hot_encode</strong></a>(y, num_classes)</dt></dl>
- <dl><dt><a name="-process_batches_binary"><strong>process_batches_binary</strong></a>(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, dropout_layer_indices, reg_lambda, dWs_acc, dbs_acc)</dt></dl>
- <dl><dt><a name="-process_batches_multi"><strong>process_batches_multi</strong></a>(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, dropout_layer_indices, reg_lambda, dWs_acc, dbs_acc)</dt></dl>
- <dl><dt><a name="-relu"><strong>relu</strong></a>(z)</dt></dl>
- <dl><dt><a name="-relu_derivative"><strong>relu_derivative</strong></a>(z)</dt></dl>
- <dl><dt><a name="-sigmoid"><strong>sigmoid</strong></a>(z)</dt></dl>
- <dl><dt><a name="-sigmoid_derivative"><strong>sigmoid_derivative</strong></a>(z)</dt></dl>
- <dl><dt><a name="-softmax"><strong>softmax</strong></a>(z)</dt></dl>
- <dl><dt><a name="-sum_axis0"><strong>sum_axis0</strong></a>(arr)</dt></dl>
- <dl><dt><a name="-sum_reduce"><strong>sum_reduce</strong></a>(arr)</dt></dl>
- <dl><dt><a name="-tanh"><strong>tanh</strong></a>(z)</dt></dl>
- <dl><dt><a name="-tanh_derivative"><strong>tanh_derivative</strong></a>(z)</dt></dl>
+<td class="singlecolumn"><dl><dt><a name="-apply_dropout_jit"><strong>apply_dropout_jit</strong></a>(X, dropout_rate)</dt><dd><span class="code">Apply&nbsp;dropout&nbsp;to&nbsp;activation&nbsp;values.</span></dd></dl>
+ <dl><dt><a name="-calculate_bce_with_logits_loss"><strong>calculate_bce_with_logits_loss</strong></a>(logits, targets)</dt><dd><span class="code">Calculate&nbsp;binary&nbsp;cross-entropy&nbsp;loss&nbsp;with&nbsp;logits.</span></dd></dl>
+ <dl><dt><a name="-calculate_cross_entropy_loss"><strong>calculate_cross_entropy_loss</strong></a>(logits, targets)</dt><dd><span class="code">Calculate&nbsp;cross-entropy&nbsp;loss&nbsp;for&nbsp;multi-class&nbsp;classification.</span></dd></dl>
+ <dl><dt><a name="-calculate_loss_from_outputs_binary"><strong>calculate_loss_from_outputs_binary</strong></a>(outputs, y, weights, reg_lambda)</dt><dd><span class="code">Calculate&nbsp;binary&nbsp;classification&nbsp;loss&nbsp;with&nbsp;L2&nbsp;regularization.</span></dd></dl>
+ <dl><dt><a name="-calculate_loss_from_outputs_multi"><strong>calculate_loss_from_outputs_multi</strong></a>(outputs, y, weights, reg_lambda)</dt><dd><span class="code">Calculate&nbsp;multi-class&nbsp;classification&nbsp;loss&nbsp;with&nbsp;L2&nbsp;regularization.</span></dd></dl>
+ <dl><dt><a name="-compute_l2_reg"><strong>compute_l2_reg</strong></a>(weights)</dt><dd><span class="code">Compute&nbsp;L2&nbsp;regularization&nbsp;for&nbsp;weights.</span></dd></dl>
+ <dl><dt><a name="-evaluate_batch"><strong>evaluate_batch</strong></a>(y_hat, y_true, is_binary)</dt><dd><span class="code">Evaluate&nbsp;accuracy&nbsp;for&nbsp;a&nbsp;batch&nbsp;of&nbsp;predictions.</span></dd></dl>
+ <dl><dt><a name="-evaluate_jit"><strong>evaluate_jit</strong></a>(y_hat, y_true, is_binary)</dt><dd><span class="code">Evaluate&nbsp;model&nbsp;performance&nbsp;and&nbsp;return&nbsp;accuracy&nbsp;and&nbsp;predictions.</span></dd></dl>
+ <dl><dt><a name="-leaky_relu"><strong>leaky_relu</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Apply&nbsp;Leaky&nbsp;ReLU&nbsp;activation&nbsp;function.</span></dd></dl>
+ <dl><dt><a name="-leaky_relu_derivative"><strong>leaky_relu_derivative</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Compute&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;Leaky&nbsp;ReLU&nbsp;activation&nbsp;function.</span></dd></dl>
+ <dl><dt><a name="-one_hot_encode"><strong>one_hot_encode</strong></a>(y, num_classes)</dt><dd><span class="code">One-hot&nbsp;encode&nbsp;a&nbsp;vector&nbsp;of&nbsp;class&nbsp;labels.</span></dd></dl>
+ <dl><dt><a name="-process_batches_binary"><strong>process_batches_binary</strong></a>(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, dropout_layer_indices, reg_lambda, dWs_acc, dbs_acc)</dt><dd><span class="code">Process&nbsp;batches&nbsp;for&nbsp;binary&nbsp;classification.</span></dd></dl>
+ <dl><dt><a name="-process_batches_multi"><strong>process_batches_multi</strong></a>(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, dropout_layer_indices, reg_lambda, dWs_acc, dbs_acc)</dt><dd><span class="code">Process&nbsp;batches&nbsp;for&nbsp;multi-class&nbsp;classification.</span></dd></dl>
+ <dl><dt><a name="-relu"><strong>relu</strong></a>(z)</dt><dd><span class="code">Apply&nbsp;ReLU&nbsp;activation&nbsp;function.</span></dd></dl>
+ <dl><dt><a name="-relu_derivative"><strong>relu_derivative</strong></a>(z)</dt><dd><span class="code">Compute&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;ReLU&nbsp;activation&nbsp;function.</span></dd></dl>
+ <dl><dt><a name="-sigmoid"><strong>sigmoid</strong></a>(z)</dt><dd><span class="code">Apply&nbsp;sigmoid&nbsp;activation&nbsp;function.</span></dd></dl>
+ <dl><dt><a name="-sigmoid_derivative"><strong>sigmoid_derivative</strong></a>(z)</dt><dd><span class="code">Compute&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;sigmoid&nbsp;activation&nbsp;function.</span></dd></dl>
+ <dl><dt><a name="-softmax"><strong>softmax</strong></a>(z)</dt><dd><span class="code">Apply&nbsp;softmax&nbsp;activation&nbsp;function.</span></dd></dl>
+ <dl><dt><a name="-sum_axis0"><strong>sum_axis0</strong></a>(arr)</dt><dd><span class="code">Sum&nbsp;elements&nbsp;along&nbsp;axis&nbsp;0.</span></dd></dl>
+ <dl><dt><a name="-sum_reduce"><strong>sum_reduce</strong></a>(arr)</dt><dd><span class="code">Sum&nbsp;elements&nbsp;along&nbsp;the&nbsp;last&nbsp;axis&nbsp;and&nbsp;reduce&nbsp;the&nbsp;array.</span></dd></dl>
+ <dl><dt><a name="-tanh"><strong>tanh</strong></a>(z)</dt><dd><span class="code">Apply&nbsp;tanh&nbsp;activation&nbsp;function.</span></dd></dl>
+ <dl><dt><a name="-tanh_derivative"><strong>tanh_derivative</strong></a>(z)</dt><dd><span class="code">Compute&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;tanh&nbsp;activation&nbsp;function.</span></dd></dl>
 </td></tr></table><p>
 <table class="section">
 <tr class="decor data-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
-    
+
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>CACHE</strong> = False<br>
-<strong>float64</strong> = float64</td></tr></table>
+<td class="singlecolumn"><strong>CACHE</strong> = False</td></tr></table>
 </body></html>

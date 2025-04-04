@@ -41,7 +41,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Package Contents</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="sega_learn.clustering._dbscan_jit_utils.html">_dbscan_jit_utils</a><br>
 </td><td class="multicolumn"><a href="sega_learn.clustering.clustering.html">clustering</a><br>
@@ -49,7 +49,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -64,49 +64,49 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="DBSCAN">class <strong>DBSCAN</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#DBSCAN">DBSCAN</a>(X,&nbsp;eps=0.5,&nbsp;min_samples=5,&nbsp;compile_numba=False)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;the&nbsp;Density-Based&nbsp;Spatial&nbsp;Clustering&nbsp;of&nbsp;Applications&nbsp;with&nbsp;Noise&nbsp;(<a href="#DBSCAN">DBSCAN</a>)&nbsp;algorithm.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
--&nbsp;eps:&nbsp;The&nbsp;maximum&nbsp;distance&nbsp;between&nbsp;two&nbsp;samples&nbsp;for&nbsp;one&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;in&nbsp;the&nbsp;neighborhood&nbsp;of&nbsp;the&nbsp;other.<br>
--&nbsp;min_samples:&nbsp;The&nbsp;number&nbsp;of&nbsp;samples&nbsp;in&nbsp;a&nbsp;neighborhood&nbsp;for&nbsp;a&nbsp;point&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;a&nbsp;core&nbsp;point.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;eps:&nbsp;The&nbsp;maximum&nbsp;distance&nbsp;between&nbsp;two&nbsp;samples&nbsp;for&nbsp;one&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;in&nbsp;the&nbsp;neighborhood&nbsp;of&nbsp;the&nbsp;other.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;min_samples:&nbsp;The&nbsp;number&nbsp;of&nbsp;samples&nbsp;in&nbsp;a&nbsp;neighborhood&nbsp;for&nbsp;a&nbsp;point&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;a&nbsp;core&nbsp;point.<br>
 &nbsp;<br>
 Methods:<br>
--&nbsp;__init__:&nbsp;Initializes&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;input&nbsp;parameters.<br>
--&nbsp;fit:&nbsp;Fits&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;assigns&nbsp;cluster&nbsp;labels.<br>
--&nbsp;predict:&nbsp;Predicts&nbsp;the&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;new&nbsp;data&nbsp;points.<br>
--&nbsp;fit_predict:&nbsp;Fits&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;and&nbsp;returns&nbsp;cluster&nbsp;labels.<br>
--&nbsp;silhouette_score:&nbsp;Calculates&nbsp;the&nbsp;Silhouette&nbsp;Score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
--&nbsp;_handle_categorical:&nbsp;Handles&nbsp;categorical&nbsp;columns&nbsp;by&nbsp;one-hot&nbsp;encoding.<br>
--&nbsp;_convert_to_ndarray:&nbsp;Converts&nbsp;input&nbsp;data&nbsp;to&nbsp;a&nbsp;NumPy&nbsp;ndarray&nbsp;and&nbsp;handles&nbsp;categorical&nbsp;columns.<br>
--&nbsp;_custom_distance_matrix:&nbsp;Calculates&nbsp;the&nbsp;pairwise&nbsp;distance&nbsp;matrix&nbsp;using&nbsp;a&nbsp;custom&nbsp;distance&nbsp;calculation&nbsp;method.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;__init__:&nbsp;Initializes&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;input&nbsp;parameters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;fit:&nbsp;Fits&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;assigns&nbsp;cluster&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;predict:&nbsp;Predicts&nbsp;the&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;new&nbsp;data&nbsp;points.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;fit_predict:&nbsp;Fits&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;and&nbsp;returns&nbsp;cluster&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;silhouette_score:&nbsp;Calculates&nbsp;the&nbsp;Silhouette&nbsp;Score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;_handle_categorical:&nbsp;Handles&nbsp;categorical&nbsp;columns&nbsp;by&nbsp;one-hot&nbsp;encoding.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;_convert_to_ndarray:&nbsp;Converts&nbsp;input&nbsp;data&nbsp;to&nbsp;a&nbsp;NumPy&nbsp;ndarray&nbsp;and&nbsp;handles&nbsp;categorical&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;_custom_distance_matrix:&nbsp;Calculates&nbsp;the&nbsp;pairwise&nbsp;distance&nbsp;matrix&nbsp;using&nbsp;a&nbsp;custom&nbsp;distance&nbsp;calculation&nbsp;method.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="DBSCAN-__init__"><strong>__init__</strong></a>(self, X, eps=0.5, min_samples=5, compile_numba=False)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
--&nbsp;eps:&nbsp;The&nbsp;maximum&nbsp;distance&nbsp;between&nbsp;two&nbsp;samples&nbsp;for&nbsp;one&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;in&nbsp;the&nbsp;neighborhood&nbsp;of&nbsp;the&nbsp;other.<br>
--&nbsp;min_samples:&nbsp;The&nbsp;number&nbsp;of&nbsp;samples&nbsp;in&nbsp;a&nbsp;neighborhood&nbsp;for&nbsp;a&nbsp;point&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;a&nbsp;core&nbsp;point.<br>
--&nbsp;compile_numba:&nbsp;Whether&nbsp;to&nbsp;compile&nbsp;the&nbsp;distance&nbsp;calculations&nbsp;using&nbsp;Numba&nbsp;for&nbsp;performance.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;eps:&nbsp;The&nbsp;maximum&nbsp;distance&nbsp;between&nbsp;two&nbsp;samples&nbsp;for&nbsp;one&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;in&nbsp;the&nbsp;neighborhood&nbsp;of&nbsp;the&nbsp;other.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;min_samples:&nbsp;The&nbsp;number&nbsp;of&nbsp;samples&nbsp;in&nbsp;a&nbsp;neighborhood&nbsp;for&nbsp;a&nbsp;point&nbsp;to&nbsp;be&nbsp;considered&nbsp;as&nbsp;a&nbsp;core&nbsp;point.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;compile_numba:&nbsp;Whether&nbsp;to&nbsp;compile&nbsp;the&nbsp;distance&nbsp;calculations&nbsp;using&nbsp;Numba&nbsp;for&nbsp;performance.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;not&nbsp;compiled,&nbsp;the&nbsp;first&nbsp;call&nbsp;to&nbsp;the&nbsp;numba&nbsp;fitting&nbsp;function&nbsp;will&nbsp;take&nbsp;longer,&nbsp;but&nbsp;subsequent&nbsp;calls&nbsp;will&nbsp;be&nbsp;faster.</span></dd></dl>
 
 <dl><dt><a name="DBSCAN-auto_eps"><strong>auto_eps</strong></a>(self, min=0.1, max=1.1, precision=0.01, return_scores=False, verbose=False)</dt><dd><span class="code">Find&nbsp;the&nbsp;optimal&nbsp;eps&nbsp;value&nbsp;for&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;based&nbsp;on&nbsp;silhouette&nbsp;score.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;min:&nbsp;The&nbsp;minimum&nbsp;eps&nbsp;value&nbsp;to&nbsp;start&nbsp;the&nbsp;search.<br>
--&nbsp;max:&nbsp;The&nbsp;maximum&nbsp;eps&nbsp;value&nbsp;to&nbsp;end&nbsp;the&nbsp;search.<br>
--&nbsp;precision:&nbsp;The&nbsp;precision&nbsp;of&nbsp;the&nbsp;search.<br>
--&nbsp;return_scores:&nbsp;Whether&nbsp;to&nbsp;return&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;(eps,&nbsp;score)&nbsp;pairs.<br>
--&nbsp;verbose:&nbsp;Whether&nbsp;to&nbsp;print&nbsp;the&nbsp;silhouette&nbsp;score&nbsp;for&nbsp;each&nbsp;eps&nbsp;value.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;min:&nbsp;The&nbsp;minimum&nbsp;eps&nbsp;value&nbsp;to&nbsp;start&nbsp;the&nbsp;search.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max:&nbsp;The&nbsp;maximum&nbsp;eps&nbsp;value&nbsp;to&nbsp;end&nbsp;the&nbsp;search.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;precision:&nbsp;The&nbsp;precision&nbsp;of&nbsp;the&nbsp;search.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return_scores:&nbsp;Whether&nbsp;to&nbsp;return&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;(eps,&nbsp;score)&nbsp;pairs.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;verbose:&nbsp;Whether&nbsp;to&nbsp;print&nbsp;the&nbsp;silhouette&nbsp;score&nbsp;for&nbsp;each&nbsp;eps&nbsp;value.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;eps:&nbsp;The&nbsp;optimal&nbsp;eps&nbsp;value.<br>
--&nbsp;scores_dict&nbsp;(optional):&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;(eps,&nbsp;score)&nbsp;pairs&nbsp;if&nbsp;return_scores&nbsp;is&nbsp;True.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;eps:&nbsp;The&nbsp;optimal&nbsp;eps&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;scores_dict&nbsp;(optional):&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;(eps,&nbsp;score)&nbsp;pairs&nbsp;if&nbsp;return_scores&nbsp;is&nbsp;True.</span></dd></dl>
 
 <dl><dt><a name="DBSCAN-fit"><strong>fit</strong></a>(self, metric='euclidean', numba=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
@@ -115,31 +115,32 @@ Algorithm&nbsp;Steps:<br>
 2.&nbsp;Identify&nbsp;core&nbsp;points&nbsp;based&nbsp;on&nbsp;the&nbsp;minimum&nbsp;number&nbsp;of&nbsp;neighbors&nbsp;within&nbsp;eps&nbsp;distance.<br>
 3.&nbsp;Assign&nbsp;cluster&nbsp;labels&nbsp;using&nbsp;depth-first&nbsp;search&nbsp;(DFS)&nbsp;starting&nbsp;from&nbsp;core&nbsp;points.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;metric:&nbsp;The&nbsp;distance&nbsp;metric&nbsp;to&nbsp;use&nbsp;('euclidean',&nbsp;'manhattan',&nbsp;or&nbsp;'cosine').<br>
--&nbsp;numba:&nbsp;Whether&nbsp;to&nbsp;use&nbsp;numba&nbsp;for&nbsp;faster&nbsp;computation.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;metric:&nbsp;The&nbsp;distance&nbsp;metric&nbsp;to&nbsp;use&nbsp;('euclidean',&nbsp;'manhattan',&nbsp;or&nbsp;'cosine').<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba:&nbsp;Whether&nbsp;to&nbsp;use&nbsp;numba&nbsp;for&nbsp;faster&nbsp;computation.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.</span></dd></dl>
 
 <dl><dt><a name="DBSCAN-fit_predict"><strong>fit_predict</strong></a>(self, numba=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;return&nbsp;the&nbsp;cluster&nbsp;labels.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;the&nbsp;data.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;the&nbsp;data.</span></dd></dl>
 
 <dl><dt><a name="DBSCAN-predict"><strong>predict</strong></a>(self, new_X)</dt><dd><span class="code">Predict&nbsp;the&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;new&nbsp;data&nbsp;points.<br>
+&nbsp;<br>
 Note:&nbsp;<a href="#DBSCAN">DBSCAN</a>&nbsp;does&nbsp;not&nbsp;naturally&nbsp;support&nbsp;predicting&nbsp;new&nbsp;data&nbsp;points.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;new_X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;to&nbsp;predict&nbsp;(numpy&nbsp;array).<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;to&nbsp;predict&nbsp;(numpy&nbsp;array).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;labels:&nbsp;The&nbsp;predicted&nbsp;cluster&nbsp;labels&nbsp;(-1&nbsp;for&nbsp;noise).</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;labels:&nbsp;The&nbsp;predicted&nbsp;cluster&nbsp;labels&nbsp;(-1&nbsp;for&nbsp;noise).</span></dd></dl>
 
 <dl><dt><a name="DBSCAN-silhouette_score"><strong>silhouette_score</strong></a>(self)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;silhouette&nbsp;score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;silhouette_score:&nbsp;The&nbsp;computed&nbsp;silhouette&nbsp;score.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;silhouette_score:&nbsp;The&nbsp;computed&nbsp;silhouette&nbsp;score.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -153,123 +154,121 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="KMeans">class <strong>KMeans</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#KMeans">KMeans</a>(X,&nbsp;n_clusters=3,&nbsp;max_iter=300,&nbsp;tol=0.0001)<br>
 &nbsp;<br>
-This&nbsp;class&nbsp;implements&nbsp;the&nbsp;K-Means&nbsp;clustering&nbsp;algorithm&nbsp;along&nbsp;with&nbsp;methods&nbsp;for&nbsp;evaluating&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;<br>
-and&nbsp;visualizing&nbsp;the&nbsp;clustering&nbsp;results.<br>
+This&nbsp;class&nbsp;implements&nbsp;the&nbsp;K-Means&nbsp;clustering&nbsp;algorithm&nbsp;along&nbsp;with&nbsp;methods&nbsp;for&nbsp;evaluating&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;and&nbsp;visualizing&nbsp;the&nbsp;clustering&nbsp;results.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
--&nbsp;n_clusters:&nbsp;The&nbsp;number&nbsp;of&nbsp;clusters.<br>
--&nbsp;max_iter:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations.<br>
--&nbsp;tol:&nbsp;The&nbsp;tolerance&nbsp;to&nbsp;declare&nbsp;convergence.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_clusters:&nbsp;The&nbsp;number&nbsp;of&nbsp;clusters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol:&nbsp;The&nbsp;tolerance&nbsp;to&nbsp;declare&nbsp;convergence.<br>
 &nbsp;<br>
 Methods:<br>
--&nbsp;__init__:&nbsp;Initializes&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;parameters&nbsp;such&nbsp;as&nbsp;the&nbsp;data&nbsp;matrix,&nbsp;number&nbsp;of&nbsp;clusters,&nbsp;maximum&nbsp;iterations,&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;convergence&nbsp;tolerance.<br>
--&nbsp;_handle_categorical:&nbsp;Handles&nbsp;categorical&nbsp;columns&nbsp;in&nbsp;the&nbsp;input&nbsp;data&nbsp;by&nbsp;one-hot&nbsp;encoding.<br>
--&nbsp;_convert_to_ndarray:&nbsp;Converts&nbsp;input&nbsp;data&nbsp;to&nbsp;a&nbsp;NumPy&nbsp;ndarray&nbsp;and&nbsp;handles&nbsp;categorical&nbsp;columns.<br>
--&nbsp;initialize_centroids:&nbsp;Randomly&nbsp;initializes&nbsp;the&nbsp;centroids&nbsp;for&nbsp;<a href="#KMeans">KMeans</a>&nbsp;clustering.<br>
--&nbsp;assign_clusters:&nbsp;Assigns&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;nearest&nbsp;centroid.<br>
--&nbsp;update_centroids:&nbsp;Updates&nbsp;centroids&nbsp;based&nbsp;on&nbsp;the&nbsp;current&nbsp;cluster&nbsp;assignments.<br>
--&nbsp;fit:&nbsp;Fits&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;by&nbsp;iteratively&nbsp;updating&nbsp;centroids&nbsp;and&nbsp;cluster&nbsp;assignments&nbsp;until&nbsp;convergence.<br>
--&nbsp;predict:&nbsp;Predicts&nbsp;the&nbsp;closest&nbsp;cluster&nbsp;each&nbsp;sample&nbsp;in&nbsp;new_X&nbsp;belongs&nbsp;to.<br>
--&nbsp;elbow_method:&nbsp;Implements&nbsp;the&nbsp;elbow&nbsp;method&nbsp;to&nbsp;determine&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters.<br>
--&nbsp;calinski_harabasz_index:&nbsp;Calculates&nbsp;the&nbsp;Calinski-Harabasz&nbsp;Index&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
--&nbsp;davies_bouldin_index:&nbsp;Calculates&nbsp;the&nbsp;Davies-Bouldin&nbsp;Index&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
--&nbsp;silhouette_score:&nbsp;Calculates&nbsp;the&nbsp;Silhouette&nbsp;Score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
--&nbsp;find_optimal_clusters:&nbsp;Implements&nbsp;methods&nbsp;to&nbsp;find&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;using&nbsp;the&nbsp;elbow&nbsp;method,&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calinski-Harabasz&nbsp;Index,&nbsp;Davies-Bouldin&nbsp;Index,&nbsp;and&nbsp;Silhouette&nbsp;Score.&nbsp;It&nbsp;also&nbsp;plots&nbsp;the&nbsp;evaluation&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;__init__:&nbsp;Initializes&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;parameters&nbsp;such&nbsp;as&nbsp;the&nbsp;data&nbsp;matrix,&nbsp;number&nbsp;of&nbsp;clusters,&nbsp;maximum&nbsp;iterations,&nbsp;and&nbsp;convergence&nbsp;tolerance.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;_handle_categorical:&nbsp;Handles&nbsp;categorical&nbsp;columns&nbsp;in&nbsp;the&nbsp;input&nbsp;data&nbsp;by&nbsp;one-hot&nbsp;encoding.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;_convert_to_ndarray:&nbsp;Converts&nbsp;input&nbsp;data&nbsp;to&nbsp;a&nbsp;NumPy&nbsp;ndarray&nbsp;and&nbsp;handles&nbsp;categorical&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;initialize_centroids:&nbsp;Randomly&nbsp;initializes&nbsp;the&nbsp;centroids&nbsp;for&nbsp;<a href="#KMeans">KMeans</a>&nbsp;clustering.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;assign_clusters:&nbsp;Assigns&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;nearest&nbsp;centroid.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;update_centroids:&nbsp;Updates&nbsp;centroids&nbsp;based&nbsp;on&nbsp;the&nbsp;current&nbsp;cluster&nbsp;assignments.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;fit:&nbsp;Fits&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;by&nbsp;iteratively&nbsp;updating&nbsp;centroids&nbsp;and&nbsp;cluster&nbsp;assignments&nbsp;until&nbsp;convergence.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;predict:&nbsp;Predicts&nbsp;the&nbsp;closest&nbsp;cluster&nbsp;each&nbsp;sample&nbsp;in&nbsp;new_X&nbsp;belongs&nbsp;to.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;elbow_method:&nbsp;Implements&nbsp;the&nbsp;elbow&nbsp;method&nbsp;to&nbsp;determine&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;calinski_harabasz_index:&nbsp;Calculates&nbsp;the&nbsp;Calinski-Harabasz&nbsp;Index&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;davies_bouldin_index:&nbsp;Calculates&nbsp;the&nbsp;Davies-Bouldin&nbsp;Index&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;silhouette_score:&nbsp;Calculates&nbsp;the&nbsp;Silhouette&nbsp;Score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;find_optimal_clusters:&nbsp;Implements&nbsp;methods&nbsp;to&nbsp;find&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;using&nbsp;the&nbsp;elbow&nbsp;method,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calinski-Harabasz&nbsp;Index,&nbsp;Davies-Bouldin&nbsp;Index,&nbsp;and&nbsp;Silhouette&nbsp;Score.&nbsp;It&nbsp;also&nbsp;plots&nbsp;the&nbsp;evaluation<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;metrics&nbsp;to&nbsp;aid&nbsp;in&nbsp;determining&nbsp;the&nbsp;optimal&nbsp;k&nbsp;value.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="KMeans-__init__"><strong>__init__</strong></a>(self, X, n_clusters=3, max_iter=300, tol=0.0001)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array,&nbsp;pandas&nbsp;DataFrame,&nbsp;or&nbsp;list).<br>
--&nbsp;n_clusters:&nbsp;The&nbsp;number&nbsp;of&nbsp;clusters.<br>
--&nbsp;max_iter:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations.<br>
--&nbsp;tol:&nbsp;The&nbsp;tolerance&nbsp;to&nbsp;declare&nbsp;convergence.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array,&nbsp;pandas&nbsp;DataFrame,&nbsp;or&nbsp;list).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_clusters:&nbsp;The&nbsp;number&nbsp;of&nbsp;clusters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol:&nbsp;The&nbsp;tolerance&nbsp;to&nbsp;declare&nbsp;convergence.</span></dd></dl>
 
 <dl><dt><a name="KMeans-assign_clusters"><strong>assign_clusters</strong></a>(self, centroids)</dt><dd><span class="code">Assign&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;nearest&nbsp;centroid.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;centroids:&nbsp;The&nbsp;current&nbsp;centroids.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;centroids:&nbsp;The&nbsp;current&nbsp;centroids.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;assignments&nbsp;for&nbsp;each&nbsp;data&nbsp;point.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;assignments&nbsp;for&nbsp;each&nbsp;data&nbsp;point.</span></dd></dl>
 
 <dl><dt><a name="KMeans-calinski_harabasz_index"><strong>calinski_harabasz_index</strong></a>(self, X, labels, centroids)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;Calinski-Harabasz&nbsp;Index&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
--&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.<br>
--&nbsp;centroids:&nbsp;The&nbsp;centroids&nbsp;of&nbsp;the&nbsp;clusters.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;centroids:&nbsp;The&nbsp;centroids&nbsp;of&nbsp;the&nbsp;clusters.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;ch_index:&nbsp;The&nbsp;computed&nbsp;Calinski-Harabasz&nbsp;Index.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;ch_index:&nbsp;The&nbsp;computed&nbsp;Calinski-Harabasz&nbsp;Index.</span></dd></dl>
 
 <dl><dt><a name="KMeans-davies_bouldin_index"><strong>davies_bouldin_index</strong></a>(self, X, labels, centroids)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;Davies-Bouldin&nbsp;Index&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
--&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.<br>
--&nbsp;centroids:&nbsp;The&nbsp;centroids&nbsp;of&nbsp;the&nbsp;clusters.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;centroids:&nbsp;The&nbsp;centroids&nbsp;of&nbsp;the&nbsp;clusters.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;db_index:&nbsp;The&nbsp;computed&nbsp;Davies-Bouldin&nbsp;Index.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;db_index:&nbsp;The&nbsp;computed&nbsp;Davies-Bouldin&nbsp;Index.</span></dd></dl>
 
 <dl><dt><a name="KMeans-elbow_method"><strong>elbow_method</strong></a>(self, max_k=10)</dt><dd><span class="code">Implement&nbsp;the&nbsp;elbow&nbsp;method&nbsp;to&nbsp;determine&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;max_k:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;clusters&nbsp;to&nbsp;test.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_k:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;clusters&nbsp;to&nbsp;test.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;distortions:&nbsp;A&nbsp;list&nbsp;of&nbsp;distortions&nbsp;for&nbsp;each&nbsp;k.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;distortions:&nbsp;A&nbsp;list&nbsp;of&nbsp;distortions&nbsp;for&nbsp;each&nbsp;k.</span></dd></dl>
 
 <dl><dt><a name="KMeans-find_optimal_clusters"><strong>find_optimal_clusters</strong></a>(self, max_k=10, true_k=None, save_dir=None)</dt><dd><span class="code">Find&nbsp;the&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;using&nbsp;various&nbsp;evaluation&nbsp;metrics&nbsp;and&nbsp;plot&nbsp;the&nbsp;results.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
--&nbsp;max_k:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;clusters&nbsp;to&nbsp;consider.<br>
--&nbsp;true_k:&nbsp;The&nbsp;true&nbsp;number&nbsp;of&nbsp;clusters&nbsp;in&nbsp;the&nbsp;data.<br>
--&nbsp;save_dir:&nbsp;The&nbsp;directory&nbsp;to&nbsp;save&nbsp;the&nbsp;plot&nbsp;(optional).<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_k:&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;clusters&nbsp;to&nbsp;consider.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;true_k:&nbsp;The&nbsp;true&nbsp;number&nbsp;of&nbsp;clusters&nbsp;in&nbsp;the&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;save_dir:&nbsp;The&nbsp;directory&nbsp;to&nbsp;save&nbsp;the&nbsp;plot&nbsp;(optional).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;ch_optimal_k:&nbsp;The&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;Calinski-Harabasz&nbsp;Index.<br>
--&nbsp;db_optimal_k:&nbsp;The&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;Davies-Bouldin&nbsp;Index.<br>
--&nbsp;silhouette_optimal_k:&nbsp;The&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;Silhouette&nbsp;Score.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;ch_optimal_k:&nbsp;The&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;Calinski-Harabasz&nbsp;Index.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db_optimal_k:&nbsp;The&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;Davies-Bouldin&nbsp;Index.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;silhouette_optimal_k:&nbsp;The&nbsp;optimal&nbsp;number&nbsp;of&nbsp;clusters&nbsp;based&nbsp;on&nbsp;the&nbsp;Silhouette&nbsp;Score.</span></dd></dl>
 
 <dl><dt><a name="KMeans-fit"><strong>fit</strong></a>(self)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#KMeans">KMeans</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data.</span></dd></dl>
 
 <dl><dt><a name="KMeans-initialize_centroids"><strong>initialize_centroids</strong></a>(self)</dt><dd><span class="code">Randomly&nbsp;initialize&nbsp;the&nbsp;centroids.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;centroids:&nbsp;The&nbsp;initialized&nbsp;centroids.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;centroids:&nbsp;The&nbsp;initialized&nbsp;centroids.</span></dd></dl>
 
 <dl><dt><a name="KMeans-predict"><strong>predict</strong></a>(self, new_X)</dt><dd><span class="code">Predict&nbsp;the&nbsp;closest&nbsp;cluster&nbsp;each&nbsp;sample&nbsp;in&nbsp;new_X&nbsp;belongs&nbsp;to.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;new_X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;to&nbsp;predict&nbsp;(numpy&nbsp;array).<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;to&nbsp;predict&nbsp;(numpy&nbsp;array).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;labels:&nbsp;The&nbsp;predicted&nbsp;cluster&nbsp;labels.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;labels:&nbsp;The&nbsp;predicted&nbsp;cluster&nbsp;labels.</span></dd></dl>
 
 <dl><dt><a name="KMeans-silhouette_score"><strong>silhouette_score</strong></a>(self, X, labels)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;silhouette&nbsp;score&nbsp;for&nbsp;evaluating&nbsp;clustering&nbsp;performance.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
--&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;The&nbsp;data&nbsp;matrix&nbsp;(numpy&nbsp;array).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;labels:&nbsp;The&nbsp;cluster&nbsp;labels&nbsp;for&nbsp;each&nbsp;data&nbsp;point.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;silhouette_score:&nbsp;The&nbsp;computed&nbsp;silhouette&nbsp;score.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;silhouette_score:&nbsp;The&nbsp;computed&nbsp;silhouette&nbsp;score.</span></dd></dl>
 
 <dl><dt><a name="KMeans-update_centroids"><strong>update_centroids</strong></a>(self)</dt><dd><span class="code">Update&nbsp;the&nbsp;centroids&nbsp;based&nbsp;on&nbsp;the&nbsp;current&nbsp;cluster&nbsp;assignments.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;centroids:&nbsp;The&nbsp;updated&nbsp;centroids.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;centroids:&nbsp;The&nbsp;updated&nbsp;centroids.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -283,7 +282,7 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor data-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
-    
+
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><strong>__all__</strong> = ['KMeans', 'DBSCAN']</td></tr></table>
 </body></html>

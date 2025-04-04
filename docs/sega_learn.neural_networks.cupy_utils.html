@@ -41,23 +41,23 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="cupy.html">cupy</a><br>
 </td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor functions-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
-    
+
 <tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt><a name="-apply_dropout"><strong>apply_dropout</strong></a>(X, dropout_rate)</dt></dl>
- <dl><dt><a name="-backward_cupy"><strong>backward_cupy</strong></a>(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs)</dt><dd><span class="code">#&nbsp;Backward&nbsp;pass&nbsp;remains&nbsp;similar;&nbsp;note&nbsp;that&nbsp;you&nbsp;can&nbsp;also&nbsp;consider&nbsp;fusing&nbsp;derivative&nbsp;computations.</span></dd></dl>
- <dl><dt><a name="-calculate_bce_with_logits_loss"><strong>calculate_bce_with_logits_loss</strong></a>(logits, targets)</dt></dl>
- <dl><dt><a name="-calculate_cross_entropy_loss"><strong>calculate_cross_entropy_loss</strong></a>(logits, targets)</dt></dl>
- <dl><dt><a name="-calculate_loss_from_outputs_binary"><strong>calculate_loss_from_outputs_binary</strong></a>(outputs, y, weights, reg_lambda)</dt></dl>
- <dl><dt><a name="-calculate_loss_from_outputs_multi"><strong>calculate_loss_from_outputs_multi</strong></a>(outputs, y, weights, reg_lambda)</dt></dl>
- <dl><dt><a name="-evaluate_batch"><strong>evaluate_batch</strong></a>(y_hat, y_true, is_binary)</dt></dl>
- <dl><dt><a name="-forward_cupy"><strong>forward_cupy</strong></a>(X, weights, biases, activations, dropout_rate, training, is_binary)</dt><dd><span class="code">#&nbsp;Optimized&nbsp;forward&nbsp;pass&nbsp;with&nbsp;in-place&nbsp;operations&nbsp;and&nbsp;fused&nbsp;kernels.</span></dd></dl>
+<td class="singlecolumn"><dl><dt><a name="-apply_dropout"><strong>apply_dropout</strong></a>(X, dropout_rate)</dt><dd><span class="code">Generate&nbsp;dropout&nbsp;mask&nbsp;and&nbsp;apply&nbsp;fused&nbsp;dropout.</span></dd></dl>
+ <dl><dt><a name="-backward_cupy"><strong>backward_cupy</strong></a>(layer_outputs, y, weights, activations, reg_lambda, is_binary, dWs, dbs)</dt><dd><span class="code">Perform&nbsp;backward&nbsp;pass&nbsp;using&nbsp;CuPy&nbsp;with&nbsp;fused&nbsp;derivative&nbsp;computations.</span></dd></dl>
+ <dl><dt><a name="-calculate_bce_with_logits_loss"><strong>calculate_bce_with_logits_loss</strong></a>(logits, targets)</dt><dd><span class="code">Calculate&nbsp;binary&nbsp;cross-entropy&nbsp;loss&nbsp;with&nbsp;logits.</span></dd></dl>
+ <dl><dt><a name="-calculate_cross_entropy_loss"><strong>calculate_cross_entropy_loss</strong></a>(logits, targets)</dt><dd><span class="code">Calculate&nbsp;cross-entropy&nbsp;loss&nbsp;for&nbsp;multi-class&nbsp;classification.</span></dd></dl>
+ <dl><dt><a name="-calculate_loss_from_outputs_binary"><strong>calculate_loss_from_outputs_binary</strong></a>(outputs, y, weights, reg_lambda)</dt><dd><span class="code">Calculate&nbsp;binary&nbsp;classification&nbsp;loss&nbsp;with&nbsp;L2&nbsp;regularization.</span></dd></dl>
+ <dl><dt><a name="-calculate_loss_from_outputs_multi"><strong>calculate_loss_from_outputs_multi</strong></a>(outputs, y, weights, reg_lambda)</dt><dd><span class="code">Calculate&nbsp;multi-class&nbsp;classification&nbsp;loss&nbsp;with&nbsp;L2&nbsp;regularization.</span></dd></dl>
+ <dl><dt><a name="-evaluate_batch"><strong>evaluate_batch</strong></a>(y_hat, y_true, is_binary)</dt><dd><span class="code">Evaluate&nbsp;batch&nbsp;accuracy&nbsp;for&nbsp;binary&nbsp;or&nbsp;multi-class&nbsp;classification.</span></dd></dl>
+ <dl><dt><a name="-forward_cupy"><strong>forward_cupy</strong></a>(X, weights, biases, activations, dropout_rate, training, is_binary)</dt><dd><span class="code">Perform&nbsp;forward&nbsp;pass&nbsp;using&nbsp;CuPy&nbsp;with&nbsp;fused&nbsp;and&nbsp;in-place&nbsp;operations.</span></dd></dl>
  <dl><dt><a name="-fuse"><strong>fuse</strong></a>(...)</dt><dd><span class="code"><a href="#-fuse">fuse</a>(*args,&nbsp;**kwargs)<br>
 Decorator&nbsp;that&nbsp;fuses&nbsp;a&nbsp;function.<br>
 &nbsp;<br>
@@ -83,12 +83,12 @@ Decorator&nbsp;that&nbsp;fuses&nbsp;a&nbsp;function.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;y&nbsp;=&nbsp;cupy.arange(10)[::-1]<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;squared_diff(x,&nbsp;y)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;array([81,&nbsp;49,&nbsp;25,&nbsp;&nbsp;9,&nbsp;&nbsp;1,&nbsp;&nbsp;1,&nbsp;&nbsp;9,&nbsp;25,&nbsp;49,&nbsp;81])</span></dd></dl>
- <dl><dt><a name="-logsumexp"><strong>logsumexp</strong></a>(a, axis=None, keepdims=False)</dt><dd><span class="code">#&nbsp;Optimized&nbsp;loss&nbsp;functions.</span></dd></dl>
+ <dl><dt><a name="-logsumexp"><strong>logsumexp</strong></a>(a, axis=None, keepdims=False)</dt><dd><span class="code">Compute&nbsp;log-sum-exp&nbsp;for&nbsp;numerical&nbsp;stability.</span></dd></dl>
 </td></tr></table><p>
 <table class="section">
 <tr class="decor data-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
-    
+
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><strong>fused_dropout</strong> = &lt;Fusion 'fused_dropout'&gt;<br>
 <strong>fused_leaky_relu</strong> = &lt;Fusion 'fused_leaky_relu'&gt;<br>

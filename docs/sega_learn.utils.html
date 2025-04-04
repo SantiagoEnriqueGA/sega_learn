@@ -41,7 +41,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Package Contents</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="sega_learn.utils.dataAugmentation.html">dataAugmentation</a><br>
 <a href="sega_learn.utils.dataPrep.html">dataPrep</a><br>
@@ -57,7 +57,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -84,17 +84,25 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="Augmenter">class <strong>Augmenter</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#Augmenter">Augmenter</a>(techniques,&nbsp;verbose=False)<br>
 &nbsp;<br>
 General&nbsp;class&nbsp;for&nbsp;data&nbsp;augmentation&nbsp;techniques.<br>
+&nbsp;<br>
 This&nbsp;class&nbsp;allows&nbsp;for&nbsp;the&nbsp;application&nbsp;of&nbsp;multiple&nbsp;augmentation&nbsp;techniques&nbsp;in&nbsp;sequence.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="Augmenter-__init__"><strong>__init__</strong></a>(self, techniques, verbose=False)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="Augmenter-__init__"><strong>__init__</strong></a>(self, techniques, verbose=False)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#Augmenter">Augmenter</a>&nbsp;with&nbsp;a&nbsp;list&nbsp;of&nbsp;techniques&nbsp;and&nbsp;verbosity&nbsp;option.</span></dd></dl>
 
-<dl><dt><a name="Augmenter-augment"><strong>augment</strong></a>(self, X, y)</dt></dl>
+<dl><dt><a name="Augmenter-augment"><strong>augment</strong></a>(self, X, y)</dt><dd><span class="code">Applies&nbsp;multiple&nbsp;augmentation&nbsp;techniques&nbsp;in&nbsp;sequence.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Feature&nbsp;matrix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(np.ndarray)&nbsp;-&nbsp;Target&nbsp;vector.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;(np.ndarray,&nbsp;np.ndarray)&nbsp;-&nbsp;Augmented&nbsp;feature&nbsp;matrix&nbsp;and&nbsp;target&nbsp;vector.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -108,68 +116,69 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="DataPrep">class <strong>DataPrep</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code">A&nbsp;class&nbsp;for&nbsp;preparing&nbsp;data&nbsp;for&nbsp;machine&nbsp;learning&nbsp;models.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="DataPrep-df_to_ndarray"><strong>df_to_ndarray</strong></a>(df, y_col=0)</dt><dd><span class="code">Converts&nbsp;a&nbsp;DataFrame&nbsp;to&nbsp;a&nbsp;NumPy&nbsp;array.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;DataFrame&nbsp;to&nbsp;be&nbsp;converted.<br>
--&nbsp;y_col&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;label&nbsp;column.&nbsp;Default&nbsp;is&nbsp;0.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;(pandas.DataFrame)&nbsp;-&nbsp;The&nbsp;DataFrame&nbsp;to&nbsp;be&nbsp;converted.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_col:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;label&nbsp;column&nbsp;(default&nbsp;is&nbsp;0).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.<br>
--&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;feature&nbsp;columns&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;label&nbsp;column&nbsp;as&nbsp;a&nbsp;NumPy&nbsp;array.</span></dd></dl>
 
 <dl><dt><a name="DataPrep-find_categorical_columns"><strong>find_categorical_columns</strong></a>(data)</dt><dd><span class="code">Finds&nbsp;the&nbsp;indices&nbsp;of&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame&nbsp;or&nbsp;numpy&nbsp;array.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;data&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;checked.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray)&nbsp;-&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;checked.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;categorical_cols&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;indices&nbsp;of&nbsp;non-numerical&nbsp;columns.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;categorical_cols:&nbsp;(list)&nbsp;-&nbsp;The&nbsp;list&nbsp;of&nbsp;indices&nbsp;of&nbsp;non-numerical&nbsp;columns.</span></dd></dl>
 
 <dl><dt><a name="DataPrep-k_split"><strong>k_split</strong></a>(X, y, k=5)</dt><dd><span class="code">Splits&nbsp;the&nbsp;data&nbsp;into&nbsp;k&nbsp;folds&nbsp;for&nbsp;cross-validation.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
--&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
--&nbsp;k&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds.&nbsp;Default&nbsp;is&nbsp;5.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;feature&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;label&nbsp;column.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;k:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;(default&nbsp;is&nbsp;5).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;X_folds&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;feature&nbsp;columns.<br>
--&nbsp;y_folds&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;label&nbsp;columns.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X_folds:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;feature&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_folds:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;k&nbsp;folds&nbsp;of&nbsp;label&nbsp;columns.</span></dd></dl>
 
 <dl><dt><a name="DataPrep-one_hot_encode"><strong>one_hot_encode</strong></a>(data, cols)</dt><dd><span class="code">One-hot&nbsp;encodes&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame&nbsp;or&nbsp;numpy&nbsp;array.<br>
+&nbsp;<br>
 Drops&nbsp;the&nbsp;original&nbsp;columns&nbsp;after&nbsp;encoding.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;data&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;encoded.<br>
--&nbsp;cols&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;column&nbsp;indices&nbsp;to&nbsp;be&nbsp;encoded.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray)&nbsp;-&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;encoded.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cols:&nbsp;(list)&nbsp;-&nbsp;The&nbsp;list&nbsp;of&nbsp;column&nbsp;indices&nbsp;to&nbsp;be&nbsp;encoded.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;data&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;with&nbsp;one-hot&nbsp;encoded&nbsp;columns.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray)&nbsp;-&nbsp;The&nbsp;data&nbsp;with&nbsp;one-hot&nbsp;encoded&nbsp;columns.</span></dd></dl>
 
-<dl><dt><a name="DataPrep-prepare_data"><strong>prepare_data</strong></a>(csv_file, label_col_index, cols_to_encode=[], write_to_csv=True)</dt><dd><span class="code">Prepares&nbsp;the&nbsp;data&nbsp;by&nbsp;loading&nbsp;a&nbsp;CSV&nbsp;file,&nbsp;one-hot&nbsp;encoding&nbsp;non-numerical&nbsp;columns,<br>
-and&nbsp;optionally&nbsp;writing&nbsp;the&nbsp;prepared&nbsp;data&nbsp;to&nbsp;a&nbsp;new&nbsp;CSV&nbsp;file.<br>
+<dl><dt><a name="DataPrep-prepare_data"><strong>prepare_data</strong></a>(csv_file, label_col_index, cols_to_encode=None, write_to_csv=True)</dt><dd><span class="code">Prepares&nbsp;the&nbsp;data&nbsp;by&nbsp;loading&nbsp;a&nbsp;CSV&nbsp;file,&nbsp;one-hot&nbsp;encoding&nbsp;non-numerical&nbsp;columns,&nbsp;and&nbsp;optionally&nbsp;writing&nbsp;the&nbsp;prepared&nbsp;data&nbsp;to&nbsp;a&nbsp;new&nbsp;CSV&nbsp;file.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;csv_file&nbsp;(str):&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;CSV&nbsp;file&nbsp;to&nbsp;load.<br>
--&nbsp;label_col_index&nbsp;(int):&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;label&nbsp;column.<br>
--&nbsp;cols_to_encode&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;column&nbsp;indices&nbsp;to&nbsp;one-hot&nbsp;encode.&nbsp;Default&nbsp;is&nbsp;an&nbsp;empty&nbsp;list.<br>
--&nbsp;write_to_csv&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;write&nbsp;the&nbsp;prepared&nbsp;data&nbsp;to&nbsp;a&nbsp;new&nbsp;CSV&nbsp;file.&nbsp;Default&nbsp;is&nbsp;True.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;csv_file:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;CSV&nbsp;file&nbsp;to&nbsp;load.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;label_col_index:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;label&nbsp;column.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cols_to_encode:&nbsp;(list),&nbsp;optional&nbsp;-&nbsp;The&nbsp;list&nbsp;of&nbsp;column&nbsp;indices&nbsp;to&nbsp;one-hot&nbsp;encode&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;write_to_csv:&nbsp;(bool),&nbsp;optional&nbsp;-&nbsp;Whether&nbsp;to&nbsp;write&nbsp;the&nbsp;prepared&nbsp;data&nbsp;to&nbsp;a&nbsp;new&nbsp;CSV&nbsp;file&nbsp;(default&nbsp;is&nbsp;True).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;prepared&nbsp;DataFrame.<br>
--&nbsp;prepared_csv_file&nbsp;(str):&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;prepared&nbsp;CSV&nbsp;file.&nbsp;If&nbsp;write_to_csv&nbsp;is&nbsp;False,&nbsp;returns&nbsp;"N/A".</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;(pandas.DataFrame)&nbsp;-&nbsp;The&nbsp;prepared&nbsp;DataFrame.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;prepared_csv_file:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;prepared&nbsp;CSV&nbsp;file.&nbsp;If&nbsp;write_to_csv&nbsp;is&nbsp;False,&nbsp;returns&nbsp;"N/A".</span></dd></dl>
 
 <dl><dt><a name="DataPrep-write_data"><strong>write_data</strong></a>(df, csv_file, print_path=False)</dt><dd><span class="code">Writes&nbsp;the&nbsp;DataFrame&nbsp;to&nbsp;a&nbsp;CSV&nbsp;file.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;df&nbsp;(pandas.DataFrame):&nbsp;The&nbsp;DataFrame&nbsp;to&nbsp;be&nbsp;written.<br>
--&nbsp;csv_file&nbsp;(str):&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;CSV&nbsp;file&nbsp;to&nbsp;write&nbsp;to.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;df:&nbsp;(pandas.DataFrame)&nbsp;-&nbsp;The&nbsp;DataFrame&nbsp;to&nbsp;be&nbsp;written.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;csv_file:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;path&nbsp;of&nbsp;the&nbsp;CSV&nbsp;file&nbsp;to&nbsp;write&nbsp;to.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print_path:&nbsp;(bool),&nbsp;optional&nbsp;-&nbsp;If&nbsp;True,&nbsp;prints&nbsp;the&nbsp;file&nbsp;path&nbsp;(default&nbsp;is&nbsp;False).</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -183,7 +192,7 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="GridSearchCV">class <strong>GridSearchCV</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#GridSearchCV">GridSearchCV</a>(model,&nbsp;param_grid,&nbsp;cv=5,&nbsp;metric='mse',&nbsp;direction='minimize')<br>
 &nbsp;<br>
@@ -192,24 +201,24 @@ Implements&nbsp;a&nbsp;grid&nbsp;search&nbsp;cross-validation&nbsp;for&nbsp;hype
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="GridSearchCV-__init__"><strong>__init__</strong></a>(self, model, param_grid, cv=5, metric='mse', direction='minimize')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#GridSearchCV">GridSearchCV</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;param_grid&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
--&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
--&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;param_grid:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;metric:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direction:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
 
 <dl><dt><a name="GridSearchCV-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;for&nbsp;all&nbsp;hyperparameter&nbsp;combinations.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
--&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
--&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;feature&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;label&nbsp;column.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;verbose:&nbsp;(bool)&nbsp;-&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;model:&nbsp;The&nbsp;best&nbsp;model&nbsp;with&nbsp;the&nbsp;optimal&nbsp;hyperparameters.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;model:&nbsp;The&nbsp;best&nbsp;model&nbsp;with&nbsp;the&nbsp;optimal&nbsp;hyperparameters.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -223,143 +232,145 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="Metrics">class <strong>Metrics</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
-<tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Implements&nbsp;various&nbsp;regression&nbsp;and&nbsp;classification&nbsp;metrics.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
 <td class="singlecolumn">Class methods defined here:<br>
 <dl><dt><a name="Metrics-accuracy"><strong>accuracy</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;accuracy&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;accuracy&nbsp;(float):&nbsp;The&nbsp;accuracy&nbsp;score.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;accuracy:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;accuracy&nbsp;score.</span></dd></dl>
 
 <dl><dt><a name="Metrics-classification_report"><strong>classification_report</strong></a>(y_true, y_pred)</dt><dd><span class="code">Generates&nbsp;a&nbsp;classification&nbsp;report&nbsp;for&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;report&nbsp;(dict):&nbsp;The&nbsp;classification&nbsp;report.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;report:&nbsp;(dict)&nbsp;-&nbsp;The&nbsp;classification&nbsp;report.</span></dd></dl>
 
 <dl><dt><a name="Metrics-confusion_matrix"><strong>confusion_matrix</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;confusion&nbsp;matrix&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;cm&nbsp;(numpy.ndarray):&nbsp;The&nbsp;confusion&nbsp;matrix.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;cm:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;confusion&nbsp;matrix.</span></dd></dl>
 
 <dl><dt><a name="Metrics-f1_score"><strong>f1_score</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;F1&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;f1_score&nbsp;(float):&nbsp;The&nbsp;F1&nbsp;score.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;f1_score:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;F1&nbsp;score.</span></dd></dl>
 
 <dl><dt><a name="Metrics-log_loss"><strong>log_loss</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;log&nbsp;loss&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;probabilities.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;probabilities.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;log_loss&nbsp;(float):&nbsp;The&nbsp;log&nbsp;loss.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;log_loss:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;log&nbsp;loss.</span></dd></dl>
 
 <dl><dt><a name="Metrics-mean_absolute_error"><strong>mean_absolute_error</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;mae&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;absolute&nbsp;error.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;mae:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;mean&nbsp;absolute&nbsp;error.</span></dd></dl>
 
 <dl><dt><a name="Metrics-mean_absolute_percentage_error"><strong>mean_absolute_percentage_error</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;mean&nbsp;absolute&nbsp;percentage&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;mape&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;absolute&nbsp;percentage&nbsp;error&nbsp;as&nbsp;a&nbsp;decimal.&nbsp;Returns&nbsp;np.nan&nbsp;if&nbsp;y_true&nbsp;is&nbsp;all&nbsp;zeros.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;mape:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;mean&nbsp;absolute&nbsp;percentage&nbsp;error&nbsp;as&nbsp;a&nbsp;decimal.&nbsp;Returns&nbsp;np.nan&nbsp;if&nbsp;y_true&nbsp;is&nbsp;all&nbsp;zeros.</span></dd></dl>
 
 <dl><dt><a name="Metrics-mean_percentage_error"><strong>mean_percentage_error</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;mean&nbsp;percentage&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;mpe&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;percentage&nbsp;error.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;mpe:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;mean&nbsp;percentage&nbsp;error.</span></dd></dl>
 
 <dl><dt><a name="Metrics-mean_squared_error"><strong>mean_squared_error</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;mse&nbsp;(float):&nbsp;The&nbsp;mean&nbsp;squared&nbsp;error.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;mse:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;mean&nbsp;squared&nbsp;error.</span></dd></dl>
 
 <dl><dt><a name="Metrics-precision"><strong>precision</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;precision&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;precision&nbsp;(float):&nbsp;The&nbsp;precision&nbsp;score.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;precision:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;precision&nbsp;score.</span></dd></dl>
 
 <dl><dt><a name="Metrics-r_squared"><strong>r_squared</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;R-squared&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;r_squared&nbsp;(float):&nbsp;The&nbsp;R-squared&nbsp;score.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;r_squared:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;R-squared&nbsp;score.</span></dd></dl>
 
 <dl><dt><a name="Metrics-recall"><strong>recall</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;recall&nbsp;score&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;recall&nbsp;(float):&nbsp;The&nbsp;recall&nbsp;score.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;recall:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;recall&nbsp;score.</span></dd></dl>
 
 <dl><dt><a name="Metrics-root_mean_squared_error"><strong>root_mean_squared_error</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;root&nbsp;mean&nbsp;squared&nbsp;error&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;rmse&nbsp;(float):&nbsp;The&nbsp;root&nbsp;mean&nbsp;squared&nbsp;error.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;rmse:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;root&nbsp;mean&nbsp;squared&nbsp;error.</span></dd></dl>
 
 <dl><dt><a name="Metrics-show_classification_report"><strong>show_classification_report</strong></a>(y_true, y_pred)</dt><dd><span class="code">Generates&nbsp;and&nbsp;displays&nbsp;a&nbsp;classification&nbsp;report&nbsp;for&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;report&nbsp;(dict):&nbsp;The&nbsp;classification&nbsp;report.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;report:&nbsp;(dict)&nbsp;-&nbsp;The&nbsp;classification&nbsp;report.</span></dd></dl>
 
 <dl><dt><a name="Metrics-show_confusion_matrix"><strong>show_confusion_matrix</strong></a>(y_true, y_pred)</dt><dd><span class="code">Calculates&nbsp;and&nbsp;displays&nbsp;the&nbsp;confusion&nbsp;matrix&nbsp;between&nbsp;the&nbsp;true&nbsp;and&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;y_true&nbsp;(numpy.ndarray):&nbsp;The&nbsp;true&nbsp;values.<br>
--&nbsp;y_pred&nbsp;(numpy.ndarray):&nbsp;The&nbsp;predicted&nbsp;values.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;true&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;cm&nbsp;(numpy.ndarray):&nbsp;The&nbsp;confusion&nbsp;matrix.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;cm:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;confusion&nbsp;matrix.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -373,30 +384,32 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="ModelSelectionUtility">class <strong>ModelSelectionUtility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
-<tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">A&nbsp;utility&nbsp;class&nbsp;for&nbsp;hyperparameter&nbsp;tuning&nbsp;and&nbsp;cross-validation&nbsp;of&nbsp;machine&nbsp;learning&nbsp;models.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
 <td class="singlecolumn">Static methods defined here:<br>
 <dl><dt><a name="ModelSelectionUtility-cross_validate"><strong>cross_validate</strong></a>(model, X, y, params, cv=5, metric='mse', direction='minimize', verbose=False)</dt><dd><span class="code">Implements&nbsp;a&nbsp;custom&nbsp;cross-validation&nbsp;for&nbsp;hyperparameter&nbsp;tuning.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
--&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
--&nbsp;params&nbsp;(dict):&nbsp;The&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
--&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
--&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.<br>
--&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;False.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;feature&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;label&nbsp;column.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params:&nbsp;(dict)&nbsp;-&nbsp;The&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;metric:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direction:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;verbose:&nbsp;(bool)&nbsp;-&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;False.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;the&nbsp;scores&nbsp;(list)&nbsp;and&nbsp;the&nbsp;trained&nbsp;model.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;the&nbsp;scores&nbsp;(list)&nbsp;and&nbsp;the&nbsp;trained&nbsp;model.</span></dd></dl>
 
 <dl><dt><a name="ModelSelectionUtility-get_param_combinations"><strong>get_param_combinations</strong></a>(param_grid)</dt><dd><span class="code">Generates&nbsp;all&nbsp;possible&nbsp;combinations&nbsp;of&nbsp;hyperparameters.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;param_combinations&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameter&nbsp;combinations.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;param_combinations&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameter&nbsp;combinations.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -410,50 +423,65 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="PCA">class <strong>PCA</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#PCA">PCA</a>(n_components)<br>
 &nbsp;<br>
 Principal&nbsp;Component&nbsp;Analysis&nbsp;(<a href="#PCA">PCA</a>)&nbsp;implementation.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="PCA-__init__"><strong>__init__</strong></a>(self, n_components)</dt><dd><span class="code">Principal&nbsp;Component&nbsp;Analysis&nbsp;(<a href="#PCA">PCA</a>)&nbsp;implementation.<br>
-Uses&nbsp;the&nbsp;eigendecomposition&nbsp;of&nbsp;the&nbsp;covariance&nbsp;matrix&nbsp;to&nbsp;project&nbsp;the&nbsp;data&nbsp;onto&nbsp;a&nbsp;lower-dimensional&nbsp;space.<br>
+<dl><dt><a name="PCA-__init__"><strong>__init__</strong></a>(self, n_components)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#PCA">PCA</a>&nbsp;model.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;n_components:&nbsp;number&nbsp;of&nbsp;principal&nbsp;components&nbsp;to&nbsp;keep</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_components:&nbsp;(int)&nbsp;-&nbsp;Number&nbsp;of&nbsp;principal&nbsp;components&nbsp;to&nbsp;keep.</span></dd></dl>
 
-<dl><dt><a name="PCA-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#PCA">PCA</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;X.<br>
+<dl><dt><a name="PCA-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fits&nbsp;the&nbsp;<a href="#PCA">PCA</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;model&nbsp;to.</span></dd></dl>
-
-<dl><dt><a name="PCA-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#PCA">PCA</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;X&nbsp;and&nbsp;apply&nbsp;the&nbsp;dimensionality&nbsp;reduction&nbsp;on&nbsp;X.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;model&nbsp;to&nbsp;and&nbsp;transform.<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;input&nbsp;data&nbsp;is&nbsp;not&nbsp;a&nbsp;2D&nbsp;numpy&nbsp;array&nbsp;or&nbsp;if&nbsp;n_components&nbsp;exceeds&nbsp;the&nbsp;number&nbsp;of&nbsp;features.</span></dd></dl>
+
+<dl><dt><a name="PCA-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fits&nbsp;the&nbsp;<a href="#PCA">PCA</a>&nbsp;model&nbsp;and&nbsp;applies&nbsp;dimensionality&nbsp;reduction&nbsp;on&nbsp;the&nbsp;input&nbsp;data.<br>
 &nbsp;<br>
-Returns:<br>
--&nbsp;X_transformed:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;principal&nbsp;component&nbsp;space.</span></dd></dl>
-
-<dl><dt><a name="PCA-get_components"><strong>get_components</strong></a>(self)</dt></dl>
-
-<dl><dt><a name="PCA-get_explained_variance_ratio"><strong>get_explained_variance_ratio</strong></a>(self)</dt></dl>
-
-<dl><dt><a name="PCA-inverse_transform"><strong>inverse_transform</strong></a>(self, X_reduced)</dt></dl>
-
-<dl><dt><a name="PCA-transform"><strong>transform</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;the&nbsp;dimensionality&nbsp;reduction&nbsp;on&nbsp;X.<br>
-&nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;transform.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;X_transformed:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;principal&nbsp;component&nbsp;space.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X_transformed:&nbsp;(np.ndarray)&nbsp;-&nbsp;Data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;principal&nbsp;component&nbsp;space&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components).</span></dd></dl>
+
+<dl><dt><a name="PCA-get_components"><strong>get_components</strong></a>(self)</dt><dd><span class="code">Retrieves&nbsp;the&nbsp;principal&nbsp;components.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;components_:&nbsp;(np.ndarray)&nbsp;-&nbsp;Array&nbsp;of&nbsp;principal&nbsp;components&nbsp;of&nbsp;shape&nbsp;(n_features,&nbsp;n_components).</span></dd></dl>
+
+<dl><dt><a name="PCA-get_explained_variance_ratio"><strong>get_explained_variance_ratio</strong></a>(self)</dt><dd><span class="code">Retrieves&nbsp;the&nbsp;explained&nbsp;variance&nbsp;ratio.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;explained_variance_ratio_:&nbsp;(np.ndarray)&nbsp;-&nbsp;Array&nbsp;of&nbsp;explained&nbsp;variance&nbsp;ratios&nbsp;for&nbsp;each&nbsp;principal&nbsp;component.</span></dd></dl>
+
+<dl><dt><a name="PCA-inverse_transform"><strong>inverse_transform</strong></a>(self, X_reduced)</dt><dd><span class="code">Reconstructs&nbsp;the&nbsp;original&nbsp;data&nbsp;from&nbsp;the&nbsp;reduced&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_reduced:&nbsp;(np.ndarray)&nbsp;-&nbsp;Reduced&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_original:&nbsp;(np.ndarray)&nbsp;-&nbsp;Reconstructed&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;input&nbsp;data&nbsp;is&nbsp;not&nbsp;a&nbsp;2D&nbsp;numpy&nbsp;array.</span></dd></dl>
+
+<dl><dt><a name="PCA-transform"><strong>transform</strong></a>(self, X)</dt><dd><span class="code">Applies&nbsp;dimensionality&nbsp;reduction&nbsp;on&nbsp;the&nbsp;input&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_transformed:&nbsp;(np.ndarray)&nbsp;-&nbsp;Data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;principal&nbsp;component&nbsp;space&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components).<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;input&nbsp;data&nbsp;is&nbsp;not&nbsp;a&nbsp;2D&nbsp;numpy&nbsp;array&nbsp;or&nbsp;if&nbsp;its&nbsp;dimensions&nbsp;do&nbsp;not&nbsp;match&nbsp;the&nbsp;fitted&nbsp;data.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -467,33 +495,28 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="PolynomialTransform">class <strong>PolynomialTransform</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#PolynomialTransform">PolynomialTransform</a>(degree=2)<br>
 &nbsp;<br>
-This&nbsp;class&nbsp;implements&nbsp;Polynomial&nbsp;Feature&nbsp;Transformation.<br>
-Polynomial&nbsp;feature&nbsp;transformation&nbsp;is&nbsp;a&nbsp;technique&nbsp;used&nbsp;to&nbsp;create&nbsp;new&nbsp;features&nbsp;from&nbsp;the&nbsp;existing&nbsp;features&nbsp;by&nbsp;raising&nbsp;them&nbsp;to&nbsp;a&nbsp;power&nbsp;or&nbsp;by&nbsp;creating&nbsp;interaction&nbsp;terms.<br>
+Implements&nbsp;Polynomial&nbsp;Feature&nbsp;Transformation.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;degree:&nbsp;int,&nbsp;default=2<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;degree&nbsp;of&nbsp;the&nbsp;polynomial&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Polynomial&nbsp;feature&nbsp;transformation&nbsp;creates&nbsp;new&nbsp;features&nbsp;by&nbsp;raising&nbsp;existing&nbsp;features&nbsp;to&nbsp;a&nbsp;power&nbsp;or&nbsp;creating&nbsp;interaction&nbsp;terms.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;degree&nbsp;(int):&nbsp;The&nbsp;degree&nbsp;of&nbsp;the&nbsp;polynomial&nbsp;features&nbsp;(default&nbsp;is&nbsp;2).<br>
+&nbsp;<br>
 Attributes:<br>
--&nbsp;n_samples:&nbsp;int<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;samples.<br>
--&nbsp;n_features:&nbsp;int<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;features.<br>
--&nbsp;n_output_features:&nbsp;int<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;output&nbsp;features.<br>
--&nbsp;combinations:&nbsp;list&nbsp;of&nbsp;tuples&nbsp;of&nbsp;shape&nbsp;(n_features,)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;combinations&nbsp;of&nbsp;features(X)&nbsp;of&nbsp;degree&nbsp;n.<br>
--&nbsp;bias:&nbsp;bool,&nbsp;default=True<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;include&nbsp;a&nbsp;bias&nbsp;term&nbsp;in&nbsp;the&nbsp;output&nbsp;features.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;n_samples&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;samples&nbsp;in&nbsp;the&nbsp;input&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_features&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;features&nbsp;in&nbsp;the&nbsp;input&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_output_features&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;output&nbsp;features&nbsp;after&nbsp;transformation.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;combinations&nbsp;(list&nbsp;of&nbsp;tuples):&nbsp;The&nbsp;combinations&nbsp;of&nbsp;features&nbsp;for&nbsp;polynomial&nbsp;terms.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="PolynomialTransform-__init__"><strong>__init__</strong></a>(self, degree=2)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="PolynomialTransform-__init__"><strong>__init__</strong></a>(self, degree=2)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#PolynomialTransform">PolynomialTransform</a>&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
 
-<dl><dt><a name="PolynomialTransform-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data.&nbsp;<br>
+<dl><dt><a name="PolynomialTransform-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
+&nbsp;<br>
 Uses&nbsp;itertools.combinations_with_replacement&nbsp;to&nbsp;generate&nbsp;all&nbsp;possible&nbsp;combinations&nbsp;of&nbsp;features(X)&nbsp;of&nbsp;degree&nbsp;n.</span></dd></dl>
 
 <dl><dt><a name="PolynomialTransform-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;to&nbsp;data,&nbsp;then&nbsp;transform&nbsp;it.</span></dd></dl>
@@ -512,7 +535,7 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomOverSampler">class <strong>RandomOverSampler</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#RandomOverSampler">RandomOverSampler</a>(random_state=None)<br>
 &nbsp;<br>
@@ -528,15 +551,16 @@ Algorithm&nbsp;Steps:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;4:&nbsp;Duplicate&nbsp;the&nbsp;selected&nbsp;samples&nbsp;to&nbsp;create&nbsp;a&nbsp;balanced&nbsp;dataset.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RandomOverSampler-__init__"><strong>__init__</strong></a>(self, random_state=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="RandomOverSampler-__init__"><strong>__init__</strong></a>(self, random_state=None)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#RandomOverSampler">RandomOverSampler</a>&nbsp;with&nbsp;an&nbsp;optional&nbsp;random&nbsp;state.</span></dd></dl>
 
-<dl><dt><a name="RandomOverSampler-fit_resample"><strong>fit_resample</strong></a>(self, X, y)</dt><dd><span class="code">Resample&nbsp;the&nbsp;dataset&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution&nbsp;by&nbsp;duplicating&nbsp;minority&nbsp;class&nbsp;samples.<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like):&nbsp;Feature&nbsp;matrix.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(array-like):&nbsp;Target&nbsp;vector.<br>
+<dl><dt><a name="RandomOverSampler-fit_resample"><strong>fit_resample</strong></a>(self, X, y)</dt><dd><span class="code">Resamples&nbsp;the&nbsp;dataset&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution&nbsp;by&nbsp;duplicating&nbsp;minority&nbsp;class&nbsp;samples.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;Feature&nbsp;matrix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;Target&nbsp;vector.<br>
+&nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X_resampled&nbsp;(array-like):&nbsp;Resampled&nbsp;feature&nbsp;matrix.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y_resampled&nbsp;(array-like):&nbsp;Resampled&nbsp;target&nbsp;vector.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;(np.ndarray,&nbsp;np.ndarray)&nbsp;-&nbsp;Resampled&nbsp;feature&nbsp;matrix&nbsp;and&nbsp;target&nbsp;vector.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -550,7 +574,7 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomSearchCV">class <strong>RandomSearchCV</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#RandomSearchCV">RandomSearchCV</a>(model,&nbsp;param_grid,&nbsp;iter=10,&nbsp;cv=5,&nbsp;metric='mse',&nbsp;direction='minimize')<br>
 &nbsp;<br>
@@ -559,25 +583,25 @@ Implements&nbsp;a&nbsp;random&nbsp;search&nbsp;cross-validation&nbsp;for&nbsp;hy
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="RandomSearchCV-__init__"><strong>__init__</strong></a>(self, model, param_grid, iter=10, cv=5, metric='mse', direction='minimize')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#RandomSearchCV">RandomSearchCV</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;param_grid&nbsp;(list):&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
--&nbsp;iter&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;random&nbsp;search.&nbsp;Default&nbsp;is&nbsp;10.<br>
--&nbsp;cv&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
--&nbsp;metric&nbsp;(str):&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
--&nbsp;direction&nbsp;(str):&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model:&nbsp;The&nbsp;model&nbsp;Object&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;param_grid:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;containing&nbsp;hyperparameters&nbsp;to&nbsp;be&nbsp;tuned.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;iter:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;random&nbsp;search.&nbsp;Default&nbsp;is&nbsp;10.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;folds&nbsp;for&nbsp;cross-validation.&nbsp;Default&nbsp;is&nbsp;5.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;metric:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;metric&nbsp;to&nbsp;be&nbsp;used&nbsp;for&nbsp;evaluation.&nbsp;Default&nbsp;is&nbsp;'mse'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Regression&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'mse',&nbsp;'r2',&nbsp;'mae',&nbsp;'rmse',&nbsp;'mape',&nbsp;'mpe'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Classification&nbsp;<a href="#Metrics">Metrics</a>:&nbsp;'accuracy',&nbsp;'precision',&nbsp;'recall',&nbsp;'f1',&nbsp;'log_loss'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direction:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;direction&nbsp;to&nbsp;optimize&nbsp;the&nbsp;metric.&nbsp;Default&nbsp;is&nbsp;'minimize'.</span></dd></dl>
 
 <dl><dt><a name="RandomSearchCV-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fits&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;for&nbsp;iter&nbsp;random&nbsp;hyperparameter&nbsp;combinations.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;feature&nbsp;columns.<br>
--&nbsp;y&nbsp;(numpy.ndarray):&nbsp;The&nbsp;label&nbsp;column.<br>
--&nbsp;verbose&nbsp;(bool):&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;feature&nbsp;columns.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;label&nbsp;column.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;verbose:&nbsp;(bool)&nbsp;-&nbsp;A&nbsp;flag&nbsp;to&nbsp;display&nbsp;the&nbsp;training&nbsp;progress.&nbsp;Default&nbsp;is&nbsp;True.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;model:&nbsp;The&nbsp;best&nbsp;model&nbsp;with&nbsp;the&nbsp;optimal&nbsp;hyperparameters.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;model:&nbsp;The&nbsp;best&nbsp;model&nbsp;with&nbsp;the&nbsp;optimal&nbsp;hyperparameters.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -591,7 +615,7 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomUnderSampler">class <strong>RandomUnderSampler</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#RandomUnderSampler">RandomUnderSampler</a>(random_state=None)<br>
 &nbsp;<br>
@@ -607,15 +631,16 @@ Algorithm&nbsp;Steps:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;4:&nbsp;Remove&nbsp;the&nbsp;selected&nbsp;samples&nbsp;to&nbsp;create&nbsp;a&nbsp;balanced&nbsp;dataset.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RandomUnderSampler-__init__"><strong>__init__</strong></a>(self, random_state=None)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="RandomUnderSampler-__init__"><strong>__init__</strong></a>(self, random_state=None)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#RandomUnderSampler">RandomUnderSampler</a>&nbsp;with&nbsp;an&nbsp;optional&nbsp;random&nbsp;state.</span></dd></dl>
 
-<dl><dt><a name="RandomUnderSampler-fit_resample"><strong>fit_resample</strong></a>(self, X, y)</dt><dd><span class="code">Resample&nbsp;the&nbsp;dataset&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution&nbsp;by&nbsp;removing&nbsp;majority&nbsp;class&nbsp;samples.<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like):&nbsp;Feature&nbsp;matrix.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(array-like):&nbsp;Target&nbsp;vector.<br>
+<dl><dt><a name="RandomUnderSampler-fit_resample"><strong>fit_resample</strong></a>(self, X, y)</dt><dd><span class="code">Resamples&nbsp;the&nbsp;dataset&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution&nbsp;by&nbsp;removing&nbsp;majority&nbsp;class&nbsp;samples.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;Feature&nbsp;matrix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;Target&nbsp;vector.<br>
+&nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X_resampled&nbsp;(array-like):&nbsp;Resampled&nbsp;feature&nbsp;matrix.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y_resampled&nbsp;(array-like):&nbsp;Resampled&nbsp;target&nbsp;vector.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;(np.ndarray,&nbsp;np.ndarray)&nbsp;-&nbsp;Resampled&nbsp;feature&nbsp;matrix&nbsp;and&nbsp;target&nbsp;vector.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -629,7 +654,7 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="SMOTE">class <strong>SMOTE</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#SMOTE">SMOTE</a>(random_state=None,&nbsp;k_neighbors=5)<br>
 &nbsp;<br>
@@ -639,22 +664,23 @@ Synthetic&nbsp;Minority&nbsp;Over-sampling&nbsp;Technique&nbsp;(<a href="#SMOTE"
 This&nbsp;helps&nbsp;to&nbsp;create&nbsp;a&nbsp;more&nbsp;balanced&nbsp;dataset,&nbsp;which&nbsp;can&nbsp;improve&nbsp;the&nbsp;performance&nbsp;of&nbsp;machine&nbsp;learning&nbsp;models.<br>
 &nbsp;<br>
 Algorithm&nbsp;Steps:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;1:&nbsp;Identify&nbsp;the&nbsp;minority&nbsp;class&nbsp;and&nbsp;its&nbsp;samples.&nbsp;&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;2:&nbsp;For&nbsp;each&nbsp;sample&nbsp;in&nbsp;the&nbsp;minority&nbsp;class,&nbsp;find&nbsp;its&nbsp;k&nbsp;nearest&nbsp;neighbors&nbsp;(using&nbsp;Euclidean&nbsp;distance.)&nbsp;&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;3:&nbsp;Randomly&nbsp;select&nbsp;one&nbsp;or&nbsp;more&nbsp;of&nbsp;these&nbsp;neighbors.&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;1:&nbsp;Identify&nbsp;the&nbsp;minority&nbsp;class&nbsp;and&nbsp;its&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;2:&nbsp;For&nbsp;each&nbsp;sample&nbsp;in&nbsp;the&nbsp;minority&nbsp;class,&nbsp;find&nbsp;its&nbsp;k&nbsp;nearest&nbsp;neighbors&nbsp;(using&nbsp;Euclidean&nbsp;distance.)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;3:&nbsp;Randomly&nbsp;select&nbsp;one&nbsp;or&nbsp;more&nbsp;of&nbsp;these&nbsp;neighbors.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Step&nbsp;4:&nbsp;Create&nbsp;synthetic&nbsp;samples&nbsp;by&nbsp;interpolating&nbsp;between&nbsp;the&nbsp;original&nbsp;sample&nbsp;and&nbsp;the&nbsp;selected&nbsp;neighbors.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="SMOTE-__init__"><strong>__init__</strong></a>(self, random_state=None, k_neighbors=5)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="SMOTE-__init__"><strong>__init__</strong></a>(self, random_state=None, k_neighbors=5)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#SMOTE">SMOTE</a>&nbsp;with&nbsp;an&nbsp;optional&nbsp;random&nbsp;state&nbsp;and&nbsp;number&nbsp;of&nbsp;neighbors.</span></dd></dl>
 
-<dl><dt><a name="SMOTE-fit_resample"><strong>fit_resample</strong></a>(self, X, y, force_equal=False)</dt><dd><span class="code">Resample&nbsp;the&nbsp;dataset&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution&nbsp;by&nbsp;generating&nbsp;synthetic&nbsp;samples.<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like):&nbsp;Feature&nbsp;matrix.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(array-like):&nbsp;Target&nbsp;vector.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;force_equal&nbsp;(bool):&nbsp;If&nbsp;True,&nbsp;resample&nbsp;until&nbsp;classes&nbsp;are&nbsp;equal.&nbsp;Default&nbsp;is&nbsp;False.<br>
+<dl><dt><a name="SMOTE-fit_resample"><strong>fit_resample</strong></a>(self, X, y, force_equal=False)</dt><dd><span class="code">Resamples&nbsp;the&nbsp;dataset&nbsp;to&nbsp;balance&nbsp;the&nbsp;class&nbsp;distribution&nbsp;by&nbsp;generating&nbsp;synthetic&nbsp;samples.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;Feature&nbsp;matrix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;Target&nbsp;vector.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;force_equal:&nbsp;(bool),&nbsp;optional&nbsp;-&nbsp;If&nbsp;True,&nbsp;resample&nbsp;until&nbsp;classes&nbsp;are&nbsp;equal&nbsp;(default&nbsp;is&nbsp;False).<br>
+&nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X_resampled&nbsp;(array-like):&nbsp;Resampled&nbsp;feature&nbsp;matrix.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y_resampled&nbsp;(array-like):&nbsp;Resampled&nbsp;target&nbsp;vector.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;(np.ndarray,&nbsp;np.ndarray)&nbsp;-&nbsp;Resampled&nbsp;feature&nbsp;matrix&nbsp;and&nbsp;target&nbsp;vector.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -668,47 +694,55 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="SVD">class <strong>SVD</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#SVD">SVD</a>(n_components)<br>
 &nbsp;<br>
 Singular&nbsp;Value&nbsp;Decomposition&nbsp;(<a href="#SVD">SVD</a>)&nbsp;implementation.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="SVD-__init__"><strong>__init__</strong></a>(self, n_components)</dt><dd><span class="code">Singular&nbsp;Value&nbsp;Decomposition&nbsp;(<a href="#SVD">SVD</a>)&nbsp;implementation.<br>
+<dl><dt><a name="SVD-__init__"><strong>__init__</strong></a>(self, n_components)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;model.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;n_components:&nbsp;number&nbsp;of&nbsp;singular&nbsp;values&nbsp;and&nbsp;vectors&nbsp;to&nbsp;keep</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_components:&nbsp;(int)&nbsp;-&nbsp;Number&nbsp;of&nbsp;singular&nbsp;values&nbsp;and&nbsp;vectors&nbsp;to&nbsp;keep.</span></dd></dl>
 
-<dl><dt><a name="SVD-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;X.<br>
+<dl><dt><a name="SVD-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fits&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;model&nbsp;to.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;input&nbsp;data&nbsp;is&nbsp;not&nbsp;a&nbsp;2D&nbsp;numpy&nbsp;array&nbsp;or&nbsp;if&nbsp;n_components&nbsp;exceeds&nbsp;the&nbsp;minimum&nbsp;dimension&nbsp;of&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
 
-<dl><dt><a name="SVD-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;data&nbsp;X&nbsp;and&nbsp;apply&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;transformation&nbsp;on&nbsp;X.<br>
+<dl><dt><a name="SVD-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fits&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;model&nbsp;and&nbsp;applies&nbsp;the&nbsp;transformation&nbsp;on&nbsp;the&nbsp;input&nbsp;data.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;model&nbsp;to&nbsp;and&nbsp;transform.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;X_transformed:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;singular&nbsp;value&nbsp;space.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X_transformed:&nbsp;(np.ndarray)&nbsp;-&nbsp;Data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;singular&nbsp;value&nbsp;space&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components).</span></dd></dl>
 
-<dl><dt><a name="SVD-get_singular_values"><strong>get_singular_values</strong></a>(self)</dt></dl>
-
-<dl><dt><a name="SVD-get_singular_vectors"><strong>get_singular_vectors</strong></a>(self)</dt></dl>
-
-<dl><dt><a name="SVD-transform"><strong>transform</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;transformation&nbsp;on&nbsp;X.<br>
-&nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;to&nbsp;transform.<br>
+<dl><dt><a name="SVD-get_singular_values"><strong>get_singular_values</strong></a>(self)</dt><dd><span class="code">Retrieves&nbsp;the&nbsp;singular&nbsp;values.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;X_transformed:&nbsp;numpy&nbsp;array&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;singular&nbsp;value&nbsp;space.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;S:&nbsp;(np.ndarray)&nbsp;-&nbsp;Array&nbsp;of&nbsp;singular&nbsp;values&nbsp;of&nbsp;shape&nbsp;(n_components,).</span></dd></dl>
+
+<dl><dt><a name="SVD-get_singular_vectors"><strong>get_singular_vectors</strong></a>(self)</dt><dd><span class="code">Retrieves&nbsp;the&nbsp;singular&nbsp;vectors.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;U:&nbsp;(np.ndarray)&nbsp;-&nbsp;Left&nbsp;singular&nbsp;vectors&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Vt:&nbsp;(np.ndarray)&nbsp;-&nbsp;Right&nbsp;singular&nbsp;vectors&nbsp;of&nbsp;shape&nbsp;(n_components,&nbsp;n_features).</span></dd></dl>
+
+<dl><dt><a name="SVD-transform"><strong>transform</strong></a>(self, X)</dt><dd><span class="code">Applies&nbsp;the&nbsp;<a href="#SVD">SVD</a>&nbsp;transformation&nbsp;on&nbsp;the&nbsp;input&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Input&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_transformed:&nbsp;(np.ndarray)&nbsp;-&nbsp;Data&nbsp;transformed&nbsp;into&nbsp;the&nbsp;singular&nbsp;value&nbsp;space&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_components).<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;input&nbsp;data&nbsp;is&nbsp;not&nbsp;a&nbsp;2D&nbsp;numpy&nbsp;array.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -722,7 +756,7 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="Scaler">class <strong>Scaler</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#Scaler">Scaler</a>(method='standard')<br>
 &nbsp;<br>
@@ -731,37 +765,37 @@ A&nbsp;class&nbsp;for&nbsp;scaling&nbsp;data&nbsp;by&nbsp;standardization&nbsp;a
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="Scaler-__init__"><strong>__init__</strong></a>(self, method='standard')</dt><dd><span class="code">Initializes&nbsp;the&nbsp;scaler&nbsp;with&nbsp;the&nbsp;specified&nbsp;method.<br>
 &nbsp;<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;method&nbsp;(str):&nbsp;The&nbsp;scaling&nbsp;method&nbsp;to&nbsp;use.&nbsp;Options&nbsp;are&nbsp;'standard',&nbsp;'minmax',&nbsp;or&nbsp;'normalize'.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;method:&nbsp;(str)&nbsp;-&nbsp;The&nbsp;scaling&nbsp;method&nbsp;to&nbsp;use.&nbsp;Options&nbsp;are&nbsp;'standard',&nbsp;'minmax',&nbsp;or&nbsp;'normalize'.</span></dd></dl>
 
 <dl><dt><a name="Scaler-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fits&nbsp;the&nbsp;scaler&nbsp;to&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;scaler&nbsp;to.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;the&nbsp;scaler&nbsp;to.</span></dd></dl>
 
 <dl><dt><a name="Scaler-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fits&nbsp;the&nbsp;scaler&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;then&nbsp;transforms&nbsp;it.<br>
 &nbsp;<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;and&nbsp;transform.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;data&nbsp;to&nbsp;fit&nbsp;and&nbsp;transform.<br>
 &nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_transformed&nbsp;(numpy.ndarray):&nbsp;The&nbsp;transformed&nbsp;data.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X_transformed:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;transformed&nbsp;data.</span></dd></dl>
 
 <dl><dt><a name="Scaler-inverse_transform"><strong>inverse_transform</strong></a>(self, X)</dt><dd><span class="code">Inverse&nbsp;transforms&nbsp;the&nbsp;data&nbsp;using&nbsp;the&nbsp;fitted&nbsp;scaler.<br>
 &nbsp;<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;inverse&nbsp;transform.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;data&nbsp;to&nbsp;inverse&nbsp;transform.<br>
 &nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_inverse&nbsp;(numpy.ndarray):&nbsp;The&nbsp;inverse&nbsp;transformed&nbsp;data.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X_inverse:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;inverse&nbsp;transformed&nbsp;data.</span></dd></dl>
 
 <dl><dt><a name="Scaler-transform"><strong>transform</strong></a>(self, X)</dt><dd><span class="code">Transforms&nbsp;the&nbsp;data&nbsp;using&nbsp;the&nbsp;fitted&nbsp;scaler.<br>
 &nbsp;<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;transform.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;data&nbsp;to&nbsp;transform.<br>
 &nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X_transformed&nbsp;(numpy.ndarray):&nbsp;The&nbsp;transformed&nbsp;data.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X_transformed:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;transformed&nbsp;data.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -775,32 +809,33 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="VotingRegressor">class <strong>VotingRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#VotingRegressor">VotingRegressor</a>(models,&nbsp;model_weights=None)<br>
 &nbsp;<br>
 Implements&nbsp;a&nbsp;voting&nbsp;regressor.<br>
+&nbsp;<br>
 Takes&nbsp;a&nbsp;list&nbsp;of&nbsp;fitted&nbsp;models&nbsp;and&nbsp;their&nbsp;weights&nbsp;and&nbsp;returns&nbsp;a&nbsp;weighted&nbsp;average&nbsp;of&nbsp;the&nbsp;predictions.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="VotingRegressor-__init__"><strong>__init__</strong></a>(self, models, model_weights=None)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#VotingRegressor">VotingRegressor</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;models:&nbsp;list&nbsp;of&nbsp;models&nbsp;to&nbsp;be&nbsp;stacked<br>
--&nbsp;model_weights:&nbsp;list&nbsp;of&nbsp;weights&nbsp;for&nbsp;each&nbsp;model.&nbsp;Default&nbsp;is&nbsp;None.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;models:&nbsp;list&nbsp;of&nbsp;models&nbsp;to&nbsp;be&nbsp;stacked<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model_weights:&nbsp;list&nbsp;of&nbsp;weights&nbsp;for&nbsp;each&nbsp;model.&nbsp;Default&nbsp;is&nbsp;None.</span></dd></dl>
 
 <dl><dt><a name="VotingRegressor-get_params"><strong>get_params</strong></a>(self)</dt><dd><span class="code">Get&nbsp;the&nbsp;parameters&nbsp;of&nbsp;the&nbsp;<a href="#VotingRegressor">VotingRegressor</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;params:&nbsp;dictionary&nbsp;of&nbsp;parameters</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;params:&nbsp;dictionary&nbsp;of&nbsp;parameters</span></dd></dl>
 
 <dl><dt><a name="VotingRegressor-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;the&nbsp;target&nbsp;variable&nbsp;using&nbsp;the&nbsp;fitted&nbsp;models.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X:&nbsp;input&nbsp;features<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;input&nbsp;features<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;y_pred:&nbsp;predicted&nbsp;target&nbsp;variable</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;predicted&nbsp;target&nbsp;variable</span></dd></dl>
 
 <dl><dt><a name="VotingRegressor-show_models"><strong>show_models</strong></a>(self, formula=False)</dt><dd><span class="code">Print&nbsp;the&nbsp;models&nbsp;and&nbsp;their&nbsp;weights.</span></dd></dl>
 
@@ -816,142 +851,88 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor functions-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
-    
+
 <tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt><a name="-make_blobs"><strong>make_blobs</strong></a>(n_samples=100, n_features=2, centers=None, cluster_std=1.0, center_box=(-10.0, 10.0), shuffle=True, random_state=None)</dt><dd><span class="code">Generate&nbsp;isotropic&nbsp;Gaussian&nbsp;blobs&nbsp;for&nbsp;clustering.<br>
+<td class="singlecolumn"><dl><dt><a name="-make_blobs"><strong>make_blobs</strong></a>(n_samples=100, n_features=2, centers=None, cluster_std=1.0, center_box=(-10.0, 10.0), shuffle=True, random_state=None)</dt><dd><span class="code">Generates&nbsp;isotropic&nbsp;Gaussian&nbsp;blobs&nbsp;for&nbsp;clustering.<br>
 &nbsp;<br>
-Parameters<br>
-----------<br>
-n_samples&nbsp;:&nbsp;int&nbsp;or&nbsp;array-like,&nbsp;default=100<br>
-&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;int,&nbsp;it&nbsp;is&nbsp;the&nbsp;total&nbsp;number&nbsp;of&nbsp;samples.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;array-like,&nbsp;it&nbsp;contains&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;per&nbsp;cluster.<br>
-n_features&nbsp;:&nbsp;int,&nbsp;default=2<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;features.<br>
-centers&nbsp;:&nbsp;int&nbsp;or&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_centers,&nbsp;n_features),&nbsp;default=None<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;centers&nbsp;to&nbsp;generate,&nbsp;or&nbsp;the&nbsp;fixed&nbsp;center&nbsp;locations.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;n_samples&nbsp;is&nbsp;an&nbsp;int&nbsp;and&nbsp;centers&nbsp;is&nbsp;None,&nbsp;3&nbsp;centers&nbsp;are&nbsp;generated.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;n_samples&nbsp;is&nbsp;array-like,&nbsp;centers&nbsp;must&nbsp;be<br>
-&nbsp;&nbsp;&nbsp;&nbsp;either&nbsp;None&nbsp;or&nbsp;an&nbsp;array&nbsp;of&nbsp;length&nbsp;equal&nbsp;to&nbsp;the&nbsp;length&nbsp;of&nbsp;n_samples.<br>
-cluster_std&nbsp;:&nbsp;float&nbsp;or&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_centers,),&nbsp;default=1.0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;standard&nbsp;deviation&nbsp;of&nbsp;the&nbsp;clusters.<br>
-center_box&nbsp;:&nbsp;tuple&nbsp;of&nbsp;float&nbsp;(min,&nbsp;max),&nbsp;default=(-10.0,&nbsp;10.0)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;bounding&nbsp;box&nbsp;for&nbsp;each&nbsp;cluster&nbsp;center&nbsp;when&nbsp;centers&nbsp;are<br>
-&nbsp;&nbsp;&nbsp;&nbsp;generated&nbsp;at&nbsp;random.<br>
-shuffle&nbsp;:&nbsp;bool,&nbsp;default=True<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Shuffle&nbsp;the&nbsp;samples.<br>
-random_state&nbsp;:&nbsp;int&nbsp;or&nbsp;None,&nbsp;default=None<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Random&nbsp;seed.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
-Returns<br>
--------<br>
-X&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;generated&nbsp;samples.<br>
-y&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;integer&nbsp;labels&nbsp;for&nbsp;cluster&nbsp;membership&nbsp;of&nbsp;each&nbsp;sample.<br>
-centers&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_centers,&nbsp;n_features)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;centers&nbsp;of&nbsp;each&nbsp;cluster.&nbsp;Only&nbsp;returned&nbsp;if&nbsp;return_centers&nbsp;is&nbsp;True.</span></dd></dl>
- <dl><dt><a name="-make_classification"><strong>make_classification</strong></a>(n_samples=100, n_features=20, n_informative=2, n_redundant=2, n_repeated=0, n_classes=2, n_clusters_per_class=2, weights=None, flip_y=0.01, class_sep=1.0, hypercube=True, shift=0.0, scale=1.0, shuffle=True, random_state=None)</dt><dd><span class="code">Generate&nbsp;a&nbsp;random&nbsp;n-class&nbsp;classification&nbsp;problem.<br>
-&nbsp;<br>
-Parameters<br>
-----------<br>
-n_samples&nbsp;:&nbsp;int,&nbsp;default=100<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;samples.<br>
-n_features&nbsp;:&nbsp;int,&nbsp;default=20<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;total&nbsp;number&nbsp;of&nbsp;features.<br>
-n_informative&nbsp;:&nbsp;int,&nbsp;default=2<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;informative&nbsp;features.<br>
-n_redundant&nbsp;:&nbsp;int,&nbsp;default=2<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;redundant&nbsp;features.<br>
-n_repeated&nbsp;:&nbsp;int,&nbsp;default=0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;duplicated&nbsp;features.<br>
-n_classes&nbsp;:&nbsp;int,&nbsp;default=2<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;classes&nbsp;(or&nbsp;labels)&nbsp;of&nbsp;the&nbsp;classification&nbsp;problem.<br>
-n_clusters_per_class&nbsp;:&nbsp;int,&nbsp;default=2<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;clusters&nbsp;per&nbsp;class.<br>
-weights&nbsp;:&nbsp;array-like&nbsp;of&nbsp;shape&nbsp;(n_classes,)&nbsp;or&nbsp;None,&nbsp;default=None<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;proportions&nbsp;of&nbsp;samples&nbsp;assigned&nbsp;to&nbsp;each&nbsp;class.<br>
-flip_y&nbsp;:&nbsp;float,&nbsp;default=0.01<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;fraction&nbsp;of&nbsp;samples&nbsp;whose&nbsp;class&nbsp;is&nbsp;randomly&nbsp;exchanged.<br>
-class_sep&nbsp;:&nbsp;float,&nbsp;default=1.0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;factor&nbsp;multiplying&nbsp;the&nbsp;hypercube&nbsp;size.<br>
-hypercube&nbsp;:&nbsp;bool,&nbsp;default=True<br>
-&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;True,&nbsp;the&nbsp;clusters&nbsp;are&nbsp;put&nbsp;on&nbsp;the&nbsp;vertices&nbsp;of&nbsp;a&nbsp;hypercube.<br>
-shift&nbsp;:&nbsp;float,&nbsp;default=0.0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Shift&nbsp;features&nbsp;by&nbsp;the&nbsp;specified&nbsp;value.<br>
-scale&nbsp;:&nbsp;float,&nbsp;default=1.0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Multiply&nbsp;features&nbsp;by&nbsp;the&nbsp;specified&nbsp;value.<br>
-shuffle&nbsp;:&nbsp;bool,&nbsp;default=True<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Shuffle&nbsp;the&nbsp;samples&nbsp;and&nbsp;the&nbsp;features.<br>
-random_state&nbsp;:&nbsp;int&nbsp;or&nbsp;None,&nbsp;default=None<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Random&nbsp;seed.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
-Returns<br>
--------<br>
-X&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;generated&nbsp;samples.<br>
-y&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;integer&nbsp;labels&nbsp;for&nbsp;class&nbsp;membership&nbsp;of&nbsp;each&nbsp;sample.</span></dd></dl>
- <dl><dt><a name="-make_regression"><strong>make_regression</strong></a>(n_samples=100, n_features=100, n_informative=10, n_targets=1, bias=0.0, effective_rank=None, tail_strength=0.5, noise=0.0, shuffle=True, coef=False, random_state=None)</dt><dd><span class="code">Generate&nbsp;a&nbsp;random&nbsp;regression&nbsp;problem.<br>
-&nbsp;<br>
-Parameters<br>
-----------<br>
-n_samples&nbsp;:&nbsp;int,&nbsp;default=100<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;samples.<br>
-n_features&nbsp;:&nbsp;int,&nbsp;default=100<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;features.<br>
-n_informative&nbsp;:&nbsp;int,&nbsp;default=10<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;informative&nbsp;features,&nbsp;i.e.,&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;used<br>
-&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;build&nbsp;the&nbsp;linear&nbsp;model&nbsp;used&nbsp;to&nbsp;generate&nbsp;the&nbsp;output.<br>
-n_targets&nbsp;:&nbsp;int,&nbsp;default=1<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;regression&nbsp;targets,&nbsp;i.e.,&nbsp;the&nbsp;dimension&nbsp;of&nbsp;the&nbsp;y&nbsp;output.<br>
-bias&nbsp;:&nbsp;float,&nbsp;default=0.0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;bias&nbsp;term&nbsp;in&nbsp;the&nbsp;underlying&nbsp;linear&nbsp;model.<br>
-effective_rank&nbsp;:&nbsp;int&nbsp;or&nbsp;None,&nbsp;default=None<br>
-&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;not&nbsp;None,&nbsp;the&nbsp;approximate&nbsp;dimension&nbsp;of&nbsp;the&nbsp;data&nbsp;matrix.<br>
-tail_strength&nbsp;:&nbsp;float,&nbsp;default=0.5<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;relative&nbsp;importance&nbsp;of&nbsp;the&nbsp;fat&nbsp;noisy&nbsp;tail&nbsp;of&nbsp;the&nbsp;singular&nbsp;values<br>
-&nbsp;&nbsp;&nbsp;&nbsp;profile&nbsp;if&nbsp;`effective_rank`&nbsp;is&nbsp;not&nbsp;None.<br>
-noise&nbsp;:&nbsp;float,&nbsp;default=0.0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;standard&nbsp;deviation&nbsp;o&nbsp;&nbsp;&nbsp;&nbsp;f&nbsp;the&nbsp;gaussian&nbsp;noise&nbsp;applied&nbsp;to&nbsp;the&nbsp;output.<br>
-shuffle&nbsp;:&nbsp;bool,&nbsp;default=True<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;shuffle&nbsp;the&nbsp;samples&nbsp;and&nbsp;the&nbsp;features.<br>
-coef&nbsp;:&nbsp;bool,&nbsp;default=False<br>
-&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;True,&nbsp;the&nbsp;coefficients&nbsp;of&nbsp;the&nbsp;underlying&nbsp;linear&nbsp;model&nbsp;are&nbsp;returned.<br>
-random_state&nbsp;:&nbsp;int&nbsp;or&nbsp;None,&nbsp;default=None<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Random&nbsp;seed.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
-Returns<br>
--------<br>
-X&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;input&nbsp;samples.<br>
-y&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_samples,&nbsp;n_targets)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;output&nbsp;values.<br>
-coef&nbsp;:&nbsp;ndarray&nbsp;of&nbsp;shape&nbsp;(n_features,)&nbsp;or&nbsp;(n_features,&nbsp;n_targets)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;coefficient&nbsp;of&nbsp;the&nbsp;underlying&nbsp;linear&nbsp;model.&nbsp;Only&nbsp;returned&nbsp;if<br>
-&nbsp;&nbsp;&nbsp;&nbsp;coef=True.</span></dd></dl>
- <dl><dt><a name="-normalize"><strong>normalize</strong></a>(X, norm='l2')</dt><dd><span class="code">Normalizes&nbsp;the&nbsp;input&nbsp;data&nbsp;using&nbsp;the&nbsp;specified&nbsp;norm.<br>
-Uses&nbsp;L2&nbsp;normalization&nbsp;by&nbsp;default.<br>
-&nbsp;<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;input&nbsp;data&nbsp;to&nbsp;be&nbsp;normalized.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;norm&nbsp;(str):&nbsp;The&nbsp;type&nbsp;of&nbsp;norm&nbsp;to&nbsp;use&nbsp;for&nbsp;normalization.&nbsp;Default&nbsp;is&nbsp;'l2'.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'l2':&nbsp;L2&nbsp;normalization&nbsp;(Euclidean&nbsp;norm).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'l1':&nbsp;L1&nbsp;normalization&nbsp;(Manhattan&nbsp;norm).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'max':&nbsp;Max&nbsp;normalization&nbsp;(divides&nbsp;by&nbsp;the&nbsp;maximum&nbsp;absolute&nbsp;value).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'minmax':&nbsp;Min-max&nbsp;normalization&nbsp;(scales&nbsp;to&nbsp;[0,&nbsp;1]).<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_samples&nbsp;(int&nbsp;or&nbsp;array-like,&nbsp;optional):&nbsp;Total&nbsp;number&nbsp;of&nbsp;samples&nbsp;if&nbsp;int,&nbsp;or&nbsp;number&nbsp;of&nbsp;samples&nbsp;per&nbsp;cluster&nbsp;if&nbsp;array-like&nbsp;(default&nbsp;is&nbsp;100).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_features&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;features&nbsp;(default&nbsp;is&nbsp;2).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;centers&nbsp;(int&nbsp;or&nbsp;array-like,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;centers&nbsp;to&nbsp;generate,&nbsp;or&nbsp;fixed&nbsp;center&nbsp;locations.&nbsp;If&nbsp;None,&nbsp;3&nbsp;centers&nbsp;are&nbsp;generated&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cluster_std&nbsp;(float&nbsp;or&nbsp;array-like,&nbsp;optional):&nbsp;Standard&nbsp;deviation&nbsp;of&nbsp;the&nbsp;clusters&nbsp;(default&nbsp;is&nbsp;1.0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;center_box&nbsp;(tuple&nbsp;of&nbsp;float,&nbsp;optional):&nbsp;Bounding&nbsp;box&nbsp;for&nbsp;each&nbsp;cluster&nbsp;center&nbsp;when&nbsp;centers&nbsp;are&nbsp;generated&nbsp;at&nbsp;random&nbsp;(default&nbsp;is&nbsp;(-10.0,&nbsp;10.0)).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;shuffle&nbsp;(bool,&nbsp;optional):&nbsp;Whether&nbsp;to&nbsp;shuffle&nbsp;the&nbsp;samples&nbsp;(default&nbsp;is&nbsp;True).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;random_state&nbsp;(int&nbsp;or&nbsp;None,&nbsp;optional):&nbsp;Random&nbsp;seed&nbsp;(default&nbsp;is&nbsp;None).<br>
 &nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(numpy.ndarray):&nbsp;The&nbsp;normalized&nbsp;data.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(np.ndarray):&nbsp;Generated&nbsp;samples&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(np.ndarray):&nbsp;Integer&nbsp;labels&nbsp;for&nbsp;cluster&nbsp;membership&nbsp;of&nbsp;each&nbsp;sample&nbsp;of&nbsp;shape&nbsp;(n_samples,).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;centers&nbsp;(np.ndarray):&nbsp;Centers&nbsp;of&nbsp;each&nbsp;cluster&nbsp;of&nbsp;shape&nbsp;(n_centers,&nbsp;n_features).</span></dd></dl>
+ <dl><dt><a name="-make_classification"><strong>make_classification</strong></a>(n_samples=100, n_features=20, n_informative=2, n_redundant=2, n_repeated=0, n_classes=2, n_clusters_per_class=2, weights=None, flip_y=0.01, class_sep=1.0, hypercube=True, shift=0.0, scale=1.0, shuffle=True, random_state=None)</dt><dd><span class="code">Generates&nbsp;a&nbsp;random&nbsp;n-class&nbsp;classification&nbsp;problem.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_samples&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;samples&nbsp;(default&nbsp;is&nbsp;100).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_features&nbsp;(int,&nbsp;optional):&nbsp;Total&nbsp;number&nbsp;of&nbsp;features&nbsp;(default&nbsp;is&nbsp;20).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_informative&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;informative&nbsp;features&nbsp;(default&nbsp;is&nbsp;2).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_redundant&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;redundant&nbsp;features&nbsp;(default&nbsp;is&nbsp;2).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_repeated&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;duplicated&nbsp;features&nbsp;(default&nbsp;is&nbsp;0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_classes&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;classes&nbsp;(default&nbsp;is&nbsp;2).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_clusters_per_class&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;clusters&nbsp;per&nbsp;class&nbsp;(default&nbsp;is&nbsp;2).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weights&nbsp;(array-like,&nbsp;optional):&nbsp;Proportions&nbsp;of&nbsp;samples&nbsp;assigned&nbsp;to&nbsp;each&nbsp;class&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;flip_y&nbsp;(float,&nbsp;optional):&nbsp;Fraction&nbsp;of&nbsp;samples&nbsp;whose&nbsp;class&nbsp;is&nbsp;randomly&nbsp;exchanged&nbsp;(default&nbsp;is&nbsp;0.01).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;class_sep&nbsp;(float,&nbsp;optional):&nbsp;Factor&nbsp;multiplying&nbsp;the&nbsp;hypercube&nbsp;size&nbsp;(default&nbsp;is&nbsp;1.0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;hypercube&nbsp;(bool,&nbsp;optional):&nbsp;If&nbsp;True,&nbsp;clusters&nbsp;are&nbsp;placed&nbsp;on&nbsp;the&nbsp;vertices&nbsp;of&nbsp;a&nbsp;hypercube&nbsp;(default&nbsp;is&nbsp;True).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;shift&nbsp;(float,&nbsp;optional):&nbsp;Shift&nbsp;features&nbsp;by&nbsp;the&nbsp;specified&nbsp;value&nbsp;(default&nbsp;is&nbsp;0.0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;scale&nbsp;(float,&nbsp;optional):&nbsp;Multiply&nbsp;features&nbsp;by&nbsp;the&nbsp;specified&nbsp;value&nbsp;(default&nbsp;is&nbsp;1.0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;shuffle&nbsp;(bool,&nbsp;optional):&nbsp;Shuffle&nbsp;the&nbsp;samples&nbsp;and&nbsp;features&nbsp;(default&nbsp;is&nbsp;True).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;random_state&nbsp;(int&nbsp;or&nbsp;None,&nbsp;optional):&nbsp;Random&nbsp;seed&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(np.ndarray):&nbsp;Generated&nbsp;samples&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(np.ndarray):&nbsp;Integer&nbsp;labels&nbsp;for&nbsp;class&nbsp;membership&nbsp;of&nbsp;each&nbsp;sample&nbsp;of&nbsp;shape&nbsp;(n_samples,).</span></dd></dl>
+ <dl><dt><a name="-make_regression"><strong>make_regression</strong></a>(n_samples=100, n_features=100, n_informative=10, n_targets=1, bias=0.0, effective_rank=None, tail_strength=0.5, noise=0.0, shuffle=True, coef=False, random_state=None)</dt><dd><span class="code">Generates&nbsp;a&nbsp;random&nbsp;regression&nbsp;problem.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_samples&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;samples&nbsp;(default&nbsp;is&nbsp;100).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_features&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;features&nbsp;(default&nbsp;is&nbsp;100).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_informative&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;informative&nbsp;features&nbsp;used&nbsp;to&nbsp;build&nbsp;the&nbsp;linear&nbsp;model&nbsp;(default&nbsp;is&nbsp;10).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_targets&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;regression&nbsp;targets&nbsp;(default&nbsp;is&nbsp;1).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bias&nbsp;(float,&nbsp;optional):&nbsp;Bias&nbsp;term&nbsp;in&nbsp;the&nbsp;underlying&nbsp;linear&nbsp;model&nbsp;(default&nbsp;is&nbsp;0.0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;effective_rank&nbsp;(int&nbsp;or&nbsp;None,&nbsp;optional):&nbsp;Approximate&nbsp;dimension&nbsp;of&nbsp;the&nbsp;data&nbsp;matrix&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tail_strength&nbsp;(float,&nbsp;optional):&nbsp;Relative&nbsp;importance&nbsp;of&nbsp;the&nbsp;noisy&nbsp;tail&nbsp;of&nbsp;the&nbsp;singular&nbsp;values&nbsp;profile&nbsp;(default&nbsp;is&nbsp;0.5).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;noise&nbsp;(float,&nbsp;optional):&nbsp;Standard&nbsp;deviation&nbsp;of&nbsp;the&nbsp;Gaussian&nbsp;noise&nbsp;applied&nbsp;to&nbsp;the&nbsp;output&nbsp;(default&nbsp;is&nbsp;0.0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;shuffle&nbsp;(bool,&nbsp;optional):&nbsp;Whether&nbsp;to&nbsp;shuffle&nbsp;the&nbsp;samples&nbsp;and&nbsp;features&nbsp;(default&nbsp;is&nbsp;True).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;coef&nbsp;(bool,&nbsp;optional):&nbsp;If&nbsp;True,&nbsp;returns&nbsp;the&nbsp;coefficients&nbsp;of&nbsp;the&nbsp;underlying&nbsp;linear&nbsp;model&nbsp;(default&nbsp;is&nbsp;False).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;random_state&nbsp;(int&nbsp;or&nbsp;None,&nbsp;optional):&nbsp;Random&nbsp;seed&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(np.ndarray):&nbsp;Input&nbsp;samples&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(np.ndarray):&nbsp;Output&nbsp;values&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_samples,&nbsp;n_targets).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;coef&nbsp;(np.ndarray,&nbsp;optional):&nbsp;Coefficients&nbsp;of&nbsp;the&nbsp;underlying&nbsp;linear&nbsp;model&nbsp;of&nbsp;shape&nbsp;(n_features,)&nbsp;or&nbsp;(n_features,&nbsp;n_targets).&nbsp;Only&nbsp;returned&nbsp;if&nbsp;coef=True.</span></dd></dl>
+ <dl><dt><a name="-normalize"><strong>normalize</strong></a>(X, norm='l2')</dt><dd><span class="code">Normalizes&nbsp;the&nbsp;input&nbsp;data&nbsp;using&nbsp;the&nbsp;specified&nbsp;norm.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;input&nbsp;data&nbsp;to&nbsp;be&nbsp;normalized.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;norm:&nbsp;(str),&nbsp;optional&nbsp;-&nbsp;The&nbsp;type&nbsp;of&nbsp;norm&nbsp;to&nbsp;use&nbsp;for&nbsp;normalization&nbsp;(default&nbsp;is&nbsp;'l2').<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Options:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'l2':&nbsp;L2&nbsp;normalization&nbsp;(Euclidean&nbsp;norm).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'l1':&nbsp;L1&nbsp;normalization&nbsp;(Manhattan&nbsp;norm).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'max':&nbsp;Max&nbsp;normalization&nbsp;(divides&nbsp;by&nbsp;the&nbsp;maximum&nbsp;absolute&nbsp;value).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'minmax':&nbsp;Min-max&nbsp;normalization&nbsp;(scales&nbsp;to&nbsp;[0,&nbsp;1]).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(numpy.ndarray)&nbsp;-&nbsp;The&nbsp;normalized&nbsp;data.</span></dd></dl>
  <dl><dt><a name="-one_hot_encode"><strong>one_hot_encode</strong></a>(X, cols=None)</dt><dd><span class="code">One-hot&nbsp;encodes&nbsp;non-numerical&nbsp;columns&nbsp;in&nbsp;a&nbsp;DataFrame&nbsp;or&nbsp;numpy&nbsp;array.<br>
+&nbsp;<br>
 Drops&nbsp;the&nbsp;original&nbsp;columns&nbsp;after&nbsp;encoding.<br>
 &nbsp;<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;encoded.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;cols&nbsp;(list):&nbsp;The&nbsp;list&nbsp;of&nbsp;column&nbsp;indices&nbsp;to&nbsp;be&nbsp;encoded.&nbsp;Defaults&nbsp;to&nbsp;None,&nbsp;which&nbsp;means&nbsp;all&nbsp;non-numerical&nbsp;columns&nbsp;will&nbsp;be&nbsp;encoded.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;None,&nbsp;the&nbsp;function&nbsp;will&nbsp;automatically&nbsp;detect&nbsp;non-numerical&nbsp;columns.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray)&nbsp;-&nbsp;The&nbsp;data&nbsp;to&nbsp;be&nbsp;encoded.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cols:&nbsp;(list),&nbsp;optional&nbsp;-&nbsp;The&nbsp;list&nbsp;of&nbsp;column&nbsp;indices&nbsp;to&nbsp;be&nbsp;encoded&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;None,&nbsp;all&nbsp;non-numerical&nbsp;columns&nbsp;will&nbsp;be&nbsp;encoded.<br>
 &nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;X&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray):&nbsp;The&nbsp;data&nbsp;with&nbsp;one-hot&nbsp;encoded&nbsp;columns.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(pandas.DataFrame&nbsp;or&nbsp;numpy.ndarray)&nbsp;-&nbsp;The&nbsp;data&nbsp;with&nbsp;one-hot&nbsp;encoded&nbsp;columns.</span></dd></dl>
  <dl><dt><a name="-train_test_split"><strong>train_test_split</strong></a>(*arrays, test_size=None, train_size=None, random_state=None, shuffle=True, stratify=None)</dt><dd><span class="code">Split&nbsp;arrays&nbsp;or&nbsp;matrices&nbsp;into&nbsp;random&nbsp;train&nbsp;and&nbsp;test&nbsp;subsets.<br>
 &nbsp;<br>
 Parameters<br>
@@ -963,27 +944,27 @@ test_size&nbsp;:&nbsp;float&nbsp;or&nbsp;int,&nbsp;default=None<br>
 &nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;float,&nbsp;should&nbsp;be&nbsp;between&nbsp;0.0&nbsp;and&nbsp;1.0&nbsp;and&nbsp;represent&nbsp;the&nbsp;proportion<br>
 &nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;the&nbsp;dataset&nbsp;to&nbsp;include&nbsp;in&nbsp;the&nbsp;test&nbsp;split.&nbsp;If&nbsp;int,&nbsp;represents&nbsp;the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;absolute&nbsp;number&nbsp;of&nbsp;test&nbsp;samples.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;<br>
 train_size&nbsp;:&nbsp;float&nbsp;or&nbsp;int,&nbsp;default=None<br>
 &nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;float,&nbsp;should&nbsp;be&nbsp;between&nbsp;0.0&nbsp;and&nbsp;1.0&nbsp;and&nbsp;represent&nbsp;the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;proportion&nbsp;of&nbsp;the&nbsp;dataset&nbsp;to&nbsp;include&nbsp;in&nbsp;the&nbsp;train&nbsp;split.&nbsp;If&nbsp;int,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;represents&nbsp;the&nbsp;absolute&nbsp;number&nbsp;of&nbsp;train&nbsp;samples.&nbsp;If&nbsp;None,&nbsp;the&nbsp;value&nbsp;is<br>
 &nbsp;&nbsp;&nbsp;&nbsp;automatically&nbsp;computed&nbsp;as&nbsp;the&nbsp;complement&nbsp;of&nbsp;the&nbsp;test&nbsp;size&nbsp;(unless&nbsp;both<br>
 &nbsp;&nbsp;&nbsp;&nbsp;are&nbsp;None,&nbsp;in&nbsp;which&nbsp;case&nbsp;test_size&nbsp;defaults&nbsp;to&nbsp;0.25).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;<br>
 random_state&nbsp;:&nbsp;int,&nbsp;RandomState&nbsp;instance&nbsp;or&nbsp;None,&nbsp;default=None<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Controls&nbsp;the&nbsp;shuffling&nbsp;applied&nbsp;to&nbsp;the&nbsp;data&nbsp;before&nbsp;applying&nbsp;the&nbsp;split.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Pass&nbsp;an&nbsp;int&nbsp;for&nbsp;reproducible&nbsp;output&nbsp;across&nbsp;multiple&nbsp;function&nbsp;calls.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;<br>
 shuffle&nbsp;:&nbsp;bool,&nbsp;default=True<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;or&nbsp;not&nbsp;to&nbsp;shuffle&nbsp;the&nbsp;data&nbsp;before&nbsp;splitting.&nbsp;If&nbsp;shuffle=False<br>
 &nbsp;&nbsp;&nbsp;&nbsp;then&nbsp;stratify&nbsp;must&nbsp;be&nbsp;None.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;<br>
 stratify&nbsp;:&nbsp;array-like,&nbsp;default=None<br>
 &nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;not&nbsp;None,&nbsp;data&nbsp;is&nbsp;split&nbsp;in&nbsp;a&nbsp;stratified&nbsp;fashion,&nbsp;using&nbsp;this&nbsp;as<br>
 &nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;class&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
-Returns<br>
+&nbsp;<br>
+Returns:<br>
 -------<br>
 splitting&nbsp;:&nbsp;list,&nbsp;length=2&nbsp;*&nbsp;len(arrays)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;List&nbsp;containing&nbsp;train-test&nbsp;split&nbsp;of&nbsp;inputs.</span></dd></dl>
@@ -991,7 +972,7 @@ splitting&nbsp;:&nbsp;list,&nbsp;length=2&nbsp;*&nbsp;len(arrays)<br>
 <table class="section">
 <tr class="decor data-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
-    
+
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><strong>__all__</strong> = ['PolynomialTransform', 'DataPrep', 'VotingRegressor', 'ModelSelectionUtility', 'GridSearchCV', 'RandomSearchCV', 'Metrics', 'RandomOverSampler', 'RandomUnderSampler', 'SMOTE', 'Augmenter', 'PCA', 'SVD', 'make_regression', 'make_classification', 'make_blobs', 'train_test_split', 'one_hot_encode', 'normalize', 'Scaler']</td></tr></table>
 </body></html>

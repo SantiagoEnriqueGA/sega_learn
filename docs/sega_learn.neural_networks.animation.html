@@ -41,7 +41,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -55,32 +55,33 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="TrainingAnimator">class <strong>TrainingAnimator</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#TrainingAnimator">TrainingAnimator</a>(figure_size=(18,&nbsp;10),&nbsp;dpi=100)<br>
 &nbsp;<br>
 A&nbsp;utility&nbsp;class&nbsp;to&nbsp;create&nbsp;and&nbsp;manage&nbsp;training&nbsp;animations.<br>
+&nbsp;<br>
 This&nbsp;class&nbsp;provides&nbsp;callback&nbsp;functions&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;during&nbsp;model&nbsp;training.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="TrainingAnimator-__init__"><strong>__init__</strong></a>(self, figure_size=(18, 10), dpi=100)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;animator&nbsp;with&nbsp;given&nbsp;figure&nbsp;size&nbsp;and&nbsp;DPI.<br>
 &nbsp;<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;figure_size&nbsp;(tuple):&nbsp;Size&nbsp;of&nbsp;the&nbsp;figure&nbsp;(width,&nbsp;height)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;dpi&nbsp;(int):&nbsp;DPI&nbsp;for&nbsp;rendering</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;figure_size:&nbsp;(tuple)&nbsp;-&nbsp;Size&nbsp;of&nbsp;the&nbsp;figure&nbsp;(width,&nbsp;height)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dpi:&nbsp;(int)&nbsp;-&nbsp;DPI&nbsp;for&nbsp;rendering</span></dd></dl>
 
-<dl><dt><a name="TrainingAnimator-add_training_frame"><strong>add_training_frame</strong></a>(self)</dt></dl>
+<dl><dt><a name="TrainingAnimator-add_training_frame"><strong>add_training_frame</strong></a>(self)</dt><dd><span class="code">Add&nbsp;a&nbsp;frame&nbsp;to&nbsp;the&nbsp;training&nbsp;video.</span></dd></dl>
 
 <dl><dt><a name="TrainingAnimator-animate_training_metrics"><strong>animate_training_metrics</strong></a>(self, interval=200, blit=True, save_path=None, save_format='mp4', fps=10, dpi=300)</dt><dd><span class="code">Create&nbsp;an&nbsp;animation&nbsp;of&nbsp;the&nbsp;training&nbsp;metrics.<br>
 &nbsp;<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;interval&nbsp;(int):&nbsp;Delay&nbsp;between&nbsp;frames&nbsp;in&nbsp;milliseconds<br>
-&nbsp;&nbsp;&nbsp;&nbsp;blit&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;use&nbsp;blitting&nbsp;for&nbsp;efficient&nbsp;animation<br>
-&nbsp;&nbsp;&nbsp;&nbsp;save_path&nbsp;(str,&nbsp;optional):&nbsp;Path&nbsp;to&nbsp;save&nbsp;the&nbsp;animation<br>
-&nbsp;&nbsp;&nbsp;&nbsp;save_format&nbsp;(str):&nbsp;Format&nbsp;to&nbsp;save&nbsp;animation&nbsp;('mp4',&nbsp;'gif',&nbsp;etc.)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;fps&nbsp;(int):&nbsp;Frames&nbsp;per&nbsp;second&nbsp;for&nbsp;the&nbsp;saved&nbsp;video<br>
-&nbsp;&nbsp;&nbsp;&nbsp;dpi&nbsp;(int):&nbsp;DPI&nbsp;for&nbsp;the&nbsp;saved&nbsp;animation<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;interval:&nbsp;(int)&nbsp;-&nbsp;Delay&nbsp;between&nbsp;frames&nbsp;in&nbsp;milliseconds<br>
+&nbsp;&nbsp;&nbsp;&nbsp;blit:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;to&nbsp;use&nbsp;blitting&nbsp;for&nbsp;efficient&nbsp;animation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;save_path:&nbsp;(str&nbsp;-&nbsp;optional):&nbsp;Path&nbsp;to&nbsp;save&nbsp;the&nbsp;animation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;save_format:&nbsp;(str)&nbsp;-&nbsp;Format&nbsp;to&nbsp;save&nbsp;animation&nbsp;('mp4',&nbsp;'gif',&nbsp;etc.)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fps:&nbsp;(int)&nbsp;-&nbsp;Frames&nbsp;per&nbsp;second&nbsp;for&nbsp;the&nbsp;saved&nbsp;video<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dpi:&nbsp;(int)&nbsp;-&nbsp;DPI&nbsp;for&nbsp;the&nbsp;saved&nbsp;animation<br>
+&nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;animation.FuncAnimation:&nbsp;Animation&nbsp;<a href="builtins.html#object">object</a></span></dd></dl>
 
@@ -88,20 +89,20 @@ Returns:<br>
 
 <dl><dt><a name="TrainingAnimator-initialize"><strong>initialize</strong></a>(self, metrics_to_track, has_validation=False)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;animation&nbsp;with&nbsp;specified&nbsp;metrics.<br>
 &nbsp;<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;metrics_to_track&nbsp;(list):&nbsp;List&nbsp;of&nbsp;metrics&nbsp;to&nbsp;track<br>
-&nbsp;&nbsp;&nbsp;&nbsp;has_validation&nbsp;(bool):&nbsp;Whether&nbsp;validation&nbsp;metrics&nbsp;are&nbsp;available</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;metrics_to_track:&nbsp;(list)&nbsp;-&nbsp;List&nbsp;of&nbsp;metrics&nbsp;to&nbsp;track<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has_validation:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;validation&nbsp;metrics&nbsp;are&nbsp;available</span></dd></dl>
 
 <dl><dt><a name="TrainingAnimator-setup_training_video"><strong>setup_training_video</strong></a>(self, filepath, fps=10, dpi=None)</dt><dd><span class="code">Set&nbsp;up&nbsp;a&nbsp;video&nbsp;writer&nbsp;to&nbsp;capture&nbsp;training&nbsp;progress&nbsp;in&nbsp;real-time.<br>
 &nbsp;<br>
-Parameters:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;filepath&nbsp;(str):&nbsp;Path&nbsp;to&nbsp;save&nbsp;the&nbsp;video<br>
-&nbsp;&nbsp;&nbsp;&nbsp;fps&nbsp;(int):&nbsp;Frames&nbsp;per&nbsp;second<br>
-&nbsp;&nbsp;&nbsp;&nbsp;dpi&nbsp;(int,&nbsp;optional):&nbsp;DPI&nbsp;for&nbsp;rendering</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filepath:&nbsp;(str)&nbsp;-&nbsp;Path&nbsp;to&nbsp;save&nbsp;the&nbsp;video<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fps:&nbsp;(int)&nbsp;-&nbsp;Frames&nbsp;per&nbsp;second<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dpi:&nbsp;(int,&nbsp;optional)&nbsp;-&nbsp;DPI&nbsp;for&nbsp;rendering</span></dd></dl>
 
 <dl><dt><a name="TrainingAnimator-update_metrics"><strong>update_metrics</strong></a>(self, epoch_metrics, validation=False)</dt><dd><span class="code">Update&nbsp;the&nbsp;stored&nbsp;metrics&nbsp;with&nbsp;new&nbsp;values.<br>
 &nbsp;<br>
-Parameters:<br>
+Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;epoch_metrics&nbsp;(dict):&nbsp;Dictionary&nbsp;containing&nbsp;metric&nbsp;values<br>
 &nbsp;&nbsp;&nbsp;&nbsp;validation&nbsp;(bool):&nbsp;Whether&nbsp;these&nbsp;are&nbsp;validation&nbsp;metrics</span></dd></dl>
 

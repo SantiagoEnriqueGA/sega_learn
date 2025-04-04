@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: package sega_learn.svm</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.svm</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Package Contents</strong></td></tr>
+
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="sega_learn.svm._LinearSVM_jit_utils.html">_LinearSVM_jit_utils</a><br>
+<a href="sega_learn.svm.baseSVM.html">baseSVM</a><br>
+</td><td class="multicolumn"><a href="sega_learn.svm.generalizedSVM.html">generalizedSVM</a><br>
+<a href="sega_learn.svm.linerarSVM.html">linerarSVM</a><br>
+</td><td class="multicolumn"><a href="sega_learn.svm.oneClassSVM.html">oneClassSVM</a><br>
+</td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.svm.generalizedSVM.html#GeneralizedSVC">sega_learn.svm.generalizedSVM.GeneralizedSVC</a>
+</dt><dt class="heading-text"><a href="sega_learn.svm.generalizedSVM.html#GeneralizedSVR">sega_learn.svm.generalizedSVM.GeneralizedSVR</a>
+</dt><dt class="heading-text"><a href="sega_learn.svm.linerarSVM.html#LinearSVC">sega_learn.svm.linerarSVM.LinearSVC</a>
+</dt><dt class="heading-text"><a href="sega_learn.svm.linerarSVM.html#LinearSVR">sega_learn.svm.linerarSVM.LinearSVR</a>
+</dt><dt class="heading-text"><a href="sega_learn.svm.oneClassSVM.html#OneClassSVM">sega_learn.svm.oneClassSVM.OneClassSVM</a>
+</dt></dl>
+</dd>
+</dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="BaseSVM">class <strong>BaseSVM</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#BaseSVM">BaseSVM</a>(C=1.0,&nbsp;tol=0.0001,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;kernel='linear',&nbsp;degree=3,&nbsp;gamma='scale',&nbsp;coef0=0.0,&nbsp;regression=False)<br>
+&nbsp;<br>
+<a href="#BaseSVM">BaseSVM</a>:&nbsp;A&nbsp;base&nbsp;class&nbsp;for&nbsp;Support&nbsp;Vector&nbsp;Machines&nbsp;(SVM)&nbsp;with&nbsp;kernel&nbsp;support.<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;provides&nbsp;the&nbsp;foundation&nbsp;for&nbsp;implementing&nbsp;SVM&nbsp;models&nbsp;with&nbsp;various&nbsp;kernels<br>
+and&nbsp;supports&nbsp;both&nbsp;classification&nbsp;and&nbsp;regression&nbsp;tasks.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;(float):&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol&nbsp;(float):&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter&nbsp;(int):&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;optimization.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float):&nbsp;Step&nbsp;size&nbsp;for&nbsp;optimization.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kernel&nbsp;(str):&nbsp;Kernel&nbsp;type&nbsp;('linear',&nbsp;'poly',&nbsp;'rbf',&nbsp;or&nbsp;'sigmoid').&nbsp;Default&nbsp;is&nbsp;'linear'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;degree&nbsp;(int):&nbsp;Degree&nbsp;for&nbsp;polynomial&nbsp;kernel.&nbsp;Default&nbsp;is&nbsp;3.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gamma&nbsp;(str&nbsp;or&nbsp;float):&nbsp;Kernel&nbsp;coefficient&nbsp;('scale',&nbsp;'auto',&nbsp;or&nbsp;float).&nbsp;Default&nbsp;is&nbsp;'scale'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;coef0&nbsp;(float):&nbsp;Independent&nbsp;term&nbsp;in&nbsp;poly&nbsp;and&nbsp;sigmoid&nbsp;kernels.&nbsp;Default&nbsp;is&nbsp;0.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;regression&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;use&nbsp;regression&nbsp;(SVR)&nbsp;or&nbsp;classification&nbsp;(SVC).&nbsp;Default&nbsp;is&nbsp;False.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;(ndarray):&nbsp;Weight&nbsp;vector&nbsp;for&nbsp;linear&nbsp;kernel.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;(float):&nbsp;Bias&nbsp;term.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;support_vectors_&nbsp;(ndarray):&nbsp;Support&nbsp;vectors&nbsp;identified&nbsp;during&nbsp;training.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;support_vector_labels_&nbsp;(ndarray):&nbsp;Labels&nbsp;of&nbsp;the&nbsp;support&nbsp;vectors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;support_vector_alphas_&nbsp;(ndarray):&nbsp;Lagrange&nbsp;multipliers&nbsp;for&nbsp;the&nbsp;support&nbsp;vectors.<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseSVM-__init__">__init__</a>(self,&nbsp;C=1.0,&nbsp;tol=1e-4,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;kernel='linear',&nbsp;degree=3,&nbsp;gamma='scale',&nbsp;coef0=0.0,&nbsp;regression=False):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;<a href="#BaseSVM">BaseSVM</a>&nbsp;instance&nbsp;with&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseSVM-fit">fit</a>(self,&nbsp;X,&nbsp;y=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fits&nbsp;the&nbsp;SVM&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_fit(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Abstract&nbsp;method&nbsp;to&nbsp;be&nbsp;implemented&nbsp;by&nbsp;subclasses&nbsp;for&nbsp;training.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_compute_kernel(self,&nbsp;X1,&nbsp;X2):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes&nbsp;the&nbsp;kernel&nbsp;function&nbsp;between&nbsp;two&nbsp;input&nbsp;matrices.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseSVM-decision_function">decision_function</a>(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes&nbsp;the&nbsp;decision&nbsp;function&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseSVM-predict">predict</a>(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predicts&nbsp;class&nbsp;labels&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseSVM-score">score</a>(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes&nbsp;the&nbsp;mean&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;model&nbsp;on&nbsp;the&nbsp;given&nbsp;test&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseSVM-get_params">get_params</a>(self,&nbsp;deep=True):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseSVM-set_params">set_params</a>(self,&nbsp;**parameters):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseSVM-__sklearn_is_fitted__">__sklearn_is_fitted__</a>(self):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted&nbsp;(for&nbsp;sklearn&nbsp;compatibility).<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="BaseSVM-__init__"><strong>__init__</strong></a>(self, C=1.0, tol=0.0001, max_iter=1000, learning_rate=0.01, kernel='linear', degree=3, gamma='scale', coef0=0.0, regression=False)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#BaseSVM">BaseSVM</a>&nbsp;instance&nbsp;with&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C:&nbsp;(float)&nbsp;-&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol:&nbsp;(float)&nbsp;-&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter:&nbsp;(int)&nbsp;-&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;optimization.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float)&nbsp;-&nbsp;Step&nbsp;size&nbsp;for&nbsp;optimization.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kernel:&nbsp;(str)&nbsp;-&nbsp;Kernel&nbsp;type&nbsp;('linear',&nbsp;'poly',&nbsp;'rbf',&nbsp;or&nbsp;'sigmoid').&nbsp;Default&nbsp;is&nbsp;'linear'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;degree:&nbsp;(int)&nbsp;-&nbsp;Degree&nbsp;for&nbsp;polynomial&nbsp;kernel.&nbsp;Default&nbsp;is&nbsp;3.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gamma:&nbsp;(str&nbsp;or&nbsp;float)&nbsp;-&nbsp;Kernel&nbsp;coefficient&nbsp;('scale',&nbsp;'auto',&nbsp;or&nbsp;float).&nbsp;Default&nbsp;is&nbsp;'scale'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;coef0:&nbsp;(float)&nbsp;-&nbsp;Independent&nbsp;term&nbsp;in&nbsp;poly&nbsp;and&nbsp;sigmoid&nbsp;kernels.&nbsp;Default&nbsp;is&nbsp;0.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;regression:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;to&nbsp;use&nbsp;regression&nbsp;(SVR)&nbsp;or&nbsp;classification&nbsp;(SVC).&nbsp;Default&nbsp;is&nbsp;False.</span></dd></dl>
+
+<dl><dt><a name="BaseSVM-__sklearn_is_fitted__"><strong>__sklearn_is_fitted__</strong></a>(self)</dt><dd><span class="code">Checks&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted&nbsp;(for&nbsp;sklearn&nbsp;compatibility).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fitted:&nbsp;(bool)&nbsp;-&nbsp;True&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted,&nbsp;otherwise&nbsp;False.</span></dd></dl>
+
+<dl><dt><a name="BaseSVM-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Computes&nbsp;the&nbsp;decision&nbsp;function&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;decision_values:&nbsp;(ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Decision&nbsp;function&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="BaseSVM-fit"><strong>fit</strong></a>(self, X, y=None)</dt><dd><span class="code">Fits&nbsp;the&nbsp;SVM&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Training&nbsp;vectors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;fitted&nbsp;instance.</span></dd></dl>
+
+<dl><dt><a name="BaseSVM-get_params"><strong>get_params</strong></a>(self, deep=True)</dt><dd><span class="code">Retrieves&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;deep:&nbsp;(bool)&nbsp;-&nbsp;If&nbsp;True,&nbsp;returns&nbsp;parameters&nbsp;of&nbsp;subobjects&nbsp;as&nbsp;well.&nbsp;Default&nbsp;is&nbsp;True.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params:&nbsp;(dict)&nbsp;-&nbsp;Dictionary&nbsp;of&nbsp;hyperparameter&nbsp;names&nbsp;and&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="BaseSVM-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;class&nbsp;labels&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;predicted_labels:&nbsp;(ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Predicted&nbsp;class&nbsp;labels.</span></dd></dl>
+
+<dl><dt><a name="BaseSVM-score"><strong>score</strong></a>(self, X, y)</dt><dd><span class="code">Computes&nbsp;the&nbsp;mean&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;model&nbsp;on&nbsp;the&nbsp;given&nbsp;test&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Test&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;True&nbsp;class&nbsp;labels.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;score:&nbsp;(float)&nbsp;-&nbsp;Mean&nbsp;accuracy&nbsp;of&nbsp;predictions.</span></dd></dl>
+
+<dl><dt><a name="BaseSVM-set_params"><strong>set_params</strong></a>(self, **parameters)</dt><dd><span class="code">Sets&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;**parameters:&nbsp;(dict)&nbsp;-&nbsp;Hyperparameter&nbsp;names&nbsp;and&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;updated&nbsp;estimator&nbsp;instance.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="GeneralizedSVC">class <strong>GeneralizedSVC</strong></a>(<a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#GeneralizedSVC">GeneralizedSVC</a>(C=1.0,&nbsp;tol=0.0001,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;kernel='linear',&nbsp;degree=3,&nbsp;gamma='scale',&nbsp;coef0=0.0)<br>
+&nbsp;<br>
+<a href="#GeneralizedSVC">GeneralizedSVC</a>:&nbsp;A&nbsp;Support&nbsp;Vector&nbsp;Classifier&nbsp;(SVC)&nbsp;model&nbsp;with&nbsp;support&nbsp;for&nbsp;multiple&nbsp;kernels.<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;implements&nbsp;an&nbsp;SVC&nbsp;model&nbsp;using&nbsp;gradient&nbsp;descent&nbsp;for&nbsp;optimization.&nbsp;It&nbsp;supports<br>
+linear&nbsp;and&nbsp;non-linear&nbsp;kernels,&nbsp;including&nbsp;polynomial&nbsp;and&nbsp;RBF&nbsp;kernels.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;(float):&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol&nbsp;(float):&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter&nbsp;(int):&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float):&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kernel&nbsp;(str):&nbsp;Kernel&nbsp;type&nbsp;('linear',&nbsp;'poly',&nbsp;'rbf').&nbsp;Default&nbsp;is&nbsp;'linear'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;degree&nbsp;(int):&nbsp;Degree&nbsp;of&nbsp;the&nbsp;polynomial&nbsp;kernel&nbsp;function&nbsp;('poly').&nbsp;Ignored&nbsp;by&nbsp;other&nbsp;kernels.&nbsp;Default&nbsp;is&nbsp;3.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gamma&nbsp;(str&nbsp;or&nbsp;float):&nbsp;Kernel&nbsp;coefficient&nbsp;for&nbsp;'rbf'&nbsp;and&nbsp;'poly'.&nbsp;Default&nbsp;is&nbsp;'scale'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;coef0&nbsp;(float):&nbsp;Independent&nbsp;term&nbsp;in&nbsp;kernel&nbsp;function&nbsp;('poly').&nbsp;Default&nbsp;is&nbsp;0.0.<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#GeneralizedSVC-__init__">__init__</a>(self,&nbsp;C=1.0,&nbsp;tol=1e-4,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;kernel="linear",&nbsp;degree=3,&nbsp;gamma="scale",&nbsp;coef0=0.0):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initialize&nbsp;the&nbsp;<a href="#GeneralizedSVC">GeneralizedSVC</a>&nbsp;model&nbsp;with&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_fit(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fit&nbsp;the&nbsp;<a href="#GeneralizedSVC">GeneralizedSVC</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data&nbsp;using&nbsp;gradient&nbsp;descent.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_predict_binary(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predict&nbsp;binary&nbsp;class&nbsp;labels&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_predict_multiclass(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predict&nbsp;multi-class&nbsp;labels&nbsp;using&nbsp;one-vs-rest&nbsp;strategy.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#GeneralizedSVC-decision_function">decision_function</a>(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute&nbsp;raw&nbsp;decision&nbsp;function&nbsp;values&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_score_binary(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute&nbsp;the&nbsp;accuracy&nbsp;score&nbsp;for&nbsp;binary&nbsp;classification.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_score_multiclass(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute&nbsp;the&nbsp;accuracy&nbsp;score&nbsp;for&nbsp;multi-class&nbsp;classification.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;numerical&nbsp;instability&nbsp;is&nbsp;detected&nbsp;during&nbsp;training.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.svm.generalizedSVM.html#GeneralizedSVC">GeneralizedSVC</a></dd>
+<dd><a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="GeneralizedSVC-__init__"><strong>__init__</strong></a>(self, C=1.0, tol=0.0001, max_iter=1000, learning_rate=0.01, kernel='linear', degree=3, gamma='scale', coef0=0.0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#GeneralizedSVC">GeneralizedSVC</a>&nbsp;model&nbsp;with&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C:&nbsp;(float)&nbsp;-&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol:&nbsp;(float)&nbsp;-&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter:&nbsp;(int)&nbsp;-&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float)&nbsp;-&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kernel:&nbsp;(str)&nbsp;-&nbsp;Kernel&nbsp;type&nbsp;('linear',&nbsp;'poly',&nbsp;'rbf').&nbsp;Default&nbsp;is&nbsp;'linear'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;degree:&nbsp;(int)&nbsp;-&nbsp;Degree&nbsp;of&nbsp;the&nbsp;polynomial&nbsp;kernel&nbsp;function&nbsp;('poly').&nbsp;Ignored&nbsp;by&nbsp;other&nbsp;kernels.&nbsp;Default&nbsp;is&nbsp;3.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gamma:&nbsp;(str&nbsp;or&nbsp;float)&nbsp;-&nbsp;Kernel&nbsp;coefficient&nbsp;for&nbsp;'rbf'&nbsp;and&nbsp;'poly'.&nbsp;Default&nbsp;is&nbsp;'scale'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;coef0:&nbsp;(float)&nbsp;-&nbsp;Independent&nbsp;term&nbsp;in&nbsp;kernel&nbsp;function&nbsp;('poly').&nbsp;Default&nbsp;is&nbsp;0.0.</span></dd></dl>
+
+<dl><dt><a name="GeneralizedSVC-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Compute&nbsp;raw&nbsp;decision&nbsp;function&nbsp;values&nbsp;for&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<hr>
+Methods inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><a name="GeneralizedSVC-__sklearn_is_fitted__"><strong>__sklearn_is_fitted__</strong></a>(self)</dt><dd><span class="code">Checks&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted&nbsp;(for&nbsp;sklearn&nbsp;compatibility).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fitted:&nbsp;(bool)&nbsp;-&nbsp;True&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted,&nbsp;otherwise&nbsp;False.</span></dd></dl>
+
+<dl><dt><a name="GeneralizedSVC-fit"><strong>fit</strong></a>(self, X, y=None)</dt><dd><span class="code">Fits&nbsp;the&nbsp;SVM&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Training&nbsp;vectors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;fitted&nbsp;instance.</span></dd></dl>
+
+<dl><dt><a name="GeneralizedSVC-get_params"><strong>get_params</strong></a>(self, deep=True)</dt><dd><span class="code">Retrieves&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;deep:&nbsp;(bool)&nbsp;-&nbsp;If&nbsp;True,&nbsp;returns&nbsp;parameters&nbsp;of&nbsp;subobjects&nbsp;as&nbsp;well.&nbsp;Default&nbsp;is&nbsp;True.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params:&nbsp;(dict)&nbsp;-&nbsp;Dictionary&nbsp;of&nbsp;hyperparameter&nbsp;names&nbsp;and&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="GeneralizedSVC-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;class&nbsp;labels&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;predicted_labels:&nbsp;(ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Predicted&nbsp;class&nbsp;labels.</span></dd></dl>
+
+<dl><dt><a name="GeneralizedSVC-score"><strong>score</strong></a>(self, X, y)</dt><dd><span class="code">Computes&nbsp;the&nbsp;mean&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;model&nbsp;on&nbsp;the&nbsp;given&nbsp;test&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Test&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;True&nbsp;class&nbsp;labels.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;score:&nbsp;(float)&nbsp;-&nbsp;Mean&nbsp;accuracy&nbsp;of&nbsp;predictions.</span></dd></dl>
+
+<dl><dt><a name="GeneralizedSVC-set_params"><strong>set_params</strong></a>(self, **parameters)</dt><dd><span class="code">Sets&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;**parameters:&nbsp;(dict)&nbsp;-&nbsp;Hyperparameter&nbsp;names&nbsp;and&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;updated&nbsp;estimator&nbsp;instance.</span></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="GeneralizedSVR">class <strong>GeneralizedSVR</strong></a>(<a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#GeneralizedSVR">GeneralizedSVR</a>(C=1.0,&nbsp;tol=0.0001,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;epsilon=0.1,&nbsp;kernel='linear',&nbsp;degree=3,&nbsp;gamma='scale',&nbsp;coef0=0.0)<br>
+&nbsp;<br>
+<a href="#GeneralizedSVR">GeneralizedSVR</a>:&nbsp;A&nbsp;Support&nbsp;Vector&nbsp;Regression&nbsp;(SVR)&nbsp;model&nbsp;with&nbsp;support&nbsp;for&nbsp;multiple&nbsp;kernels.<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;implements&nbsp;an&nbsp;SVR&nbsp;model&nbsp;using&nbsp;gradient&nbsp;descent&nbsp;for&nbsp;optimization.&nbsp;It&nbsp;supports<br>
+linear&nbsp;and&nbsp;non-linear&nbsp;kernels,&nbsp;including&nbsp;polynomial&nbsp;and&nbsp;RBF&nbsp;kernels.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;(float):&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol&nbsp;(float):&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter&nbsp;(int):&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float):&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon&nbsp;(float):&nbsp;Epsilon&nbsp;parameter&nbsp;for&nbsp;epsilon-insensitive&nbsp;loss.&nbsp;Default&nbsp;is&nbsp;0.1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kernel&nbsp;(str):&nbsp;Kernel&nbsp;type&nbsp;('linear',&nbsp;'poly',&nbsp;'rbf').&nbsp;Default&nbsp;is&nbsp;'linear'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;degree&nbsp;(int):&nbsp;Degree&nbsp;of&nbsp;the&nbsp;polynomial&nbsp;kernel&nbsp;function&nbsp;('poly').&nbsp;Ignored&nbsp;by&nbsp;other&nbsp;kernels.&nbsp;Default&nbsp;is&nbsp;3.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gamma&nbsp;(str&nbsp;or&nbsp;float):&nbsp;Kernel&nbsp;coefficient&nbsp;for&nbsp;'rbf'&nbsp;and&nbsp;'poly'.&nbsp;Default&nbsp;is&nbsp;'scale'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;coef0&nbsp;(float):&nbsp;Independent&nbsp;term&nbsp;in&nbsp;kernel&nbsp;function&nbsp;('poly').&nbsp;Default&nbsp;is&nbsp;0.0.<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#GeneralizedSVR-__init__">__init__</a>(self,&nbsp;C=1.0,&nbsp;tol=1e-4,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;epsilon=0.1,&nbsp;kernel="linear",&nbsp;degree=3,&nbsp;gamma="scale",&nbsp;coef0=0.0):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initialize&nbsp;the&nbsp;<a href="#GeneralizedSVR">GeneralizedSVR</a>&nbsp;model&nbsp;with&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_fit(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fit&nbsp;the&nbsp;<a href="#GeneralizedSVR">GeneralizedSVR</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data&nbsp;using&nbsp;gradient&nbsp;descent.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#GeneralizedSVR-predict">predict</a>(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predict&nbsp;continuous&nbsp;target&nbsp;values&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#GeneralizedSVR-decision_function">decision_function</a>(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute&nbsp;raw&nbsp;decision&nbsp;function&nbsp;values&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#GeneralizedSVR-score">score</a>(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute&nbsp;the&nbsp;coefficient&nbsp;of&nbsp;determination&nbsp;(R²&nbsp;score)&nbsp;for&nbsp;the&nbsp;model's&nbsp;predictions.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;numerical&nbsp;instability&nbsp;is&nbsp;detected&nbsp;during&nbsp;training.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.svm.generalizedSVM.html#GeneralizedSVR">GeneralizedSVR</a></dd>
+<dd><a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="GeneralizedSVR-__init__"><strong>__init__</strong></a>(self, C=1.0, tol=0.0001, max_iter=1000, learning_rate=0.01, epsilon=0.1, kernel='linear', degree=3, gamma='scale', coef0=0.0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#GeneralizedSVR">GeneralizedSVR</a>&nbsp;model&nbsp;with&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C:&nbsp;(float)&nbsp;-&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol:&nbsp;(float)&nbsp;-&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter:&nbsp;(int)&nbsp;-&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float)&nbsp;-&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon:&nbsp;(float)&nbsp;-&nbsp;Epsilon&nbsp;parameter&nbsp;for&nbsp;epsilon-insensitive&nbsp;loss.&nbsp;Default&nbsp;is&nbsp;0.1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kernel:&nbsp;(str)&nbsp;-&nbsp;Kernel&nbsp;type&nbsp;('linear',&nbsp;'poly',&nbsp;'rbf').&nbsp;Default&nbsp;is&nbsp;'linear'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;degree:&nbsp;(int)&nbsp;-&nbsp;Degree&nbsp;of&nbsp;the&nbsp;polynomial&nbsp;kernel&nbsp;function&nbsp;('poly').&nbsp;Ignored&nbsp;by&nbsp;other&nbsp;kernels.&nbsp;Default&nbsp;is&nbsp;3.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gamma:&nbsp;(str&nbsp;or&nbsp;float)&nbsp;-&nbsp;Kernel&nbsp;coefficient&nbsp;for&nbsp;'rbf'&nbsp;and&nbsp;'poly'.&nbsp;Default&nbsp;is&nbsp;'scale'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;coef0:&nbsp;(float)&nbsp;-&nbsp;Independent&nbsp;term&nbsp;in&nbsp;kernel&nbsp;function&nbsp;('poly').&nbsp;Default&nbsp;is&nbsp;0.0.</span></dd></dl>
+
+<dl><dt><a name="GeneralizedSVR-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Compute&nbsp;raw&nbsp;decision&nbsp;function&nbsp;values&nbsp;for&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<dl><dt><a name="GeneralizedSVR-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;continuous&nbsp;target&nbsp;values&nbsp;for&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<dl><dt><a name="GeneralizedSVR-score"><strong>score</strong></a>(self, X, y)</dt><dd><span class="code">Compute&nbsp;the&nbsp;coefficient&nbsp;of&nbsp;determination&nbsp;(R²&nbsp;score)&nbsp;for&nbsp;the&nbsp;model's&nbsp;predictions.</span></dd></dl>
+
+<hr>
+Methods inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><a name="GeneralizedSVR-__sklearn_is_fitted__"><strong>__sklearn_is_fitted__</strong></a>(self)</dt><dd><span class="code">Checks&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted&nbsp;(for&nbsp;sklearn&nbsp;compatibility).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fitted:&nbsp;(bool)&nbsp;-&nbsp;True&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted,&nbsp;otherwise&nbsp;False.</span></dd></dl>
+
+<dl><dt><a name="GeneralizedSVR-fit"><strong>fit</strong></a>(self, X, y=None)</dt><dd><span class="code">Fits&nbsp;the&nbsp;SVM&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Training&nbsp;vectors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;fitted&nbsp;instance.</span></dd></dl>
+
+<dl><dt><a name="GeneralizedSVR-get_params"><strong>get_params</strong></a>(self, deep=True)</dt><dd><span class="code">Retrieves&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;deep:&nbsp;(bool)&nbsp;-&nbsp;If&nbsp;True,&nbsp;returns&nbsp;parameters&nbsp;of&nbsp;subobjects&nbsp;as&nbsp;well.&nbsp;Default&nbsp;is&nbsp;True.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params:&nbsp;(dict)&nbsp;-&nbsp;Dictionary&nbsp;of&nbsp;hyperparameter&nbsp;names&nbsp;and&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="GeneralizedSVR-set_params"><strong>set_params</strong></a>(self, **parameters)</dt><dd><span class="code">Sets&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;**parameters:&nbsp;(dict)&nbsp;-&nbsp;Hyperparameter&nbsp;names&nbsp;and&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;updated&nbsp;estimator&nbsp;instance.</span></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="LinearSVC">class <strong>LinearSVC</strong></a>(<a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#LinearSVC">LinearSVC</a>(C=1.0,&nbsp;tol=0.0001,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;numba=False)<br>
+&nbsp;<br>
+<a href="#LinearSVC">LinearSVC</a>&nbsp;is&nbsp;a&nbsp;linear&nbsp;Support&nbsp;Vector&nbsp;Classifier&nbsp;(SVC)&nbsp;implementation&nbsp;that&nbsp;uses&nbsp;gradient&nbsp;descent&nbsp;for&nbsp;optimization.<br>
+&nbsp;<br>
+It&nbsp;supports&nbsp;binary&nbsp;and&nbsp;multi-class&nbsp;classification&nbsp;using&nbsp;a&nbsp;one-vs-rest&nbsp;strategy.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;(float):&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol&nbsp;(float):&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter&nbsp;(int):&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float):&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;use&nbsp;Numba-accelerated&nbsp;computations.&nbsp;Default&nbsp;is&nbsp;False.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;(ndarray):&nbsp;Weight&nbsp;vector&nbsp;for&nbsp;the&nbsp;linear&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;(float):&nbsp;Bias&nbsp;term&nbsp;for&nbsp;the&nbsp;linear&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba_available&nbsp;(bool):&nbsp;Indicates&nbsp;if&nbsp;Numba&nbsp;is&nbsp;available&nbsp;for&nbsp;use.<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LinearSVC-__init__">__init__</a>(self,&nbsp;C=1.0,&nbsp;tol=1e-4,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;numba=False):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;<a href="#LinearSVC">LinearSVC</a>&nbsp;instance&nbsp;with&nbsp;hyperparameters&nbsp;and&nbsp;checks&nbsp;for&nbsp;Numba&nbsp;availability.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_fit(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fits&nbsp;the&nbsp;<a href="#LinearSVC">LinearSVC</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data&nbsp;using&nbsp;gradient&nbsp;descent.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_predict_binary(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predicts&nbsp;class&nbsp;labels&nbsp;{-1,&nbsp;1}&nbsp;for&nbsp;binary&nbsp;classification.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_predict_multiclass(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predicts&nbsp;class&nbsp;labels&nbsp;for&nbsp;multi-class&nbsp;classification&nbsp;using&nbsp;one-vs-rest&nbsp;strategy.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LinearSVC-decision_function">decision_function</a>(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes&nbsp;raw&nbsp;decision&nbsp;function&nbsp;values&nbsp;before&nbsp;thresholding.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_score_binary(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes&nbsp;the&nbsp;mean&nbsp;accuracy&nbsp;of&nbsp;predictions&nbsp;for&nbsp;binary&nbsp;classification.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_score_multiclass(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computes&nbsp;the&nbsp;mean&nbsp;accuracy&nbsp;of&nbsp;predictions&nbsp;for&nbsp;multi-class&nbsp;classification.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.svm.linerarSVM.html#LinearSVC">LinearSVC</a></dd>
+<dd><a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="LinearSVC-__init__"><strong>__init__</strong></a>(self, C=1.0, tol=0.0001, max_iter=1000, learning_rate=0.01, numba=False)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#LinearSVC">LinearSVC</a>&nbsp;instance&nbsp;with&nbsp;hyperparameters&nbsp;and&nbsp;checks&nbsp;for&nbsp;Numba&nbsp;availability.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C:&nbsp;(float)&nbsp;-&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol:&nbsp;(float)&nbsp;-&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter:&nbsp;(int)&nbsp;-&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float)&nbsp;-&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;to&nbsp;use&nbsp;Numba-accelerated&nbsp;computations.&nbsp;Default&nbsp;is&nbsp;False.</span></dd></dl>
+
+<dl><dt><a name="LinearSVC-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Compute&nbsp;raw&nbsp;decision&nbsp;function&nbsp;values&nbsp;before&nbsp;thresholding.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features)):&nbsp;Input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;scores&nbsp;(array&nbsp;of&nbsp;shape&nbsp;(n_samples,)):&nbsp;Decision&nbsp;function&nbsp;values.</span></dd></dl>
+
+<hr>
+Methods inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><a name="LinearSVC-__sklearn_is_fitted__"><strong>__sklearn_is_fitted__</strong></a>(self)</dt><dd><span class="code">Checks&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted&nbsp;(for&nbsp;sklearn&nbsp;compatibility).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fitted:&nbsp;(bool)&nbsp;-&nbsp;True&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted,&nbsp;otherwise&nbsp;False.</span></dd></dl>
+
+<dl><dt><a name="LinearSVC-fit"><strong>fit</strong></a>(self, X, y=None)</dt><dd><span class="code">Fits&nbsp;the&nbsp;SVM&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Training&nbsp;vectors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;fitted&nbsp;instance.</span></dd></dl>
+
+<dl><dt><a name="LinearSVC-get_params"><strong>get_params</strong></a>(self, deep=True)</dt><dd><span class="code">Retrieves&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;deep:&nbsp;(bool)&nbsp;-&nbsp;If&nbsp;True,&nbsp;returns&nbsp;parameters&nbsp;of&nbsp;subobjects&nbsp;as&nbsp;well.&nbsp;Default&nbsp;is&nbsp;True.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params:&nbsp;(dict)&nbsp;-&nbsp;Dictionary&nbsp;of&nbsp;hyperparameter&nbsp;names&nbsp;and&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="LinearSVC-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;class&nbsp;labels&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;predicted_labels:&nbsp;(ndarray&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Predicted&nbsp;class&nbsp;labels.</span></dd></dl>
+
+<dl><dt><a name="LinearSVC-score"><strong>score</strong></a>(self, X, y)</dt><dd><span class="code">Computes&nbsp;the&nbsp;mean&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;model&nbsp;on&nbsp;the&nbsp;given&nbsp;test&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Test&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;True&nbsp;class&nbsp;labels.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;score:&nbsp;(float)&nbsp;-&nbsp;Mean&nbsp;accuracy&nbsp;of&nbsp;predictions.</span></dd></dl>
+
+<dl><dt><a name="LinearSVC-set_params"><strong>set_params</strong></a>(self, **parameters)</dt><dd><span class="code">Sets&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;**parameters:&nbsp;(dict)&nbsp;-&nbsp;Hyperparameter&nbsp;names&nbsp;and&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;updated&nbsp;estimator&nbsp;instance.</span></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="LinearSVR">class <strong>LinearSVR</strong></a>(<a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#LinearSVR">LinearSVR</a>(C=1.0,&nbsp;tol=0.0001,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;epsilon=0.1,&nbsp;numba=False)<br>
+&nbsp;<br>
+<a href="#LinearSVR">LinearSVR</a>:&nbsp;A&nbsp;linear&nbsp;Support&nbsp;Vector&nbsp;Regression&nbsp;(SVR)&nbsp;model&nbsp;using&nbsp;epsilon-insensitive&nbsp;loss.<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;implements&nbsp;a&nbsp;linear&nbsp;SVR&nbsp;model&nbsp;with&nbsp;support&nbsp;for&nbsp;mini-batch&nbsp;gradient&nbsp;descent<br>
+and&nbsp;optional&nbsp;acceleration&nbsp;using&nbsp;Numba.&nbsp;It&nbsp;is&nbsp;designed&nbsp;for&nbsp;regression&nbsp;tasks&nbsp;and&nbsp;uses<br>
+epsilon-insensitive&nbsp;loss&nbsp;to&nbsp;handle&nbsp;errors&nbsp;within&nbsp;a&nbsp;specified&nbsp;margin.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;(float):&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol&nbsp;(float):&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter&nbsp;(int):&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float):&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon&nbsp;(float):&nbsp;Epsilon&nbsp;parameter&nbsp;for&nbsp;epsilon-insensitive&nbsp;loss.&nbsp;Default&nbsp;is&nbsp;0.1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;use&nbsp;Numba&nbsp;for&nbsp;acceleration.&nbsp;Default&nbsp;is&nbsp;False.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;(ndarray):&nbsp;Weight&nbsp;vector&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;(float):&nbsp;Bias&nbsp;term&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba_available&nbsp;(bool):&nbsp;Indicates&nbsp;if&nbsp;Numba&nbsp;is&nbsp;available&nbsp;for&nbsp;acceleration.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X_train&nbsp;(ndarray):&nbsp;Training&nbsp;data&nbsp;used&nbsp;for&nbsp;fitting.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_train&nbsp;(ndarray):&nbsp;Target&nbsp;values&nbsp;used&nbsp;for&nbsp;fitting.<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LinearSVR-__init__">__init__</a>(self,&nbsp;C=1.0,&nbsp;tol=1e-4,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;epsilon=0.1,&nbsp;numba=False):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initialize&nbsp;the&nbsp;<a href="#LinearSVR">LinearSVR</a>&nbsp;model&nbsp;with&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_fit(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fit&nbsp;the&nbsp;<a href="#LinearSVR">LinearSVR</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data&nbsp;using&nbsp;mini-batch&nbsp;gradient&nbsp;descent.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LinearSVR-predict">predict</a>(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predict&nbsp;continuous&nbsp;target&nbsp;values&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LinearSVR-decision_function">decision_function</a>(self,&nbsp;X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute&nbsp;raw&nbsp;decision&nbsp;function&nbsp;values&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#LinearSVR-score">score</a>(self,&nbsp;X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute&nbsp;the&nbsp;coefficient&nbsp;of&nbsp;determination&nbsp;(R²&nbsp;score)&nbsp;for&nbsp;the&nbsp;model's&nbsp;predictions.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;a&nbsp;non-linear&nbsp;kernel&nbsp;is&nbsp;specified,&nbsp;as&nbsp;<a href="#LinearSVR">LinearSVR</a>&nbsp;only&nbsp;supports&nbsp;linear&nbsp;kernels.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.svm.linerarSVM.html#LinearSVR">LinearSVR</a></dd>
+<dd><a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="LinearSVR-__init__"><strong>__init__</strong></a>(self, C=1.0, tol=0.0001, max_iter=1000, learning_rate=0.01, epsilon=0.1, numba=False)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#LinearSVR">LinearSVR</a>&nbsp;instance&nbsp;with&nbsp;hyperparameters&nbsp;and&nbsp;checks&nbsp;for&nbsp;Numba&nbsp;availability.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C:&nbsp;(float)&nbsp;-&nbsp;Regularization&nbsp;parameter.&nbsp;Default&nbsp;is&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol:&nbsp;(float)&nbsp;-&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria.&nbsp;Default&nbsp;is&nbsp;1e-4.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter:&nbsp;(int)&nbsp;-&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float)&nbsp;-&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent.&nbsp;Default&nbsp;is&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon:&nbsp;(float)&nbsp;-&nbsp;Epsilon&nbsp;parameter&nbsp;for&nbsp;epsilon-insensitive&nbsp;loss.&nbsp;Default&nbsp;is&nbsp;0.1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numba:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;to&nbsp;use&nbsp;Numba-accelerated&nbsp;computations.&nbsp;Default&nbsp;is&nbsp;False.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;None</span></dd></dl>
+
+<dl><dt><a name="LinearSVR-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Compute&nbsp;raw&nbsp;decision&nbsp;function&nbsp;values.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;scores:&nbsp;(array&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Predicted&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="LinearSVR-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;continuous&nbsp;target&nbsp;values&nbsp;for&nbsp;input&nbsp;samples.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Input&nbsp;samples.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred:&nbsp;(array&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Predicted&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="LinearSVR-score"><strong>score</strong></a>(self, X, y)</dt><dd><span class="code">Compute&nbsp;the&nbsp;coefficient&nbsp;of&nbsp;determination&nbsp;(R²&nbsp;score).<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Test&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;True&nbsp;target&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;score:&nbsp;(float)&nbsp;-&nbsp;R²&nbsp;score&nbsp;of&nbsp;predictions.</span></dd></dl>
+
+<hr>
+Methods inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><a name="LinearSVR-__sklearn_is_fitted__"><strong>__sklearn_is_fitted__</strong></a>(self)</dt><dd><span class="code">Checks&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted&nbsp;(for&nbsp;sklearn&nbsp;compatibility).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fitted:&nbsp;(bool)&nbsp;-&nbsp;True&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted,&nbsp;otherwise&nbsp;False.</span></dd></dl>
+
+<dl><dt><a name="LinearSVR-fit"><strong>fit</strong></a>(self, X, y=None)</dt><dd><span class="code">Fits&nbsp;the&nbsp;SVM&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Training&nbsp;vectors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;fitted&nbsp;instance.</span></dd></dl>
+
+<dl><dt><a name="LinearSVR-get_params"><strong>get_params</strong></a>(self, deep=True)</dt><dd><span class="code">Retrieves&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;deep:&nbsp;(bool)&nbsp;-&nbsp;If&nbsp;True,&nbsp;returns&nbsp;parameters&nbsp;of&nbsp;subobjects&nbsp;as&nbsp;well.&nbsp;Default&nbsp;is&nbsp;True.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params:&nbsp;(dict)&nbsp;-&nbsp;Dictionary&nbsp;of&nbsp;hyperparameter&nbsp;names&nbsp;and&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="LinearSVR-set_params"><strong>set_params</strong></a>(self, **parameters)</dt><dd><span class="code">Sets&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;**parameters:&nbsp;(dict)&nbsp;-&nbsp;Hyperparameter&nbsp;names&nbsp;and&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;updated&nbsp;estimator&nbsp;instance.</span></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="OneClassSVM">class <strong>OneClassSVM</strong></a>(<a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#OneClassSVM">OneClassSVM</a>(C=1.0,&nbsp;tol=0.0001,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;kernel='linear',&nbsp;degree=3,&nbsp;gamma='scale',&nbsp;coef0=0.0)<br>
+&nbsp;<br>
+<a href="#OneClassSVM">OneClassSVM</a>&nbsp;is&nbsp;a&nbsp;custom&nbsp;implementation&nbsp;of&nbsp;a&nbsp;One-Class&nbsp;Support&nbsp;Vector&nbsp;Machine&nbsp;(SVM)&nbsp;for&nbsp;anomaly&nbsp;detection&nbsp;using&nbsp;gradient&nbsp;descent.<br>
+&nbsp;<br>
+It&nbsp;inherits&nbsp;from&nbsp;the&nbsp;<a href="#BaseSVM">BaseSVM</a>&nbsp;class&nbsp;and&nbsp;supports&nbsp;various&nbsp;kernel&nbsp;functions.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;support_vectors_&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_support_vectors,&nbsp;n_features)):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;support&nbsp;vectors&nbsp;identified&nbsp;during&nbsp;training.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;support_vector_alphas_&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_support_vectors,)):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;Lagrange&nbsp;multipliers&nbsp;(alpha)&nbsp;corresponding&nbsp;to&nbsp;the&nbsp;support&nbsp;vectors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;(float):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;bias&nbsp;term&nbsp;(rho)&nbsp;computed&nbsp;during&nbsp;training.<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#OneClassSVM-__init__">__init__</a>(C=1.0,&nbsp;tol=1e-4,&nbsp;max_iter=1000,&nbsp;learning_rate=0.01,&nbsp;kernel="linear",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;degree=3,&nbsp;gamma="scale",&nbsp;coef0=0.0):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initialize&nbsp;the&nbsp;<a href="#OneClassSVM">OneClassSVM</a>&nbsp;with&nbsp;hyperparameters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_fit(X,&nbsp;y=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fit&nbsp;the&nbsp;<a href="#OneClassSVM">OneClassSVM</a>&nbsp;model&nbsp;using&nbsp;gradient&nbsp;descent&nbsp;for&nbsp;anomaly&nbsp;detection.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#OneClassSVM-decision_function">decision_function</a>(X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute&nbsp;the&nbsp;decision&nbsp;function&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#OneClassSVM-predict">predict</a>(X):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predict&nbsp;whether&nbsp;the&nbsp;input&nbsp;samples&nbsp;are&nbsp;inliers&nbsp;(1)&nbsp;or&nbsp;outliers&nbsp;(-1).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#OneClassSVM-score">score</a>(X,&nbsp;y):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute&nbsp;the&nbsp;mean&nbsp;accuracy&nbsp;of&nbsp;predictions&nbsp;compared&nbsp;to&nbsp;true&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#OneClassSVM-__sklearn_is_fitted__">__sklearn_is_fitted__</a>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted.&nbsp;For&nbsp;compatibility&nbsp;with&nbsp;sklearn.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="sega_learn.svm.oneClassSVM.html#OneClassSVM">OneClassSVM</a></dd>
+<dd><a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="OneClassSVM-__init__"><strong>__init__</strong></a>(self, C=1.0, tol=0.0001, max_iter=1000, learning_rate=0.01, kernel='linear', degree=3, gamma='scale', coef0=0.0)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#OneClassSVM">OneClassSVM</a>&nbsp;with&nbsp;hyperparameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C:&nbsp;(float)&nbsp;-&nbsp;Regularization&nbsp;parameter&nbsp;(default&nbsp;is&nbsp;1.0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tol:&nbsp;(float)&nbsp;-&nbsp;Tolerance&nbsp;for&nbsp;stopping&nbsp;criteria&nbsp;(default&nbsp;is&nbsp;1e-4).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter:&nbsp;(int)&nbsp;-&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;(default&nbsp;is&nbsp;1000).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float)&nbsp;-&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;descent&nbsp;(default&nbsp;is&nbsp;0.01).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;kernel:&nbsp;(str)&nbsp;-&nbsp;Kernel&nbsp;type&nbsp;("linear",&nbsp;"poly",&nbsp;"rbf",&nbsp;"sigmoid")&nbsp;(default&nbsp;is&nbsp;"linear").<br>
+&nbsp;&nbsp;&nbsp;&nbsp;degree:&nbsp;(int)&nbsp;-&nbsp;Degree&nbsp;for&nbsp;polynomial&nbsp;kernel&nbsp;(default&nbsp;is&nbsp;3).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gamma:&nbsp;(str&nbsp;or&nbsp;float)&nbsp;-&nbsp;Kernel&nbsp;coefficient&nbsp;("scale",&nbsp;"auto",&nbsp;or&nbsp;float)&nbsp;(default&nbsp;is&nbsp;"scale").<br>
+&nbsp;&nbsp;&nbsp;&nbsp;coef0:&nbsp;(float)&nbsp;-&nbsp;Independent&nbsp;term&nbsp;in&nbsp;kernel&nbsp;function&nbsp;(default&nbsp;is&nbsp;0.0).</span></dd></dl>
+
+<dl><dt><a name="OneClassSVM-__sklearn_is_fitted__"><strong>__sklearn_is_fitted__</strong></a>(self)</dt><dd><span class="code">Check&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted.&nbsp;For&nbsp;compatibility&nbsp;with&nbsp;sklearn.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fitted:&nbsp;(bool)&nbsp;-&nbsp;True&nbsp;if&nbsp;the&nbsp;model&nbsp;has&nbsp;been&nbsp;fitted,&nbsp;otherwise&nbsp;False.</span></dd></dl>
+
+<dl><dt><a name="OneClassSVM-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Compute&nbsp;the&nbsp;decision&nbsp;function&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+
+<dl><dt><a name="OneClassSVM-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;whether&nbsp;the&nbsp;input&nbsp;samples&nbsp;are&nbsp;inliers&nbsp;(1)&nbsp;or&nbsp;outliers&nbsp;(-1).</span></dd></dl>
+
+<dl><dt><a name="OneClassSVM-score"><strong>score</strong></a>(self, X, y)</dt><dd><span class="code">Compute&nbsp;the&nbsp;mean&nbsp;accuracy&nbsp;of&nbsp;predictions.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Test&nbsp;samples.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;True&nbsp;labels&nbsp;(+1&nbsp;for&nbsp;inliers,&nbsp;-1&nbsp;for&nbsp;outliers).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;score:&nbsp;(float)&nbsp;-&nbsp;Mean&nbsp;accuracy&nbsp;of&nbsp;predictions.</span></dd></dl>
+
+<hr>
+Methods inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><a name="OneClassSVM-fit"><strong>fit</strong></a>(self, X, y=None)</dt><dd><span class="code">Fits&nbsp;the&nbsp;SVM&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features))&nbsp;-&nbsp;Training&nbsp;vectors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like&nbsp;of&nbsp;shape&nbsp;(n_samples,))&nbsp;-&nbsp;Target&nbsp;values.&nbsp;Default&nbsp;is&nbsp;None.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;fitted&nbsp;instance.</span></dd></dl>
+
+<dl><dt><a name="OneClassSVM-get_params"><strong>get_params</strong></a>(self, deep=True)</dt><dd><span class="code">Retrieves&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;deep:&nbsp;(bool)&nbsp;-&nbsp;If&nbsp;True,&nbsp;returns&nbsp;parameters&nbsp;of&nbsp;subobjects&nbsp;as&nbsp;well.&nbsp;Default&nbsp;is&nbsp;True.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params:&nbsp;(dict)&nbsp;-&nbsp;Dictionary&nbsp;of&nbsp;hyperparameter&nbsp;names&nbsp;and&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="OneClassSVM-set_params"><strong>set_params</strong></a>(self, **parameters)</dt><dd><span class="code">Sets&nbsp;the&nbsp;hyperparameters&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;**parameters:&nbsp;(dict)&nbsp;-&nbsp;Hyperparameter&nbsp;names&nbsp;and&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self:&nbsp;(<a href="#BaseSVM">BaseSVM</a>)&nbsp;-&nbsp;The&nbsp;updated&nbsp;estimator&nbsp;instance.</span></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sega_learn.svm.baseSVM.html#BaseSVM">sega_learn.svm.baseSVM.BaseSVM</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>__all__</strong> = ['BaseSVM', 'LinearSVC', 'LinearSVR', 'OneClassSVM', 'GeneralizedSVR', 'GeneralizedSVC']</td></tr></table>
+</body></html>

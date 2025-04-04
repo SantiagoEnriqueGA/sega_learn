@@ -41,7 +41,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="scipy.linalg.html">scipy.linalg</a><br>
 </td><td class="multicolumn"><a href="numpy.html">numpy</a><br>
@@ -49,7 +49,7 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -64,57 +64,46 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="LinearDiscriminantAnalysis">class <strong>LinearDiscriminantAnalysis</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#LinearDiscriminantAnalysis">LinearDiscriminantAnalysis</a>(solver='svd',&nbsp;priors=None)<br>
 &nbsp;<br>
 Implements&nbsp;Linear&nbsp;Discriminant&nbsp;Analysis.<br>
+&nbsp;<br>
 A&nbsp;classifier&nbsp;with&nbsp;a&nbsp;linear&nbsp;decision&nbsp;boundary,&nbsp;generated&nbsp;by&nbsp;fitting&nbsp;class&nbsp;conditional&nbsp;densities&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;using&nbsp;Bayes'&nbsp;rule.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;solver&nbsp;:&nbsp;{'svd',&nbsp;'lsqr',&nbsp;'eigen'},&nbsp;default='svd'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Solver&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;LDA.&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'svd'&nbsp;is&nbsp;the&nbsp;default&nbsp;and&nbsp;recommended&nbsp;solver.&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'lsqr'&nbsp;is&nbsp;a&nbsp;faster&nbsp;alternative&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;is&nbsp;large.&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'eigen'&nbsp;is&nbsp;an&nbsp;alternative&nbsp;solver&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;is&nbsp;small.<br>
--&nbsp;priors&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_classes,),&nbsp;default=None<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.<br>&nbsp;</span></td></tr>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;solver:&nbsp;(str)&nbsp;-&nbsp;{'svd',&nbsp;'lsqr',&nbsp;'eigen'},&nbsp;default='svd'.&nbsp;Solver&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;LDA.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;priors:&nbsp;(np.ndarray),&nbsp;optional&nbsp;-&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes&nbsp;(default&nbsp;is&nbsp;None).<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="LinearDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, solver='svd', priors=None)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;Linear&nbsp;Discriminant&nbsp;Analysis&nbsp;model&nbsp;with&nbsp;the&nbsp;specified&nbsp;solver&nbsp;and&nbsp;prior&nbsp;probabilities.<br>
+<dl><dt><a name="LinearDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, solver='svd', priors=None)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;Linear&nbsp;Discriminant&nbsp;Analysis&nbsp;model.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;solver&nbsp;:&nbsp;{'svd',&nbsp;'lsqr',&nbsp;'eigen'},&nbsp;default='svd'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Solver&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;LDA.&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'svd'&nbsp;is&nbsp;the&nbsp;default&nbsp;and&nbsp;recommended&nbsp;solver.&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'lsqr'&nbsp;is&nbsp;a&nbsp;faster&nbsp;alternative&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;is&nbsp;large.&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'eigen'&nbsp;is&nbsp;an&nbsp;alternative&nbsp;solver&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;number&nbsp;of&nbsp;features&nbsp;is&nbsp;small.<br>
--&nbsp;priors&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_classes,),&nbsp;default=None<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;solver:&nbsp;(str)&nbsp;-&nbsp;{'svd',&nbsp;'lsqr',&nbsp;'eigen'},&nbsp;default='svd'.&nbsp;Solver&nbsp;to&nbsp;use&nbsp;for&nbsp;the&nbsp;LDA.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;priors:&nbsp;(np.ndarray),&nbsp;optional&nbsp;-&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes&nbsp;(default&nbsp;is&nbsp;None).</span></dd></dl>
 
-<dl><dt><a name="LinearDiscriminantAnalysis-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;decision&nbsp;function&nbsp;to&nbsp;an&nbsp;array&nbsp;of&nbsp;samples.&nbsp;<br>
-The&nbsp;decision&nbsp;function&nbsp;is&nbsp;the&nbsp;log-likelihood&nbsp;of&nbsp;each&nbsp;class.<br>
+<dl><dt><a name="LinearDiscriminantAnalysis-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Computes&nbsp;the&nbsp;log-likelihood&nbsp;of&nbsp;each&nbsp;class&nbsp;for&nbsp;the&nbsp;input&nbsp;data.&nbsp;The&nbsp;decision&nbsp;function&nbsp;is&nbsp;the&nbsp;log-likelihood&nbsp;of&nbsp;each&nbsp;class.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Test&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Test&nbsp;feature&nbsp;data.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;array,&nbsp;shape&nbsp;(n_samples,&nbsp;n_classes):&nbsp;Log-likelihood&nbsp;of&nbsp;each&nbsp;class&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;scores:&nbsp;(np.ndarray)&nbsp;-&nbsp;Log-likelihood&nbsp;of&nbsp;each&nbsp;class&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
 
-<dl><dt><a name="LinearDiscriminantAnalysis-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;according&nbsp;to&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
-This&nbsp;method&nbsp;computes&nbsp;the&nbsp;mean&nbsp;and&nbsp;covariance&nbsp;of&nbsp;each&nbsp;class,&nbsp;and&nbsp;the&nbsp;prior&nbsp;probabilities&nbsp;of&nbsp;each&nbsp;class.<br>
+<dl><dt><a name="LinearDiscriminantAnalysis-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fits&nbsp;the&nbsp;LDA&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
--&nbsp;y&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,):&nbsp;Target&nbsp;values,&nbsp;i.e.,&nbsp;class&nbsp;labels.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Training&nbsp;feature&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(np.ndarray)&nbsp;-&nbsp;Training&nbsp;target&nbsp;data.</span></dd></dl>
 
-<dl><dt><a name="LinearDiscriminantAnalysis-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Perform&nbsp;classification&nbsp;on&nbsp;an&nbsp;array&nbsp;of&nbsp;test&nbsp;vectors&nbsp;X.<br>
+<dl><dt><a name="LinearDiscriminantAnalysis-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;data.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Test&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Test&nbsp;feature&nbsp;data.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;array,&nbsp;shape&nbsp;(n_samples,):&nbsp;Predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;predictions:&nbsp;(np.ndarray)&nbsp;-&nbsp;Predicted&nbsp;class&nbsp;labels.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -128,50 +117,49 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="QuadraticDiscriminantAnalysis">class <strong>QuadraticDiscriminantAnalysis</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#QuadraticDiscriminantAnalysis">QuadraticDiscriminantAnalysis</a>(priors=None,&nbsp;reg_param=0.0)<br>
 &nbsp;<br>
 Implements&nbsp;Quadratic&nbsp;Discriminant&nbsp;Analysis.<br>
+&nbsp;<br>
 The&nbsp;quadratic&nbsp;term&nbsp;allows&nbsp;for&nbsp;more&nbsp;flexibility&nbsp;in&nbsp;modeling&nbsp;the&nbsp;class&nbsp;conditional<br>
 A&nbsp;classifier&nbsp;with&nbsp;a&nbsp;quadratic&nbsp;decision&nbsp;boundary,&nbsp;generated&nbsp;by&nbsp;fitting&nbsp;class&nbsp;conditional&nbsp;densities&nbsp;to&nbsp;the&nbsp;data&nbsp;and&nbsp;using&nbsp;Bayes'&nbsp;rule.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;priors&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_classes,),&nbsp;default=None<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.<br>
--&nbsp;reg_param&nbsp;:&nbsp;float,&nbsp;default=0.0<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Regularization&nbsp;parameter.&nbsp;If&nbsp;greater&nbsp;than&nbsp;0,&nbsp;the&nbsp;covariance&nbsp;matrices&nbsp;are&nbsp;regularized&nbsp;by&nbsp;adding&nbsp;a&nbsp;scaled&nbsp;identity&nbsp;matrix&nbsp;to&nbsp;them.<br>&nbsp;</span></td></tr>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;priors:&nbsp;(np.ndarray),&nbsp;optional&nbsp;-&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_param:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;Regularization&nbsp;parameter&nbsp;(default&nbsp;is&nbsp;0.0).<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="QuadraticDiscriminantAnalysis-__init__"><strong>__init__</strong></a>(self, priors=None, reg_param=0.0)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;Quadratic&nbsp;Discriminant&nbsp;Analysis&nbsp;model&nbsp;with&nbsp;the&nbsp;specified&nbsp;prior&nbsp;probabilities&nbsp;and&nbsp;regularization&nbsp;parameter.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;priors&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_classes,),&nbsp;default=None<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes.&nbsp;If&nbsp;None,&nbsp;the&nbsp;priors&nbsp;are&nbsp;uniform.<br>
--&nbsp;reg_param&nbsp;:&nbsp;float,&nbsp;default=0.0</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;priors:&nbsp;(np.ndarray),&nbsp;optional&nbsp;-&nbsp;Prior&nbsp;probabilities&nbsp;of&nbsp;the&nbsp;classes&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_param:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;Regularization&nbsp;parameter&nbsp;(default&nbsp;is&nbsp;0.0).</span></dd></dl>
 
 <dl><dt><a name="QuadraticDiscriminantAnalysis-decision_function"><strong>decision_function</strong></a>(self, X)</dt><dd><span class="code">Apply&nbsp;decision&nbsp;function&nbsp;to&nbsp;an&nbsp;array&nbsp;of&nbsp;samples.<br>
+&nbsp;<br>
 The&nbsp;decision&nbsp;function&nbsp;is&nbsp;the&nbsp;log-likelihood&nbsp;of&nbsp;each&nbsp;class.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Test&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Test&nbsp;feature&nbsp;data.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;array,&nbsp;shape&nbsp;(n_samples,&nbsp;n_classes):&nbsp;Log-likelihood&nbsp;of&nbsp;each&nbsp;class&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;scores:&nbsp;(np.ndarray)&nbsp;-&nbsp;Log-likelihood&nbsp;of&nbsp;each&nbsp;class&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
 
 <dl><dt><a name="QuadraticDiscriminantAnalysis-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;according&nbsp;to&nbsp;the&nbsp;given&nbsp;training&nbsp;data.&nbsp;Uses&nbsp;the&nbsp;means&nbsp;and&nbsp;covariance&nbsp;matrices&nbsp;of&nbsp;each&nbsp;class.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Training&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
--&nbsp;y&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,):&nbsp;Target&nbsp;values,&nbsp;i.e.,&nbsp;class&nbsp;labels.</span></dd></dl>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Training&nbsp;feature&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(np.ndarray)&nbsp;-&nbsp;Training&nbsp;target&nbsp;data.</span></dd></dl>
 
 <dl><dt><a name="QuadraticDiscriminantAnalysis-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Perform&nbsp;classification&nbsp;on&nbsp;an&nbsp;array&nbsp;of&nbsp;test&nbsp;vectors&nbsp;X.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;X&nbsp;:&nbsp;array-like,&nbsp;shape&nbsp;(n_samples,&nbsp;n_features):&nbsp;Test&nbsp;data,&nbsp;where&nbsp;n_samples&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;samples&nbsp;and&nbsp;n_features&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;features.<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Test&nbsp;feature&nbsp;data.<br>
 &nbsp;<br>
 Returns:<br>
--&nbsp;array,&nbsp;shape&nbsp;(n_samples,):&nbsp;Predicted&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;samples.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;predictions:&nbsp;(np.ndarray)&nbsp;-&nbsp;Predicted&nbsp;class&nbsp;labels.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -185,21 +173,24 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor functions-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
-    
+
 <tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt><a name="-ceil"><strong>ceil</strong></a>(x, /)</dt><dd><span class="code">Return&nbsp;the&nbsp;ceiling&nbsp;of&nbsp;x&nbsp;as&nbsp;an&nbsp;Integral.<br>
-&nbsp;<br>
-This&nbsp;is&nbsp;the&nbsp;smallest&nbsp;integer&nbsp;&gt;=&nbsp;x.</span></dd></dl>
- <dl><dt><a name="-floor"><strong>floor</strong></a>(x, /)</dt><dd><span class="code">Return&nbsp;the&nbsp;floor&nbsp;of&nbsp;x&nbsp;as&nbsp;an&nbsp;Integral.<br>
-&nbsp;<br>
-This&nbsp;is&nbsp;the&nbsp;largest&nbsp;integer&nbsp;&lt;=&nbsp;x.</span></dd></dl>
- <dl><dt><a name="-log"><strong>log</strong></a>(...)</dt><dd><span class="code"><a href="#-log">log</a>(x,&nbsp;[base=math.e])<br>
+<td class="singlecolumn"><dl><dt><a name="-log"><strong>log</strong></a>(...)</dt><dd><span class="code"><a href="#-log">log</a>(x,&nbsp;[base=math.e])<br>
 Return&nbsp;the&nbsp;logarithm&nbsp;of&nbsp;x&nbsp;to&nbsp;the&nbsp;given&nbsp;base.<br>
 &nbsp;<br>
 If&nbsp;the&nbsp;base&nbsp;not&nbsp;specified,&nbsp;returns&nbsp;the&nbsp;natural&nbsp;logarithm&nbsp;(base&nbsp;e)&nbsp;of&nbsp;x.</span></dd></dl>
- <dl><dt><a name="-make_sample_data"><strong>make_sample_data</strong></a>(n_samples, n_features, cov_class_1, cov_class_2, shift=[1, 1], seed=0)</dt><dd><span class="code">Make&nbsp;data&nbsp;for&nbsp;testing,&nbsp;for&nbsp;testing&nbsp;LDA&nbsp;and&nbsp;QDA.&nbsp;<br>
-Data&nbsp;points&nbsp;for&nbsp;class&nbsp;1&nbsp;are&nbsp;generated&nbsp;by&nbsp;multiplying&nbsp;a&nbsp;random&nbsp;matrix&nbsp;with&nbsp;the&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;covariance&nbsp;matrix&nbsp;of&nbsp;class&nbsp;1,&nbsp;and&nbsp;data&nbsp;points&nbsp;for&nbsp;class&nbsp;2&nbsp;are&nbsp;generated&nbsp;by&nbsp;multiplying&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;random&nbsp;matrix&nbsp;with&nbsp;the&nbsp;covariance&nbsp;matrix&nbsp;of&nbsp;class&nbsp;2&nbsp;and&nbsp;adding&nbsp;[1,&nbsp;1].</span></dd></dl>
+ <dl><dt><a name="-make_sample_data"><strong>make_sample_data</strong></a>(n_samples, n_features, cov_class_1, cov_class_2, shift=None, seed=0)</dt><dd><span class="code">Generates&nbsp;sample&nbsp;data&nbsp;for&nbsp;testing&nbsp;LDA&nbsp;and&nbsp;QDA&nbsp;models.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_samples:&nbsp;(int)&nbsp;-&nbsp;Number&nbsp;of&nbsp;samples&nbsp;per&nbsp;class.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_features:&nbsp;(int)&nbsp;-&nbsp;Number&nbsp;of&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cov_class_1:&nbsp;(np.ndarray)&nbsp;-&nbsp;Covariance&nbsp;matrix&nbsp;for&nbsp;class&nbsp;1.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cov_class_2:&nbsp;(np.ndarray)&nbsp;-&nbsp;Covariance&nbsp;matrix&nbsp;for&nbsp;class&nbsp;2.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;shift:&nbsp;(list),&nbsp;optional&nbsp;-&nbsp;Shift&nbsp;applied&nbsp;to&nbsp;class&nbsp;2&nbsp;data&nbsp;(default&nbsp;is&nbsp;[1,&nbsp;1]).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;seed:&nbsp;(int),&nbsp;optional&nbsp;-&nbsp;Random&nbsp;seed&nbsp;for&nbsp;reproducibility&nbsp;(default&nbsp;is&nbsp;0).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Generated&nbsp;feature&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(np.ndarray)&nbsp;-&nbsp;Generated&nbsp;target&nbsp;labels.</span></dd></dl>
 </td></tr></table>
 </body></html>

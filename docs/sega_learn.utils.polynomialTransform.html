@@ -41,14 +41,14 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
 </td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -62,33 +62,28 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="PolynomialTransform">class <strong>PolynomialTransform</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#PolynomialTransform">PolynomialTransform</a>(degree=2)<br>
 &nbsp;<br>
-This&nbsp;class&nbsp;implements&nbsp;Polynomial&nbsp;Feature&nbsp;Transformation.<br>
-Polynomial&nbsp;feature&nbsp;transformation&nbsp;is&nbsp;a&nbsp;technique&nbsp;used&nbsp;to&nbsp;create&nbsp;new&nbsp;features&nbsp;from&nbsp;the&nbsp;existing&nbsp;features&nbsp;by&nbsp;raising&nbsp;them&nbsp;to&nbsp;a&nbsp;power&nbsp;or&nbsp;by&nbsp;creating&nbsp;interaction&nbsp;terms.<br>
+Implements&nbsp;Polynomial&nbsp;Feature&nbsp;Transformation.<br>
 &nbsp;<br>
-Parameters:<br>
--&nbsp;degree:&nbsp;int,&nbsp;default=2<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;degree&nbsp;of&nbsp;the&nbsp;polynomial&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Polynomial&nbsp;feature&nbsp;transformation&nbsp;creates&nbsp;new&nbsp;features&nbsp;by&nbsp;raising&nbsp;existing&nbsp;features&nbsp;to&nbsp;a&nbsp;power&nbsp;or&nbsp;creating&nbsp;interaction&nbsp;terms.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;degree&nbsp;(int):&nbsp;The&nbsp;degree&nbsp;of&nbsp;the&nbsp;polynomial&nbsp;features&nbsp;(default&nbsp;is&nbsp;2).<br>
+&nbsp;<br>
 Attributes:<br>
--&nbsp;n_samples:&nbsp;int<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;samples.<br>
--&nbsp;n_features:&nbsp;int<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;features.<br>
--&nbsp;n_output_features:&nbsp;int<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;number&nbsp;of&nbsp;output&nbsp;features.<br>
--&nbsp;combinations:&nbsp;list&nbsp;of&nbsp;tuples&nbsp;of&nbsp;shape&nbsp;(n_features,)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;combinations&nbsp;of&nbsp;features(X)&nbsp;of&nbsp;degree&nbsp;n.<br>
--&nbsp;bias:&nbsp;bool,&nbsp;default=True<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;include&nbsp;a&nbsp;bias&nbsp;term&nbsp;in&nbsp;the&nbsp;output&nbsp;features.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;n_samples&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;samples&nbsp;in&nbsp;the&nbsp;input&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_features&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;features&nbsp;in&nbsp;the&nbsp;input&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_output_features&nbsp;(int):&nbsp;The&nbsp;number&nbsp;of&nbsp;output&nbsp;features&nbsp;after&nbsp;transformation.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;combinations&nbsp;(list&nbsp;of&nbsp;tuples):&nbsp;The&nbsp;combinations&nbsp;of&nbsp;features&nbsp;for&nbsp;polynomial&nbsp;terms.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="PolynomialTransform-__init__"><strong>__init__</strong></a>(self, degree=2)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="PolynomialTransform-__init__"><strong>__init__</strong></a>(self, degree=2)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#PolynomialTransform">PolynomialTransform</a>&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
 
-<dl><dt><a name="PolynomialTransform-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data.&nbsp;<br>
+<dl><dt><a name="PolynomialTransform-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;the&nbsp;model&nbsp;to&nbsp;the&nbsp;data.<br>
+&nbsp;<br>
 Uses&nbsp;itertools.combinations_with_replacement&nbsp;to&nbsp;generate&nbsp;all&nbsp;possible&nbsp;combinations&nbsp;of&nbsp;features(X)&nbsp;of&nbsp;degree&nbsp;n.</span></dd></dl>
 
 <dl><dt><a name="PolynomialTransform-fit_transform"><strong>fit_transform</strong></a>(self, X)</dt><dd><span class="code">Fit&nbsp;to&nbsp;data,&nbsp;then&nbsp;transform&nbsp;it.</span></dd></dl>

@@ -48,13 +48,25 @@ wrote sega_learn.nearest_neighbors.knn_classifier.html
 wrote sega_learn.nearest_neighbors.knn_regressor.html
 wrote sega_learn.nearest_neighbors._nearest_neighbors_jit_utils.html
 wrote sega_learn.nearest_neighbors.__init__.html
+wrote sega_learn.svm.baseSVM.html
+wrote sega_learn.svm.generalizedSVM.html
+wrote sega_learn.svm.linerarSVM.html
+wrote sega_learn.svm.oneClassSVM.html
+wrote sega_learn.svm._LinearSVM_jit_utils.html
+wrote sega_learn.svm.__init__.html
+wrote sega_learn.auto.classifier.html
+wrote sega_learn.auto.regressor.html
+wrote sega_learn.auto.__init__.html
 wrote sega_learn.html
 wrote sega_learn.clustering.html
 wrote sega_learn.linear_models.html
 wrote sega_learn.trees.html
 wrote sega_learn.neural_networks.html
+wrote sega_learn.nearest_neighbors.html
+wrote sega_learn.svm.html
+wrote sega_learn.auto.html
 wrote sega_learn.utils.html
- 
+
 To view the documentation, run the following command in the terminal:
 python -m pydoc -p 8080
 Then open a web browser and navigate to http://localhost:8080/sega_learn.html

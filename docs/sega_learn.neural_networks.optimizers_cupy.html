@@ -41,14 +41,14 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
-    
+
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="cupy.html">cupy</a><br>
 </td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
-    
+
 <tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl>
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
@@ -64,16 +64,18 @@ td.singlecolumn { width: 100%; }
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="CuPyAdadeltaOptimizer">class <strong>CuPyAdadeltaOptimizer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#CuPyAdadeltaOptimizer">CuPyAdadeltaOptimizer</a>(learning_rate=1.0,&nbsp;rho=0.95,&nbsp;epsilon=1e-06,&nbsp;reg_lambda=0.0)<br>
 &nbsp;<br>
 Adadelta&nbsp;optimizer&nbsp;class&nbsp;for&nbsp;training&nbsp;neural&nbsp;networks.<br>
-Formula:&nbsp;<br>
+&nbsp;<br>
+Formula:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;E[g^2]_t&nbsp;=&nbsp;rho&nbsp;*&nbsp;E[g^2]_{t-1}&nbsp;+&nbsp;(1&nbsp;-&nbsp;rho)&nbsp;*&nbsp;g^2<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Delta_x&nbsp;=&nbsp;-&nbsp;(sqrt(E[delta_x^2]_{t-1}&nbsp;+&nbsp;epsilon)&nbsp;/&nbsp;sqrt(E[g^2]_t&nbsp;+&nbsp;epsilon))&nbsp;*&nbsp;g<br>
 &nbsp;&nbsp;&nbsp;&nbsp;E[delta_x^2]_t&nbsp;=&nbsp;rho&nbsp;*&nbsp;E[delta_x^2]_{t-1}&nbsp;+&nbsp;(1&nbsp;-&nbsp;rho)&nbsp;*&nbsp;Delta_x^2<br>
 Derived&nbsp;from:&nbsp;<a href="https://arxiv.org/abs/1212.5701">https://arxiv.org/abs/1212.5701</a><br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer.&nbsp;Defaults&nbsp;to&nbsp;1.0.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;rho&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;decay&nbsp;rate.&nbsp;Defaults&nbsp;to&nbsp;0.95.<br>
@@ -81,11 +83,29 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;regularization&nbsp;parameter.&nbsp;Defaults&nbsp;to&nbsp;0.0.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="CuPyAdadeltaOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=1.0, rho=0.95, epsilon=1e-06, reg_lambda=0.0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="CuPyAdadeltaOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=1.0, rho=0.95, epsilon=1e-06, reg_lambda=0.0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;optimizer&nbsp;with&nbsp;the&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer&nbsp;(default&nbsp;is&nbsp;1.0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;rho:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;The&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;moving&nbsp;average&nbsp;of&nbsp;squared&nbsp;gradients&nbsp;(default&nbsp;is&nbsp;0.95).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;A&nbsp;small&nbsp;constant&nbsp;to&nbsp;prevent&nbsp;division&nbsp;by&nbsp;zero&nbsp;(default&nbsp;is&nbsp;1e-6).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;The&nbsp;regularization&nbsp;parameter&nbsp;for&nbsp;weight&nbsp;decay&nbsp;(default&nbsp;is&nbsp;0.0).<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;E_g2:&nbsp;(None&nbsp;or&nbsp;np.ndarray)&nbsp;-&nbsp;The&nbsp;moving&nbsp;average&nbsp;of&nbsp;squared&nbsp;gradients,&nbsp;initialized&nbsp;as&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;E_delta_x2:&nbsp;(None&nbsp;or&nbsp;np.ndarray)&nbsp;-&nbsp;The&nbsp;moving&nbsp;average&nbsp;of&nbsp;squared&nbsp;parameter&nbsp;updates,&nbsp;initialized&nbsp;as&nbsp;None.</span></dd></dl>
 
-<dl><dt><a name="CuPyAdadeltaOptimizer-initialize"><strong>initialize</strong></a>(self, layers)</dt></dl>
+<dl><dt><a name="CuPyAdadeltaOptimizer-initialize"><strong>initialize</strong></a>(self, layers)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;optimizer's&nbsp;internal&nbsp;state&nbsp;for&nbsp;the&nbsp;given&nbsp;layers.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;layers:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;layers,&nbsp;each&nbsp;containing&nbsp;weights&nbsp;and&nbsp;biases.</span></dd></dl>
 
-<dl><dt><a name="CuPyAdadeltaOptimizer-update_layers"><strong>update_layers</strong></a>(self, layers, dWs, dbs)</dt></dl>
+<dl><dt><a name="CuPyAdadeltaOptimizer-update_layers"><strong>update_layers</strong></a>(self, layers, dWs, dbs)</dt><dd><span class="code">Updates&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;of&nbsp;the&nbsp;layers&nbsp;using&nbsp;Adadelta&nbsp;optimization.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;layers:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;layers&nbsp;to&nbsp;update.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dWs:&nbsp;(list)&nbsp;-&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;for&nbsp;each&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dbs:&nbsp;(list)&nbsp;-&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;biases&nbsp;for&nbsp;each&nbsp;layer.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -99,13 +119,15 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="CuPyAdamOptimizer">class <strong>CuPyAdamOptimizer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#CuPyAdamOptimizer">CuPyAdamOptimizer</a>(learning_rate=0.001,&nbsp;beta1=0.9,&nbsp;beta2=0.999,&nbsp;epsilon=1e-08,&nbsp;reg_lambda=0.01)<br>
 &nbsp;<br>
 Adam&nbsp;optimizer&nbsp;class&nbsp;for&nbsp;training&nbsp;neural&nbsp;networks.<br>
-Formula:&nbsp;w&nbsp;=&nbsp;w&nbsp;-&nbsp;alpha&nbsp;*&nbsp;m_hat&nbsp;/&nbsp;(sqrt(v_hat)&nbsp;+&nbsp;epsilon)&nbsp;-&nbsp;lambda&nbsp;*&nbsp;w&nbsp;<br>
+&nbsp;<br>
+Formula:&nbsp;w&nbsp;=&nbsp;w&nbsp;-&nbsp;alpha&nbsp;*&nbsp;m_hat&nbsp;/&nbsp;(sqrt(v_hat)&nbsp;+&nbsp;epsilon)&nbsp;-&nbsp;lambda&nbsp;*&nbsp;w<br>
 Derived&nbsp;from:&nbsp;<a href="https://arxiv.org/abs/1412.6980">https://arxiv.org/abs/1412.6980</a><br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer.&nbsp;Defaults&nbsp;to&nbsp;0.001.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;beta1&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;exponential&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;first&nbsp;moment&nbsp;estimates.&nbsp;Defaults&nbsp;to&nbsp;0.9.<br>
@@ -114,11 +136,26 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;regularization&nbsp;parameter.&nbsp;Defaults&nbsp;to&nbsp;0.01.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="CuPyAdamOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-08, reg_lambda=0.01)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="CuPyAdamOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-08, reg_lambda=0.01)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;optimizer&nbsp;with&nbsp;the&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;The&nbsp;step&nbsp;size&nbsp;for&nbsp;updating&nbsp;weights&nbsp;(default&nbsp;is&nbsp;0.001).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;beta1:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;Exponential&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;first&nbsp;moment&nbsp;estimates&nbsp;(default&nbsp;is&nbsp;0.9).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;beta2:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;Exponential&nbsp;decay&nbsp;rate&nbsp;for&nbsp;the&nbsp;second&nbsp;moment&nbsp;estimates&nbsp;(default&nbsp;is&nbsp;0.999).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;epsilon:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;A&nbsp;small&nbsp;constant&nbsp;to&nbsp;prevent&nbsp;division&nbsp;by&nbsp;zero&nbsp;(default&nbsp;is&nbsp;1e-8).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;Regularization&nbsp;parameter&nbsp;for&nbsp;weight&nbsp;decay&nbsp;(default&nbsp;is&nbsp;0.01).</span></dd></dl>
 
-<dl><dt><a name="CuPyAdamOptimizer-initialize"><strong>initialize</strong></a>(self, layers)</dt></dl>
+<dl><dt><a name="CuPyAdamOptimizer-initialize"><strong>initialize</strong></a>(self, layers)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;optimizer's&nbsp;internal&nbsp;state&nbsp;for&nbsp;the&nbsp;given&nbsp;layers.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;layers:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;layers,&nbsp;each&nbsp;containing&nbsp;weights&nbsp;and&nbsp;biases.</span></dd></dl>
 
-<dl><dt><a name="CuPyAdamOptimizer-update_layers"><strong>update_layers</strong></a>(self, layers, dWs, dbs)</dt></dl>
+<dl><dt><a name="CuPyAdamOptimizer-update_layers"><strong>update_layers</strong></a>(self, layers, dWs, dbs)</dt><dd><span class="code">Updates&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;of&nbsp;the&nbsp;layers&nbsp;using&nbsp;Adam&nbsp;optimization.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;layers:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;layers&nbsp;to&nbsp;update.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dWs:&nbsp;(list)&nbsp;-&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;for&nbsp;each&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dbs:&nbsp;(list)&nbsp;-&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;biases&nbsp;for&nbsp;each&nbsp;layer.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -132,23 +169,41 @@ Data descriptors defined here:<br>
 <table class="section">
 <tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="CuPySGDOptimizer">class <strong>CuPySGDOptimizer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
-    
+
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
 <td class="decor title-decor" colspan=2><span class="code"><a href="#CuPySGDOptimizer">CuPySGDOptimizer</a>(learning_rate=0.001,&nbsp;momentum=0.0,&nbsp;reg_lambda=0.0)<br>
 &nbsp;<br>
 Stochastic&nbsp;Gradient&nbsp;Descent&nbsp;(SGD)&nbsp;optimizer&nbsp;class&nbsp;for&nbsp;training&nbsp;neural&nbsp;networks.<br>
+&nbsp;<br>
 Formula:&nbsp;v&nbsp;=&nbsp;momentum&nbsp;*&nbsp;v&nbsp;-&nbsp;learning_rate&nbsp;*&nbsp;dW,&nbsp;w&nbsp;=&nbsp;w&nbsp;+&nbsp;v&nbsp;-&nbsp;learning_rate&nbsp;*&nbsp;reg_lambda&nbsp;*&nbsp;w<br>
+&nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimizer.&nbsp;Defaults&nbsp;to&nbsp;0.001.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;momentum&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;momentum&nbsp;factor.&nbsp;Defaults&nbsp;to&nbsp;0.0.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;regularization&nbsp;parameter.&nbsp;Defaults&nbsp;to&nbsp;0.0.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="CuPySGDOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=0.001, momentum=0.0, reg_lambda=0.0)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="CuPySGDOptimizer-__init__"><strong>__init__</strong></a>(self, learning_rate=0.001, momentum=0.0, reg_lambda=0.0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;optimizer&nbsp;with&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;The&nbsp;step&nbsp;size&nbsp;for&nbsp;updating&nbsp;weights&nbsp;(default&nbsp;is&nbsp;0.001).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;momentum:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;The&nbsp;momentum&nbsp;factor&nbsp;for&nbsp;accelerating&nbsp;gradient&nbsp;descent&nbsp;(default&nbsp;is&nbsp;0.0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;The&nbsp;regularization&nbsp;strength&nbsp;to&nbsp;prevent&nbsp;overfitting&nbsp;(default&nbsp;is&nbsp;0.0).<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;velocity:&nbsp;(None&nbsp;or&nbsp;np.ndarray)&nbsp;-&nbsp;The&nbsp;velocity&nbsp;term&nbsp;used&nbsp;for&nbsp;momentum-based&nbsp;updates&nbsp;(initialized&nbsp;as&nbsp;None).</span></dd></dl>
 
-<dl><dt><a name="CuPySGDOptimizer-initialize"><strong>initialize</strong></a>(self, layers)</dt></dl>
+<dl><dt><a name="CuPySGDOptimizer-initialize"><strong>initialize</strong></a>(self, layers)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;optimizer's&nbsp;velocity&nbsp;for&nbsp;the&nbsp;given&nbsp;layers.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;layers:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;layers,&nbsp;each&nbsp;containing&nbsp;weights&nbsp;and&nbsp;biases.</span></dd></dl>
 
-<dl><dt><a name="CuPySGDOptimizer-update_layers"><strong>update_layers</strong></a>(self, layers, dWs, dbs)</dt></dl>
+<dl><dt><a name="CuPySGDOptimizer-update_layers"><strong>update_layers</strong></a>(self, layers, dWs, dbs)</dt><dd><span class="code">Updates&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;of&nbsp;the&nbsp;layers&nbsp;using&nbsp;SGD&nbsp;optimization.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;layers:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;layers&nbsp;to&nbsp;update.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dWs:&nbsp;(list)&nbsp;-&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;weights&nbsp;for&nbsp;each&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dbs:&nbsp;(list)&nbsp;-&nbsp;Gradients&nbsp;of&nbsp;the&nbsp;biases&nbsp;for&nbsp;each&nbsp;layer.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>

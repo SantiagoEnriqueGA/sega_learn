@@ -15,6 +15,8 @@ dependencies:
   - bzip2=1.0.8
   - ca-certificates=2025.2.25
   - cairo=1.16.0
+  - cffi=1.17.1
+  - cfgv=3.3.1
   - colorama=0.4.6
   - comm=0.2.2
   - contourpy=1.3.1
@@ -40,14 +42,17 @@ dependencies:
   - cuda-nvvm-tools=12.8.61
   - cuda-python=12.8.0
   - cuda-version=12.8
+  - cxx-compiler=1.9.0
   - cycler=0.11.0
   - dav1d=1.2.1
   - debugpy=1.6.7
   - decorator=5.2.1
+  - distlib=0.3.9
   - exceptiongroup=1.2.2
   - executing=2.1.0
   - expat=2.6.4
   - ffmpeg=6.1.1
+  - filelock=3.18.0
   - font-ttf-dejavu-sans-mono=2.37
   - font-ttf-inconsolata=3.000
   - font-ttf-source-code-pro=2.038
@@ -63,6 +68,7 @@ dependencies:
   - harfbuzz=10.2.0
   - icc_rt=2022.1.0
   - icu=73.1
+  - identify=2.6.9
   - importlib-metadata=8.6.1
   - intel-openmp=2023.1.0
   - ipykernel=6.29.5
@@ -109,6 +115,7 @@ dependencies:
   - mkl_fft=1.3.11
   - mkl_random=1.2.8
   - nest-asyncio=1.6.0
+  - nodeenv=1.9.1
   - numba=0.61.0
   - numba-cuda=0.5.0
   - numexpr=2.10.1
@@ -127,9 +134,11 @@ dependencies:
   - pixman=0.40.0
   - platformdirs=4.3.6
   - ply=3.11
+  - pre-commit=4.2.0
   - prompt-toolkit=3.0.50
   - psutil=5.9.5
   - pure_eval=0.2.3
+  - pycparser=2.22
   - pygments=2.19.1
   - pyparsing=3.2.0
   - pyqt=5.15.10
@@ -140,8 +149,10 @@ dependencies:
   - python_abi=3.11
   - pytz=2024.1
   - pywin32=304
+  - pyyaml=6.0.2
   - pyzmq=25.0.2
   - qt-main=5.15.2
+  - ruff=0.11.2
   - scikit-learn=1.5.2
   - scipy=1.14.1
   - seaborn=0.13.2
@@ -151,6 +162,7 @@ dependencies:
   - sqlite=3.45.3
   - stack_data=0.6.3
   - svt-av1=1.7.0
+  - tabulate=0.9.0
   - tbb=2021.8.0
   - threadpoolctl=3.5.0
   - tk=8.6.14
@@ -160,9 +172,11 @@ dependencies:
   - typing_extensions=4.12.2
   - tzdata=2024b
   - ucrt=10.0.22621.0
+  - ukkonen=1.0.1
   - unicodedata2=15.1.0
   - vc=14.40
   - vc14_runtime=14.42.34433
+  - virtualenv=20.30.0
   - vs2015_runtime=14.42.34433
   - vs2019_win-64=19.29.30139
   - vswhere=3.1.7
@@ -172,6 +186,7 @@ dependencies:
   - x264=1!164.3095
   - x265=3.5
   - xz=5.4.6
+  - yaml=0.2.5
   - zeromq=4.3.4
   - zipp=3.21.0
   - zlib=1.2.13
@@ -189,10 +204,10 @@ dependencies:
       - black==23.12.1
       - bleach==6.2.0
       - certifi==2024.12.14
-      - cffi==1.17.1
       - charset-normalizer==3.4.1
       - click==8.1.8
       - cupy-cuda12x==13.3.0
+      - cython==3.0.11
       - databind==4.5.2
       - databind-core==4.5.2
       - databind-json==4.5.2
@@ -241,11 +256,9 @@ dependencies:
       - pandocfilters==1.5.1
       - pathspec==0.12.1
       - prometheus-client==0.21.1
-      - pycparser==2.22
       - pydoc-markdown==4.8.2
       - python-json-logger==3.2.1
       - pywinpty==2.0.15
-      - pyyaml==6.0.2
       - referencing==0.36.2
       - requests==2.32.3
       - rfc3339-validator==0.1.4
