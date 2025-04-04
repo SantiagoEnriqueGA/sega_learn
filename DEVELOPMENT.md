@@ -29,7 +29,7 @@ Welcome to the `sega_learn` project! This guide provides instructions for settin
 ### Cloning the Repository
 
 ```bash
-git clone https://github.com/your-username/sega_learn.git # Replace with the actual repository URL
+git clone https://github.com/SantiagoEnriqueGA/sega_learn.git
 cd sega_learn
 ```
 
@@ -198,13 +198,13 @@ cd scripts
 
 cd ..
 ```
-*(Note: Ensure you have the necessary tools, like `pydoc-markdown`, installed if required by these scripts. Check script contents for details.)*
+*(Note: Ensure you have the necessary tools, like `pydoc-markdown`, installed as required by these scripts. Check script contents for details.)*
 
-Keep the documentation updated with any changes you make.
+The documentation is generated from the docstrings in the code, so keep the docstrings updated with any changes you make.
 
 ## Contributing Process
 
-1.  **Fork the Repository:** (Optional, if you don't have direct push access)
+1.  **Fork the Repository:**
 2.  **Create a Branch:** Create a descriptive branch name from the `main` branch (e.g., `git checkout -b feat/add-new-model`).
 3.  **Make Changes:** Implement your feature or bug fix.
 4.  **Code Quality:** Run `ruff format .` and `ruff check --fix .` locally. Ensure pre-commit hooks pass when you commit.
@@ -221,36 +221,36 @@ Keep the documentation updated with any changes you make.
 sega_learn/
 |
 ├── sega_learn/      # Main library source code
-│   ├── auto/        # Automated model selection
-│   ├── clustering/  # Clustering algorithms
-│   ├── linear_models/ # Linear models
-│   ├── nearest_neighbors/ # K-Nearest Neighbors
-│   ├── neural_networks/ # Neural Network components
-│   ├── svm/         # Support Vector Machines
-│   ├── trees/       # Tree-based models
-│   └── utils/       # Utility functions (metrics, data prep, etc.)
+│   ├── auto/               # Automated model selection
+│   ├── clustering/         # Clustering algorithms
+│   ├── linear_models/      # Linear models
+│   ├── nearest_neighbors/  # K-Nearest Neighbors
+│   ├── neural_networks/    # Neural Network components
+│   ├── svm/                # Support Vector Machines
+│   ├── trees/              # Tree-based models
+│   └── utils/              # Utility functions (metrics, data prep, etc.)
 |
-├── examples/        # Usage examples for different modules
+├── examples/           # Usage examples for different modules
 |
-├── tests/           # Unit tests for the library code
+├── tests/              # Unit tests for the library code
 |
-├── tests_performance/ # Performance benchmark tests (may take longer to run)
+├── tests_performance/  # Performance benchmark tests
 |
-├── docs/            # Documentation source files (e.g., Markdown)
+├── docs/               # Documentation source files (e.g., Markdown)
 |
-├── scripts/         # Helper scripts (e.g., for building docs, environment setup)
+├── scripts/            # Helper scripts (e.g., for building docs, environment setup)
 |
-├── .github/         # GitHub specific files (workflows for CI)
+├── .github/            # GitHub specific files (workflows for CI)
 │   └── workflows/
 │       └── lint-format.yml # Ruff CI check workflow
 |
-├── .gitignore       # Files/directories ignored by Git
+├── .gitignore              # Files/directories ignored by Git
 ├── .pre-commit-config.yaml # Configuration for pre-commit hooks
-├── DEVELOPMENT.md   # This file: Guide for developers
-├── environment.yml  # Conda environment definition (if used)
-├── pyproject.toml   # Project metadata, build config, Ruff config
-├── README.md        # Main project README for users
-└── uv.lock          # Lock file for uv (if used)
+├── DEVELOPMENT.md          # This file: Guide for developers
+├── environment.yml         # Conda environment definition
+├── pyproject.toml          # Project metadata, build config, Ruff config
+├── README.md               # Main project README for users
+└── uv.lock                 # Lock file for uv
 ```
 
 Thank you for contributing!
