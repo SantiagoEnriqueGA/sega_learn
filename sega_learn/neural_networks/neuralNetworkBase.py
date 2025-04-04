@@ -156,8 +156,6 @@ class NeuralNetworkBase:
                 "layers must be a list of integers or a list of Layer objects."
             )
 
-        self.loss_function = loss_function if loss_function else None
-
     def initialize_layers(self):
         """Initializes the weights and biases of the layers."""
         raise NotImplementedError("This method should be implemented by subclasses")
@@ -321,6 +319,12 @@ class NeuralNetworkBase:
             train_attr = f"train_{metric_attr}"
             val_attr = f"val_{metric_attr}"
 
+            if metric_attr == "learning_rate":
+                ax.plot(self.learning_rates, label="Learning Rate", color="red")
+                ax.set_ylim(
+                    [-min(self.learning_rates), max(self.learning_rates) * 1.1]
+                )  # Adjust y-axis limits
+
             if hasattr(self, train_attr):
                 ax.plot(getattr(self, train_attr), label=f"Train {metric_label}")
             if hasattr(self, val_attr):
@@ -329,9 +333,7 @@ class NeuralNetworkBase:
             ax.set_title(metric_label)
             ax.set_xlabel("Epoch")
             ax.set_ylabel(metric_label)
-            if hasattr(self, train_attr) or hasattr(
-                self, val_attr
-            ):  # Only show legend if data exists
+            if hasattr(self, train_attr) or hasattr(self, val_attr):
                 ax.legend()
             ax.grid(True)
             plot_idx += 1

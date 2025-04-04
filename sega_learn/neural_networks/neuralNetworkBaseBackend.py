@@ -4,12 +4,12 @@ import warnings
 import numpy as np
 from joblib import Parallel, delayed
 
-# from .activations import Activation
+from .activations import Activation
 from .layers import *
 from .loss import (
     BCEWithLogitsLoss,
     CrossEntropyLoss,
-    # HuberLoss,
+    HuberLoss,
     MeanAbsoluteErrorLoss,
     MeanSquaredErrorLoss,
 )
@@ -76,6 +76,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             Trains the neural network while capturing training metrics in real-time animation.
     """
 
+    # TODO: Check that last layer activation is 'none' or 'linear' if regressor, else warn
     def __init__(
         self,
         layers,
@@ -144,22 +145,16 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             self.layer_outputs.append(A)
 
         # For regression, the last layer's output (A) is the final output
-        # For classification, apply final activation if needed (handled in Layer.forward based on config)
+        # For classification, apply final activation if needed (handled in Layer.forward)
         # The `self.is_binary` check might be redundant if last layer activation is set correctly
-        # but kept for potential clarity/safety.
+        # kept for potential clarity/safety.
         if not self.is_regressor:
             if self.is_binary:
-                # Sigmoid is typically applied implicitly with BCEWithLogitsLoss
-                # If not using BCEWithLogits, apply sigmoid here:
-                # return Activation.sigmoid(A)
-                pass  # Assuming loss function handles logits
+                return Activation.sigmoid(A)
             else:
-                # Softmax is typically applied implicitly with CrossEntropyLoss
-                # If not using CrossEntropyLoss, apply softmax here:
-                # return Activation.softmax(A) if A.ndim > 1 else A
-                pass  # Assuming loss function handles logits
+                return Activation.softmax(A) if A.ndim > 1 else A
 
-        # Return the raw output A for regression, or the logit/activated output for classification
+        # Return the raw output A for regression
         return A
 
     def backward(self, y):
@@ -185,11 +180,10 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             # Calculate gradient based on the specified regression loss function
             # Derivative of MSE Loss w.r.t output A (assuming linear output): dL/dA = 2/m * (A - y)
             # Often, the 2/m factor is dropped or handled by the optimizer's learning rate.
-            # We'll use (A - y) / m here. Adjust if your optimizer/LR expects otherwise.
+
             # Note: This assumes the LAST layer activation is 'none' or 'linear'.
             # If a non-linear activation was used, dA would need to be dA = dL/dA * activation_derivative(Z)
             # but the calculation below starts from dZ = dA * activation_derivative(Z) which simplifies if derivative is 1.
-            # Let's calculate dL/dA first.
             if isinstance(self.loss_function, MeanSquaredErrorLoss):
                 dA = (
                     outputs - y
@@ -198,7 +192,14 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                 dA = (
                     np.sign(outputs - y) / m
                 )  # Gradient of MAE loss w.r.t prediction 'outputs'
-            # Add other regression loss derivatives here if needed (e.g., Huber)
+            elif isinstance(self.loss_function, HuberLoss):
+                # Huber loss derivative: dL/dA = (A - y) / m for |A - y| < delta, delta * sign(A - y) / m otherwise
+                delta = 1.0
+                dA = np.where(
+                    np.abs(outputs - y) < delta,
+                    (outputs - y) / m,
+                    delta * np.sign(outputs - y) / m,
+                )
             else:
                 # Default or fallback: Assume MSE derivative for dA
                 print(
@@ -213,9 +214,6 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         elif self.is_binary:
             # Binary classification (ensure y shape is correct)
             y = np.asarray(y).reshape(-1, 1)
-            # Gradient for BCEWithLogitsLoss (dL/dZ) is simpler: A - y
-            # If using standard BCE (requires sigmoid output), dA = -(y / (outputs + 1e-15) - (1 - y) / (1 - outputs + 1e-15))
-            # Assuming BCEWithLogitsLoss is default or used:
             dA = (
                 (outputs - y) / m
             )  # Gradient dL/dA for sigmoid output, or dL/dZ for logit output used with BCEWithLogitsLoss
@@ -228,8 +226,6 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             dA = (
                 (outputs - y) / m
             )  # Gradient dL/dA for softmax output, or dL/dZ for logit output used with CrossEntropyLoss
-
-        # --- END MODIFIED Initial Gradient Calculation ---
 
         # Backpropagation through the network in reverse order
         for i in reversed(range(len(self.layers))):
@@ -402,10 +398,8 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         ]
 
         # Set metrics to track
-        # --- MODIFIED: Initialize metric lists based on task type ---
         if track_metrics:
             self.train_loss = []
-            # Use a generic name like 'metric' or specific regression metric
             self.train_metric = []  # e.g., stores MSE for regression, Accuracy for classification
             self.learning_rates = []
             if X_val is not None:
@@ -414,7 +408,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
 
         # Remove tracking for precision/recall/f1 if it's a regressor
         if self.is_regressor:
-            track_adv_metrics = False  # These metrics don't apply
+            track_adv_metrics = False
 
         # Set advanced metrics to track
         if track_adv_metrics:
@@ -479,7 +473,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                 val_metric_display = (
                     f"Val Loss: {val_loss:.4f}, Val Metric: {val_metric_value:.4f}"
                 )
-                val_metrics_str = f", {val_metric_display}"  # Add comma separator
+                val_metrics_str = f", {val_metric_display}"
 
                 # Early stopping check
                 if val_loss < best_loss:
@@ -524,7 +518,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                     self.learning_rates.append(optimizer.learning_rate)
                 if X_val is not None:
                     self.val_loss.append(val_loss)
-                    self.val_metric.append(val_metric_value)  # Store val metric
+                    self.val_metric.append(val_metric_value)
 
             # Store advanced metrics
             if track_adv_metrics:
@@ -542,7 +536,6 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                     self.val_recall.append(val_recall)
                     self.val_f1.append(val_f1)
 
-            # --- MODIFIED: Update progress bar/print ---
             metric_label = (
                 "MSE" if self.is_regressor else "Acc"
             )  # Choose appropriate label
@@ -657,7 +650,6 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         y_hat = self.forward(X, training=False)
         y = np.asarray(y)  # Ensure y is numpy array
 
-        # --- MODIFIED Evaluation Logic ---
         if self.is_regressor:
             # Regression: Calculate primary metric (e.g., MSE) and return raw predictions
             metric_fn = (
@@ -677,6 +669,7 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                 y, y_hat
             )  # Using the loss as the primary evaluation metric
             predicted = y_hat  # Return raw predictions for regression
+
         elif self.is_binary:
             # Binary classification: Calculate accuracy and predicted classes
             predicted_classes = (y_hat > 0.5).astype(int)
@@ -692,7 +685,6 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             predicted = predicted_classes  # Return predicted class indices
 
         return metric, predicted
-        # --- END MODIFIED Evaluation Logic ---
 
     def predict(self, X):
         """Generates predictions for the given input data.
@@ -705,18 +697,15 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
                         Otherwise, returns the class indices with the highest probability.
         """
         outputs = self.forward(X, training=False)
-        # --- MODIFIED Prediction Logic ---
         if self.is_regressor:
             return outputs  # Return raw continuous output for regression
+
         elif self.is_binary:
-            # For consistency, maybe return probabilities here too?
-            # Or stick to class labels
             return (outputs > 0.5).astype(int)  # Return class labels 0 or 1
         else:
             return np.argmax(
                 outputs, axis=1
             )  # Return class index with highest probability
-        # --- END MODIFIED Prediction Logic ---
 
     def calculate_loss(self, X, y):
         """Calculates the loss with L2 regularization.
@@ -731,7 +720,6 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
         # Get the output of the network (forward pass w/o dropout)
         outputs = self.forward(X, training=False)
 
-        # --- MODIFIED Loss Calculation ---
         if self.is_regressor:
             # Use the assigned or default regression loss function
             if not hasattr(self, "loss_function") or self.loss_function is None:
@@ -770,8 +758,6 @@ class BaseBackendNeuralNetwork(NeuralNetworkBase):
             loss = loss_fn(
                 outputs, y
             )  # Assumes y is indices or loss_fn handles one-hot
-
-        # --- END MODIFIED Loss Calculation ---
 
         # Add L2 regularization term to the loss
         l2_reg = self.reg_lambda * self.compute_l2_reg(

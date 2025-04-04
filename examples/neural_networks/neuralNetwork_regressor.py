@@ -24,7 +24,7 @@ def train_and_evaluate_model(
     dropout,
     reg_lambda,
     hidden_activation="relu",
-    output_activation="softmax",
+    output_activation="none",
     epochs=100,
     batch_size=32,
     loss_func=None,
@@ -33,14 +33,8 @@ def train_and_evaluate_model(
     """Function to train and evaluate the Neural Network."""
     input_size = X_train.shape[1]
 
-    # --- MODIFIED: Correct output activation for regression ---
     # The output_activation parameter should be 'none' or 'linear' for regression
-    # Override the default 'softmax' if regressor=True is set below.
-    final_output_activation = "none"  # Set explicitly for regression
-
-    activations = [hidden_activation] * len(layers) + [
-        final_output_activation
-    ]  # Use the correct final activation
+    activations = [hidden_activation] * len(layers) + [output_activation]
 
     # Initialize Neural Network
     nn = BaseBackendNeuralNetwork(
@@ -75,10 +69,9 @@ def train_and_evaluate_model(
         batch_size=batch_size,
         early_stopping_threshold=10,
         track_metrics=True,
-        # track_adv_metrics=True, # Not used for regression
+        track_adv_metrics=True,  # Not used for regression
     )
 
-    #  --- MODIFIED: Evaluation and Metric Calculation ---
     # Evaluate the Model (evaluate returns primary metric (loss/MSE) and predictions)
     test_loss, y_pred_scaled = nn.evaluate(X_test, y_test)  # y_pred is scaled
     print(f"Test Loss (Scaled MSE): {test_loss:.4f}")
@@ -101,8 +94,10 @@ def train_and_evaluate_model(
     print(f"Mean Absolute Error (Original Scale): {mae_score:.4f}")
 
     # Plot metrics (will show scaled loss/metric from training history)
-    nn.plot_metrics()
-    # nn.plot_metrics(save_dir="examples/neural_networks/plots/neuralNetwork_classifier_vanilla_metrics.png")
+    # nn.plot_metrics()
+    nn.plot_metrics(
+        save_dir="examples/neural_networks/plots/neuralNetwork_regressor_vanilla_metrics.png"
+    )
 
 
 def main():
@@ -113,18 +108,17 @@ def main():
     random.seed(1)
 
     # Define parameter grid and tuning ranges
-    # --- Experiment with these ---
     dropout = 0.1
-    reg_lambda = 0.01  # Maybe try 0 or lower lambda?
-    lr = 0.00001  # *** REDUCED LEARNING RATE ***
-    layers = [128, 64]  # *** SIMPLIFIED ARCHITECTURE ***
+    reg_lambda = 0.01
+    lr = 0.00001
+    layers = [128, 64]
     output_size = 1
     loss_func = MeanSquaredErrorLoss()
-    epochs = 500  # Increase epochs if using lower LR
+    epochs = 1000
 
-    X, y = make_regression(n_samples=1_000, n_features=5, noise=0.1, random_state=42)
+    X, y = make_regression(n_samples=1_000, n_features=5, noise=0.5, random_state=42)
 
-    # Scale the features
+    # Scale the features and target variable
     X_scaler = Scaler(method="standard")
     y_scaler = Scaler(method="standard")
 
@@ -134,8 +128,8 @@ def main():
         y = y.reshape(-1, 1)
     y = y_scaler.fit_transform(y)
 
-    print(f"X mean/std: {X.mean():.2f}/{X.std():.2f}")  # Check scaling
-    print(f"y mean/std: {y.mean():.2f}/{y.std():.2f}")  # Check scaling
+    print(f"X mean/std: {X.mean():.2f}/{X.std():.2f}")  # Verify scaling
+    print(f"y mean/std: {y.mean():.2f}/{y.std():.2f}")  # Verify scaling
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
@@ -152,7 +146,7 @@ def main():
         dropout,
         reg_lambda,
         hidden_activation="relu",
-        output_activation="none",  # *** ENSURE this is 'none' or 'linear' ***
+        output_activation="none",
         epochs=epochs,
         batch_size=32,
         loss_func=loss_func,
@@ -160,6 +154,7 @@ def main():
     )
 
     # To use the Numba backend:
+    # TODO: Implement Numba backend training and evaluation
     # train_and_evaluate_model_numba(X_train, X_test, y_train, y_test,
     #                               layers, output_size, lr, dropout, reg_lambda,
     #                               hidden_activation='relu', output_activation=None,
