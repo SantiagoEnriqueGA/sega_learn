@@ -55,6 +55,7 @@ nn1 = NumbaBackendNeuralNetwork(
     activations=activations,
     dropout_rate=dropout,
     reg_lambda=reg_lambda,
+    compile_numba=False,
 )
 
 
@@ -94,7 +95,10 @@ layers = [
 
 # Initialize Neural Network
 nn2 = NumbaBackendNeuralNetwork(
-    layers=layers, dropout_rate=dropout, reg_lambda=reg_lambda
+    layers=layers,
+    dropout_rate=dropout,
+    reg_lambda=reg_lambda,
+    compile_numba=False,
 )
 
 # Call the train method

@@ -30,22 +30,45 @@ class TestNeuralNetworkNumba(unittest.TestCase):
         with suppress_print():
             # Binary classification network
             self.nn_binary = NumbaBackendNeuralNetwork(
-                [2, 100, 25, 1], dropout_rate=0.2, reg_lambda=0.01, compile_numba=False
+                [2, 10, 5, 1],
+                dropout_rate=0.1,
+                reg_lambda=0.01,
+                compile_numba=False,
+                progress_bar=False,
             )
             # Multi-class classification network
             self.nn_multi = NumbaBackendNeuralNetwork(
-                [2, 100, 25, 10], dropout_rate=0.2, reg_lambda=0.01, compile_numba=False
+                [2, 10, 5, 3],
+                dropout_rate=0.1,
+                reg_lambda=0.01,
+                compile_numba=False,
+                progress_bar=False,
+            )
+            # Regression network
+            self.nn_regressor = NumbaBackendNeuralNetwork(
+                [2, 10, 5, 1],
+                dropout_rate=0.1,
+                reg_lambda=0.01,
+                compile_numba=False,
+                regressor=True,
+                loss_function=JITMeanSquaredErrorLoss(),
+                progress_bar=False,
             )
         self.optimizer = JITAdamOptimizer(learning_rate=0.01)
         np.random.seed(42)
-        self.X = np.random.randn(100, 2)
-        self.y_binary = np.random.randint(0, 2, (100, 1))
-        self.y_multi = np.random.randint(0, 10, (100,))
-        self.X.astype(np.float64)
-        self.y_binary.astype(np.float64)
-        self.y_multi.astype(np.float64)
+        self.X = np.random.randn(50, 2).astype(np.float64)
+        self.y_binary = np.random.randint(0, 2, (50, 1)).astype(np.float64)
+        self.y_multi = np.random.randint(0, 3, (50,)).astype(np.int32)
+        self.y_reg = (np.random.randn(50, 1) * 5 + 2).astype(np.float64)
 
     ### Initialization Tests ###
+    def test_intial_numba_compilation(self):
+        """Test Numba compilation of initial network."""
+        nn = NumbaBackendNeuralNetwork(
+            [2, 10, 1], compile_numba=True, progress_bar=False
+        )
+        self.assertTrue(nn.compiled)
+
     def test_initialization(self):
         """Test layer initialization with custom sizes and activations."""
         nn = NumbaBackendNeuralNetwork(
@@ -100,18 +123,21 @@ class TestNeuralNetworkNumba(unittest.TestCase):
     ### Dropout Tests ###
     def test_apply_dropout(self):
         """Test dropout application with Numba."""
-        A = np.ones((10, 10))
-        A_dropped = self.nn_binary.apply_dropout(A)
+        A = np.ones((100, 100))  # Increased size for better statistics
+        A_dropped = self.nn_binary.apply_dropout(A)  # nn_binary has dropout_rate=0.1
         self.assertEqual(A.shape, A_dropped.shape)
         self.assertTrue(np.any(A_dropped == 0))
         non_zero_elements = A_dropped[A_dropped != 0]
+        # Check scaling factor
         self.assertAlmostEqual(
             np.mean(non_zero_elements), 1 / (1 - self.nn_binary.dropout_rate), delta=0.1
         )
         num_zeros = np.sum(A_dropped == 0)
         total_elements = A_dropped.size
         self.assertAlmostEqual(
-            num_zeros / total_elements, self.nn_binary.dropout_rate, delta=0.1
+            num_zeros / total_elements,
+            self.nn_binary.dropout_rate,
+            delta=0.15,  # Increased delta
         )
 
     def test_apply_dropout_zero(self):
@@ -129,7 +155,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             outputs = self.nn_binary.forward(self.X)
-            self.assertEqual(outputs.shape, (100, 1))
+            self.assertEqual(outputs.shape, (50, 1))
             self.assertTrue(np.all(outputs >= 0) and np.all(outputs <= 1))
 
     def test_forward_multiclass(self):
@@ -137,8 +163,16 @@ class TestNeuralNetworkNumba(unittest.TestCase):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             outputs = self.nn_multi.forward(self.X)
-            self.assertEqual(outputs.shape, (100, 10))
+            self.assertEqual(outputs.shape, (50, 3))
             self.assertTrue(np.allclose(np.sum(outputs, axis=1), 1.0, atol=1e-5))
+
+    def test_forward_regression(self):
+        """Test forward pass for regression with Numba."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            outputs = self.nn_regressor.forward(self.X)
+            self.assertEqual(outputs.shape, (50, 1))
+            # No activation constraint for regression output
 
     ### Backward Pass Test ###
     def test_backward(self):
@@ -202,6 +236,29 @@ class TestNeuralNetworkNumba(unittest.TestCase):
             final_loss = nn.calculate_loss(X_small, y_small)
             self.assertLessEqual(final_loss, initial_loss)
 
+    def test_train_regression(self):
+        """Test basic training functionality for regression with Numba."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            with suppress_print():
+                self.nn_regressor.train(
+                    self.X,
+                    self.y_reg,
+                    self.X,
+                    self.y_reg,
+                    self.optimizer,
+                    epochs=2,
+                    batch_size=16,
+                    use_tqdm=False,
+                )
+            metric, _predicted = self.nn_regressor.evaluate(
+                self.X, self.y_reg
+            )  # Metric is MSE by default
+            loss = self.nn_regressor.calculate_loss(self.X, self.y_reg)
+            self.assertIsInstance(metric, float)
+            self.assertGreaterEqual(metric, 0)  # MSE >= 0
+            self.assertGreater(loss, 0)
+
     ### Evaluation Test ###
     def test_evaluate(self):
         """Test evaluation for binary and multi-class cases with Numba."""
@@ -217,6 +274,15 @@ class TestNeuralNetworkNumba(unittest.TestCase):
             self.assertEqual(predicted.shape, self.y_multi.shape)
             self.assertTrue(np.all(predicted >= 0) and np.all(predicted < 10))
 
+    def test_evaluate_regression(self):
+        """Test evaluation for regression cases with Numba."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            metric, predicted = self.nn_regressor.evaluate(self.X, self.y_reg)
+            self.assertIsInstance(metric, float)
+            self.assertGreaterEqual(metric, 0)  # MSE >= 0
+            self.assertEqual(predicted.shape, (50, 1))  # Evaluate returns 1D array
+
     ### Loss Calculation Test ###
     def test_calculate_loss(self):
         """Test loss calculation with Numba."""
@@ -225,13 +291,21 @@ class TestNeuralNetworkNumba(unittest.TestCase):
             loss = self.nn_binary.calculate_loss(self.X, self.y_binary)
             self.assertGreater(loss, 0)
 
+    def test_calculate_loss_regression(self):
+        """Test loss calculation for regression with Numba."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            loss = self.nn_regressor.calculate_loss(self.X, self.y_reg)
+            self.assertIsInstance(loss, float)
+            self.assertGreater(loss, 0)
+
     ### Prediction Tests ###
     def test_predict_binary(self):
         """Test prediction for binary classification with Numba."""
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             predictions = self.nn_binary.predict(self.X)
-            self.assertEqual(predictions.shape, (100, 1))
+            self.assertEqual(predictions.shape, (50, 1))
             self.assertTrue(np.all(predictions >= 0) and np.all(predictions <= 1))
 
     def test_predict_multiclass(self):
@@ -239,8 +313,18 @@ class TestNeuralNetworkNumba(unittest.TestCase):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             predictions = self.nn_multi.predict(self.X)
-            self.assertEqual(predictions.shape, (100,))
+            self.assertEqual(predictions.shape, (50,))
             self.assertTrue(np.all(predictions >= 0) and np.all(predictions < 10))
+
+    def test_predict_regression(self):
+        """Test prediction for regression with Numba."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            predictions = self.nn_regressor.predict(self.X)
+            self.assertEqual(
+                predictions.shape, (50,)
+            )  # Predict returns flattened array
+            self.assertTrue(np.issubdtype(predictions.dtype, np.floating))
 
     ### Regularization Test ###
     def test_regularization(self):

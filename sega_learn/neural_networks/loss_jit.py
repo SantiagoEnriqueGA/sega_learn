@@ -1,9 +1,12 @@
 import numpy as np
 from numba import njit, prange
 
+from .numba_utils import calculate_huber_loss, calculate_mae_loss, calculate_mse_loss
+
 CACHE = False
 
 
+# JIT Classification Loss Classes
 class JITCrossEntropyLoss:
     """Custom cross entropy loss implementation using numba for multi-class classification.
 
@@ -95,3 +98,50 @@ def calculate_bce_with_logits_loss(logits, targets):
         targets * np.log(probs + 1e-15) + (1 - targets) * np.log(1 - probs + 1e-15)
     )  # Binary cross-entropy loss
     return loss
+
+
+# JIT Regression Loss Classes
+class JITMeanSquaredErrorLoss:
+    """Custom mean squared error loss implementation using numba."""
+
+    def calculate_loss(self, y_pred, y_true):
+        """Calculate the mean squared error loss."""
+        return calculate_mse_loss(y_pred, y_true)
+
+
+class JITMeanAbsoluteErrorLoss:
+    """Custom mean absolute error loss implementation using numba."""
+
+    def calculate_loss(self, y_pred, y_true):
+        """Calculate the mean absolute error loss."""
+        return calculate_mae_loss(y_pred, y_true)
+
+
+class JITHuberLoss:
+    """Custom Huber loss implementation using numba.
+
+    Attributes:
+        delta (float): The threshold parameter for Huber loss. Default is 1.0.
+    """
+
+    def __init__(self, delta=1.0):
+        """Initializes the JITHuberLoss instance.
+
+        Args:
+            delta (float): The threshold at which the loss function transitions
+                           from quadratic to linear. Default is 1.0.
+        """
+        self.delta = float(delta)  # Ensure delta is float
+
+    def calculate_loss(self, y_pred, y_true):
+        """Calculate the Huber loss using the stored delta.
+
+        Args:
+            y_pred (np.ndarray): Predicted values.
+            y_true (np.ndarray): True target values.
+
+        Returns:
+            float: The calculated Huber loss.
+        """
+        # Pass the instance's delta value to the njit function
+        return calculate_huber_loss(y_pred, y_true, self.delta)

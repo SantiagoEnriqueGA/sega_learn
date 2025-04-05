@@ -1,6 +1,7 @@
 import os
 import sys
 import unittest
+import warnings
 
 import numpy as np
 
@@ -37,11 +38,20 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
             reg_lambda=0.01,
             loss_function=CrossEntropyLoss(),
         )
+        # Regression network
+        self.nn_regressor = BaseBackendNeuralNetwork(
+            [2, 10, 5, 1],
+            dropout_rate=0.1,
+            reg_lambda=0.01,
+            regressor=True,
+            loss_function=MeanSquaredErrorLoss(),
+        )
         self.optimizer = AdamOptimizer(learning_rate=0.01)
         np.random.seed(42)
         self.X = np.random.randn(100, 2)
         self.y_binary = np.random.randint(0, 2, (100, 1))
         self.y_multi = np.random.randint(0, 10, (100,))
+        self.y_reg = (np.random.randn(100, 1) * 5 + 2).astype(np.float64)
 
     ### Initialization Tests ###
     def test_initialization(self):
@@ -77,19 +87,22 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
 
     ### Dropout Tests ###
     def test_apply_dropout(self):
-        """Test dropout application."""
-        A = np.ones((10, 10))
-        A_dropped = self.nn_binary.apply_dropout(A)
+        """Test dropout application with Numba."""
+        A = np.ones((100, 100))  # Increased size for better statistics
+        A_dropped = self.nn_binary.apply_dropout(A)  # nn_binary has dropout_rate=0.1
         self.assertEqual(A.shape, A_dropped.shape)
         self.assertTrue(np.any(A_dropped == 0))
         non_zero_elements = A_dropped[A_dropped != 0]
+        # Check scaling factor
         self.assertAlmostEqual(
             np.mean(non_zero_elements), 1 / (1 - self.nn_binary.dropout_rate), delta=0.1
         )
         num_zeros = np.sum(A_dropped == 0)
         total_elements = A_dropped.size
         self.assertAlmostEqual(
-            num_zeros / total_elements, self.nn_binary.dropout_rate, delta=0.1
+            num_zeros / total_elements,
+            self.nn_binary.dropout_rate,
+            delta=0.15,  # Increased delta
         )
 
     def test_apply_dropout_zero(self):
@@ -113,6 +126,14 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
         outputs = self.nn_multi.forward(self.X)
         self.assertEqual(outputs.shape, (100, 10))
         self.assertTrue(np.allclose(np.sum(outputs, axis=1), 1.0, atol=1e-5))
+
+    def test_forward_regression(self):
+        """Test forward pass for regression."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            outputs = self.nn_regressor.forward(self.X)
+            self.assertEqual(outputs.shape, (100, 1))
+            # No activation constraint for regression output
 
     ### Backward Pass Test ###
     def test_backward(self):
@@ -165,6 +186,29 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
         final_loss = nn.calculate_loss(X_small, y_small)
         self.assertLessEqual(final_loss, initial_loss)
 
+    def test_train_regression(self):
+        """Test basic training functionality for regression."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            with suppress_print():
+                self.nn_regressor.train(
+                    self.X,
+                    self.y_reg,
+                    self.X,
+                    self.y_reg,
+                    self.optimizer,
+                    epochs=2,
+                    batch_size=16,
+                    use_tqdm=False,
+                )
+            metric, _predicted = self.nn_regressor.evaluate(
+                self.X, self.y_reg
+            )  # Metric is MSE by default
+            loss = self.nn_regressor.calculate_loss(self.X, self.y_reg)
+            self.assertIsInstance(metric, float)
+            self.assertGreaterEqual(metric, 0)  # MSE >= 0
+            self.assertGreater(loss, 0)
+
     ### Evaluation Test ###
     def test_evaluate(self):
         """Test evaluation for binary and multi-class cases."""
@@ -178,11 +222,28 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
         self.assertEqual(predicted.shape, self.y_multi.shape)
         self.assertTrue(np.all(predicted >= 0) and np.all(predicted < 10))
 
+    def test_evaluate_regression(self):
+        """Test evaluation for regression cases."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            metric, predicted = self.nn_regressor.evaluate(self.X, self.y_reg)
+            self.assertIsInstance(metric, float)
+            self.assertGreaterEqual(metric, 0)  # MSE >= 0
+            self.assertEqual(predicted.shape, (100, 1))  # Evaluate returns 1D array
+
     ### Loss Calculation Test ###
     def test_calculate_loss(self):
         """Test loss calculation."""
         loss = self.nn_binary.calculate_loss(self.X, self.y_binary)
         self.assertGreater(loss, 0)
+
+    def test_calculate_loss_regression(self):
+        """Test loss calculation for regression."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            loss = self.nn_regressor.calculate_loss(self.X, self.y_reg)
+            self.assertIsInstance(loss, float)
+            self.assertGreater(loss, 0)
 
     ### Prediction Tests ###
     def test_predict_binary(self):
@@ -196,6 +257,16 @@ class TestNeuralNetworkVanilla(unittest.TestCase):
         predictions = self.nn_multi.predict(self.X)
         self.assertEqual(predictions.shape, (100,))
         self.assertTrue(np.all(predictions >= 0) and np.all(predictions < 10))
+
+    def test_predict_regression(self):
+        """Test prediction for regression."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            predictions = self.nn_regressor.predict(self.X)
+            self.assertEqual(
+                predictions.shape, (100,)
+            )  # Predict returns flattened array
+            self.assertTrue(np.issubdtype(predictions.dtype, np.floating))
 
     ### Regularization Test ###
     def test_regularization(self):

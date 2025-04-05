@@ -122,6 +122,8 @@ class JITDenseLayer:
             return sigmoid(Z)
         elif self.activation == "softmax":
             return softmax(Z)
+        elif self.activation == "linear" or self.activation == "none":
+            return Z
         else:
             raise ValueError(f"Unsupported activation: {self.activation}")
 
@@ -137,6 +139,8 @@ class JITDenseLayer:
             return sigmoid_derivative(Z)
         elif self.activation == "softmax":
             return np.ones_like(Z)  # Identity for compatibility
+        elif self.activation == "linear" or self.activation == "none":
+            return np.ones_like(Z)
         else:
             raise ValueError(f"Unsupported activation: {self.activation}")
 

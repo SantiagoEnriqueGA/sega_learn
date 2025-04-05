@@ -100,6 +100,97 @@ def train_and_evaluate_model(
     )
 
 
+def train_and_evaluate_model_numba(
+    X_train,
+    X_test,
+    y_train,
+    y_test,
+    layers,
+    output_size,
+    lr,
+    dropout,
+    reg_lambda,
+    hidden_activation="relu",
+    output_activation="none",
+    epochs=100,
+    batch_size=32,
+    loss_func=None,
+    y_scaler=None,
+):
+    """Function to train and evaluate the Neural Network."""
+    input_size = X_train.shape[1]
+
+    # The output_activation parameter should be 'none' or 'linear' for regression
+    activations = [hidden_activation] * len(layers) + [output_activation]
+
+    # Initialize Neural Network
+    nn = NumbaBackendNeuralNetwork(
+        [input_size] + layers + [output_size],
+        dropout_rate=dropout,
+        reg_lambda=reg_lambda,
+        activations=activations,
+        loss_function=loss_func,
+        regressor=True,
+        compile_numba=True,
+        # compile_numba=False,
+        progress_bar=True,
+    )
+
+    # Select optimizer
+    optimizer = JITAdamOptimizer(learning_rate=lr)
+    # optimizer = JITSGDOptimizer(learning_rate=lr, momentum=0.25, reg_lambda=0.1)
+    # optimizer = JITAdadeltaOptimizer(learning_rate=lr, rho=0.95, epsilon=1e-6, reg_lambda=0.0)
+
+    # Select learning rate scheduler
+    sub_scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)
+    scheduler = lr_scheduler_plateau(sub_scheduler, patience=5, threshold=0.001)
+    # scheduler = lr_scheduler_exp(optimizer, lr_decay=0.1, lr_decay_epoch=10)
+    # scheduler = lr_scheduler_step(optimizer, lr_decay=0.1, lr_decay_epoch=10)
+
+    # Call the train method
+    nn.train(
+        X_train,
+        y_train,
+        X_test,
+        y_test,
+        optimizer=optimizer,
+        lr_scheduler=scheduler,
+        epochs=epochs,
+        batch_size=batch_size,
+        early_stopping_threshold=10,
+        track_metrics=True,
+        track_adv_metrics=False,  # Not used for regression
+        use_tqdm=True,  # Use tqdm progress bar if available
+    )
+
+    # Evaluate the Model (evaluate returns primary metric (loss/MSE) and predictions)
+    test_loss, y_pred_scaled = nn.evaluate(X_test, y_test)  # y_pred is scaled
+    print(f"Test Loss (Scaled MSE): {test_loss:.4f}")
+
+    # Inverse transform for interpretable metrics
+    if y_scaler is None:
+        print("Warning: y_scaler not provided, cannot inverse transform metrics.")
+        y_test_orig = y_test  # Keep scaled if no scaler
+        y_pred_orig = y_pred_scaled
+    else:
+        y_test_orig = y_scaler.inverse_transform(y_test)
+        y_pred_orig = y_scaler.inverse_transform(y_pred_scaled)
+
+    # Calculate metrics on original scale
+    r2_score = r2(y_test_orig, y_pred_orig)
+    mse_score = mse(y_test_orig, y_pred_orig)
+    mae_score = mae(y_test_orig, y_pred_orig)
+    print(f"R^2 Score (Original Scale): {r2_score:.4f}")
+    print(f"Mean Squared Error (Original Scale): {mse_score:.4f}")
+    print(f"Mean Absolute Error (Original Scale): {mae_score:.4f}")
+
+    # Plot metrics (will show scaled loss/metric from training history)
+    # nn.plot_metrics()
+    # nn.plot_metrics(
+    #     save_dir="examples/neural_networks/plots/neuralNetwork_regressor_numba_metrics.png"
+    # )
+
+
 def main():
     """Main function to train and evaluate the Neural Network."""
     import random
@@ -154,11 +245,25 @@ def main():
     )
 
     # To use the Numba backend:
-    # TODO: Implement Numba backend training and evaluation
-    # train_and_evaluate_model_numba(X_train, X_test, y_train, y_test,
-    #                               layers, output_size, lr, dropout, reg_lambda,
-    #                               hidden_activation='relu', output_activation=None,
-    #                               epochs=1000, batch_size=32)
+    # lr = 0.0001
+    # loss_func = JITMeanSquaredErrorLoss()
+    # train_and_evaluate_model_numba(
+    #     X_train,
+    #     X_test,
+    #     y_train,
+    #     y_test,
+    #     layers,
+    #     output_size,
+    #     lr,
+    #     dropout,
+    #     reg_lambda,
+    #     hidden_activation="relu",
+    #     output_activation="none",
+    #     epochs=epochs * 2,
+    #     batch_size=32,
+    #     loss_func=loss_func,
+    #     y_scaler=y_scaler,
+    # )
 
 
 if __name__ == "__main__":

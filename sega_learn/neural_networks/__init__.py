@@ -36,7 +36,13 @@ __all__ = [
 
 try:
     from .layers_jit import JITConvLayer, JITDenseLayer, JITFlattenLayer, JITRNNLayer
-    from .loss_jit import JITBCEWithLogitsLoss, JITCrossEntropyLoss
+    from .loss_jit import (
+        JITBCEWithLogitsLoss,
+        JITCrossEntropyLoss,
+        JITMeanSquaredErrorLoss,
+        JITMeanAbsoluteErrorLoss,
+        JITHuberLoss,
+    )
     from .neuralNetworkNumbaBackend import NumbaBackendNeuralNetwork
     from .numba_utils import *
     from .optimizers_jit import JITAdadeltaOptimizer, JITAdamOptimizer, JITSGDOptimizer
@@ -48,6 +54,9 @@ try:
             "JITAdadeltaOptimizer",
             "JITBCEWithLogitsLoss",
             "JITCrossEntropyLoss",
+            "JITMeanSquaredErrorLoss",
+            "JITMeanAbsoluteErrorLoss",
+            "JITHuberLoss",
             "JITDenseLayer",
             "JITFlattenLayer",
             "JITConvLayer",
