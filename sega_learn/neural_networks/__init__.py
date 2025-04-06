@@ -1,7 +1,13 @@
 from tkinter import E
 from .activations import Activation
 from .layers import ConvLayer, DenseLayer, FlattenLayer, RNNLayer
-from .loss import BCEWithLogitsLoss, CrossEntropyLoss
+from .loss import (
+    BCEWithLogitsLoss,
+    CrossEntropyLoss,
+    MeanAbsoluteErrorLoss,
+    MeanSquaredErrorLoss,
+    HuberLoss,
+)
 from .neuralNetworkBase import NeuralNetworkBase
 from .neuralNetworkBaseBackend import BaseBackendNeuralNetwork
 from .optimizers import AdadeltaOptimizer, AdamOptimizer, SGDOptimizer
@@ -16,6 +22,9 @@ __all__ = [
     "lr_scheduler_step",
     "CrossEntropyLoss",
     "BCEWithLogitsLoss",
+    "MeanSquaredErrorLoss",
+    "MeanAbsoluteErrorLoss",
+    "HuberLoss",
     "DenseLayer",
     "FlattenLayer",
     "ConvLayer",
@@ -27,7 +36,13 @@ __all__ = [
 
 try:
     from .layers_jit import JITConvLayer, JITDenseLayer, JITFlattenLayer, JITRNNLayer
-    from .loss_jit import JITBCEWithLogitsLoss, JITCrossEntropyLoss
+    from .loss_jit import (
+        JITBCEWithLogitsLoss,
+        JITCrossEntropyLoss,
+        JITMeanSquaredErrorLoss,
+        JITMeanAbsoluteErrorLoss,
+        JITHuberLoss,
+    )
     from .neuralNetworkNumbaBackend import NumbaBackendNeuralNetwork
     from .numba_utils import *
     from .optimizers_jit import JITAdadeltaOptimizer, JITAdamOptimizer, JITSGDOptimizer
@@ -39,6 +54,9 @@ try:
             "JITAdadeltaOptimizer",
             "JITBCEWithLogitsLoss",
             "JITCrossEntropyLoss",
+            "JITMeanSquaredErrorLoss",
+            "JITMeanAbsoluteErrorLoss",
+            "JITHuberLoss",
             "JITDenseLayer",
             "JITFlattenLayer",
             "JITConvLayer",

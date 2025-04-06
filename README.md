@@ -10,12 +10,8 @@ The `examples/` directory contains example usages of the library, and the `docs/
 The `scripts/` directory contains PowerShell scripts to help with various tasks.
 
 This project was created with the goal of learning about the internals of machine learning algorithms and how they work under the hood.
-<<<<<<< Updated upstream
-It is not intended for production use and should be used for educational purposes only (See performance tests).
-=======
 As well as for exploration of Python packages for speed and performance.
 It is not intended for production use and should be used for educational purposes only (See performance tests for scalability).
->>>>>>> Stashed changes
 Many of the algorithms are not optimized for performance and may not be suitable for large datasets.
 
 This project was heavily inspired by [scikit-learn](https://scikit-learn.org/stable/), and [pytorch](https://pytorch.org/).
@@ -25,7 +21,7 @@ This project was heavily inspired by [scikit-learn](https://scikit-learn.org/sta
 - [Features](#features)
 - [Project Structure](#project-structure)
 - [Usage Examples](#usage-examples)
-- [Scripts](#scripts)
+- [Helper Scripts](#helper-scripts)
 - [Documentation](#documentation)
 - [Tests](#tests)
 - [Installation](#installation)
@@ -66,9 +62,9 @@ The SEGA_LEARN library includes the following features:
 - **KNeighborsRegressor**: Implements the K-Nearest Neighbors algorithm for regression tasks.
 
 ### Neural Networks
-- **NeuralNetwork**: Implements a neural network class that can be used to create and train neural networks with multiple layers and activation functions.
+- **Neural Networks:** Flexible implementation with support for various layers, activations, optimizers, and backends (NumPy, Numba, CuPy), now supporting both **classification and regression** tasks.
   - **Optimizers**: Implements various optimizers like Adadelta, Adam, and SGD.
-  - **Loss Functions**: Implements loss functions like BCEWithLogitsLoss and CrossEntropyLoss.
+  - **Loss Functions**: Implements loss functions like BCEWithLogitsLoss, CrossEntropyLoss, MeanSquaredErrorLoss, MeanAbsoluteErrorLoss, and HuberLoss.
   - **Schedulers**: Implements learning rate schedulers like StepLR and ReduceLROnPlateau.
   - **Activation Functions**: Implements activation functions like ReLU, Sigmoid, Softmax and more.
 
@@ -108,7 +104,7 @@ The project directory structure is as follows:
 sega_learn/
 |
 ├── sega_learn/      # Main library source code
-│   ├── auto/               # Automated model selection
+│   ├── auto/               # Automated model creation/comparison
 │   ├── clustering/         # Clustering algorithms
 │   ├── linear_models/      # Linear models
 │   ├── nearest_neighbors/  # K-Nearest Neighbors
@@ -182,6 +178,8 @@ sega_learn/
 - [`neuralNetwork_layers_conv.py`](examples/neural_networks/neuralNetwork_layers_conv.py): Demonstrates the NeuralNetwork class with convolutional layers.
 - [`neuralNetwork_layers_numba.py`](examples/neural_networks/neuralNetwork_layers_numba.py): Demonstrates the NeuralNetwork class with Numba optimization.
 - [`neuralNetwork_layers.py`](examples/neural_networks/neuralNetwork_layers.py): Demonstrates the NeuralNetwork class with multiple layer creation.
+- [`neuralNetwork_metrics_anim.py`](examples/neural_networks/neuralNetwork_metrics_anim.py): Demonstrates the NeuralNetwork class with animated metrics.
+- [`neuralNetwork_regressor.py`](examples/neural_networks/neuralNetwork_regressor.py): Demonstrates the NeuralNetwork class for regression tasks.
 
 ### SVM
 - [`generalizedSCV_binary.py`](examples/svm/generalizedSVC_binary.py): Demonstrates the Generalized SVC for binary classification.
@@ -225,7 +223,7 @@ sega_learn/
 - [`svd_regression.py`](examples/utils/svd_regression.py): Demonstrates SVD for regression tasks.
 - [`votingRegressor.py`](examples/utils/votingRegressor.py): Demonstrates Voting Regressor.
 
-## Scripts
+## Helper Scripts
 The following PowerShell scripts are included in the `scripts/` folder to help with various tasks:
 
 - **_run_all_scripts.ps1**: Runs all PowerShell scripts in the `scripts/` folder sequentially.
@@ -250,9 +248,6 @@ Pydoc Markdown is also availible and is generated from the PowerShell script `do
 The output file is located in [`docs/documentation.md`](docs/documentation.md)
 
 ## Tests
-<<<<<<< Updated upstream
-To run the tests, use the following command: `python -m unittest discover -s tests`
-=======
 An extensive suite of unit tests is included in the `tests/` directory.
 These tests ensure the functionality and reliability of each module in the library, as well as the overall package.
 The tests are organized into subdirectories based on the module they test. Each module is tested for imports, functionality, and example usage.
@@ -264,7 +259,6 @@ The tests are organized into subdirectories based on the module they test. Each 
 
 ### Running Tests
 To run the tests, use the following command: `python -m unittest discover -s tests`
->>>>>>> Stashed changes
 Or run the all tests file: `python run_all_tests.py`
 
 ### Test Results
@@ -295,15 +289,21 @@ Testing Ridge Regression Model............
 Testing KNeighborsClassifierKNeighborsBase Class............
 Testing KNeighborsRegressor Class............
 Testing the TrainingAnimator Class...........
-Testing NeuralNetwork class with base backend..................
+Testing NeuralNetwork class with base backend.......................
 Testing ConvLayer class...
 Testing DenseLayer class...
 Testing FlattenLayer class..
 Testing the BCEWithLogitsLoss class..
 Testing the CrossEntropyLoss class..
-Testing the BCEWithLogitsLoss class..
+Testing the HuberLoss class..
+Testing the MeanAbsoluteErrorLoss class.
+Testing the MeanSquaredErrorLoss class.
+Testing the JITHuberLoss class..
+Testing the JITBCEWithLogitsLoss class..
 Testing the JITCrossEntropyLoss class..
-Testing NeuralNetwork class with Numba backend...................
+Testing the JITMeanAbsoluteErrorLoss class.
+Testing the JITMeanSquaredErrorLoss class.
+Testing NeuralNetwork class with Numba backend.........................
 Testing the AdadeltaOptimizer Class..
 Testing the AdamOptimizer Class..
 Testing the SGDOptimizer Class..
@@ -363,6 +363,7 @@ Testing example file: neuralNetwork_hyper.py.
 Testing example file: neuralNetwork_iris.py.
 Testing example file: neuralNetwork_layers.py...
 Testing example file: neuralNetwork_layers_numba.py..
+Testing example file: neuralNetwork_regressor.py.
 Testing example file: generalizedSVC_binary.py.
 Testing example file: generalizedSVC_multi.py.
 Testing example file: generalizedSVR.py.
@@ -400,7 +401,7 @@ Testing example file: svd_classification.py.
 Testing example file: svd_regression.py.
 Testing example file: votingRegressor.py.
 ----------------------------------------------------------------------
-Ran 662 tests in 374.162s
+Ran 682 tests in 319.933s
 
 OK
 ```
@@ -413,123 +414,3 @@ To set up the project environment, you can use the provided `environment.yml` fi
 2. Navigate to the directory where your repository is located.
 3. Run the following command to create the conda environment: `conda env create -f environment.yml`
 4. Activate the newly created environment: `conda activate sega_learn`
-
-<<<<<<< Updated upstream
-## File Structure
-The project directory structure is as follows:
-
-- **sega_learn/**: Contains the main library code.
-- [`__init__.py`](sega_learn/__init__.py): Initializes the SEGA_LEARN package.
-  - **clustering/**: Contains clustering algorithms.
-    - [`__init__.py`](sega_learn/clustering/__init__.py): Initializes the clustering package.
-    - [`clustering.py`](sega_learn/clustering/clustering.py): Implements DBSCAN and KMeans clustering algorithms.
-  - **linear_models/**: Contains linear models.
-    - [`__init__.py`](sega_learn/linear_models/__init__.py): Initializes the linear models package.
-    - [`linearModels.py`](sega_learn/linear_models/linearModels.py): Implements various linear models.
-    - [`discriminantAnalysis.py`](sega_learn/linear_models/discriminantAnalysis.py): Implements Linear and Quadratic Discriminant Analysis.
-  - **neural_networks/**: Contains neural network components.
-    - [`__init__.py`](sega_learn/neural_networks/__init__.py): Initializes the neural networks package.
-    - [`optimizers.py`](sega_learn/neural_networks/optimizers.py): Implements various optimizers.
-    - [`schedulers.py`](sega_learn/neural_networks/schedulers.py): Implements learning rate schedulers.
-    - [`loss.py`](sega_learn/neural_networks/loss.py): Implements loss functions.
-    - [`neuralNetwork.py`](sega_learn/neural_networks/neuralNetwork.py): Implements the NeuralNetwork class.
-  - **trees/**: Contains tree-based algorithms.
-    - [`__init__.py`](sega_learn/trees/__init__.py): Initializes the trees package.
-    - [`treeClassifier.py`](sega_learn/trees/treeClassifier.py): Implements Classifier Tree.
-    - [`treeRegressor.py`](sega_learn/trees/treeRegressor.py): Implements Regressor Tree.
-    - [`randomForestClassifier.py`](sega_learn/trees/randomForestClassifier.py): Implements Random Forest Classifier.
-    - [`randomForestRegressor.py`](sega_learn/trees/randomForestRegressor.py): Implements Random Forest Regressor.
-    - [`gradientBoostedRegressor.py`](sega_learn/trees/gradientBoostedRegressor.py): Implements Gradient Boosted Regressor.
-  - **utils/**: Contains utility functions.
-    - [`__init__.py`](sega_learn/utils/__init__.py): Initializes the utils package.
-    - [`dataPrep.py`](sega_learn/utils/dataPrep.py): Implements data preparation functions.
-    - [`voting.py`](sega_learn/utils/voting.py): Implements voting regressor.
-    - [`metrics.py`](sega_learn/utils/metrics.py): Implements evaluation metrics.
-    - [`model_selection.py`](sega_learn/utils/model_selection.py): Implements model selection algorithms.
-    - [`polynomialTransform.py`](sega_learn/utils/polynomialTransform.py): Implements polynomial transformation.
-    - [`dataAugmentation.py`](sega_learn/utils/dataAugmentation.py): Implements data augmentation for imbalanced classification tasks.
-
-- **tests/**: Contains unit and performance tests for the database library.
-  - **Core Tests**:
-    - [`test_clustering.py`](tests/test_clustering.py): Tests DBSCAN and KMeans clustering algorithms.
-    - [`test_linear_models.py`](tests/test_linear_models.py): Tests various linear models.
-    - [`test_neural_networks.py`](tests/test_neural_networks.py): Tests neural network components.
-    - [`test_trees_classifier.py`](tests/test_trees_classifier.py): Tests Classifier Trees.
-    - [`test_trees_regressor.py`](tests/test_trees_regressor.py): Tests Regressor Trees.
-    - [`test_utils.py`](tests/test_utils.py): Tests utility functions.
-  - **Imports**:
-    - [`test_clustering_imports.py`](tests/test_clustering_imports.py): Tests imports for clustering package.
-    - [`test_linear_models_imports.py`](tests/test_linear_models_imports.py): Tests imports for linear models package.
-    - [`test_neural_networks_imports.py`](tests/test_neural_networks_imports.py): Tests imports for neural networks package.
-    - [`test_trees_imports.py`](tests/test_trees_imports.py): Tests imports for trees package.
-    - [`test_imports.py`](tests/test_imports.py): Tests imports for the main package.
-  - **Examples**:
-    - [`test_clustering_examples.py`](tests/test_clustering_examples.py): Tests clustering examples.
-    - [`test_linear_models_examples.py`](tests/test_linear_models_examples.py): Tests linear models examples.
-    - [`test_neural_networks_examples.py`](tests/test_neural_networks_examples.py): Tests neural networks examples.
-    - [`test_trees_examples.py`](tests/test_trees_examples.py): Tests tree-based algorithms examples.
-    - [`test_utils_examples.py`](tests/test_utils_examples.py): Tests utility functions examples.
-  - **Run All Tests**:
-    - [`run_all_tests.py`](tests/run_all_tests.py): Runs all available tests.
-  - **Test Utilities**:
-    - [`utils.py`](tests/utils.py): Contains utility functions for testing.
-
-- **examples/**: Example usages of the SEGA_LEARN library.
-  - **clustering/**: Contains clustering algorithms.
-    - [`kmeans.py`](examples/clustering/kmeans.py): Demonstrates KMeans.
-    - [`dbscan.py`](examples/clustering/dbscan.py): Demonstrates DBSCAN.
-    - [`dbscan_3d.py`](examples/clustering/dbscan_3d.py): Demonstrates DBSCAN with 3D data.
-    - [`dbscan_3d_aimated.py`](examples/clustering/dbscan_3d_aimated.py): Demonstrates DBSCAN with 3D data and animated plot.
-  - **linear_models/**: Contains linear models.
-    - [`ols.py`](examples/linear_models/ols.py): Demonstrates Ordinary Least Squares.
-    - [`ridge.py`](examples/linear_models/ridge.py): Demonstrates Ridge Regression.
-    - [`lasso.py`](examples/linear_models/lasso.py): Demonstrates Lasso Regression.
-    - [`bayes.py`](examples/linear_models/bayes.py): Demonstrates Bayesian Regression.
-    - [`ransac.py`](examples/linear_models/ransac.py): Demonstrates RANSAC Regression.
-    - [`ransac_vis.py`](examples/linear_models/ransac_vis.py): Demonstrates RANSAC Regression with visualization.
-    - [`passiveAggressive.py`](examples/linear_models/passiveAggressive.py): Demonstrates Passive Aggressive Regressor.
-    - [`passiveAggressive_vis.py`](examples/linear_models/passiveAggressive_vis.py): Demonstrates Passive Aggressive Regressor with visualization.
-    - [`lda.py`](examples/linear_models/lda.py): Demonstrates Linear Discriminant Analysis.
-    - [`qda.py`](examples/linear_models/qda.py): Demonstrates Quadratic Discriminant Analysis.
-  - **neural_networks/**: Contains neural network components.
-    - [`neuralNetwork.py`](examples/neural_networks/neuralNetwork.py): Demonstrates the NeuralNetwork class.
-    - [`neuralNetwork_hyper.py`](examples/neural_networks/neuralNetwork_hyper.py): Demonstrates the NeuralNetwork class with hyper-parameter tuning.
-  - **trees/**: Contains tree-based algorithms.
-    - [`gradientBoostedRegressor.py`](examples/trees/gradientBoostedRegressor.py): Demonstrates Gradient Boosted Regressor.
-    - [`randomForestClassifier.py`](examples/trees/randomForestClassifier.py): Demonstrates Random Forest Classifier.
-    - [`randomForestRegressor.py`](examples/trees/randomForestRegressor.py): Demonstrates Random Forest Regressor.
-    - [`regressorTree.py`](examples/trees/regressorTree.py): Demonstrates Regressor Tree.
-  - **utils/**: Contains utility functions.
-    - [`votingRegressor.py`](examples/utils/votingRegressor.py): Demonstrates Voting Regressor.
-    - [`polynomialTransform.py`](examples/utils/polynomialTransform.py): Demonstrates Polynomial Transform.
-    - [`gridSearchCV_bayes.py`](examples/utils/gridSearchCV_bayes.py): Demonstrates Grid Search Cross Validation with Bayesian Regression.
-    - [`gridSearchCV_gbr.py`](examples/utils/gridSearchCV_gbr.py): Demonstrates Grid Search Cross Validation with Gradient Boosted Regressor.
-    - [`gridSearchCV_passiveAggressive.py`](examples/utils/gridSearchCV_passiveAggressive.py): Demonstrates Grid Search Cross Validation with Passive Aggressive Regressor.
-    - [`gridSearchCV_rfc.py`](examples/utils/gridSearchCV_rfc.py): Demonstrates Grid Search Cross Validation with Random Forest Classifier.
-    - [`gridSearchCV_rfr.py`](examples/utils/gridSearchCV_rfr.py): Demonstrates Grid Search Cross Validation with Random Forest Regressor.
-    - [`randomSearchCV_bayes.py`](examples/utils/randomSearchCV_bayes.py): Demonstrates Random Search Cross Validation with Bayesian Regression.
-    - [`randomSearchCV_gbr.py`](examples/utils/randomSearchCV_gbr.py): Demonstrates Random Search Cross Validation with Gradient Boosted Regressor.
-    - [`randomSearchCV_passiveAggressive.py`](examples/utils/randomSearchCV_passiveAggressive.py): Demonstrates Random Search Cross Validation with Passive Aggressive Regressor.
-    - [`randomSearchCV_rfc.py`](examples/utils/randomSearchCV_rfc.py): Demonstrates Random Search Cross Validation with Random Forest Classifier.
-    - [`randomSearchCV_rfr.py`](examples/utils/randomSearchCV_rfr.py): Demonstrates Random Search Cross Validation with Random Forest Regressor.
-    - [`dataAugmentation_randOver.py`](examples/utils/dataAugmentation_randOver.py): Demonstrates Random Over Sampling for imbalanced classification tasks.
-    - [`dataAugmentation_randUnder.py`](examples/utils/dataAugmentation_randUnder.py): Demonstrates Random Under Sampling for imbalanced classification tasks.
-    - [`dataAugmentation_smote.py`](examples/utils/dataAugmentation_smote.py): Demonstrates SMOTE (Synthetic Minority Over-Sampling Technique) for imbalanced classification tasks.
-    - [`dataAugmentation_combined.py`](examples/utils/dataAugmentation_combined.py): Demonstrates a combination of Random Over Sampling and SMOTE for imbalanced classification tasks.
-
-- **docs/**: Contains the generated documentation for the SEGA_LEARN library.
-  - [`documentation.md`](docs/documentation.md): Contains the generated documentation for the SEGA_LEARN library.
-  - **HTML Documentation**: Contains the generated HTML documentation for the SEGA_LEARN library.
-    - [`SEGA_LEARN.html`](docs/SEGA_LEARN.html): Contains the main HTML documentation for the SEGA_LEARN library.
-    - Other HTML documentation files: Contain the additional HTML documentation for the SEGA_LEARN library.
-
-- **scripts/**: PowerShell scripts to help with various tasks.
-  - [`_run_all_scripts.ps1`](scripts/_run_all_scripts.ps1): Runs all PowerShell scripts in the `scripts/` folder sequentially.
-  - [`todo_comments.ps1`](scripts/todo_comments.ps1): Finds and lists all TODO comments in Python files.
-  - [`count_lines.ps1`](scripts/count_lines.ps1): Counts the number of lines in each Python file.
-  - [`comment_density.ps1`](scripts/comment_density.ps1): Calculates the comment density in Python files.
-  - [`documentation_html.ps1`](scripts/documentation_html.ps1): Generates HTML documentation.
-  - [`documentation_md.ps1`](scripts/documentation_md.ps1): Generates markdown documentation.
-  - [`export_env.ps1`](scripts/export_env.ps1): Exports the conda environment to a YAML file.
-=======
->>>>>>> Stashed changes

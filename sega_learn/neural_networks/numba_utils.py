@@ -1,5 +1,6 @@
 import numpy as np
 from numba import njit, prange
+from numba.typed import List
 
 CACHE = False
 
@@ -85,6 +86,92 @@ def evaluate_batch(y_hat, y_true, is_binary):
         predicted = np.argmax(y_hat, axis=1).astype(np.int32)
         accuracy = np.mean(predicted == y_true)
     return accuracy
+
+
+# JIT Regression Loss Calculation Helpers
+@njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
+def calculate_mse_loss(y_pred, y_true):
+    """Helper function to calculate the mean squared error loss. Handles 1D and 2D inputs."""
+    n_samples = y_true.shape[0]
+    loss = 0.0
+
+    # Check dimensions and handle accordingly
+    if y_true.ndim == 1:  # Single output case
+        for i in prange(n_samples):
+            loss += (y_true[i] - y_pred[i]) ** 2
+    elif y_true.ndim == 2:  # Multi-output case
+        n_outputs = y_true.shape[1]
+        if n_outputs == 0:
+            return 0.0  # Handle empty second dimension case
+        for i in prange(n_samples):
+            diff_sq_sum = 0.0
+            for j in range(n_outputs):  # Iterate over outputs
+                diff_sq_sum += (y_true[i, j] - y_pred[i, j]) ** 2
+            loss += diff_sq_sum / n_outputs  # Average over outputs for the sample
+    else:
+        # Numba doesn't support raising exceptions easily here in nopython mode.
+        # Rely on input validation before calling.
+        return np.nan  # Or some other indicator of error
+
+    return loss / n_samples
+
+
+@njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
+def calculate_mae_loss(y_pred, y_true):
+    """Helper function to calculate the mean absolute error loss. Handles 1D and 2D inputs."""
+    n_samples = y_true.shape[0]
+    loss = 0.0
+
+    if y_true.ndim == 1:
+        for i in prange(n_samples):
+            loss += np.abs(y_true[i] - y_pred[i])
+    elif y_true.ndim == 2:
+        n_outputs = y_true.shape[1]
+        if n_outputs == 0:
+            return 0.0
+        for i in prange(n_samples):
+            abs_diff_sum = 0.0
+            for j in range(n_outputs):
+                abs_diff_sum += np.abs(y_true[i, j] - y_pred[i, j])
+            loss += abs_diff_sum / n_outputs
+    else:
+        return np.nan
+
+    return loss / n_samples
+
+
+@njit(parallel=True, fastmath=True, nogil=True, cache=CACHE)
+def calculate_huber_loss(y_pred, y_true, delta=1.0):
+    """Helper function to calculate the Huber loss. Handles 1D and 2D inputs."""
+    n_samples = y_true.shape[0]
+    loss = 0.0
+
+    if y_true.ndim == 1:
+        for i in prange(n_samples):
+            error = y_true[i] - y_pred[i]
+            abs_error = np.abs(error)
+            if abs_error <= delta:
+                loss += 0.5 * error**2
+            else:
+                loss += delta * (abs_error - 0.5 * delta)
+    elif y_true.ndim == 2:
+        n_outputs = y_true.shape[1]
+        if n_outputs == 0:
+            return 0.0
+        for i in prange(n_samples):
+            sample_loss = 0.0
+            for j in range(n_outputs):
+                error = y_true[i, j] - y_pred[i, j]
+                abs_error = np.abs(error)
+                if abs_error <= delta:
+                    sample_loss += 0.5 * error**2
+                else:
+                    sample_loss += delta * (abs_error - 0.5 * delta)
+            loss += sample_loss / n_outputs  # Average over outputs
+    else:
+        return np.nan
+
+    return loss / n_samples
 
 
 # -------------------------------------------------------------------------------------------------
@@ -339,6 +426,88 @@ def process_batches_multi(
 
 
 @njit(fastmath=True, nogil=True, cache=CACHE)
+def process_batches_regression_jit(
+    X_shuffled,
+    y_shuffled,
+    batch_size,
+    layers,
+    dropout_rate,
+    dropout_layer_indices,
+    reg_lambda,
+    dWs_acc,
+    dbs_acc,
+    loss_calculator_func,  # Reference to the @njit loss function
+    # Note: If HuberLoss is used, delta must be handled within calculate_huber_loss (default)
+    # or this function needs modification to accept delta.
+):
+    """Process batches for regression tasks using Numba."""
+    num_samples = X_shuffled.shape[0]
+    num_batches = (num_samples + batch_size - 1) // batch_size
+    running_loss = 0.0
+    running_metric = 0.0  # Will store the primary metric (e.g., MSE)
+
+    for i in prange(num_batches):
+        start_idx = i * batch_size
+        end_idx = min(start_idx + batch_size, num_samples)
+
+        X_batch = X_shuffled[start_idx:end_idx]
+        y_batch = y_shuffled[start_idx:end_idx]
+
+        # Forward pass
+        layer_outputs = [X_batch.astype(np.float64)]
+        A = layer_outputs[0]
+        for k, layer in enumerate(layers):
+            A = layer.forward(A)
+            if dropout_rate > 0 and k in dropout_layer_indices:
+                A = apply_dropout_jit(A, dropout_rate)
+            layer_outputs.append(A)
+
+        # Backward pass
+        outputs = layer_outputs[-1]
+        m = y_batch.shape[0]
+        # Assuming MSE derivative for now for dA calculation
+        # TODO: Make dA calculation dependent on the actual loss function if needed
+        dA = (outputs - y_batch) / m
+        for j in range(len(layers) - 1, -1, -1):
+            dA = layers[j].backward(dA.astype(np.float64), reg_lambda)
+
+        # Calculate loss and primary metric using the passed function
+        # Directly call the passed njit function
+        batch_loss = loss_calculator_func(outputs, y_batch)
+        # Assuming the primary metric is the same as the loss for now
+        batch_metric = batch_loss
+
+        # Add L2 regularization to batch loss
+        # Need to be careful how weights are accessed if layers list is complex
+        # Assuming layers list contains objects with a .weights attribute
+        weights_list = List()  # Use numba typed list
+        for layer in layers:
+            if hasattr(layer, "weights"):  # Check if layer has weights
+                weights_list.append(layer.weights)
+        if len(weights_list) > 0:
+            l2_reg = reg_lambda * compute_l2_reg(weights_list)
+            batch_loss += l2_reg
+
+        running_loss += batch_loss
+        running_metric += batch_metric
+
+        # Accumulate gradients (remains the same)
+        for j, layer in enumerate(layers):
+            if hasattr(layer, "weight_gradients"):
+                dWs_acc[j] += layer.weight_gradients
+                dbs_acc[j] += layer.bias_gradients
+
+    # Average the accumulated gradients, loss, and metric (remains the same)
+    for j in range(len(dWs_acc)):
+        dWs_acc[j] /= num_batches
+        dbs_acc[j] /= num_batches
+    running_loss /= num_batches
+    running_metric /= num_batches
+
+    return dWs_acc, dbs_acc, running_loss, running_metric
+
+
+@njit(fastmath=True, nogil=True, cache=CACHE)
 def evaluate_jit(y_hat, y_true, is_binary):
     """Evaluate model performance and return accuracy and predictions."""
     if is_binary:
@@ -348,3 +517,21 @@ def evaluate_jit(y_hat, y_true, is_binary):
         predicted = np.argmax(y_hat, axis=1).astype(np.int32)
         accuracy = np.mean(predicted == y_true)
     return accuracy, predicted
+
+
+@njit(fastmath=True, nogil=True, cache=CACHE)
+def evaluate_regression_jit(y_pred, y_true, loss_function):
+    """Evaluate model performance for regression tasks using Numba.
+
+    Args:
+        y_pred (ndarray): Model predictions.
+        y_true (ndarray): True target values.
+        loss_function (object): The JIT loss function instance (e.g., JITMeanSquaredErrorLoss).
+
+    Returns:
+        tuple: Metric value (e.g., MSE) and the predictions.
+    """
+    # Calculate the primary metric using the provided loss function
+    metric = loss_function.calculate_loss(y_pred, y_true)
+    # Return the metric and the raw predictions
+    return metric, y_pred

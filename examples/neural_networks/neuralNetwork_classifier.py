@@ -187,10 +187,21 @@ def main():
     )
 
     # To use the Numba backend:
-    # train_and_evaluate_model_numba(X_train, X_test, y_train, y_test,
-    #                               layers, output_size, lr, dropout, reg_lambda,
-    #                               hidden_activation='relu', output_activation='softmax',
-    #                               epochs=1000, batch_size=32)
+    # train_and_evaluate_model_numba(
+    #     X_train,
+    #     X_test,
+    #     y_train,
+    #     y_test,
+    #     layers,
+    #     output_size,
+    #     lr,
+    #     dropout,
+    #     reg_lambda,
+    #     hidden_activation="relu",
+    #     output_activation="softmax",
+    #     epochs=1000,
+    #     batch_size=32,
+    # )
 
 
 if __name__ == "__main__":

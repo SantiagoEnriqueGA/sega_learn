@@ -1,6 +1,6 @@
 # Neural Networks Module
 
-The Neural Networks module in SEGA_LEARN provides implementations of neural networks for various tasks such as classification, regression, and more. These models are designed to be flexible, efficient, and support multiple backends for computation, including CPU, GPU (via CuPy), and JIT compilation (via Numba).
+The Neural Networks module in **SEGA_LEARN** is a fully featured framework for building, training, and evaluating custom neural network models for **both classification and regression tasks**. It provides implementations of key neural network components using pure NumPy for clarity and flexibility, as well as Numba-accelerated and CuPy-accelerated versions for performance gains. The module supports a wide range of functionalities including diverse layer types, activation functions, loss calculations, optimizers, learning rate schedulers, and various utility functions for efficient forward and backward propagation.
 
 ## How Neural Networks Work
 
@@ -15,8 +15,8 @@ Neural networks are computational models inspired by the human brain. They consi
 ### Classification
 For classification tasks, neural networks output probabilities for each class. The class with the highest probability is selected as the prediction.
 
-### Regression - in development -
-For regression tasks, neural networks output continuous values. The loss function measures the difference between the predicted and actual values.
+### Regression
+For regression tasks, the network is configured to predict continuous target values. The final layer typically uses a linear activation (or no activation, specified as `'none'` or `'linear'`), and the loss function measures the difference between the predicted and actual continuous values (e.g., Mean Squared Error). Data scaling, especially for the target variable `y`, is often crucial for achieving good performance in regression.
 
 ### Advanced Features
 - **Dropout**: A regularization technique that randomly drops neurons during training to prevent overfitting.
@@ -70,6 +70,10 @@ Activation functions introduce non-linearity into the neural network, enabling i
    - Formula: $\text{softmax}(x_i) = \frac{e^{x_i}}{\sum_{j} e^{x_j}}$
    - Range: (0, 1), with the sum of outputs equal to 1.
    - Usage: Used in the output layer for multi-class classification tasks.
+
+6. **Linear / None:**
+   - For regression tasks, the output layer typically uses no activation (equivalent to a linear activation) to allow for predicting unbounded continuous values.
+   - Specify `'linear'` or `'none'` as the activation for the final layer in regression networks.
 
 #### Choosing an Activation Function
 - **Sigmoid**: Use for binary classification or probabilistic outputs.
@@ -127,6 +131,24 @@ y_train = np.random.randint(0, 10, size=100)
 
 # Initialize and train the neural network
 nn = CuPyBackendNeuralNetwork(layers=[64, 32, 10], dropout_rate=0.2, reg_lambda=0.01)
+nn.train(X_train, y_train, epochs=50, batch_size=16)
+
+# Predict on new data
+predictions = nn.predict(X_train)
+print(predictions)
+```
+
+### Regression Example
+```python
+from sega_learn.neural_networks import BaseBackendNeuralNetwork
+import numpy as np
+
+# Generate sample data
+X_train = np.random.rand(100, 64)
+y_train = np.random.rand(100, 1)
+
+# Initialize and train the neural network
+nn = BaseBackendNeuralNetwork(layers=[64, 32, 1], dropout_rate=0.2, reg_lambda=0.01, regression=True)
 nn.train(X_train, y_train, epochs=50, batch_size=16)
 
 # Predict on new data

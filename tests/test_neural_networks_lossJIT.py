@@ -55,7 +55,7 @@ class TestJITBCEWithLogitsLoss(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):  # NOQA D201
-        print("\nTesting the BCEWithLogitsLoss class", end="", flush=True)
+        print("\nTesting the JITBCEWithLogitsLoss class", end="", flush=True)
 
     def test_bce_with_logits_loss(self):
         """Test the binary cross entropy loss with logits."""
@@ -82,6 +82,70 @@ class TestJITBCEWithLogitsLoss(unittest.TestCase):
             targets * np.log(1 / (1 + np.exp(-logits)) + 1e-15)
             + (1 - targets) * np.log(1 - 1 / (1 + np.exp(-logits)) + 1e-15)
         )
+        self.assertAlmostEqual(loss, expected_loss, places=5)
+
+
+class TestMeanSquaredErrorLoss(unittest.TestCase):
+    """Unit tests for the JITMeanSquaredErrorLoss class."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        print("\nTesting the JITMeanSquaredErrorLoss class", end="", flush=True)
+
+    def test_mean_squared_error_loss(self):
+        """Test the mean squared error loss."""
+        loss_fn = JITMeanSquaredErrorLoss()
+        y_true = np.array([1.0, 2.0, 3.0])
+        y_pred = np.array([1.5, 2.5, 3.5])
+        loss = loss_fn.calculate_loss(y_true, y_pred)
+        expected_loss = np.mean((y_true - y_pred) ** 2)
+        self.assertAlmostEqual(loss, expected_loss, places=5)
+
+
+class TestMeanAbsoluteErrorLoss(unittest.TestCase):
+    """Unit tests for the JITMeanAbsoluteErrorLoss class."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        print("\nTesting the JITMeanAbsoluteErrorLoss class", end="", flush=True)
+
+    def test_mean_absolute_error_loss(self):
+        """Test the mean absolute error loss."""
+        loss_fn = JITMeanAbsoluteErrorLoss()
+        y_true = np.array([1.0, 2.0, 3.0])
+        y_pred = np.array([1.5, 2.5, 3.5])
+        loss = loss_fn.calculate_loss(y_true, y_pred)
+        expected_loss = np.mean(np.abs(y_true - y_pred))
+        self.assertAlmostEqual(loss, expected_loss, places=5)
+
+
+class TestHuberLoss(unittest.TestCase):
+    """Unit tests for the HuberLoss class."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        print("\nTesting the JITHuberLoss class", end="", flush=True)
+
+    def test_huber_loss_small_error(self):
+        """Test the Huber loss for small errors."""
+        delta = 1.0
+        loss_fn = JITHuberLoss(delta=delta)
+        y_true = np.array([1.0, 2.0, 3.0])
+        y_pred = np.array([1.1, 2.1, 3.1])
+        loss = loss_fn.calculate_loss(y_true, y_pred)
+        error = y_true - y_pred
+        expected_loss = np.mean(0.5 * error**2)
+        self.assertAlmostEqual(loss, expected_loss, places=5)
+
+    def test_huber_loss_large_error(self):
+        """Test the Huber loss for large errors."""
+        delta = 1.0
+        loss_fn = JITHuberLoss(delta=delta)
+        y_true = np.array([1.0, 2.0, 3.0])
+        y_pred = np.array([4.0, 5.0, 6.0])
+        loss = loss_fn.calculate_loss(y_true, y_pred)
+        error = y_true - y_pred
+        expected_loss = np.mean(delta * (np.abs(error) - 0.5 * delta))
         self.assertAlmostEqual(loss, expected_loss, places=5)
 
 

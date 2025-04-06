@@ -31,6 +31,9 @@ from .neural_networks import (
     CrossEntropyLoss,
     DenseLayer,
     FlattenLayer,
+    HuberLoss,
+    MeanAbsoluteErrorLoss,
+    MeanSquaredErrorLoss,
     NeuralNetworkBase,
     RNNLayer,
     SGDOptimizer,
@@ -136,6 +139,9 @@ __all__ = [
     "lr_scheduler_step",
     "CrossEntropyLoss",
     "BCEWithLogitsLoss",
+    "MeanSquaredErrorLoss",
+    "MeanAbsoluteErrorLoss",
+    "HuberLoss",
     "NeuralNetwork",
     "DenseLayer",
     "FlattenLayer",
@@ -166,7 +172,13 @@ try:
         JITFlattenLayer,
         JITRNNLayer,
     )
-    from .neural_networks.loss_jit import JITBCEWithLogitsLoss, JITCrossEntropyLoss
+    from .neural_networks.loss_jit import (
+        JITBCEWithLogitsLoss,
+        JITCrossEntropyLoss,
+        JITHuberLoss,
+        JITMeanAbsoluteErrorLoss,
+        JITMeanSquaredErrorLoss,
+    )
     from .neural_networks.neuralNetworkNumbaBackend import NumbaBackendNeuralNetwork
     from .neural_networks.numba_utils import *
     from .neural_networks.optimizers_jit import (
@@ -182,6 +194,9 @@ try:
             "JITAdadeltaOptimizer",
             "JITBCEWithLogitsLoss",
             "JITCrossEntropyLoss",
+            "JITMeanSquaredErrorLoss",
+            "JITMeanAbsoluteErrorLoss",
+            "JITHuberLoss",
             "JITDenseLayer",
             "JITFlattenLayer",
             "JITConvLayer",

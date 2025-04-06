@@ -2,6 +2,7 @@ import warnings
 
 import numpy as np
 
+from .loss import HuberLoss, MeanAbsoluteErrorLoss
 from .neuralNetworkBase import NeuralNetworkBase
 from .schedulers import lr_scheduler_plateau
 
@@ -86,6 +87,8 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         dropout_rate=0.2,
         reg_lambda=0.01,
         activations=None,
+        loss_function=None,
+        regressor=False,
         compile_numba=True,
         progress_bar=True,
     ):
@@ -96,11 +99,16 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             dropout_rate: (float) - Dropout rate for regularization.
             reg_lambda: (float) - L2 regularization parameter.
             activations: (list) - List of activation functions for each layer.
+            loss_function: (callable) optional - Custom loss function (default: selects based on task).
+            regressor: (bool) - Whether the model is a regressor (default is False).
             compile_numba: (bool) - Whether to compile Numba functions.
             progress_bar: (bool) - Whether to display a progress bar.
         """
-        super().__init__(layers, dropout_rate, reg_lambda, activations)
+        super().__init__(
+            layers, dropout_rate, reg_lambda, activations, loss_function, regressor
+        )
         self.compiled = False
+
         # if layers are empty list, initialize them
         if len(self.layers) == 0:
             self.initialize_new_layers()
@@ -112,6 +120,43 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             if hasattr(layer, "weights") and hasattr(layer, "biases")
         ]
 
+        # Check if the provided loss_function is already a JIT version
+        is_jit_loss = isinstance(
+            self.loss_function,
+            JITMeanSquaredErrorLoss
+            | JITMeanAbsoluteErrorLoss
+            | JITHuberLoss
+            | JITBCEWithLogitsLoss
+            | JITCrossEntropyLoss,
+        )
+
+        if not is_jit_loss:
+            # If not a JIT version or None, determine the default JIT loss
+            if self.is_regressor:
+                if isinstance(self.loss_function, MeanAbsoluteErrorLoss):
+                    self.loss_function = JITMeanAbsoluteErrorLoss()
+                elif isinstance(self.loss_function, HuberLoss):
+                    # Keep the delta from the original if possible
+                    delta = getattr(self.loss_function, "delta", 1.0)
+                    self.loss_function = JITHuberLoss(delta=delta)
+                else:  # Default to MSE for regression (or if original was MSELoss/None)
+                    self.loss_function = JITMeanSquaredErrorLoss()
+            elif self.is_binary:
+                # Default to JIT BCE for binary (handles None or BCEWithLogitsLoss)
+                self.loss_function = JITBCEWithLogitsLoss()
+            else:
+                # Default to JIT CrossEntropy for multi-class
+                self.loss_function = JITCrossEntropyLoss()
+            if loss_function is not None:  # Warn if we converted a non-JIT function
+                warnings.warn(
+                    f"Converted non-JIT loss function {type(loss_function).__name__} to {type(self.loss_function).__name__} for Numba backend.",
+                    stacklevel=2,
+                )
+
+        # Flag to only warn once for HuberLoss
+        self.warn_huber_delta = False
+
+        # Progress bar setup
         if progress_bar and not TQDM_AVAILABLE:
             warnings.warn(
                 "tqdm is not installed. Progress bar will not be displayed.",
@@ -121,11 +166,21 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         else:
             self.progress_bar = progress_bar
 
+        # Compile Numba functions if requested
         if compile_numba and not self.compiled:
             self.store_init_layers()
-            self.compile_numba_functions(self.progress_bar)
-            self.restore_layers()
-            self.compiled = True
+            try:
+                self.compile_numba_functions(self.progress_bar)
+                self.compiled = True
+            except Exception as e:
+                warnings.warn(
+                    f"Numba compilation failed: {e}. Running without JIT acceleration.",
+                    stacklevel=2,
+                )
+                self.compiled = False  # Ensure flag is false if compilation fails
+            finally:
+                # Always restore layers, even if compilation failed
+                self.restore_layers()
 
     def store_init_layers(self):
         """Stores the layers to restore after initialization."""
@@ -412,11 +467,15 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         # Set metrics to track
         if track_metrics:
             self.train_loss = []
-            self.train_accuracy = []
+            self.train_metric = []  # Stores MSE for regression, Accuracy for classification
             self.learning_rates = []
             if X_val is not None:
                 self.val_loss = []
-                self.val_accuracy = []
+                self.val_metric = []
+
+        # Remove tracking for precision/recall/f1 if it's a regressor
+        if self.is_regressor:
+            track_adv_metrics = False
 
         # Set advanced metrics to track
         if track_adv_metrics:
@@ -427,6 +486,8 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
                 self.val_precision = []
                 self.val_recall = []
                 self.val_f1 = []
+
+        lr = optimizer.learning_rate  # Initialize lr for animation tracking
 
         # Training loop with progress bar
         progress_bar = tqdm(range(epochs)) if use_tqdm else range(epochs)
@@ -459,40 +520,72 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
                 dropout_layer_indices = [-1]
 
             # Process batches based on classification type
-            if self.is_binary:
-                dWs_acc, dbs_acc, train_loss, train_accuracy = process_batches_binary(
-                    X_shuffled,
-                    y_shuffled,
-                    batch_size,
-                    self.layers,
-                    self.dropout_rate,
-                    dropout_layer_indices,
-                    self.reg_lambda,
-                    dWs_zeros,
-                    dbs_zeros,
+            if self.is_regressor:
+                # Ensure y_shuffled has the correct shape and type for regression
+                y_shuffled_reg = y_shuffled.astype(np.float64)
+                if y_shuffled_reg.ndim == 1:
+                    y_shuffled_reg = y_shuffled_reg.reshape(-1, 1)
+
+                jit_loss_calculator = self._get_jit_loss_calculator()
+                if not jit_loss_calculator:
+                    # Should not happen if initialized correctly, but handle defensively
+                    raise TypeError(
+                        "Could not find appropriate JIT loss calculator for regression."
+                    )
+
+                dWs_acc, dbs_acc, train_loss, train_metric_value = (
+                    process_batches_regression_jit(
+                        X_shuffled,
+                        y_shuffled_reg,
+                        batch_size,
+                        self.layers,
+                        self.dropout_rate,
+                        dropout_layer_indices,
+                        self.reg_lambda,
+                        dWs_zeros,
+                        dbs_zeros,
+                        jit_loss_calculator,
+                    )
+                )
+            elif self.is_binary:
+                dWs_acc, dbs_acc, train_loss, train_metric_value = (
+                    process_batches_binary(
+                        X_shuffled,
+                        y_shuffled,
+                        batch_size,
+                        self.layers,
+                        self.dropout_rate,
+                        dropout_layer_indices,
+                        self.reg_lambda,
+                        dWs_zeros,
+                        dbs_zeros,
+                    )
                 )
             else:
-                dWs_acc, dbs_acc, train_loss, train_accuracy = process_batches_multi(
-                    X_shuffled,
-                    y_shuffled,
-                    batch_size,
-                    self.layers,
-                    self.dropout_rate,
-                    dropout_layer_indices,
-                    self.reg_lambda,
-                    dWs_zeros,
-                    dbs_zeros,
+                dWs_acc, dbs_acc, train_loss, train_metric_value = (
+                    process_batches_multi(
+                        X_shuffled,
+                        y_shuffled,
+                        batch_size,
+                        self.layers,
+                        self.dropout_rate,
+                        dropout_layer_indices,
+                        self.reg_lambda,
+                        dWs_zeros,
+                        dbs_zeros,
+                    )
                 )
 
             # Update weights and biases using the optimizer
             optimizer.update_layers(self.trainable_layers, dWs_acc, dbs_acc)
 
             # Validation metrics
-            val_metrics = ""
+            val_metrics_str = ""
             if X_val is not None:
                 val_loss = self.calculate_loss(X_val, y_val)
-                val_accuracy, _ = self.evaluate(X_val, y_val)
-                val_metrics = f", Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.4f}"
+                val_metric_value, _ = self.evaluate(X_val, y_val)
+                val_metric_label = "MSE" if self.is_regressor else "Acc"
+                val_metrics_str = f", Val Loss: {val_loss:.4f}, Val {val_metric_label}: {val_metric_value:.4f}"
 
                 # Early stopping check
                 if val_loss < best_loss:
@@ -532,14 +625,15 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
             # Store metrics
             if track_metrics:
                 self.train_loss.append(train_loss)
-                self.train_accuracy.append(train_accuracy)
-                self.learning_rates.append(optimizer.learning_rate)
+                self.train_metric.append(train_metric_value)
+                if lr_scheduler:  # Store LR only if scheduler exists
+                    self.learning_rates.append(optimizer.learning_rate)
                 if X_val is not None:
                     self.val_loss.append(val_loss)
-                    self.val_accuracy.append(val_accuracy)
+                    self.val_metric.append(val_metric_value)
 
             # Store advanced metrics
-            if track_adv_metrics:
+            if track_adv_metrics and not self.is_regressor:
                 train_precision, train_recall, train_f1 = (
                     self.calculate_precision_recall_f1(X_train, y_train)
                 )
@@ -555,15 +649,14 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
                     self.val_f1.append(val_f1)
 
             # Update progress bar or print metrics
+            metric_label = "MSE" if self.is_regressor else "Acc"
+            train_metrics_display = f"Loss: {train_loss:.4f}, Train {metric_label}: {train_metric_value:.4f}"
             if p:
+                log_message = f"Epoch {epoch + 1}/{epochs} - {train_metrics_display}{val_metrics_str}"
                 if use_tqdm and isinstance(progress_bar, tqdm):
-                    progress_bar.set_description(
-                        f"Epoch {epoch + 1}/{epochs} - Loss: {train_loss:.4f}, Acc: {train_accuracy:.4f}{val_metrics}"
-                    )
+                    progress_bar.set_description(log_message)
                 else:
-                    print(
-                        f"Epoch {epoch + 1}/{epochs} - Loss: {train_loss:.4f}, Acc: {train_accuracy:.4f}{val_metrics}"
-                    )
+                    print(log_message)
 
             # Learning rate scheduler step
             if lr_scheduler:
@@ -582,24 +675,44 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
 
             # Update animator with metrics
             if save_animation:
-                train_metrics = {
+                # Prepare metrics dictionary for animator
+                epoch_train_metrics = {
                     "loss": train_loss,
-                    "accuracy": train_accuracy,
-                    "precision": train_precision,
-                    "recall": train_recall,
-                    "f1": train_f1,
+                    (
+                        "metric",
+                        "MSE" if self.is_regressor else "Accuracy",
+                    ): train_metric_value,  # Use tuple for label
                 }
-                if lr:
-                    train_metrics["learning_rate"] = lr
-                animator.update_metrics(train_metrics, validation=False)
-                val_metrics = {
-                    "loss": val_loss,
-                    "accuracy": val_accuracy,
-                    "precision": val_precision,
-                    "recall": val_recall,
-                    "f1": val_f1,
-                }
-                animator.update_metrics(val_metrics, validation=True)
+                if not self.is_regressor and track_adv_metrics:
+                    epoch_train_metrics.update(
+                        {
+                            "precision": train_precision,
+                            "recall": train_recall,
+                            "f1": train_f1,
+                        }
+                    )
+                if lr_scheduler:
+                    epoch_train_metrics["learning_rate"] = lr
+
+                animator.update_metrics(epoch_train_metrics, validation=False)
+
+                if X_val is not None:
+                    epoch_val_metrics = {
+                        "loss": val_loss,
+                        (
+                            "metric",
+                            "MSE" if self.is_regressor else "Accuracy",
+                        ): val_metric_value,
+                    }
+                    if not self.is_regressor and track_adv_metrics:
+                        epoch_val_metrics.update(
+                            {
+                                "precision": val_precision,
+                                "recall": val_recall,
+                                "f1": val_f1,
+                            }
+                        )
+                    animator.update_metrics(epoch_val_metrics, validation=True)
 
                 # Add frame to the animation if needed
                 if epoch % frame_every == 0 or epoch == epochs - 1:
@@ -607,7 +720,10 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
                         animator.add_training_frame()
                     except Exception as e:
                         print(f"Failed to add animation frame: {str(e)}")
-                        save_animation = False
+                        save_animation = (
+                            False  # Disable animation if adding frame fails
+                        )
+
             # Early stopping
             if patience_counter >= early_stopping_threshold:
                 if p and use_tqdm:
@@ -649,13 +765,33 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         Returns:
             tuple: Accuracy and predicted labels.
         """
-        # Get predictions (forward pass w/o dropout)
         y_hat = self.forward(X, training=False)
+        y = np.asarray(y)  # Ensure y is numpy array
 
-        # Evaluate predictions
-        accuracy, predicted = evaluate_jit(y_hat, y, self.is_binary)
-        predicted = predicted.reshape(y.shape)
-        return accuracy, predicted
+        if self.is_regressor:
+            # Ensure y has the correct shape for regression loss calculation
+            y = y.astype(np.float64)
+            if y.ndim == 1:
+                y = y.reshape(-1, 1)
+            if y_hat.shape != y.shape:
+                raise ValueError(
+                    f"evaluate (regression) shape mismatch: y_true {y.shape} vs y_pred {y_hat.shape}"
+                )
+
+            # The loss_function object's calculate_loss method calls the @njit helper
+            metric = self.loss_function.calculate_loss(y_hat, y)
+            predicted = y_hat
+
+        elif self.is_binary:
+            # Use the existing evaluate_jit for classification accuracy
+            metric, predicted = evaluate_jit(y_hat, y.astype(np.int32), True)
+            predicted = predicted.reshape(y.shape)  # Ensure correct output shape
+        else:
+            # Use the existing evaluate_jit for classification accuracy
+            metric, predicted = evaluate_jit(y_hat, y.astype(np.int32), False)
+            # No need to reshape predicted here as evaluate_jit returns 1D argmax indices
+
+        return metric, predicted
 
     def predict(self, X):
         """Predicts the output for the given input data.
@@ -668,7 +804,12 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         """
         # Get predictions (forward pass w/o dropout)
         outputs = self.forward(X, training=False)
-        return outputs if self.is_binary else np.argmax(outputs, axis=1)
+        if self.is_regressor:
+            return outputs.flatten()  # Ensure 1D output for regression
+        elif self.is_binary:
+            return (outputs > 0.5).astype(int)
+        else:
+            return np.argmax(outputs, axis=1)
 
     def calculate_loss(self, X, y):
         """Calculates the loss with L2 regularization.
@@ -680,20 +821,33 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         Returns:
             float: The calculated loss value.
         """
-        # Get predictions (forward pass w/o dropout)
         outputs = self.forward(X, training=False)
-        # If binary classification use BCE loss
-        if self.is_binary:
-            loss_fn = JITBCEWithLogitsLoss()
-            loss = loss_fn.calculate_loss(outputs, y.reshape(-1, 1))
-        # If multi-class classification use Cross-Entropy loss
+        y = np.asarray(y)  # Ensure numpy array
+
+        if self.is_regressor:
+            # Ensure y has the correct shape for regression loss calculation
+            y = y.astype(np.float64)
+            if y.ndim == 1:
+                y = y.reshape(-1, 1)
+            if outputs.shape != y.shape:
+                raise ValueError(
+                    f"calculate_loss (regression) shape mismatch: y_true {y.shape} vs y_pred {outputs.shape}"
+                )
+            loss = self.loss_function.calculate_loss(outputs, y)
+        elif self.is_binary:
+            loss = self.loss_function.calculate_loss(
+                outputs, y.reshape(-1, 1).astype(np.float64)
+            )
         else:
-            loss_fn = JITCrossEntropyLoss()
-            y_ohe = np.eye(self.layer_sizes[-1])[y]
-            loss = loss_fn.calculate_loss(outputs, y_ohe)
+            y_ohe = np.eye(self.layer_sizes[-1])[y.astype(np.int32)]
+            loss = self.loss_function.calculate_loss(outputs, y_ohe)
 
         # Add L2 regularization term
-        weights = [layer.weights for layer in self.layers if hasattr(layer, "weights")]
+        weights = [
+            layer.weights
+            for layer in self.trainable_layers
+            if hasattr(layer, "weights")
+        ]
         l2_reg = self.reg_lambda * compute_l2_reg(weights)
         loss += l2_reg
         return float(loss)
@@ -858,191 +1012,276 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
 
         return best_params, best_accuracy
 
+    def _get_jit_loss_calculator(self):
+        """Helper to get the corresponding @njit loss calculation function."""
+        if isinstance(self.loss_function, JITMeanSquaredErrorLoss):
+            return calculate_mse_loss
+        elif isinstance(self.loss_function, JITMeanAbsoluteErrorLoss):
+            return calculate_mae_loss
+        elif isinstance(self.loss_function, JITHuberLoss):
+            # The delta parameter is stored in self.loss_function.delta
+            # However, we cannot easily pass this instance variable into the
+            # @njit process_batches_regression_jit function which expects only
+            # the @njit function reference (calculate_huber_loss).
+            # The calculate_huber_loss function has a default delta=1.0.
+            # We will return the function and issue a warning that the default delta is used.
+            if not self.warn_huber_delta and self.loss_function.delta != 1.0:
+                self.warn_huber_delta = True
+                warnings.warn(
+                    f"JITHuberLoss selected for Numba backend. "
+                    f"The JIT batch processing loop will use the default delta={getattr(calculate_huber_loss, 'delta', 1.0)} "
+                    f"for calculate_huber_loss. The specified delta ({self.loss_function.delta}) "
+                    f"will be used for non-JIT evaluations (like final loss/metric calculation).",
+                    UserWarning,
+                    stacklevel=2,
+                )
+            return calculate_huber_loss
+        elif (
+            self.is_regressor
+        ):  # Default case if loss is None or unexpected for regressor
+            warnings.warn(
+                "Defaulting to MSE loss calculator for JIT regression.", stacklevel=2
+            )
+            return calculate_mse_loss
+        else:
+            # Should not be called for classification, but handle defensively
+            return None
+
     def compile_numba_functions(self, progress_bar=True):
         """Compiles all Numba JIT functions to improve performance.
 
         Args:
             progress_bar (bool): Whether to display a progress bar.
         """
-        if progress_bar:
-            progress_bar = tqdm(total=31, desc="Compiling Numba functions")
-        else:
-            progress_bar = None
+        if progress_bar and not TQDM_AVAILABLE:
+            warnings.warn("tqdm not installed. Progress bar disabled.", stacklevel=2)
+            progress_bar = False
+
+        # Total steps: 2 + 1 + 2 + 6 + 9 + 2 + 9 + 10 = 41
+        # NN Functions: 2 calls
+        # Batch Processing: 1 call
+        # Evaluation Functions: 2 calls
+        # Numba Utils - Loss Helpers: 6 calls
+        # Numba Utils - Activations: 9 calls
+        # Numba Utils - Other: 2 calls
+        # Optimizers: 9 calls
+        # Loss Modules: 10 calls
+        total_steps = 41
+        pbar = tqdm(
+            total=total_steps,
+            desc="Compiling Numba functions",
+            disable=not progress_bar,
+        )
+
+        def update_pbar(p):
+            if p:
+                p.update(1)
+
         # Neural network functions
         # --------------------------------------------------------------------
-        if progress_bar:
-            progress_bar.set_description("Compiling Neural Network Functions")
-        apply_dropout_jit(np.random.randn(10, 10), self.dropout_rate)
-        if progress_bar:
-            progress_bar.update(1)
-        compute_l2_reg(self.weights)
-        if progress_bar:
-            progress_bar.update(1)
-        # Compile the appropriate batch processing function based on classification type
-        if self.is_binary:
-            process_batches_binary(
-                X_shuffled=np.random.randn(10, self.layer_sizes[0]),
-                y_shuffled=np.random.randint(0, 2, (10, 1)),
-                batch_size=32,
-                layers=self.layers,
-                dropout_rate=self.dropout_rate,
-                dropout_layer_indices=[1],
-                reg_lambda=self.reg_lambda,
-                dWs_acc=self.dWs_cache,
-                dbs_acc=self.dbs_cache,
-            )
-            if progress_bar:
-                progress_bar.update(1)
-        else:
-            process_batches_multi(
-                X_shuffled=np.random.randn(10, self.layer_sizes[0]),
-                y_shuffled=np.random.randint(0, 2, 10),
-                batch_size=32,
-                layers=self.layers,
-                dropout_rate=self.dropout_rate,
-                dropout_layer_indices=[1],
-                reg_lambda=self.reg_lambda,
-                dWs_acc=self.dWs_cache,
-                dbs_acc=self.dbs_cache,
-            )
-            if progress_bar:
-                progress_bar.update(1)
+        if pbar:
+            pbar.set_description("Compiling NN Functions")
+        apply_dropout_jit(np.random.randn(10, 10).astype(np.float64), self.dropout_rate)
+        update_pbar(pbar)
+        _weights_list = [
+            w.astype(np.float64) for w in self.weights
+        ]  # Ensure float64 list
+        compute_l2_reg(_weights_list)
+        update_pbar(pbar)
 
-        evaluate_jit(
-            np.random.randn(10, self.layer_sizes[-1]),
-            np.random.randint(0, 2, 10),
-            self.is_binary,
+        # Prepare dummy data (Ensure both binary and multi-class dummy targets are defined)
+        dummy_X = np.random.randn(10, self.layer_sizes[0]).astype(np.float64)
+        # Creates dummy binary targets, shape (10, 1)
+        dummy_y_binary = np.random.randint(0, 2, (10, 1)).astype(np.float64)
+        # Create dummy multi-class index targets, shape (10,)
+        dummy_y_multi_idx = np.random.randint(0, self.layer_sizes[-1], 10).astype(
+            np.int32
         )
-        if progress_bar:
-            progress_bar.update(1)
+        # Create dummy regression targets if needed
+        dummy_y_reg = np.random.randn(10, 1).astype(np.float64)
 
-        # Initialize dummy layer outputs for backward pass
-        self.layer_outputs = [np.random.randn(10, size) for size in self.layer_sizes]
+        dummy_dWs = [np.zeros_like(w, dtype=np.float64) for w in self.weights]
+        dummy_dbs = [np.zeros_like(b, dtype=np.float64) for b in self.biases]
+        dropout_idxs = [
+            i for i, layer in enumerate(self.layers) if isinstance(layer, JITDenseLayer)
+        ] or [-1]
+
+        # Compile batch processing functions
+        # --------------------------------------------------------------------
+        if pbar:
+            pbar.set_description("Compiling Batch Processing")
+        if self.is_regressor:
+            jit_loss_calculator = self._get_jit_loss_calculator()
+            if jit_loss_calculator:  # Only compile if we have a valid calculator
+                process_batches_regression_jit(
+                    dummy_X,
+                    dummy_y_reg,  # Use regression dummy data
+                    4,  # batch_size
+                    self.layers,
+                    self.dropout_rate,
+                    dropout_idxs,
+                    self.reg_lambda,
+                    dummy_dWs,
+                    dummy_dbs,
+                    jit_loss_calculator,  # Pass the loss function instance
+                )
+            else:
+                warnings.warn(
+                    "Skipping compilation of process_batches_regression_jit due to incompatible loss function.",
+                    stacklevel=2,
+                )
+        elif self.is_binary:
+            process_batches_binary(
+                dummy_X,
+                dummy_y_binary.astype(np.int32),  # Use binary dummy data
+                4,  # batch_size
+                self.layers,
+                self.dropout_rate,
+                dropout_idxs,
+                self.reg_lambda,
+                dummy_dWs,
+                dummy_dbs,
+            )
+        else:  # Multi-class
+            process_batches_multi(
+                dummy_X,
+                dummy_y_multi_idx,  # Use multi-class index dummy data
+                4,  # batch_size
+                self.layers,
+                self.dropout_rate,
+                dropout_idxs,
+                self.reg_lambda,
+                dummy_dWs,
+                dummy_dbs,
+            )
+        update_pbar(pbar)
+
+        # Compile evaluation functions
+        # --------------------------------------------------------------------
+        if pbar:
+            pbar.set_description("Compiling Evaluation")
+        dummy_y_hat_binary = np.random.rand(10, 1).astype(np.float64)
+        dummy_y_hat_multi = np.random.rand(10, self.layer_sizes[-1]).astype(np.float64)
+        # REMOVED: dummy_y_hat_reg = np.random.rand(10, 1).astype(np.float64) # No longer needed here
+
+        evaluate_jit(dummy_y_hat_binary, dummy_y_binary.astype(np.int32), True)
+        update_pbar(pbar)
+        evaluate_jit(dummy_y_hat_multi, dummy_y_multi_idx, False)
+        update_pbar(pbar)
+        # REMOVED: evaluate_regression_jit compilation call
 
         # Numba Utils functions
         # --------------------------------------------------------------------
-        if progress_bar:
-            progress_bar.set_description("Compiling Numba Utils Functions")
-        # Loss functions and evaluation
+        if pbar:
+            pbar.set_description("Compiling Numba Utils")
+        # Loss calculation helpers
         calculate_loss_from_outputs_binary(
-            np.random.randn(10, 1),
-            np.random.randint(0, 2, 10).astype(np.float64),
-            self.reg_lambda,
-            self.weights,
+            dummy_y_hat_binary, dummy_y_binary, self.reg_lambda, _weights_list
         )
-        if progress_bar:
-            progress_bar.update(1)
+        update_pbar(pbar)
+        dummy_y_ohe = np.eye(self.layer_sizes[-1])[dummy_y_multi_idx].astype(np.float64)
         calculate_loss_from_outputs_multi(
-            np.random.randn(10, self.layer_sizes[-1]),
-            np.eye(self.layer_sizes[-1])[
-                np.random.randint(0, self.layer_sizes[-1], 10)
-            ],
-            self.reg_lambda,
-            self.weights,
+            dummy_y_hat_multi, dummy_y_ohe, self.reg_lambda, _weights_list
         )
-        if progress_bar:
-            progress_bar.update(1)
+        update_pbar(pbar)
+        # Compile regression loss helpers
+        dummy_y_hat_reg = np.random.rand(10, 1).astype(
+            np.float64
+        )  # Define it here for loss helpers
+        calculate_mse_loss(dummy_y_hat_reg, dummy_y_reg)
+        update_pbar(pbar)
+        calculate_mae_loss(dummy_y_hat_reg, dummy_y_reg)
+        update_pbar(pbar)
+        calculate_huber_loss(dummy_y_hat_reg, dummy_y_reg)
+        update_pbar(pbar)
         evaluate_batch(
-            np.random.randn(10, self.layer_sizes[-1]),
-            np.random.randint(0, 2, 10),
-            self.is_binary,
-        )
-        if progress_bar:
-            progress_bar.update(1)
-        # Activation functions
-        relu(np.random.randn(10, 10))
-        if progress_bar:
-            progress_bar.update(1)
-        relu_derivative(np.random.randn(10, 10))
-        if progress_bar:
-            progress_bar.update(1)
-        leaky_relu(np.random.randn(10, 10))
-        if progress_bar:
-            progress_bar.update(1)
-        leaky_relu_derivative(np.random.randn(10, 10))
-        if progress_bar:
-            progress_bar.update(1)
-        tanh(np.random.randn(10, 10))
-        if progress_bar:
-            progress_bar.update(1)
-        tanh_derivative(np.random.randn(10, 10))
-        if progress_bar:
-            progress_bar.update(1)
-        sigmoid(np.random.randn(10, 10))
-        if progress_bar:
-            progress_bar.update(1)
-        sigmoid_derivative(np.random.randn(10, 10))
-        if progress_bar:
-            progress_bar.update(1)
-        softmax(np.random.randn(10, 10))
-        if progress_bar:
-            progress_bar.update(1)
-        # Other utility functions
-        sum_reduce(np.random.randn(10, 10))
-        if progress_bar:
-            progress_bar.update(1)
-        sum_axis0(np.random.randn(10, 10))
-        if progress_bar:
-            progress_bar.update(1)
+            dummy_y_hat_multi, dummy_y_multi_idx, False
+        )  # Covers both binary/multi logic inside
+        update_pbar(pbar)
+        # Activation functions (remain the same)
+        relu(np.random.randn(10, 10).astype(np.float64))
+        update_pbar(pbar)
+        relu_derivative(np.random.randn(10, 10).astype(np.float64))
+        update_pbar(pbar)
+        leaky_relu(np.random.randn(10, 10).astype(np.float64))
+        update_pbar(pbar)
+        leaky_relu_derivative(np.random.randn(10, 10).astype(np.float64))
+        update_pbar(pbar)
+        tanh(np.random.randn(10, 10).astype(np.float64))
+        update_pbar(pbar)
+        tanh_derivative(np.random.randn(10, 10).astype(np.float64))
+        update_pbar(pbar)
+        sigmoid(np.random.randn(10, 10).astype(np.float64))
+        update_pbar(pbar)
+        sigmoid_derivative(np.random.randn(10, 10).astype(np.float64))
+        update_pbar(pbar)
+        softmax(np.random.randn(10, 10).astype(np.float64))
+        update_pbar(pbar)
+        # Other utility functions (remain the same)
+        sum_reduce(np.random.randn(10, 10).astype(np.float64))
+        update_pbar(pbar)
+        sum_axis0(np.random.randn(10, 10).astype(np.float64))
+        update_pbar(pbar)
 
         # Optimizers
         # --------------------------------------------------------------------
-        if progress_bar:
-            progress_bar.set_description("Compiling Optimizer Functions")
+        if pbar:
+            pbar.set_description("Compiling Optimizers")
+        # Ensure dummy gradients match weight/bias dimensions for trainable layers
+        dummy_dWs = []
+        dummy_dbs = []
+        for layer in self.trainable_layers:
+            dummy_dWs.append(np.zeros_like(layer.weights, dtype=np.float64))
+            dummy_dbs.append(np.zeros_like(layer.biases, dtype=np.float64))
+
         # Adam
         _adam = JITAdamOptimizer()
-        if progress_bar:
-            progress_bar.update(1)
-        _adam.initialize(self.layers)
-        if progress_bar:
-            progress_bar.update(1)
-        _adam.update_layers(self.layers, self.dWs_cache, self.dbs_cache)
-        if progress_bar:
-            progress_bar.update(1)
+        update_pbar(pbar)
+        _adam.initialize(self.trainable_layers)
+        update_pbar(pbar)  # Pass trainable_layers
+        _adam.update_layers(self.trainable_layers, dummy_dWs, dummy_dbs)
+        update_pbar(pbar)  # Pass trainable_layers
         # SGD
         _sgd = JITSGDOptimizer()
-        if progress_bar:
-            progress_bar.update(1)
-        _sgd.initialize(self.layers)
-        if progress_bar:
-            progress_bar.update(1)
-        _sgd.update_layers(self.layers, self.dWs_cache, self.dbs_cache)
-        if progress_bar:
-            progress_bar.update(1)
+        update_pbar(pbar)
+        _sgd.initialize(self.trainable_layers)
+        update_pbar(pbar)  # Pass trainable_layers
+        _sgd.update_layers(self.trainable_layers, dummy_dWs, dummy_dbs)
+        update_pbar(pbar)  # Pass trainable_layers
         # Adadelta
         _adadelta = JITAdadeltaOptimizer()
-        if progress_bar:
-            progress_bar.update(1)
-        _adadelta.initialize(self.layers)
-        if progress_bar:
-            progress_bar.update(1)
-        _adadelta.update_layers(self.layers, self.dWs_cache, self.dbs_cache)
-        if progress_bar:
-            progress_bar.update(1)
+        update_pbar(pbar)
+        _adadelta.initialize(self.trainable_layers)
+        update_pbar(pbar)  # Pass trainable_layers
+        _adadelta.update_layers(self.trainable_layers, dummy_dWs, dummy_dbs)
+        update_pbar(pbar)  # Pass trainable_layers
 
         # Loss Modules
         # --------------------------------------------------------------------
-        if progress_bar:
-            progress_bar.set_description("Compiling Loss Functions")
+        if pbar:
+            pbar.set_description("Compiling Loss Modules")
         _cross_entropy = JITCrossEntropyLoss()
-        if progress_bar:
-            progress_bar.update(1)
-        _cross_entropy.calculate_loss(
-            np.random.randn(10, self.layer_sizes[-1]),
-            np.eye(self.layer_sizes[-1])[
-                np.random.randint(0, self.layer_sizes[-1], 10)
-            ],
-        )
-        if progress_bar:
-            progress_bar.update(1)
+        update_pbar(pbar)
+        _cross_entropy.calculate_loss(dummy_y_hat_multi, dummy_y_ohe)
+        update_pbar(pbar)
         _bce = JITBCEWithLogitsLoss()
-        if progress_bar:
-            progress_bar.update(1)
-        _bce.calculate_loss(
-            np.random.randn(10, 1),
-            np.random.randint(0, 2, 10).astype(np.float64).reshape(-1, 1),
-        )
-        if progress_bar:
-            progress_bar.update(1)
-        if progress_bar:
-            progress_bar.close()
+        update_pbar(pbar)
+        _bce.calculate_loss(dummy_y_hat_binary, dummy_y_binary)
+        update_pbar(pbar)
+        # Compile JIT Regression Loss Classes
+        _mse = JITMeanSquaredErrorLoss()
+        update_pbar(pbar)
+        _mse.calculate_loss(dummy_y_hat_reg, dummy_y_reg)
+        update_pbar(pbar)
+        _mae = JITMeanAbsoluteErrorLoss()
+        update_pbar(pbar)
+        _mae.calculate_loss(dummy_y_hat_reg, dummy_y_reg)
+        update_pbar(pbar)
+        _huber = JITHuberLoss()
+        update_pbar(pbar)
+        _huber.calculate_loss(dummy_y_hat_reg, dummy_y_reg)
+        update_pbar(pbar)
+
+        if pbar:
+            pbar.close()
+        self.compiled = True
