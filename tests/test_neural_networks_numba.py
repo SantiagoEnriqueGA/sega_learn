@@ -62,7 +62,7 @@ class TestNeuralNetworkNumba(unittest.TestCase):
         self.y_reg = (np.random.randn(50, 1) * 5 + 2).astype(np.float64)
 
     ### Initialization Tests ###
-    def test_intial_numba_compilation(self):
+    def test_initial_numba_compilation(self):
         """Test Numba compilation of initial network."""
         nn = NumbaBackendNeuralNetwork(
             [2, 10, 1], compile_numba=True, progress_bar=False
