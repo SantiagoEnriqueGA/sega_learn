@@ -28,15 +28,19 @@ class AutoClassifier:
     Uses various classification models and compares their performance using metrics such as accuracy, precision, recall, F1 score, and ROC AUC.
     """
 
-    def __init__(self):
-        """Initializes the AutoClassifier with a set of predefined classification models."""
+    def __init__(self, all_kernels=False):
+        """Initializes the AutoClassifier with a set of predefined classification models.
+
+        Args:
+            all_kernels: (bool) - If True, include all kernels in the model list. Default is False.
+        """
         self.models = {
             # Linear Models - Not yet implemented
             # "LogisticRegression": LogisticRegression(),
             # "SGDClassifier": SGDClassifier(),
             # SVM
             "LinearSVC": LinearSVC(),
-            "GeneralizedSVC": GeneralizedSVC(),
+            "GeneralizedSVC - Linear": GeneralizedSVC(kernel="linear"),
             # "OneClassSVM": OneClassSVM(), <- Will add in fit only if n_classes == 2
             # Nearest Neighbors
             "KNeighborsClassifier": KNeighborsClassifier(),
@@ -55,8 +59,12 @@ class AutoClassifier:
             "SGDClassifier": "Linear",
             # SVM
             "LinearSVC": "SVM",
-            "GeneralizedSVC": "SVM",
-            "OneClassSVM": "SVM",
+            "GeneralizedSVC - Linear": "SVM",
+            "GeneralizedSVC - RBF": "SVM",
+            "GeneralizedSVC - Polynomial": "SVM",
+            "OneClassSVM - Linear": "SVM",
+            "OneClassSVM - RBF": "SVM",
+            "OneClassSVM - Polynomial": "SVM",
             # Nearest Neighbors
             "KNeighborsClassifier": "Nearest Neighbors",
             # Trees
@@ -65,6 +73,15 @@ class AutoClassifier:
             # Neural Networks
             "BaseBackendNeuralNetwork": "Neural Networks",
         }
+
+        # Add kernels if needed
+        if all_kernels:
+            self.models["GeneralizedSVC - RBF"] = GeneralizedSVC(kernel="rbf")
+            self.models["GeneralizedSVC - Polynomial"] = GeneralizedSVC(kernel="poly")
+            self.all_kernels = True
+        else:
+            self.all_kernels = False
+
         self.predictions = {}
         self.results = []
 
@@ -124,7 +141,10 @@ class AutoClassifier:
 
         # Include one-class SVM if the dataset is binary
         if len(np.unique(y_train)) == 2:
-            self.models["OneClassSVM"] = OneClassSVM()
+            self.models["OneClassSVM - Linear"] = OneClassSVM(kernel="linear")
+            if self.all_kernels:
+                self.models["OneClassSVM - RBF"] = OneClassSVM(kernel="rbf")
+                self.models["OneClassSVM - Polynomial"] = OneClassSVM(kernel="poly")
 
         progress_bar = (
             tqdm(

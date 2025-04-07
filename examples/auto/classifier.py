@@ -17,8 +17,11 @@ def run_example(verbose=False):
     """Runs the example."""
     X, y = make_classification(n_samples=1_000, n_features=5, random_state=42)
 
-    # Create and fit the AutoClassifier
-    reg = AutoClassifier()
+    # Create the AutoClassifier
+    # reg = AutoClassifier()
+    reg = AutoClassifier(all_kernels=True)  # Include all kernels in the model list
+
+    # Fit all models
     reg.fit(X, y, verbose=verbose)
     # Or can use custom metrics {str: callable}
     # reg.fit(X, y, custom_metrics={"r_squared": r_squared, "rmse": root_mean_squared_error})

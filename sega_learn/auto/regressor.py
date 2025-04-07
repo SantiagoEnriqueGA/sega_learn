@@ -28,8 +28,12 @@ class AutoRegressor:
     Uses various regression models and compares their performance using metrics such as R-squared, RMSE, and MAPE.
     """
 
-    def __init__(self):
-        """Initializes the AutoRegressor with a set of predefined regression models."""
+    def __init__(self, all_kernels=False):
+        """Initializes the AutoRegressor with a set of predefined regression models.
+
+        Args:
+            all_kernels: (bool) - If True, include all kernels in the model list. Default is False.
+        """
         # Each model should have a fit and predict method
         self.models = {
             # Linear Models
@@ -41,7 +45,7 @@ class AutoRegressor:
             "PassiveAggressive": PassiveAggressiveRegressor(),
             # SVM
             "LinearSVR": LinearSVR(),
-            "GeneralizedSVR": GeneralizedSVR(),
+            "GeneralizedSVR - Linear": GeneralizedSVR(kernel="linear"),
             # Nearest Neighbors
             "KNeighborsRegressor": KNeighborsRegressor(),
             # Trees
@@ -64,7 +68,9 @@ class AutoRegressor:
             "PassiveAggressive": "Linear",
             # SVM
             "LinearSVR": "SVM",
-            "GeneralizedSVR": "SVM",
+            "GeneralizedSVR - Linear": "SVM",
+            "GeneralizedSVR - RBF": "SVM",
+            "GeneralizedSVR - Polynomial": "SVM",
             # Nearest Neighbors
             "KNeighborsRegressor": "Nearest Neighbors",
             # Trees
@@ -74,6 +80,15 @@ class AutoRegressor:
             # Neural Networks
             "BaseBackendNeuralNetwork": "Neural Networks",
         }
+
+        # Add kernels if needed
+        if all_kernels:
+            self.models["GeneralizedSVR - RBF"] = GeneralizedSVR(kernel="rbf")
+            self.models["GeneralizedSVR - Polynomial"] = GeneralizedSVR(kernel="poly")
+            self.all_kernels = True
+        else:
+            self.all_kernels = False
+
         self.predictions = {}
         self.results = []
 
