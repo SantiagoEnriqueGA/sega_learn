@@ -11,12 +11,11 @@ except ImportError:
     TQDM_AVAILABLE = False
 
 from sega_learn.utils.metrics import Metrics
-from sega_learn.utils.modelSelection import (  # Import search methods
+from sega_learn.utils.modelSelection import (
     GridSearchCV,
     RandomSearchCV,
 )
 
-# Import models (keep existing imports)
 from ..linear_models import (
     RANSAC,
     Bayesian,
@@ -26,14 +25,14 @@ from ..linear_models import (
     Ridge,
 )
 from ..nearest_neighbors import KNeighborsRegressor
-from ..neural_networks import (  # Keep NN imports for default fitting and scaling
+from ..neural_networks import (
     AdamOptimizer,
     BaseBackendNeuralNetwork,
     MeanSquaredErrorLoss,
 )
 from ..svm import GeneralizedSVR, LinearSVR
 from ..trees import GradientBoostedRegressor, RandomForestRegressor, RegressorTree
-from ..utils import Scaler  # Keep Scaler for NN
+from ..utils import Scaler
 
 r_squared = Metrics.r_squared
 root_mean_squared_error = Metrics.root_mean_squared_error
@@ -109,7 +108,7 @@ class AutoRegressor:
             "RegressorTree": RegressorTree(),
             "RandomForestRegressor": RandomForestRegressor(),
             "GradientBoostedRegressor": GradientBoostedRegressor(),
-            "BaseBackendNeuralNetwork": None,  # Placeholder
+            "BaseBackendNeuralNetwork": None,  # Placeholder, defined in fit()
         }
 
         self.model_types = {  # Categorization for summary
@@ -150,12 +149,32 @@ class AutoRegressor:
             "Ridge": [
                 {"alpha": np.logspace(-3, 3, 7)},
                 {"fit_intercept": [True, False]},
+                {"max_iter": [500, 1000, 10_000, 20_000]},
+                {"tol": [1e-4, 1e-3, 1e-2]},
             ],
             "Lasso": [
                 {"alpha": np.logspace(-3, 3, 7)},
                 {"fit_intercept": [True, False]},
+                {"max_iter": [500, 1000, 10_000, 20_000]},
+                {"tol": [1e-4, 1e-3, 1e-2]},
             ],
-            # Bayesian/RANSAC skipped for auto-tuning simplicity
+            "Bayesian": [
+                {"fit_intercept": [True, False]},
+                {"max_iter": [500, 1000, 10_000, 20_000]},
+                {"tol": [1e-4, 1e-3, 1e-2]},
+                {"alpha_1": [1e-6, 1e-5, 1e-4, 1e-3]},
+                {"alpha_2": [1e-6, 1e-5, 1e-4, 1e-3]},
+                {"lambda_1": [1e-6, 1e-5, 1e-4, 1e-3]},
+                {"lambda_2": [1e-6, 1e-5, 1e-4, 1e-3]},
+            ],
+            "RANSAC": [
+                {"n": [5, 10, 25, 50, 100]},
+                {"k": [5, 10, 100]},
+                {"t": [0.01, 0.05, 0.1, 0.5, 1.0]},
+                {"d": [5, 10, 25, 50]},
+                {"model": [OrdinaryLeastSquares()]},
+                # {"model": [OrdinaryLeastSquares(),Ridge(),Lasso()]}, <- supports multiple models (using just OrdinaryLeastSquares for simplicity)
+            ],
             "PassiveAggressive": [
                 {"C": [0.01, 0.1, 1, 10]},
                 {"max_iter": [500, 1000, 2000]},
@@ -178,10 +197,10 @@ class AutoRegressor:
                 {"n_neighbors": [3, 5, 7, 9]},
                 {"distance_metric": ["euclidean", "manhattan"]},
             ],
-            "RegressorTree": [{"max_depth": [5, 10, 15, None]}],
+            "RegressorTree": [{"max_depth": [5, 10, 15, 20, 25, 50]}],
             "RandomForestRegressor": [
-                {"n_estimators": [50, 100, 200]},
-                {"max_depth": [10, 20, None]},
+                {"forest_size": [50, 100, 200]},
+                {"max_depth": [5, 10, 15]},
             ],
             "GradientBoostedRegressor": [
                 {"num_trees": [50, 100, 200]},
@@ -271,10 +290,9 @@ class AutoRegressor:
         )  # Default to original if NN fails/skipped
         X_test_nn_scaled = X_test
         y_test_nn_scaled = y_test
-
         if (
             "BaseBackendNeuralNetwork" in self.models
-            and self.models["BaseBackendNeuralNetwork"] is not None
+            and self.models["BaseBackendNeuralNetwork"] is None
         ):
             try:
                 input_size = X_train.shape[1]
@@ -330,7 +348,6 @@ class AutoRegressor:
             if TQDM_AVAILABLE
             else model_items
         )
-
         for name, model_instance in progress_bar:
             if TQDM_AVAILABLE:
                 progress_bar.set_description(f"Processing {name}")
@@ -341,15 +358,17 @@ class AutoRegressor:
             best_score_tuning = None
 
             # --- Hyperparameter Tuning ---
-            # Exclude NN, Bayesian, RANSAC from generic tuning loop
-            excluded_from_tuning = ["BaseBackendNeuralNetwork", "Bayesian", "RANSAC"]
+            # Exclude NN from generic tuning loop
+            excluded_from_tuning = ["BaseBackendNeuralNetwork"]
             if (
                 self.tune_hyperparameters
                 and name in self._param_grids
                 and name not in excluded_from_tuning
             ):
-                if verbose:
+                if verbose and not TQDM_AVAILABLE:
                     print(f"\n  Tuning {name}...")
+
+                # Define search space and method
                 param_grid = self._param_grids[name]
                 model_class = self._model_classes_map[name]
 
@@ -366,6 +385,7 @@ class AutoRegressor:
                 if self.tuning_method == "random":
                     search_kwargs["iter"] = self.tuning_iterations
 
+                # --- Try CV Search ---
                 try:
                     search = SearchClass(**search_kwargs)
                     with warnings.catch_warnings():
@@ -376,20 +396,26 @@ class AutoRegressor:
                         model_to_fit = best_model_tuned
                         best_params_tuning = search.best_params_
                         best_score_tuning = search.best_score_
-                        self.models[name] = (
-                            model_to_fit  # IMPORTANT: Update the stored model
-                        )
+                        self.models[name] = model_to_fit
                         self.tuning_results[name] = {
                             "best_score": best_score_tuning,
                             "best_params": best_params_tuning,
                             "method": self.tuning_method,
                         }
-                        if verbose:
+                        if verbose and TQDM_AVAILABLE:
+                            tqdm.write(
+                                f"    Best {name} params: {best_params_tuning}, Score ({self.tuning_metric}): {best_score_tuning:.4f}"
+                            )
+                        elif verbose:
                             print(
                                 f"    Best {name} params: {best_params_tuning}, Score ({self.tuning_metric}): {best_score_tuning:.4f}"
                             )
                     else:
-                        if verbose:
+                        if verbose and TQDM_AVAILABLE:
+                            tqdm.write(
+                                f"    Tuning failed for {name}, using default parameters."
+                            )
+                        elif verbose:
                             print(
                                 f"    Tuning failed for {name}, using default parameters."
                             )
@@ -428,6 +454,14 @@ class AutoRegressor:
                                 use_tqdm=False,
                             )
                     elif hasattr(model_to_fit, "fit") and callable(model_to_fit.fit):
+                        # If model is GradientBoostedRegressor, reinit with parameters (if tuned)
+                        if name == "GradientBoostedRegressor":
+                            if best_params_tuning:
+                                model_to_fit = GradientBoostedRegressor(
+                                    **best_params_tuning
+                                )
+                            else:
+                                model_to_fit = GradientBoostedRegressor()
                         model_to_fit.fit(X_train, y_train)
                     else:
                         raise TypeError(
@@ -471,6 +505,9 @@ class AutoRegressor:
                             y_pred = (
                                 y_pred_scaled  # Should not happen if scaling worked
                             )
+                        # Store train reference for scaler
+                        self.X_train_ref = X_train
+                        self.y_train_ref = y_train
                     else:
                         y_pred = model_to_fit.predict(eval_X)
 
@@ -529,10 +566,12 @@ class AutoRegressor:
                     {"Model": name, "Error": "Model not initialized", "Time Taken": 0}
                 )
 
+            # If last model in loop and progress bar is available
+            if TQDM_AVAILABLE and name == model_items[-1][0]:
+                progress_bar.set_description("All models processed")
+
         if TQDM_AVAILABLE and progress_bar:
             progress_bar.set_description("Fitting Completed")
-        # Restore default models for next potential fit call without tuning
-        # self.models = self._default_model_instances.copy() # Keep the tuned models available via get_model
 
         return self.results, self.predictions
 
@@ -705,7 +744,7 @@ class AutoRegressor:
             print("No models have been fitted or evaluated yet.")
             return
 
-        # --- Dynamic metric extraction and sorting (same as AutoClassifier) ---
+        # --- Dynamic metric extraction and sorting ---
         non_metric_keys = {
             "Model",
             "Model Class",
@@ -748,7 +787,7 @@ class AutoRegressor:
         for result in sorted_results:
             result["Model Class"] = self.model_types.get(result["Model"], "Unknown")
 
-        # --- Tabulate Output (same logic as AutoClassifier) ---
+        # --- Tabulate Output ---
         try:
             from tabulate import tabulate
 

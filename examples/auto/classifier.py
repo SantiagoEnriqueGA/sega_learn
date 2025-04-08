@@ -15,37 +15,35 @@ f1 = Metrics.f1_score
 
 def run_example(verbose=False):
     """Runs the example."""
-    X, y = make_classification(n_samples=1_000, n_features=5, random_state=42)
+    X, y = make_classification(n_samples=100, n_features=5, random_state=42)
 
-    # --- Original ---
-    # reg = AutoClassifier()
-    # reg = AutoClassifier(all_kernels=True)
-
-    # --- With Tuning Enabled ---
+    # ------------------------ AutoClassifier Fitting ------------------------
+    # --- Default AutoClassifier Run ---
     print("\n--- Running AutoClassifier with Default Parameters ---")
     reg_default = AutoClassifier(all_kernels=False)
     reg_default.fit(X, y, verbose=verbose)
     print("\nDefault Summary:")
     reg_default.summary()
 
+    # --- AutoClassifier Run with Hyperparameter Tuning (Random Search) ---
     print("\n--- Running AutoClassifier with Hyperparameter Tuning (Random Search) ---")
     # Note: Tuning takes longer! Use fewer iterations/folds for quick tests.
     reg_tuned_random = AutoClassifier(
         all_kernels=False,
         tune_hyperparameters=True,
         tuning_method="random",
-        tuning_iterations=5,  # Keep low for example speed
+        tuning_iterations=5,  # Number of random combinations to try per model
         cv=2,  # Keep low for example speed
-        tuning_metric="f1",  # Optimize for F1-score
+        tuning_metric="f1",  # Optimize for F1 score
     )
     reg_tuned_random.fit(X, y, verbose=verbose)
     print("\nTuned Summary (Random):")
     reg_tuned_random.summary()
 
-    # --- Optional: Grid Search Example ---
+    # --- AutoClassifier Run with Hyperparameter Tuning (Grid Search) ---
     # print("\n--- Running AutoClassifier with Hyperparameter Tuning (Grid Search) ---")
     # reg_tuned_grid = AutoClassifier(
-    #     all_kernels=True,
+    #     all_kernels=False,
     #     tune_hyperparameters=True,
     #     tuning_method="grid",
     #     cv=2, # Keep low for example speed
@@ -55,6 +53,7 @@ def run_example(verbose=False):
     # print("\nTuned Summary (Grid):")
     # reg_tuned_grid.summary()
 
+    # ------------------------ AutoClassifier Evaluation and Prediction ------------------------
     # --- Evaluation and Prediction (Using the tuned random model) ---
     print("\n--- Predictions and Evaluations using Tuned (Random) Model ---")
     reg = reg_tuned_random  # Use the tuned model for subsequent steps
@@ -64,7 +63,6 @@ def run_example(verbose=False):
 
     # Predict using all models or a specific model
     predictions = reg.predict(X[:3])
-    # Note: Model name might change slightly if tuning is complex, but base name should work
     try:
         specific_pred = reg.predict(X[:3], model="RandomForestClassifier")
         print(f"\nRandom Forest Classifier Predictions (Tuned): {specific_pred}")
@@ -75,7 +73,7 @@ def run_example(verbose=False):
     for model, pred in predictions.items():
         print(f"\t{model}: {pred}")
 
-    # Evaluate all or a specific model
+    # Evaluate all models
     results = reg.evaluate(y)
     try:
         results_specific = reg.evaluate(y, model="RandomForestClassifier")

@@ -143,16 +143,21 @@ class GridSearchCV:
         self.best_params_ = None
 
         for params in self.param_combinations:
-            scores, self.active_model = ModelSelectionUtility.cross_validate(
-                self.model,
-                X,
-                y,
-                params,
-                cv=self.cv,
-                metric=self.metric,
-                direction=self.direction,
-                verbose=verbose,
-            )
+            try:
+                scores, self.active_model = ModelSelectionUtility.cross_validate(
+                    self.model,
+                    X,
+                    y,
+                    params,
+                    cv=self.cv,
+                    metric=self.metric,
+                    direction=self.direction,
+                    verbose=verbose,
+                )
+            except Exception as e:
+                if verbose:
+                    print(f"Error with params {params}: {e}")
+                continue
 
             mean_score = np.mean(scores)
             if verbose:
@@ -226,7 +231,8 @@ class RandomSearchCV:
         for _i in range(self.iter):
             # Check if all parameter combinations have been tried
             if len(self.tried_params) >= len(self.param_combinations):
-                print("All parameter combinations have been tried.")
+                if verbose:
+                    print("All parameter combinations have been tried.")
                 break
 
             # Randomly select hyperparameters
@@ -237,16 +243,21 @@ class RandomSearchCV:
             # Store tried combinations
             self.tried_params.append(params)
 
-            scores, self.active_model = ModelSelectionUtility.cross_validate(
-                self.model,
-                X,
-                y,
-                params,
-                cv=self.cv,
-                metric=self.metric,
-                direction=self.direction,
-                verbose=verbose,
-            )
+            try:
+                scores, self.active_model = ModelSelectionUtility.cross_validate(
+                    self.model,
+                    X,
+                    y,
+                    params,
+                    cv=self.cv,
+                    metric=self.metric,
+                    direction=self.direction,
+                    verbose=verbose,
+                )
+            except Exception as e:
+                if verbose:
+                    print(f"Error with params {params}: {e}")
+                continue
 
             mean_score = np.mean(scores)
             if verbose:

@@ -17,7 +17,6 @@ from sega_learn.utils.modelSelection import (  # Import search methods
     RandomSearchCV,
 )
 
-# Import models (keep existing imports)
 from ..nearest_neighbors import KNeighborsClassifier
 from ..neural_networks import AdamOptimizer, BaseBackendNeuralNetwork
 from ..svm import GeneralizedSVC, LinearSVC, OneClassSVM
@@ -78,8 +77,6 @@ class AutoClassifier:
             # Neural Networks (will be initialized in fit if needed)
             "BaseBackendNeuralNetwork": BaseBackendNeuralNetwork,
             # Add other classifiers here if needed
-            # "LinearDiscriminantAnalysis": LinearDiscriminantAnalysis,
-            # "QuadraticDiscriminantAnalysis": QuadraticDiscriminantAnalysis,
         }
 
         self._default_model_instances = {
@@ -89,8 +86,6 @@ class AutoClassifier:
             "ClassifierTree": ClassifierTree(),
             "RandomForestClassifier": RandomForestClassifier(),
             "BaseBackendNeuralNetwork": None,  # Placeholder
-            # "LinearDiscriminantAnalysis": LinearDiscriminantAnalysis(),
-            # "QuadraticDiscriminantAnalysis": QuadraticDiscriminantAnalysis(),
         }
 
         self.model_types = {  # Categorization for summary
@@ -105,8 +100,6 @@ class AutoClassifier:
             "ClassifierTree": "Trees",
             "RandomForestClassifier": "Trees",
             "BaseBackendNeuralNetwork": "Neural Networks",
-            # "LinearDiscriminantAnalysis": "Linear",
-            # "QuadraticDiscriminantAnalysis": "Linear",
         }
 
         # Add kernel variations if needed
@@ -125,36 +118,66 @@ class AutoClassifier:
 
         # --- Default Hyperparameter Search Spaces ---
         self._param_grids = {
-            "LinearSVC": [{"C": [0.1, 1, 10, 100]}, {"max_iter": [1000, 2000, 3000]}],
+            "LinearSVC": [
+                {"C": [0.1, 1, 10, 100]},
+                {"tol": [1e-4, 1e-3, 1e-2]},
+                {"max_iter": [1000, 2000, 3000]},
+                {"learning_rate": [0.001, 0.01, 0.1]},
+            ],
             "GeneralizedSVC - Linear": [
                 {"C": [0.1, 1, 10, 100]},
+                {"tol": [1e-4, 1e-3, 1e-2]},
                 {"max_iter": [1000, 2000, 3000]},
+                {"learning_rate": [0.001, 0.01, 0.1]},
             ],
             "GeneralizedSVC - RBF": [
                 {"C": [0.1, 1, 10, 100]},
+                {"tol": [1e-4, 1e-3, 1e-2]},
                 {"gamma": ["scale", "auto", 0.1, 1]},
+                {"learning_rate": [0.001, 0.01, 0.1]},
             ],
             "GeneralizedSVC - Polynomial": [
                 {"C": [0.1, 1, 10, 100]},
+                {"tol": [1e-4, 1e-3, 1e-2]},
                 {"degree": [2, 3, 4]},
                 {"gamma": ["scale", "auto"]},
+                {"learning_rate": [0.001, 0.01, 0.1]},
             ],
             "KNeighborsClassifier": [
                 {"n_neighbors": [3, 5, 7, 9]},
                 {"distance_metric": ["euclidean", "manhattan"]},
             ],
-            "ClassifierTree": [{"max_depth": [5, 10, 15, None]}],
+            "ClassifierTree": [{"max_depth": [5, 10, 15, 20, 25, 50]}],
             "RandomForestClassifier": [
-                {"n_estimators": [50, 100, 200]},
-                {"max_depth": [10, 20, None]},
+                {"forest_size": [50, 100, 200]},
+                {"max_depth": [5, 10, 15]},
+            ],
+            # Note: OneClassSVM tuning is often complex/specific, adding basic grid for demonstration
+            "OneClassSVM - Linear": [
+                {"C": [0.1, 1, 10, 100]},
+                {"tol": [1e-4, 1e-3, 1e-2]},
+                {"max_iter": [1000, 2000, 3000]},
+                {"learning_rate": [0.001, 0.01, 0.1]},
+            ],
+            "OneClassSVM - RBF": [
+                {"C": [0.1, 1, 10, 100]},
+                {"tol": [1e-4, 1e-3, 1e-2]},
+                {"gamma": ["scale", "auto", 0.1, 1]},
+                {"learning_rate": [0.001, 0.01, 0.1]},
+            ],
+            "OneClassSVM - Polynomial": [
+                {"C": [0.1, 1, 10, 100]},
+                {"tol": [1e-4, 1e-3, 1e-2]},
+                {"degree": [2, 3, 4]},
+                {"gamma": ["scale", "auto"]},
+                {"learning_rate": [0.001, 0.01, 0.1]},
             ],
             # Add grids for other models here
         }
-        # Note: OneClassSVM tuning is often complex/specific, excluding from generic auto-tuning for now.
         # Note: Neural Network is excluded from this grid/random search tuning loop.
 
         self.predictions = {}
-        self.results = []  # Stores fitting/evaluation results
+        self.results = []
 
     def fit(
         self,
@@ -236,11 +259,14 @@ class AutoClassifier:
         one_class_models = {}
         if n_classes == 2:
             one_class_models["OneClassSVM - Linear"] = OneClassSVM(kernel="linear")
+            self._model_classes_map["OneClassSVM - Linear"] = OneClassSVM
             if self.all_kernels:
                 one_class_models["OneClassSVM - RBF"] = OneClassSVM(kernel="rbf")
+                self._model_classes_map["OneClassSVM - RBF"] = OneClassSVM
                 one_class_models["OneClassSVM - Polynomial"] = OneClassSVM(
                     kernel="poly"
                 )
+                self._model_classes_map["OneClassSVM - Polynomial"] = OneClassSVM
             # Add OneClassSVM models to the main models dict for this run
             self.models.update(one_class_models)
         else:
@@ -281,8 +307,9 @@ class AutoClassifier:
                 and name in self._param_grids
                 and name != "BaseBackendNeuralNetwork"
             ):
-                if verbose:
+                if verbose and not TQDM_AVAILABLE:
                     print(f"\n  Tuning {name}...")
+
                 param_grid = self._param_grids[name]
                 model_class = self._model_classes_map[name]  # Get the class
 
@@ -324,12 +351,20 @@ class AutoClassifier:
                             "best_params": best_params_tuning,
                             "method": self.tuning_method,
                         }
-                        if verbose:
+                        if verbose and TQDM_AVAILABLE:
+                            tqdm.write(
+                                f"    Best {name} params: {best_params_tuning}, Score ({self.tuning_metric}): {best_score_tuning:.4f}"
+                            )
+                        elif verbose:
                             print(
                                 f"    Best {name} params: {best_params_tuning}, Score ({self.tuning_metric}): {best_score_tuning:.4f}"
                             )
                     else:
-                        if verbose:
+                        if verbose and TQDM_AVAILABLE:
+                            tqdm.write(
+                                f"    Tuning failed for {name}, using default parameters."
+                            )
+                        elif verbose:
                             print(
                                 f"    Tuning failed for {name}, using default parameters."
                             )
@@ -365,9 +400,13 @@ class AutoClassifier:
                                 p=False,
                                 use_tqdm=False,
                             )
+                        # Store the fitted model instance
+                        self.models[name] = model_to_fit
                     elif hasattr(model_to_fit, "fit") and callable(model_to_fit.fit):
                         # Standard fit method for most models
                         model_to_fit.fit(X_train, y_train)
+                        # Store the fitted model instance
+                        self.models[name] = model_to_fit
                     else:
                         raise TypeError(
                             f"Model {name} does not have a callable 'fit' method."
@@ -394,7 +433,8 @@ class AutoClassifier:
                     eval_y = y_test if y_test is not None else y_train
 
                     y_pred = model_to_fit.predict(eval_X)
-                    self.predictions[name] = y_pred
+                    # Ensure predictions are in the expected format (np.ndarray) (flatten if needed)
+                    self.predictions[name] = np.array(y_pred).flatten()
                     elapsed_time = time.time() - start_time
 
                     metrics = {}
@@ -453,10 +493,13 @@ class AutoClassifier:
                     {"Model": name, "Error": "Model not initialized", "Time Taken": 0}
                 )
 
+            # If last model in loop and progress bar is available
+            if TQDM_AVAILABLE and name == model_items[-1][0]:
+                progress_bar.set_description("All models processed")
+
         if TQDM_AVAILABLE and progress_bar:
-            progress_bar.set_description("Fitting Completed")
-        # Restore default models for next potential fit call without tuning
-        self.models = self._default_model_instances.copy()
+            progress_bar.refresh()
+            progress_bar.close()
 
         return self.results, self.predictions
 
@@ -486,20 +529,6 @@ class AutoClassifier:
             fitted_model_instance = None
             for res in self.results:
                 if res["Model"] == model and "Error" not in res:
-                    # This assumes self.models was updated correctly during tuning,
-                    # or we need a way to retrieve the tuned instance (e.g., store in self.tuning_results)
-                    # Let's rely on self.models being updated in fit() if tuning occurs.
-                    # We need to re-fetch the *potentially tuned* model instance from self.models
-                    # Correction: It's simpler to just return stored predictions if available.
-                    # Re-predicting requires managing the potentially tuned model instances.
-                    # Let's return stored predictions from self.predictions instead of re-predicting here.
-                    # This requires fit() to store predictions correctly.
-                    # return self.models[model].predict(X)
-                    # Reverting to using stored predictions:
-                    # Check if the input X matches the shape used for storing predictions
-                    # This check is problematic if fit was called only on train, and predict on test.
-                    # Decision: Re-predict using the stored model instance is better.
-                    # Need to ensure self.models *holds the final fitted instance*
                     fitted_model_instance = self.models.get(
                         model
                     )  # Fetch the final fitted model instance
@@ -521,7 +550,9 @@ class AutoClassifier:
                 name in self.predictions and fitted_instance is not None
             ):  # Check if predictions exist and model instance is valid
                 try:
-                    all_predictions[name] = fitted_instance.predict(X)
+                    all_predictions[name] = np.array(
+                        fitted_instance.predict(X)
+                    ).flatten()
                 except Exception as e:
                     warnings.warn(
                         f"Prediction failed for {name} during multi-predict: {e}",
@@ -565,6 +596,7 @@ class AutoClassifier:
             y_pred = self.predictions[name]
             # Ensure y_pred is usable (not an error string from predict step)
             if not isinstance(y_pred, np.ndarray):
+                print(f"y_pred is type: {type(y_pred)}")
                 evaluation_results[name] = {"Error": "Prediction failed during fit"}
                 continue
 
