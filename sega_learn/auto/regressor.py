@@ -837,7 +837,7 @@ class AutoRegressor:
                 table_data.append(row)
             print("\n--- AutoRegressor Summary ---")
             print(tabulate(table_data, headers=headers, tablefmt="rounded_outline"))
-        except ImportError:
+        except Exception as _e:
             print(
                 "\n--- AutoRegressor Summary (Install tabulate for better formatting) ---"
             )

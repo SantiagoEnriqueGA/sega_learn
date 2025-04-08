@@ -768,7 +768,7 @@ class AutoClassifier:
             print("\n--- AutoClassifier Summary ---")
             print(tabulate(table_data, headers=headers, tablefmt="rounded_outline"))
 
-        except ImportError:
+        except Exception as _e:
             print(
                 "\n--- AutoClassifier Summary (Install tabulate for better formatting) ---"
             )

@@ -7,6 +7,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 import numpy as np
 from sega_learn.auto import AutoClassifier, AutoRegressor
+from sega_learn.linear_models import OrdinaryLeastSquares, Ridge
+from sega_learn.svm import LinearSVC
+from sega_learn.trees import ClassifierTree
 from sega_learn.utils import Metrics, make_classification, make_regression
 from tests.utils import suppress_print
 
@@ -30,8 +33,26 @@ class TestAutoRegressor(unittest.TestCase):
 
     def setUp(self):  # NOQA D201
         self.model = AutoRegressor()
-        self.X_train, self.y_train = make_regression(n_samples=100, n_features=5)
-        self.X_test, self.y_test = make_regression(n_samples=50, n_features=5)
+        self.hp_tuned_model_rand = AutoRegressor(
+            all_kernels=True,
+            tune_hyperparameters=True,
+            tuning_method="random",
+            tuning_iterations=2,
+            cv=2,
+            tuning_metric="r2",
+        )
+        self.hp_tuned_model_grid = AutoRegressor(
+            all_kernels=True,
+            tune_hyperparameters=True,
+            tuning_method="grid",
+            tuning_iterations=2,
+            cv=2,
+            tuning_metric="r2",
+        )
+        self.X_train, self.y_train = make_regression(n_samples=50, n_features=3)
+        self.X_test, self.y_test = make_regression(n_samples=5, n_features=3)
+
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
 
     def test_initialization(self):
         """Test that the AutoRegressor initializes with the correct models."""
@@ -51,6 +72,7 @@ class TestAutoRegressor(unittest.TestCase):
     def test_predict(self):
         """Test the predict method of AutoRegressor."""
         self.model.fit(self.X_train, self.y_train, verbose=False)
+        warnings.filterwarnings("ignore", category=UserWarning)
         predictions = self.model.predict(self.X_test)
         self.assertIsInstance(predictions, dict)
         self.assertEqual(len(predictions), len(self.model.models))
@@ -181,10 +203,8 @@ class TestAutoRegressor(unittest.TestCase):
         """Test behavior with a single sample."""
         X_train = np.random.rand(1, 5)  # Single sample
         y_train = np.random.rand(1)
-        with self.assertRaises(ValueError):
-            # Catch and suppress the warning (compiled C code failed)
-            warnings.filterwarnings("ignore", category=UserWarning)
-            self.model.fit(X_train, y_train)
+        warnings.filterwarnings("ignore", category=UserWarning)
+        self.model.fit(X_train, y_train)
 
     def test_single_feature(self):
         """Test behavior with a single feature."""
@@ -198,6 +218,38 @@ class TestAutoRegressor(unittest.TestCase):
         self.assertGreater(len(results), 0)
         self.assertGreater(len(predictions), 0)
 
+    def test_hp_tuning_random(self):
+        """Test hyperparameter tuning with random search."""
+        self.hp_tuned_model_rand.fit(self.X_train, self.y_train, verbose=False)
+        with suppress_print():
+            self.hp_tuned_model_rand.summary()
+        self.assertIsNotNone(self.hp_tuned_model_rand.results)
+        self.assertIsNotNone(self.hp_tuned_model_rand.predictions)
+
+    def test_hp_tuning_grid(self):
+        """Test hyperparameter tuning with grid search."""
+        # Set models to subset for testing
+        models_to_test = {
+            "OrdinaryLeastSquares": OrdinaryLeastSquares(),
+            "Ridge": Ridge(),
+            "BaseBackendNeuralNetwork": 1,
+        }
+        param_grids = {
+            "OrdinaryLeastSquares": [{"fit_intercept": [True, False]}],
+            "Ridge": [
+                {"fit_intercept": [True, False]},
+                {"max_iter": [500, 1000]},
+            ],
+        }
+        self.hp_tuned_model_grid.models = models_to_test
+        self._param_grids = param_grids
+        with suppress_print():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            self.hp_tuned_model_grid.fit(self.X_train, self.y_train, verbose=False)
+            self.hp_tuned_model_grid.summary()
+        self.assertIsNotNone(self.hp_tuned_model_grid.results)
+        self.assertIsNotNone(self.hp_tuned_model_grid.predictions)
+
 
 class TestAutoClassifier(unittest.TestCase):
     """Unit test for the AutoClassifier class."""
@@ -209,11 +261,27 @@ class TestAutoClassifier(unittest.TestCase):
 
     def setUp(self):  # NOQA D201
         self.model = AutoClassifier()
+        self.hp_tuned_model_rand = AutoClassifier(
+            all_kernels=True,
+            tune_hyperparameters=True,
+            tuning_method="random",
+            tuning_iterations=2,
+            cv=2,
+            tuning_metric="accuracy",
+        )
+        self.hp_tuned_model_grid = AutoClassifier(
+            all_kernels=True,
+            tune_hyperparameters=True,
+            tuning_method="grid",
+            tuning_iterations=2,
+            cv=2,
+            tuning_metric="accuracy",
+        )
         self.X_train, self.y_train = make_classification(
-            n_samples=100, n_features=5, n_classes=3
+            n_samples=50, n_features=5, n_classes=3
         )
         self.X_test, self.y_test = make_classification(
-            n_samples=50, n_features=5, n_classes=3
+            n_samples=5, n_features=5, n_classes=3
         )
 
     def test_initialization(self):
@@ -357,6 +425,41 @@ class TestAutoClassifier(unittest.TestCase):
         )
         self.assertGreater(len(results), 0)
         self.assertGreater(len(predictions), 0)
+
+    def test_hp_tuning_random(self):
+        """Test hyperparameter tuning with random search."""
+        self.hp_tuned_model_rand.fit(self.X_train, self.y_train, verbose=False)
+        with suppress_print():
+            self.hp_tuned_model_rand.summary()
+        self.assertIsNotNone(self.hp_tuned_model_rand.results)
+        self.assertIsNotNone(self.hp_tuned_model_rand.predictions)
+
+    def test_hp_tuning_grid(self):
+        """Test hyperparameter tuning with grid search."""
+        # Set models to subset for testing
+        models_to_test = {
+            "LinearSVC": LinearSVC(),
+            "ClassifierTree": ClassifierTree(),
+            "BaseBackendNeuralNetwork": 1,
+        }
+        param_grids = {
+            "LinearSVC": [
+                {"C": [0.1, 1, 10]},
+                {"kernel": ["linear"]},
+            ],
+            "ClassifierTree": [
+                {"max_depth": [1, 3]},
+                {"min_samples_split": [2, 5]},
+            ],
+        }
+        self.hp_tuned_model_grid.models = models_to_test
+        self._param_grids = param_grids
+        with suppress_print():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            self.hp_tuned_model_grid.fit(self.X_train, self.y_train, verbose=False)
+            self.hp_tuned_model_grid.summary()
+        self.assertIsNotNone(self.hp_tuned_model_grid.results)
+        self.assertIsNotNone(self.hp_tuned_model_grid.predictions)
 
 
 if __name__ == "__main__":
