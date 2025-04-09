@@ -37,6 +37,37 @@ Classification
     - Implement Logistic Regression
     - Implement SGDClassifier
     - Implement Gradient Boosted Classifier
+GitHub Action to run tests?:
+# filepath: .github/workflows/run-tests.yml
+name: Run Tests
+
+on:
+  push:
+    branches: [ "main" ] # Trigger on push to main branch
+  pull_request:
+    branches: [ "main" ] # Trigger on pull request to main branch
+
+jobs:
+  run-tests:
+    name: Run Selected Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Add any additional dependencies here, e.g., pytest
+          # pip install pytest
+
+      - name: Run selected tests
+        run: python tests/run_selected_tests.py
 "@
 
 # Add the "Other" section to the file and console output
