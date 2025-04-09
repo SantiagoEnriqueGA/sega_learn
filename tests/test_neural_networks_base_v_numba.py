@@ -396,7 +396,9 @@ class TestNeuralNetworkBaseNumbaUtils(unittest.TestCase):
     @classmethod
     def setUpClass(cls):  # NOQA D201
         print(
-            "\nTesting Comparing NeuralNetwork Base and Numba Utilities...", end="", flush=True
+            "\nTesting Comparing NeuralNetwork Base and Numba Utilities...",
+            end="",
+            flush=True,
         )
 
     def setUp(self):  # NOQA D201
@@ -470,7 +472,9 @@ class TestNeuralNetworkBaseNumbaOptimizers(unittest.TestCase):
     @classmethod
     def setUpClass(cls):  # NOQA D201
         print(
-            "\nTesting Comparing NeuralNetwork Base and Numba Optimizers...", end="", flush=True
+            "\nTesting Comparing NeuralNetwork Base and Numba Optimizers...",
+            end="",
+            flush=True,
         )
 
     def setUp(self):  # NOQA D201
