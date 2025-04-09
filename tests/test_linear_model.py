@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 import numpy as np
 from sega_learn.linear_models import *
 from sega_learn.linear_models import make_sample_data
-from sega_learn.utils import Metrics
+from sega_learn.utils import Metrics, make_classification
 from tests.utils import suppress_print, synthetic_data_regression
 
 r2_score = Metrics.r_squared
@@ -683,22 +683,44 @@ class TestLogisticRegression(unittest.TestCase):
             self.cov_class_1.T
         )  # Covariance matrix for class 2, same as class 1 but transposed
 
-        # Generate data
-        self.X, self.y = make_sample_data(
-            n_samples=1000,
+        # Generate binary data
+        self.X_binary, self.y_binary = make_classification(
+            n_samples=300,
             n_features=2,
-            cov_class_1=self.cov_class_1,
-            cov_class_2=self.cov_class_2,
-            shift=[4, 1],
-            seed=1,
+            n_redundant=0,
+            n_informative=2,
+            n_classes=2,
+            random_state=42,
+            n_clusters_per_class=1,
+            class_sep=2,
         )
 
-    def test_fit_predict(self):
-        """Tests the fit and predict methods of the Logistic Regression class."""
+        # Generate multiclass data
+        self.X_multiclass, self.y_multiclass = make_classification(
+            n_samples=300,
+            n_features=2,
+            n_redundant=0,
+            n_informative=2,
+            n_classes=4,
+            random_state=42,
+            n_clusters_per_class=1,
+            class_sep=2,
+        )
+
+    def test_fit_predict_binary(self):
+        """Tests the fit and predict methods of the Logistic Regression class for binary classification."""
         model = LogisticRegression(learning_rate=0.01, max_iter=1000)
-        model.fit(self.X, self.y)
-        y_pred = model.predict(self.X)
-        acc = accuracy_score(self.y, y_pred)
+        model.fit(self.X_binary, self.y_binary)
+        y_pred = model.predict(self.X_binary)
+        acc = accuracy_score(self.y_binary, y_pred)
+        self.assertGreaterEqual(acc, 0.50)
+
+    def test_fit_predict_multiclass(self):
+        """Tests the fit and predict methods of the Logistic Regression class for multiclass classification."""
+        model = LogisticRegression(learning_rate=0.01, max_iter=1000)
+        model.fit(self.X_multiclass, self.y_multiclass)
+        y_pred = model.predict(self.X_multiclass)
+        acc = accuracy_score(self.y_multiclass, y_pred)
         self.assertGreaterEqual(acc, 0.50)
 
     def test_invalid_fit(self):
@@ -730,22 +752,44 @@ class TestPerceptron(unittest.TestCase):
             self.cov_class_1.T
         )  # Covariance matrix for class 2, same as class 1 but transposed
 
-        # Generate data
-        self.X, self.y = make_sample_data(
-            n_samples=1000,
+        # Generate binary data
+        self.X_binary, self.y_binary = make_classification(
+            n_samples=300,
             n_features=2,
-            cov_class_1=self.cov_class_1,
-            cov_class_2=self.cov_class_2,
-            shift=[4, 1],
-            seed=1,
+            n_redundant=0,
+            n_informative=2,
+            n_classes=2,
+            random_state=42,
+            n_clusters_per_class=1,
+            class_sep=2,
         )
 
-    def test_fit_predict(self):
-        """Tests the fit and predict methods of the Perceptron class."""
+        # Generate multiclass data
+        self.X_multiclass, self.y_multiclass = make_classification(
+            n_samples=300,
+            n_features=2,
+            n_redundant=0,
+            n_informative=2,
+            n_classes=4,
+            random_state=42,
+            n_clusters_per_class=1,
+            class_sep=2,
+        )
+
+    def test_fit_predict_binary(self):
+        """Tests the fit and predict methods of the Perceptron class for binary classification."""
         model = Perceptron(max_iter=1000, learning_rate=0.01)
-        model.fit(self.X, self.y)
-        y_pred = model.predict(self.X)
-        acc = accuracy_score(self.y, y_pred)
+        model.fit(self.X_binary, self.y_binary)
+        y_pred = model.predict(self.X_binary)
+        acc = accuracy_score(self.y_binary, y_pred)
+        self.assertGreaterEqual(acc, 0.50)
+
+    def test_fit_predict_multiclass(self):
+        """Tests the fit and predict methods of the Perceptron class for multiclass classification."""
+        model = Perceptron(max_iter=1000, learning_rate=0.01)
+        model.fit(self.X_multiclass, self.y_multiclass)
+        y_pred = model.predict(self.X_multiclass)
+        acc = accuracy_score(self.y_multiclass, y_pred)
         self.assertGreaterEqual(acc, 0.50)
 
     def test_invalid_fit(self):

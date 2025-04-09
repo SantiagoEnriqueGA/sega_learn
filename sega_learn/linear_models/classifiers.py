@@ -251,6 +251,8 @@ class LinearDiscriminantAnalysis:
 
         Returns:
             scores: (np.ndarray) - Log-likelihood of each class for the input samples.
+
+        # TODO: caching the inverse once per function call could improve performance if the covariance matrix does not change during prediction.
         """
         scores = []
         # Compute log-likelihood of each class
@@ -378,7 +380,7 @@ class QuadraticDiscriminantAnalysis:
 
 
 class Perceptron:
-    """Implements the Perceptron algorithm for binary classification.
+    """Implements the Perceptron algorithm for binary and multiclass classification.
 
     Args:
         max_iter: (int) - Maximum number of iterations (default is 1000).
@@ -396,6 +398,7 @@ class Perceptron:
         self.learning_rate = learning_rate
         self.weights = None
         self.bias = None
+        self.classes_ = None
 
     def fit(self, X, y):
         """Fits the Perceptron model to the training data.
@@ -406,18 +409,41 @@ class Perceptron:
         """
         _validate_data(X, y)
 
+        self.classes_ = np.unique(y)
         n_samples, n_features = X.shape
-        self.weights = np.zeros(n_features)
-        self.bias = 0
 
-        # Convert labels to {1, -1}
-        y_ = np.where(y > 0, 1, -1)
+        if len(self.classes_) == 2:
+            # Binary classification
+            self.weights = np.zeros(n_features)
+            self.bias = 0
 
-        for _ in range(self.max_iter):
-            for idx, x_i in enumerate(X):
-                if y_[idx] * (np.dot(x_i, self.weights) + self.bias) <= 0:
-                    self.weights += self.learning_rate * y_[idx] * x_i
-                    self.bias += self.learning_rate * y_[idx]
+            # Convert labels to {1, -1}
+            y_ = np.where(y == self.classes_[1], 1, -1)
+
+            for _ in range(self.max_iter):
+                for idx, x_i in enumerate(X):
+                    if y_[idx] * (np.dot(x_i, self.weights) + self.bias) <= 0:
+                        self.weights += self.learning_rate * y_[idx] * x_i
+                        self.bias += self.learning_rate * y_[idx]
+        else:
+            # Multiclass classification (One-vs-Rest)
+            self.weights = {}
+            self.bias = {}
+
+            for cls in self.classes_:
+                # Create binary labels for the current class
+                y_binary = np.where(y == cls, 1, -1)
+                weights = np.zeros(n_features)
+                bias = 0
+
+                for _ in range(self.max_iter):
+                    for idx, x_i in enumerate(X):
+                        if y_binary[idx] * (np.dot(x_i, weights) + bias) <= 0:
+                            weights += self.learning_rate * y_binary[idx] * x_i
+                            bias += self.learning_rate * y_binary[idx]
+
+                self.weights[cls] = weights
+                self.bias[cls] = bias
 
     def predict(self, X):
         """Predicts class labels for the input data.
@@ -428,12 +454,20 @@ class Perceptron:
         Returns:
             predictions: (np.ndarray) - Predicted class labels.
         """
-        linear_output = np.dot(X, self.weights) + self.bias
-        return np.where(linear_output > 0, 1, 0)
+        if len(self.classes_) == 2:
+            # Binary classification
+            linear_output = np.dot(X, self.weights) + self.bias
+            return np.where(linear_output > 0, self.classes_[1], self.classes_[0])
+        else:
+            # Multiclass classification
+            scores = np.zeros((X.shape[0], len(self.classes_)))
+            for idx, cls in enumerate(self.classes_):
+                scores[:, idx] = np.dot(X, self.weights[cls]) + self.bias[cls]
+            return self.classes_[np.argmax(scores, axis=1)]
 
 
 class LogisticRegression:
-    """Implements Logistic Regression using gradient descent.
+    """Implements Logistic Regression using gradient descent. Supports binary and multiclass classification.
 
     Args:
         learning_rate: (float) - Learning rate for gradient updates (default is 0.01).
@@ -451,6 +485,7 @@ class LogisticRegression:
         self.max_iter = max_iter
         self.weights = None
         self.bias = None
+        self.classes_ = None
 
     def fit(self, X, y):
         """Fits the Logistic Regression model to the training data.
@@ -461,21 +496,50 @@ class LogisticRegression:
         """
         _validate_data(X, y)
 
+        self.classes_ = np.unique(y)
         n_samples, n_features = X.shape
-        self.weights = np.zeros(n_features)
-        self.bias = 0
 
-        for _ in range(self.max_iter):
-            linear_model = np.dot(X, self.weights) + self.bias
-            y_predicted = self._sigmoid(linear_model)
+        if len(self.classes_) == 2:
+            # Binary classification
+            self.weights = np.zeros(n_features)
+            self.bias = 0
 
-            # Compute gradients
-            dw = (1 / n_samples) * np.dot(X.T, (y_predicted - y))
-            db = (1 / n_samples) * np.sum(y_predicted - y)
+            for _ in range(self.max_iter):
+                linear_model = np.dot(X, self.weights) + self.bias
+                y_predicted = self._sigmoid(linear_model)
 
-            # Update weights and bias
-            self.weights -= self.learning_rate * dw
-            self.bias -= self.learning_rate * db
+                # Compute gradients
+                dw = (1 / n_samples) * np.dot(X.T, (y_predicted - y))
+                db = (1 / n_samples) * np.sum(y_predicted - y)
+
+                # Update weights and bias
+                self.weights -= self.learning_rate * dw
+                self.bias -= self.learning_rate * db
+        else:
+            # Multiclass classification (One-vs-Rest)
+            self.weights = {}
+            self.bias = {}
+
+            for cls in self.classes_:
+                # Create binary labels for the current class
+                y_binary = np.where(y == cls, 1, 0)
+                weights = np.zeros(n_features)
+                bias = 0
+
+                for _ in range(self.max_iter):
+                    linear_model = np.dot(X, weights) + bias
+                    y_predicted = self._sigmoid(linear_model)
+
+                    # Compute gradients
+                    dw = (1 / n_samples) * np.dot(X.T, (y_predicted - y_binary))
+                    db = (1 / n_samples) * np.sum(y_predicted - y_binary)
+
+                    # Update weights and bias
+                    weights -= self.learning_rate * dw
+                    bias -= self.learning_rate * db
+
+                self.weights[cls] = weights
+                self.bias[cls] = bias
 
     def predict(self, X):
         """Predicts class labels for the input data.
@@ -486,9 +550,18 @@ class LogisticRegression:
         Returns:
             predictions: (np.ndarray) - Predicted class labels.
         """
-        linear_model = np.dot(X, self.weights) + self.bias
-        y_predicted = self._sigmoid(linear_model)
-        return np.where(y_predicted > 0.5, 1, 0)
+        if len(self.classes_) == 2:
+            # Binary classification
+            linear_model = np.dot(X, self.weights) + self.bias
+            y_predicted = self._sigmoid(linear_model)
+            return np.where(y_predicted > 0.5, self.classes_[1], self.classes_[0])
+        else:
+            # Multiclass classification
+            scores = np.zeros((X.shape[0], len(self.classes_)))
+            for idx, cls in enumerate(self.classes_):
+                linear_model = np.dot(X, self.weights[cls]) + self.bias[cls]
+                scores[:, idx] = self._sigmoid(linear_model)
+            return self.classes_[np.argmax(scores, axis=1)]
 
     def _sigmoid(self, z):
         """Applies the sigmoid function."""
