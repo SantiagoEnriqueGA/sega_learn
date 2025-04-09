@@ -26,6 +26,12 @@ def _validate_data(X, y):
     if X.shape[0] == 0 or y.shape[0] == 0:
         raise ValueError("X and y must not be empty")
 
+    if np.any(np.isnan(X)) or np.any(np.isnan(y)):
+        raise ValueError("X and y must not contain NaN values")
+
+    if np.any(np.isinf(X)) or np.any(np.isinf(y)):
+        raise ValueError("X and y must not contain infinite values")
+
 
 class OrdinaryLeastSquares:
     """Ordinary Least Squares (OLS) linear regression model.

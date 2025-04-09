@@ -587,7 +587,7 @@ class TestLinearDiscriminantAnalysis(unittest.TestCase):
     def test_lda_no_data(self):
         """Tests the fit method with invalid input."""
         lda = LinearDiscriminantAnalysis()
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             lda.fit(None, None)
 
 
@@ -651,7 +651,7 @@ class TestQuadraticDiscriminantAnalysis(unittest.TestCase):
     def test_qda_no_data(self):
         """Tests the fit method with invalid input."""
         qda = QuadraticDiscriminantAnalysis()
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             qda.fit(None, None)
 
     def test_qda_no_priors(self):
@@ -665,6 +665,100 @@ class TestQuadraticDiscriminantAnalysis(unittest.TestCase):
         with self.assertRaises(TypeError):
             qda = QuadraticDiscriminantAnalysis(priors=[0.5, 0.5, 0.5])
             qda.fit(self.X, self.y)
+
+
+class TestLogisticRegression(unittest.TestCase):
+    """Unit test for the Logistic Regression class."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        """Initializes a new instance of the Index class before each test method is run."""
+        print("\nTesting Logistic Regression", end="", flush=True)
+
+    def setUp(self):  # NOQA D201
+        self.cov_class_1 = (
+            np.array([[0.0, -1.0], [2.5, 0.7]]) * 2.0
+        )  # Covariance matrix for class 1, scaled by 2.0
+        self.cov_class_2 = (
+            self.cov_class_1.T
+        )  # Covariance matrix for class 2, same as class 1 but transposed
+
+        # Generate data
+        self.X, self.y = make_sample_data(
+            n_samples=1000,
+            n_features=2,
+            cov_class_1=self.cov_class_1,
+            cov_class_2=self.cov_class_2,
+            shift=[4, 1],
+            seed=1,
+        )
+
+    def test_fit_predict(self):
+        """Tests the fit and predict methods of the Logistic Regression class."""
+        model = LogisticRegression(learning_rate=0.01, max_iter=1000)
+        model.fit(self.X, self.y)
+        y_pred = model.predict(self.X)
+        acc = accuracy_score(self.y, y_pred)
+        self.assertGreaterEqual(acc, 0.50)
+
+    def test_invalid_fit(self):
+        """Tests the fit method with invalid input."""
+        model = LogisticRegression()
+        with self.assertRaises(ValueError):
+            model.fit(None, None)
+
+    def test_invalid_predict(self):
+        """Tests the predict method with invalid input."""
+        model = LogisticRegression()
+        with self.assertRaises(TypeError):
+            model.predict(None)
+
+
+class TestPerceptron(unittest.TestCase):
+    """Unit test for the Perceptron class."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        """Initializes a new instance of the Index class before each test method is run."""
+        print("\nTesting Perceptron", end="", flush=True)
+
+    def setUp(self):  # NOQA D201
+        self.cov_class_1 = (
+            np.array([[0.0, -1.0], [2.5, 0.7]]) * 2.0
+        )  # Covariance matrix for class 1, scaled by 2.0
+        self.cov_class_2 = (
+            self.cov_class_1.T
+        )  # Covariance matrix for class 2, same as class 1 but transposed
+
+        # Generate data
+        self.X, self.y = make_sample_data(
+            n_samples=1000,
+            n_features=2,
+            cov_class_1=self.cov_class_1,
+            cov_class_2=self.cov_class_2,
+            shift=[4, 1],
+            seed=1,
+        )
+
+    def test_fit_predict(self):
+        """Tests the fit and predict methods of the Perceptron class."""
+        model = Perceptron(max_iter=1000, learning_rate=0.01)
+        model.fit(self.X, self.y)
+        y_pred = model.predict(self.X)
+        acc = accuracy_score(self.y, y_pred)
+        self.assertGreaterEqual(acc, 0.50)
+
+    def test_invalid_fit(self):
+        """Tests the fit method with invalid input."""
+        model = Perceptron()
+        with self.assertRaises(ValueError):
+            model.fit(None, None)
+
+    def test_invalid_predict(self):
+        """Tests the predict method with invalid input."""
+        model = Perceptron()
+        with self.assertRaises(TypeError):
+            model.predict(None)
 
 
 if __name__ == "__main__":

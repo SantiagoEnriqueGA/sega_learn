@@ -17,6 +17,7 @@ from sega_learn.utils.modelSelection import (  # Import search methods
     RandomSearchCV,
 )
 
+from ..linear_models import LogisticRegression, Perceptron
 from ..nearest_neighbors import KNeighborsClassifier
 from ..neural_networks import AdamOptimizer, BaseBackendNeuralNetwork
 from ..svm import GeneralizedSVC, LinearSVC, OneClassSVM
@@ -76,6 +77,9 @@ class AutoClassifier:
             "RandomForestClassifier": RandomForestClassifier,
             # Neural Networks (will be initialized in fit if needed)
             "BaseBackendNeuralNetwork": BaseBackendNeuralNetwork,
+            # Linear Models
+            "LogisticRegression": LogisticRegression,
+            "Perceptron": Perceptron,
             # Add other classifiers here if needed
         }
 
@@ -86,6 +90,8 @@ class AutoClassifier:
             "ClassifierTree": ClassifierTree(),
             "RandomForestClassifier": RandomForestClassifier(),
             "BaseBackendNeuralNetwork": None,  # Placeholder
+            "LogisticRegression": LogisticRegression(),
+            "Perceptron": Perceptron(),
         }
 
         self.model_types = {  # Categorization for summary
@@ -100,6 +106,8 @@ class AutoClassifier:
             "ClassifierTree": "Trees",
             "RandomForestClassifier": "Trees",
             "BaseBackendNeuralNetwork": "Neural Networks",
+            "LogisticRegression": "Linear Models",
+            "Perceptron": "Linear Models",
         }
 
         # Add kernel variations if needed
@@ -171,6 +179,14 @@ class AutoClassifier:
                 {"degree": [2, 3, 4]},
                 {"gamma": ["scale", "auto"]},
                 {"learning_rate": [0.001, 0.01, 0.1]},
+            ],
+            "LogisticRegression": [
+                {"learning_rate": [0.001, 0.01, 0.1]},
+                {"max_iter": [1000, 2000, 3000]},
+            ],
+            "Perceptron": [
+                {"learning_rate": [0.001, 0.01, 0.1]},
+                {"max_iter": [1000, 2000, 3000]},
             ],
             # Add grids for other models here
         }

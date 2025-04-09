@@ -10,8 +10,10 @@ from sega_learn.linear_models import RANSAC as rns
 from sega_learn.linear_models import Bayesian as byn
 from sega_learn.linear_models import Lasso as lso
 from sega_learn.linear_models import LinearDiscriminantAnalysis as lda
+from sega_learn.linear_models import LogisticRegression as log
 from sega_learn.linear_models import OrdinaryLeastSquares as ols
 from sega_learn.linear_models import PassiveAggressiveRegressor as par
+from sega_learn.linear_models import Perceptron as per
 from sega_learn.linear_models import QuadraticDiscriminantAnalysis as qda
 from sega_learn.linear_models import Ridge as rdg
 from sega_learn.linear_models import make_sample_data as mdt
@@ -39,6 +41,8 @@ class TestImportsLinear(unittest.TestCase):
         assert par is not None
         assert lda is not None
         assert qda is not None
+        assert per is not None
+        assert log is not None
         assert mdt is not None
 
     def test_wildcard_import(self):  # NOQA D201
@@ -50,6 +54,8 @@ class TestImportsLinear(unittest.TestCase):
         assert PassiveAggressiveRegressor is not None
         assert LinearDiscriminantAnalysis is not None
         assert QuadraticDiscriminantAnalysis is not None
+        assert Perceptron is not None
+        assert LogisticRegression is not None
 
 
 if __name__ == "__main__":

@@ -1,5 +1,7 @@
 from .classifiers import (
     LinearDiscriminantAnalysis,
+    LogisticRegression,
+    Perceptron,
     QuadraticDiscriminantAnalysis,
     make_sample_data,
 )
@@ -23,5 +25,7 @@ __all__ = [
     # Discriminant Analysis
     "LinearDiscriminantAnalysis",
     "QuadraticDiscriminantAnalysis",
+    "LogisticRegression",
+    "Perceptron",
     "make_sample_data",
 ]

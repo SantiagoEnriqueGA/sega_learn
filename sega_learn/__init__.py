@@ -11,8 +11,10 @@ from .linear_models import (
     Bayesian,
     Lasso,
     LinearDiscriminantAnalysis,
+    LogisticRegression,
     OrdinaryLeastSquares,
     PassiveAggressiveRegressor,
+    Perceptron,
     QuadraticDiscriminantAnalysis,
     Ridge,
     make_sample_data,
@@ -118,6 +120,8 @@ __all__ = [
     "PassiveAggressiveRegressor",
     "LinearDiscriminantAnalysis",
     "QuadraticDiscriminantAnalysis",
+    "LogisticRegression",
+    "Perceptron",
     "make_data"
     # Trees
     "ClassifierTreeUtility",
