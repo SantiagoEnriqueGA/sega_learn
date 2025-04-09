@@ -68,7 +68,7 @@ class OrdinaryLeastSquares:
 
         # Try to use C compiled code for faster computation
         try:
-            from .linear_models_cython import fit_ols
+            from .regressors_cython import fit_ols
 
             self.coef_ = fit_ols(X, y, self.fit_intercept)
 
@@ -236,7 +236,7 @@ class Ridge:
         if not numba:
             # Try to use C compiled code for faster computation
             try:
-                from .linear_models_cython import fit_ridge
+                from .regressors_cython import fit_ridge  # type: ignore
 
                 self.coef_ = fit_ridge(
                     X, y, self.alpha, self.fit_intercept, self.max_iter, self.tol
@@ -278,7 +278,7 @@ class Ridge:
             # Else if numba is not available, try to use the compiled version (not as optimized)
             except Exception as _e:
                 try:
-                    from .compiled_ridge_jit_utils import (
+                    from .compiled_ridge_jit_utils import (  # type: ignore
                         compiled_fit_numba_intercept,
                         compiled_fit_numba_no_intercept,
                     )
@@ -471,7 +471,7 @@ class Lasso:
         if not numba:
             # Try to use C compiled code for faster computation
             try:
-                from .linear_models_cython import fit_lasso
+                from .regressors_cython import fit_lasso  # type: ignore
 
                 self.coef_ = fit_lasso(
                     X, y, self.alpha, self.fit_intercept, self.max_iter, self.tol
@@ -513,7 +513,7 @@ class Lasso:
             # Else if numba is not available, try to use the compiled version (not as optimized)
             except Exception as _e:
                 try:
-                    from .compiled_lasso_jit_utils import (
+                    from .compiled_lasso_jit_utils import (  # type: ignore
                         compiled_fit_numba_intercept,
                         compiled_fit_numba_no_intercept,
                     )

@@ -1,9 +1,9 @@
-from .discriminantAnalysis import (
+from .classifiers import (
     LinearDiscriminantAnalysis,
     QuadraticDiscriminantAnalysis,
     make_sample_data,
 )
-from .linearModels import (
+from .regressors import (
     RANSAC,
     Bayesian,
     Lasso,
