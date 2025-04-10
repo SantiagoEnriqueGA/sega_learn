@@ -72,62 +72,62 @@ jobs:
       - name: Run Examples
         run: |
           # Auto
-          uv run python classifier.py
+          uv run python examples/auto/classifier.py
           # Clustering
-          uv run python dbscan.py
-          uv run python dbscan_3d.py
+          uv run python examples/auto/dbscan.py
+          uv run python examples/auto/dbscan_3d.py
           # Linear Models
-          uv run python bayes.py
-          uv run python lasso.py
-          uv run python lda.py
-          uv run python logisticRegression.py
-          uv run python ols.py
-          uv run python passiveAggressive.py
-          uv run python qda.py
-          uv run python ransac.py
-          uv run python ridge.py
+          uv run python examples/linear_models/bayes.py
+          uv run python examples/linear_models/lasso.py
+          uv run python examples/linear_models/lda.py
+          uv run python examples/linear_models/logisticRegression.py
+          uv run python examples/linear_models/ols.py
+          uv run python examples/linear_models/passiveAggressive.py
+          uv run python examples/linear_models/qda.py
+          uv run python examples/linear_models/ransac.py
+          uv run python examples/linear_models/ridge.py
           # Nearest Neighbors
-          uv run python nearestNeighborsClassifier.py
-          uv run python nearestNeighborsRegressor.py
+          uv run python examples/nearest_neighbors/nearestNeighborsClassifier.py
+          uv run python examples/nearest_neighbors/nearestNeighborsRegressor.py
           # Neural Networks
-          uv run python neuralNetwork_cancer.py
-          uv run python neuralNetwork_classifier.py
-          uv run python neuralNetwork_classifier_hyper.py
-          uv run python neuralNetwork_diabetes.py
-          uv run python neuralNetwork_hyper.py
-          uv run python neuralNetwork_iris.py
-          uv run python neuralNetwork_layers_conv.py
-          uv run python neuralNetwork_metrics_anim.py
-          uv run python neuralNetwork_regressor.py
+          uv run python examples/neural_networks/neuralNetwork_cancer.py
+          uv run python examples/neural_networks/neuralNetwork_classifier.py
+          uv run python examples/neural_networks/neuralNetwork_classifier_hyper.py
+          uv run python examples/neural_networks/neuralNetwork_diabetes.py
+          uv run python examples/neural_networks/neuralNetwork_hyper.py
+          uv run python examples/neural_networks/neuralNetwork_iris.py
+          uv run python examples/neural_networks/neuralNetwork_layers_conv.py
+          uv run python examples/neural_networks/neuralNetwork_metrics_anim.py
+          uv run python examples/neural_networks/neuralNetwork_regressor.py
           # SVM
-          uv run python generalizedSVC_multi.py
-          uv run python linearSVC_binary.py
-          uv run python linearSVR.py
+          uv run python examples/svm/generalizedSVC_multi.py
+          uv run python examples/svm/linearSVC_binary.py
+          uv run python examples/svm/linearSVR.py
           # Trees
-          uv run python gradientBoostedRegressor.py
-          uv run python isolationForest_reg.py
-          uv run python randomForestClassifier.py
-          uv run python randomForestRegressor.py
+          uv run python examples/trees/gradientBoostedRegressor.py
+          uv run python examples/trees/isolationForest_reg.py
+          uv run python examples/trees/randomForestClassifier.py
+          uv run python examples/trees/randomForestRegressor.py
           # Utils
-          uv run python dataAugmentation_combined.py
-          uv run python dataAugmentation_randOver.py
-          uv run python dataAugmentation_randUnder.py
-          uv run python dataAugmentation_smote.py
-          uv run python dataPreprocessing.py
-          uv run python gridSearchCV_gbr.py
-          uv run python gridSearchCV_rfc.py
-          uv run python gridSearchCV_rfr.py
-          uv run python makeData.py
-          uv run python pca_classification.py
-          uv run python pca_regression.py
-          uv run python polynomialTransform.py
-          uv run python randomSearchCV_bayes.py
-          uv run python randomSearchCV_gbr.py
-          uv run python randomSearchCV_rfc.py
-          uv run python randomSearchCV_rfr.py
-          uv run python segaSearchCV_rfr.py
-          uv run python svd_classification.py
-          uv run python svd_regression.py
+          uv run python examples/utils/dataAugmentation_combined.py
+          uv run python examples/utils/dataAugmentation_randOver.py
+          uv run python examples/utils/dataAugmentation_randUnder.py
+          uv run python examples/utils/dataAugmentation_smote.py
+          uv run python examples/utils/dataPreprocessing.py
+          uv run python examples/utils/gridSearchCV_gbr.py
+          uv run python examples/utils/gridSearchCV_rfc.py
+          uv run python examples/utils/gridSearchCV_rfr.py
+          uv run python examples/utils/makeData.py
+          uv run python examples/utils/pca_classification.py
+          uv run python examples/utils/pca_regression.py
+          uv run python examples/utils/polynomialTransform.py
+          uv run python examples/utils/randomSearchCV_bayes.py
+          uv run python examples/utils/randomSearchCV_gbr.py
+          uv run python examples/utils/randomSearchCV_rfc.py
+          uv run python examples/utils/randomSearchCV_rfr.py
+          uv run python examples/utils/segaSearchCV_rfr.py
+          uv run python examples/utils/svd_classification.py
+          uv run python examples/utils/svd_regression.py
 
       # NOT BEING USED CURRENTLY
       # ---------------------------------------
