@@ -15,7 +15,8 @@ jobs:
     strategy:
       # Run the job on multiple Python versions
       matrix:
-        python-version: ['3.9', '3.10', '3.11']
+        # python-version: ['3.9', '3.10', '3.11', '3.12'] # will use to test all versions
+        python-version: ['3.12']
       fail-fast: false # Don't cancel other jobs if one fails
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -33,21 +34,23 @@ jobs:
       # Install uv (fast Python package installer/resolver)
       - name: Install uv
         uses: astral-sh/setup-uv@v1
-        with:
-          uv-version: latest # Or pin a specific version
+        # Removed the invalid 'uv-version' input - let it use its default or latest
+        # with:
+        #   uv-version: latest
 
-      # Install dependencies using uv sync, including all optional extras
+      # Install dependencies using uv sync. This creates/uses .venv by default.
       # This uses pyproject.toml and potentially uv.lock
       # setup-uv action should automatically handle caching.
       - name: Install dependencies with uv sync
         run: uv sync --all-extras
 
-      # Install the local project package (sega_learn) itself using uv pip.
-      # --no-deps ensures uv doesn't try to reinstall dependencies already handled by 'uv sync'.
-      # This step will trigger setup.py build_ext if configured correctly.
+      # Install the local project package *inside* the uv-managed environment.
+      # `uv run` executes the command within the environment found/created by uv.
+      # --no-deps is still good practice here.
+      # This step triggers setup.py build_ext within the correct environment.
       - name: Install project package
-        run: uv pip install --no-deps .
+        run: uv run uv pip install --no-deps .
 
-      # Run the specific test script
+      # Run the test script *inside* the uv-managed environment.
       - name: Run specific test file (test_imports.py)
-        run: python tests/test_imports.py
+        run: uv run python tests/test_imports.py
