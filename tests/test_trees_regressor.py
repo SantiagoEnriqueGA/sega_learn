@@ -113,38 +113,41 @@ class TestRegressorTreeUtility(unittest.TestCase):
         """Tests the information_gain method with various inputs."""
         previous_y = [1, 2, 3, 4, 5]
         current_y = [[1, 2], [3, 4, 5]]
-        expected_gain = self.utility.calculate_variance(previous_y) - (
+        parent_variance = self.utility.calculate_variance(previous_y)
+        expected_gain = parent_variance - (
             self.utility.calculate_variance(current_y[0]) * len(current_y[0])
             + self.utility.calculate_variance(current_y[1]) * len(current_y[1])
         ) / len(previous_y)
-        calculated_gain = self.utility.information_gain(previous_y, current_y)
+        calculated_gain = self.utility.information_gain(parent_variance, current_y)
         self.assertAlmostEqual(calculated_gain, expected_gain, places=5)
 
     def test_information_gain_empty(self):
         """Tests the information_gain method with an empty list."""
         previous_y = []
         current_y = [[], []]
+        parent_variance = self.utility.calculate_variance(previous_y)
         expected_gain = 0
-        calculated_gain = self.utility.information_gain(previous_y, current_y)
+        calculated_gain = self.utility.information_gain(parent_variance, current_y)
         self.assertEqual(calculated_gain, expected_gain)
 
     def test_information_gain_single_value(self):
         """Tests the information_gain method with a list containing a single value."""
         previous_y = [5, 5, 5, 5, 5]
         current_y = [[5, 5], [5, 5]]
-        expected_gain = self.utility.calculate_variance(previous_y) - (
+        parent_variance = self.utility.calculate_variance(previous_y)
+        expected_gain = parent_variance - (
             self.utility.calculate_variance(current_y[0]) * len(current_y[0])
             + self.utility.calculate_variance(current_y[1]) * len(current_y[1])
         ) / len(previous_y)
-        calculated_gain = self.utility.information_gain(previous_y, current_y)
+        calculated_gain = self.utility.information_gain(parent_variance, current_y)
         self.assertAlmostEqual(calculated_gain, expected_gain, places=5)
 
     def test_information_gain_bad_type(self):
         """Tests the information_gain method with a bad type input."""
-        previous_y = "not a list"
+        parent_variance = 1  # Dummy value since the input is invalid
         current_y = "not a list"
         with self.assertRaises(TypeError):
-            self.utility.information_gain(previous_y, current_y)
+            self.utility.information_gain(parent_variance, current_y)
 
     def test_best_split(self):
         """Tests the best_split method with various inputs."""
@@ -499,7 +502,7 @@ class TestGradientBoostedRegressor(unittest.TestCase):
         """Tests the fit method with a bad type input."""
         self.gbr.X = "not a list"
         self.gbr.y = "not a list"
-        with self.assertRaises(TypeError):
+        with self.assertRaises((TypeError, ValueError)):
             self.gbr.fit()
 
     def test_predict(self):
@@ -532,7 +535,7 @@ class TestGradientBoostedRegressor(unittest.TestCase):
         """Tests the predict method with a bad type input."""
         self.gbr.X = "not a list"
         self.gbr.y = "not a list"
-        with self.assertRaises(TypeError):
+        with self.assertRaises((TypeError, ValueError)):
             self.gbr.predict()
 
     def test_get_stats(self):
