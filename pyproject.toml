@@ -17,8 +17,8 @@ dependencies = [
 [project.optional-dependencies]
 vis = [
     "matplotlib",
-    "seaborn>=0.13.2",
-    "tqdm>=4.67.1",
+    "seaborn",
+    "tqdm",
 ]
 accelerators = [
     "cupy-cuda12x>=13.4.0",

@@ -1,0 +1,53 @@
+name: Run Python Tests
+
+# Controls when the workflow will run
+on:
+  push:
+    branches: [ main ] # Runs on pushes to the main branch
+  pull_request:
+    branches: [ main ] # Runs on pull requests targeting the main branch
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    strategy:
+      # Run the job on multiple Python versions
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+      fail-fast: false # Don't cancel other jobs if one fails
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Sets up Python environment
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Install uv (fast Python package installer/resolver)
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+        with:
+          uv-version: latest # Or pin a specific version
+
+      # Install dependencies using uv sync, including all optional extras
+      # This uses pyproject.toml and potentially uv.lock
+      # setup-uv action should automatically handle caching.
+      - name: Install dependencies with uv sync
+        run: uv sync --all-extras
+
+      # Install the local project package (sega_learn) itself using uv pip.
+      # --no-deps ensures uv doesn't try to reinstall dependencies already handled by 'uv sync'.
+      # This step will trigger setup.py build_ext if configured correctly.
+      - name: Install project package
+        run: uv pip install --no-deps .
+
+      # Run the specific test script
+      - name: Run specific test file (test_imports.py)
+        run: python tests/test_imports.py
