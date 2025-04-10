@@ -251,9 +251,9 @@ class LinearDiscriminantAnalysis:
 
         Returns:
             scores: (np.ndarray) - Log-likelihood of each class for the input samples.
-
-        # TODO: caching the inverse once per function call could improve performance if the covariance matrix does not change during prediction.
         """
+        # Cache the inverse of the covariance matrix
+        inv_covariance = np.linalg.inv(self.covariance_)
         scores = []
         # Compute log-likelihood of each class
         for cls in self.classes_:
@@ -262,8 +262,8 @@ class LinearDiscriminantAnalysis:
 
             # Score is the log-likelihood of each class
             score = (
-                X @ np.linalg.inv(self.covariance_) @ mean.T
-                - 0.5 * mean @ np.linalg.inv(self.covariance_) @ mean.T
+                X @ inv_covariance @ mean.T
+                - 0.5 * mean @ inv_covariance @ mean.T
                 + log(prior)
             )
 

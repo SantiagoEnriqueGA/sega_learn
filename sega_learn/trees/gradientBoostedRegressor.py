@@ -50,7 +50,6 @@ class GradientBoostedRegressor:
 
         self.X = []  # Initialize the list of input data features
         self.y = []  # Initialize the list of target values
-        self.XX = []  # Initialize the list of input data features and target values
 
         self.numerical_cols = (
             0  # Initialize the set of indices of numeric attributes (columns)
@@ -82,7 +81,6 @@ class GradientBoostedRegressor:
         self.max_depth = 10
         self.X = []
         self.y = []
-        self.XX = []
         self.numerical_cols = 0
         self.mean_absolute_residuals = []
 
@@ -105,41 +103,33 @@ class GradientBoostedRegressor:
             self.X = X.tolist()
         if y is not None:
             self.y = y.tolist()
-        if X is not None and y is not None:
-            self.XX = [
-                list(x) + [y] for x, y in zip(X, y, strict=False)
-            ]  # Combine X and y
-
         if not self.X or not self.y:  # If the input data X or target values y are empty
             raise ValueError("Input data X and target values y cannot be empty.")
 
-        residuals = np.array(self.y)  # Initialize the residuals with the target values
+        # Ensure residuals are float
+        residuals = np.array(self.y).astype(float)
 
-        for i in range(self.num_trees):  # Loop over the number of trees in the ensemble
-            tree = self.trees[i]  # Get the current tree
-            self.trees[i] = tree.learn(
-                self.X, residuals
-            )  # Fit the tree to the residuals
+        for i, tree in enumerate(self.trees):  # Loop over the number of trees
+            # Fit the tree to the residuals
+            self.trees[i] = tree.learn(self.X, residuals)
 
+            # Predict residuals using the current tree
             predictions = np.array(
                 [
                     RegressorTree.evaluate_tree(self.trees[i], record)
                     for record in self.X
-                ]
-            )  # Predict the target values using the current tree
+                ],
+                dtype=float,
+            )  # Ensure predictions are float
 
-            residuals = (
-                residuals - predictions
-            )  # Update the residuals by subtracting the predictions from the target values
+            # Update residuals
+            residuals -= predictions
 
-            mean_absolute_residual = np.mean(
-                np.abs(residuals)
-            )  # Calculate the mean absolute residuals
-            self.mean_absolute_residuals.append(
-                mean_absolute_residual
-            )  # Append the mean absolute residuals to the list
+            # Calculate mean absolute residuals
+            mean_absolute_residual = np.mean(np.abs(residuals))
+            self.mean_absolute_residuals.append(mean_absolute_residual)
 
-            if stats:  # If stats is True, print the mean absolute residuals
+            if stats:  # Print stats if required
                 print(
                     f"Tree {i + 1} trained. Mean Absolute Residuals: {mean_absolute_residual}"
                 )
@@ -228,3 +218,58 @@ class GradientBoostedRegressor:
             "RMSE": rmse,
             # "Mean_Absolute_Residuals": self.mean_absolute_residuals
         }
+
+
+# PROFILE REPORT
+# Line #      Hits         Time  Per Hit   % Time  Line Contents
+# ==============================================================
+#     87                                               @profile
+#     88                                               def fit(self, X=None, y=None, stats=False):
+#     89                                                   """Fits the gradient boosted decision tree regressor to the training data.
+#     90
+#     91                                                   This method trains the ensemble of decision trees by iteratively fitting each tree to the residuals
+#     92                                                   of the previous iteration. The residuals are updated after each iteration by subtracting the predictions
+#     93                                                   made by the current tree from the :target values.
+#     94
+#     95                                                   Args:
+#     96                                                       X: (numpy.ndarray) - An array of input :data features. Default is None.
+#     97                                                       y: (numpy.ndarray) - An array of target values. Default is None.
+#     98                                                       stats: (bool) - A flag to decide whether to return stats or not. Default is False.
+#     99
+#    100                                                   Returns:
+#    101                                                       None
+#    102                                                   """
+#    103         1          0.6      0.6      0.0          if X is not None:
+#    104                                                       self.X = X.tolist()
+#    105         1          0.4      0.4      0.0          if y is not None:
+#    106                                                       self.y = y.tolist()
+#    107         1          1.3      1.3      0.0          if not self.X or not self.y:  # If the input data X or target values y are empty
+#    108                                                       raise ValueError("Input data X and target values y cannot be empty.")
+#    109
+#    110                                                   # Ensure residuals are float
+#    111         1         42.3     42.3      0.0          residuals = np.array(self.y).astype(float)
+#    112
+#    113        11         35.7      3.2      0.0          for i, tree in enumerate(self.trees):  # Loop over the number of trees
+#    114                                                       # Fit the tree to the residuals
+#    115        10     341363.7  34136.4     80.1              self.trees[i] = tree.learn(self.X, residuals)
+#    116
+#    117                                                       # Predict residuals using the current tree
+#    118        20        269.6     13.5      0.1              predictions = np.array(
+#    119        20      82328.3   4116.4     19.3                  [
+#    120                                                               RegressorTree.evaluate_tree(self.trees[i], record)
+#    121        10          6.8      0.7      0.0                      for record in self.X
+#    122                                                           ],
+#    123        10          5.5      0.6      0.0                  dtype=float,
+#    124                                                       )  # Ensure predictions are float
+#    125
+#    126                                                       # Update residuals
+#    127        10         43.9      4.4      0.0              residuals -= predictions
+#    128
+#    129                                                       # Calculate mean absolute residuals
+#    130        10        311.9     31.2      0.1              mean_absolute_residual = np.mean(np.abs(residuals))
+#    131        10         19.1      1.9      0.0              self.mean_absolute_residuals.append(mean_absolute_residual)
+#    132
+#    133        10          3.0      0.3      0.0              if stats:  # Print stats if required
+#    134        20       1406.0     70.3      0.3                  print(
+#    135        10         78.6      7.9      0.0                      f"Tree {i + 1} trained. Mean Absolute Residuals: {mean_absolute_residual}"
+#    136                                                           )

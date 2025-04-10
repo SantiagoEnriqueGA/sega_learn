@@ -13,7 +13,7 @@ class RegressorTreeUtility:
         """
         if len(y) == 0:
             return 0
-        return np.var(y)
+        return float(np.var(y))  # Ensure the result is a scalar
 
     def partition_classes(self, X, y, split_attribute, split_val):
         """Partitions the dataset into two subsets based on a given split attribute and value.
@@ -46,24 +46,29 @@ class RegressorTreeUtility:
         # X_right contains rows where the split attribute is greater than the split value
         # y_left  contains target labels corresponding to X_left
         # y_right contains target labels corresponding to X_right
+        # Vectorized partitioning using NumPy boolean indexing
         mask = X[:, split_attribute] <= split_val
-        X_left = X[mask]
-        X_right = X[~mask]
-        y_left = y[mask]
-        y_right = y[~mask]
+        return X[mask], X[~mask], y[mask], y[~mask]
 
-        return X_left, X_right, y_left, y_right
+    def information_gain(self, parent_variance, current_y):
+        """Calculate the information gain from a split by subtracting the variance of child nodes from the variance of the parent node.
 
-    def information_gain(self, previous_y, current_y):
-        """Calculate the information gain from a split by subtracting the variance of child nodes from the variance of the parent node."""
-        if len(previous_y) == 0:  # If the parent node is empty
+        Args:
+            parent_variance: (float) - The precomputed variance of the parent node.
+            current_y: (list of array-like) - The target labels of the child nodes.
+
+        Returns:
+            float: The information gain from the split.
+        """
+        if parent_variance == 0:  # If the parent node variance is 0
             return 0  # Return 0 information gain
 
-        # Compute parent variance
-        parent_variance = self.calculate_variance(previous_y)
+        # Compute total length of child nodes
+        total_len = sum(len(y) for y in current_y)
+        if total_len == 0:  # Avoid division by zero
+            return 0
 
         # Compute weighted child variance
-        total_len = len(previous_y)
         child_variance = (
             sum(len(y) * self.calculate_variance(y) for y in current_y) / total_len
         )
@@ -111,6 +116,9 @@ class RegressorTreeUtility:
                 "info_gain": 0,
             }
 
+        # Precompute the parent variance
+        parent_variance = self.calculate_variance(y)
+
         # Randomly select a subset of attributes for splitting
         num_features = int(np.sqrt(X.shape[1]))  # Square root of total attributes
         selected_attributes = np.random.choice(
@@ -138,7 +146,8 @@ class RegressorTreeUtility:
                 if len(y_left) == 0 or len(y_right) == 0:
                     continue
 
-                info_gain = self.information_gain(y, [y_left, y_right])
+                # Compute information gain using the cached parent variance
+                info_gain = self.information_gain(parent_variance, [y_left, y_right])
 
                 if info_gain > best_info_gain:
                     best_info_gain = info_gain
