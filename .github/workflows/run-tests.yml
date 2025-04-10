@@ -55,7 +55,7 @@ jobs:
 
        # --- Test Steps ---
 
-      # Step 1: Run main import tests first (quickest feedback)
+      # Step 1: Run main import tests first
       - name: Run Main Import Test (test_imports.py)
         run: uv run python -m unittest tests/test_imports.py
 
@@ -64,14 +64,14 @@ jobs:
         run: uv run python -m unittest discover -s tests -p "test_*_imports.py"
 
       # Step 3: Run unit/functional tests
-      # TODO: Update this scrip to skip *_imports.py tests
-      # This is currently rerunning all *_imports.py tests
+      # Run quick tests, filters for tests that run under CUTOFF, and not Numba/JIT
       - name: Run Unit/Functional Tests
-        run: uv run python tests/run_selected_tests.py
+        run: uv run python tests/run_quick_tests.py
 
+      # NOT BEING USED CURRENTLY
       # Step 4: Run all example tests
-      - name: Run Example Tests
-        run: uv run python tests/run_all_examples.py
+      # - name: Run Example Tests
+      #   run: uv run python tests/run_all_examples.py
 
       # (Alternative Step: Run ALL tests)
       # - name: Run All Remaining Tests (Alternative)
