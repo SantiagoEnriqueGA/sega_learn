@@ -15,8 +15,7 @@ jobs:
     strategy:
       # Run the job on multiple Python versions
       matrix:
-        # python-version: ['3.9', '3.10', '3.11', '3.12']   # will use to test all versions
-        python-version: ['3.12']                            # currently only 3.12 is tested
+        python-version: ['3.9', '3.10', '3.11', '3.12']
       fail-fast: false # Don't cancel other jobs if one fails
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -48,7 +47,7 @@ jobs:
 
       # Install the local project package *inside* the uv-managed environment.
       # `uv run` executes the command within the environment found/created by uv.
-      # --no-deps is still good practice here.
+      # --no-deps is good practice here.
       # This step triggers setup.py build_ext within the correct environment.
       - name: Install project package
         run: uv run uv pip install --no-deps .
