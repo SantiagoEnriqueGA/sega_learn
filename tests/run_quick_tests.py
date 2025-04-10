@@ -11,7 +11,7 @@ tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-CUTOFF = 5.0  # Elapsed time cutoff in seconds
+CUTOFF = 1.0  # Elapsed time cutoff in seconds
 TEST_LOG_FILE = "tests/_test_log.csv"
 FILTER_NUMBA = True
 
