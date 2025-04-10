@@ -43,7 +43,7 @@ jobs:
       # Force reinstall numba and llvmlite to specific versions for compatibility
       - name: Reinstall numba and llvmlite
         run: |
-          uv run uv pip uninstall -y numba llvmlite
+          uv run uv pip uninstall -- -y numba llvmlite
           uv run uv pip install numba==0.61.0 llvmlite==0.44.0
 
       # Install dependencies using uv sync. This creates/uses .venv by default.
