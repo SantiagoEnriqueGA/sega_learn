@@ -74,8 +74,8 @@ jobs:
           # Auto
           uv run python examples/auto/classifier.py
           # Clustering
-          uv run python examples/auto/dbscan.py
-          uv run python examples/auto/dbscan_3d.py
+          uv run python examples/clustering/dbscan.py
+          uv run python examples/clustering/dbscan_3d.py
           # Linear Models
           uv run python examples/linear_models/bayes.py
           uv run python examples/linear_models/lasso.py
