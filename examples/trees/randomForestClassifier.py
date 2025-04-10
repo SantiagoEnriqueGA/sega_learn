@@ -13,11 +13,6 @@ import sega_learn.trees.randomForestClassifier as rfc
 import sega_learn.utils.dataPrep as dp
 from sega_learn.utils import Metrics
 
-# Source file location
-file_orig = "example_datasets/Wisconsin_breast_prognostic.csv"
-df = pd.read_csv(file_orig)  # Load the CSV file
-X, y = dp.DataPrep.df_to_ndarray(df, y_col=-1)
-
 
 def basic_example(num_trees=10, max_depth=5):
     """Basic example of using the Random Forest Classifier on a synthetic dataset."""
@@ -44,6 +39,11 @@ def cancer_example(num_trees=10, max_depth=5):
     """Basic example of using the Random Forest Classifier on the Wisconsin Breast Prognostic dataset."""
     print("\n\nRandom Forest Classifier on Wisconsin Breast Prognostic dataset\n")
 
+    # Source file location
+    file_orig = "example_datasets/Wisconsin_breast_prognostic.csv"
+    df = pd.read_csv(file_orig)  # Load the CSV file
+    X, y = dp.DataPrep.df_to_ndarray(df, y_col=-1)
+
     # Initialize random forest object
     rfObj = rfc.RandomForestClassifier(
         X=X, y=y, max_depth=max_depth, forest_size=num_trees, random_seed=0
@@ -60,6 +60,11 @@ def grid_search():
     print(
         "\n\nRandom Forest Classifier Grid Search on Wisconsin Breast Prognostic dataset\n"
     )
+
+    # Source file location
+    file_orig = "example_datasets/Wisconsin_breast_prognostic.csv"
+    df = pd.read_csv(file_orig)  # Load the CSV file
+    X, y = dp.DataPrep.df_to_ndarray(df, y_col=-1)
 
     # Define the range of forest sizes and maximum depths to test
     forest_sizes = [10, 20, 100]

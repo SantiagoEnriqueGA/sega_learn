@@ -12,20 +12,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 import sega_learn.trees.gradientBoostedRegressor as gbr
 import sega_learn.utils.dataPrep as dp
 
-# Load and prepare dataset
-df = pd.read_csv("example_datasets/output_May-06-2024_cleaned.csv")
-df = df[["Miles", "Stock", "Year", "Sub_Model", "Price"]]
-df.to_csv("example_datasets/carsDotCom.csv", index=False)
-
-# Source file location
-file_orig = "example_datasets/carsDotCom.csv"
-
-# Prepare and format data
-df, file_loc = dp.DataPrep.prepare_data(
-    file_orig, label_col_index=4, cols_to_encode=[1, 2, 3]
-)
-X, y = dp.DataPrep.df_to_ndarray(df, y_col=4)
-
 
 def basic_example(num_trees=10, max_depth=5):
     """Basic example of using the Gradient Boosted Regressor on a synthetic dataset."""
@@ -56,6 +42,20 @@ def cars_example(num_trees=50, max_depth=25):
     """Basic example of using the Gradient Boosted Regressor on the Cars.com dataset."""
     print("\n\nRandom Forest Regressor on Cars.com dataset\n")
 
+    # Load and prepare dataset
+    df = pd.read_csv("example_datasets/output_May-06-2024_cleaned.csv")
+    df = df[["Miles", "Stock", "Year", "Sub_Model", "Price"]]
+    df.to_csv("example_datasets/carsDotCom.csv", index=False)
+
+    # Source file location
+    file_orig = "example_datasets/carsDotCom.csv"
+
+    # Prepare and format data
+    df, file_loc = dp.DataPrep.prepare_data(
+        file_orig, label_col_index=4, cols_to_encode=[1, 2, 3]
+    )
+    X, y = dp.DataPrep.df_to_ndarray(df, y_col=4)
+
     # Initialize GBDT object
     gbdtDiab = gbr.GradientBoostedRegressor(
         X, y, num_trees=num_trees, max_depth=max_depth, random_seed=0
@@ -75,6 +75,20 @@ def cars_example(num_trees=50, max_depth=25):
 
 def grid_search():
     """Grid search example to find the best hyperparameters for the GBDT model."""
+    # Load and prepare dataset
+    df = pd.read_csv("example_datasets/output_May-06-2024_cleaned.csv")
+    df = df[["Miles", "Stock", "Year", "Sub_Model", "Price"]]
+    df.to_csv("example_datasets/carsDotCom.csv", index=False)
+
+    # Source file location
+    file_orig = "example_datasets/carsDotCom.csv"
+
+    # Prepare and format data
+    df, file_loc = dp.DataPrep.prepare_data(
+        file_orig, label_col_index=4, cols_to_encode=[1, 2, 3]
+    )
+    X, y = dp.DataPrep.df_to_ndarray(df, y_col=4)
+
     # Define the range of numbers of trees and maximum depths to test
     num_trees_list = [10, 20, 100]
     max_depths = [5, 10, 20]

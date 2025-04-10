@@ -1,5 +1,7 @@
+import csv
 import os
 import sys
+import time
 import unittest
 import warnings
 from functools import partialmethod
@@ -28,6 +30,31 @@ def reorder_tests(tests):
     return import_tests + normal_tests + example_tests
 
 
+class LoggingTestResult(unittest.TextTestResult):
+    """Custom test result class to log test results with elapsed time."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the LoggingTestResult."""
+        super().__init__(*args, **kwargs)
+        self.test_log = []
+
+    def startTest(self, test):
+        """Start logging the test with the current time."""
+        self._start_time = time.time()
+        super().startTest(test)
+
+    def stopTest(self, test):
+        """Log the test result with elapsed time."""
+        elapsed_time = time.time() - self._start_time
+        status = (
+            "PASSED"
+            if test not in self.failures and test not in self.errors
+            else "FAILED"
+        )
+        self.test_log.append((str(test), status, elapsed_time))
+        super().stopTest(test)
+
+
 if __name__ == "__main__":
     # Discover and run all tests in the 'tests' directory
     loader = unittest.TestLoader()
@@ -37,5 +64,14 @@ if __name__ == "__main__":
     ordered_tests = reorder_tests(list(suite))
     ordered_suite = unittest.TestSuite(ordered_tests)
 
-    testRunner = unittest.TextTestRunner()
-    testRunner.run(ordered_suite)
+    # Run tests with logging
+    with open("tests/_test_log.csv", "w", newline="") as log_file:
+        csv_writer = csv.writer(log_file)
+        csv_writer.writerow(["Test Name", "Status", "Elapsed Time (s)"])
+
+        testRunner = unittest.TextTestRunner(resultclass=LoggingTestResult)
+        result = testRunner.run(ordered_suite)
+
+        # Write test results to the CSV file
+        for test_name, status, elapsed_time in result.test_log:
+            csv_writer.writerow([test_name, status, f"{elapsed_time:.2f}"])
