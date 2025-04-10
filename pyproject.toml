@@ -19,6 +19,7 @@ vis = [
     "matplotlib",
     "seaborn",
     "tqdm",
+    "tabulate",
 ]
 accelerators = [
     "cupy-cuda12x>=13.4.0",

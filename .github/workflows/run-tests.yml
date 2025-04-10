@@ -15,8 +15,8 @@ jobs:
     strategy:
       # Run the job on multiple Python versions
       matrix:
-        # python-version: ['3.9', '3.10', '3.11', '3.12'] # will use to test all versions
-        python-version: ['3.12']
+        # python-version: ['3.9', '3.10', '3.11', '3.12']   # will use to test all versions
+        python-version: ['3.12']                            # currently only 3.12 is tested
       fail-fast: false # Don't cancel other jobs if one fails
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -32,14 +32,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       # Install uv (fast Python package installer/resolver)
+      # Uses default version or latest
       - name: Install uv
         uses: astral-sh/setup-uv@v1
-        # Removed the invalid 'uv-version' input - let it use its default or latest
-        # with:
-        #   uv-version: latest
 
       # Install dependencies using uv sync. This creates/uses .venv by default.
-      # This uses pyproject.toml and potentially uv.lock
+      # This uses the default Python version (3.12) and installs all extras from pyproject.toml.
       # setup-uv action should automatically handle caching.
       - name: Install dependencies with uv sync
         run: uv sync --all-extras
@@ -51,6 +49,26 @@ jobs:
       - name: Install project package
         run: uv run uv pip install --no-deps .
 
-      # Run the test script *inside* the uv-managed environment.
-      - name: Run specific test file (test_imports.py)
-        run: uv run python tests/test_imports.py
+       # --- Test Steps ---
+
+      # Step 1: Run main import tests first (quickest feedback)
+      - name: Run Main Import Test (test_imports.py)
+        run: uv run python -m unittest tests/test_imports.py
+
+      # Step 2: Run module-specific import tests
+      - name: Run Module Import Tests
+        run: uv run python -m unittest discover -s tests -p "test_*_imports.py"
+
+      # Step 3: Run unit/functional tests
+      # TODO: Update this scrip to skip *_imports.py tests
+      # This is currently rerunning all *_imports.py tests
+      - name: Run Unit/Functional Tests
+        run: uv run python tests/run_selected_tests.py
+
+      # Step 4: Run all example tests
+      - name: Run Example Tests
+        run: uv run python tests/run_all_examples.py
+
+      # (Alternative Step: Run ALL tests)
+      # - name: Run All Remaining Tests (Alternative)
+      #   run: uv run python -m unittest discover -s tests -p "test_*.py"
