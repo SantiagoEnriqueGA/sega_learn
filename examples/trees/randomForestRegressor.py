@@ -12,20 +12,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 import sega_learn.trees.randomForestRegressor as rfg
 import sega_learn.utils.dataPrep as dp
 
-# Load and prepare dataset
-df = pd.read_csv("example_datasets/output_May-06-2024_cleaned.csv")
-df = df[["Miles", "Stock", "Year", "Sub_Model", "Price"]]
-df.to_csv("example_datasets/carsDotCom.csv", index=False)
-
-# Source file location
-file_orig = "example_datasets/carsDotCom.csv"
-
-# Prepare and format data
-df, file_loc = dp.DataPrep.prepare_data(
-    file_orig, label_col_index=4, cols_to_encode=[1, 2, 3]
-)
-X, y = dp.DataPrep.df_to_ndarray(df, y_col=4)
-
 
 def basic_example(num_trees=10, max_depth=5):
     """Basic example of using the Random Forest Regressor on a synthetic dataset."""
@@ -48,6 +34,20 @@ def cars_example(num_trees=50, max_depth=5):
     """Basic example of using the Random Forest Regressor on the Cars.com dataset."""
     print("\n\nRandom Forest Regressor on Cars.com dataset\n")
 
+    # Load and prepare dataset
+    df = pd.read_csv("example_datasets/output_May-06-2024_cleaned.csv")
+    df = df[["Miles", "Stock", "Year", "Sub_Model", "Price"]]
+    df.to_csv("example_datasets/carsDotCom.csv", index=False)
+
+    # Source file location
+    file_orig = "example_datasets/carsDotCom.csv"
+
+    # Prepare and format data
+    df, file_loc = dp.DataPrep.prepare_data(
+        file_orig, label_col_index=4, cols_to_encode=[1, 2, 3]
+    )
+    X, y = dp.DataPrep.df_to_ndarray(df, y_col=4)
+
     # Initialize random forest object
     rfObj = rfg.RandomForestRegressor(
         X=X, y=y, max_depth=max_depth, forest_size=num_trees, random_seed=0
@@ -60,6 +60,20 @@ def cars_example(num_trees=50, max_depth=5):
 def grid_search():
     """Grid search example to find the best hyperparameters for the Random Forest Regressor model."""
     print("\n\nRandom Forest Regressor Grid Search on Cars.com dataset\n")
+
+    # Load and prepare dataset
+    df = pd.read_csv("example_datasets/output_May-06-2024_cleaned.csv")
+    df = df[["Miles", "Stock", "Year", "Sub_Model", "Price"]]
+    df.to_csv("example_datasets/carsDotCom.csv", index=False)
+
+    # Source file location
+    file_orig = "example_datasets/carsDotCom.csv"
+
+    # Prepare and format data
+    df, file_loc = dp.DataPrep.prepare_data(
+        file_orig, label_col_index=4, cols_to_encode=[1, 2, 3]
+    )
+    X, y = dp.DataPrep.df_to_ndarray(df, y_col=4)
 
     # Define the range of forest sizes and maximum depths to test
     forest_sizes = [10, 20, 50]

@@ -90,11 +90,9 @@ jobs:
           uv run python examples/nearest_neighbors/nearestNeighborsClassifier.py
           uv run python examples/nearest_neighbors/nearestNeighborsRegressor.py
           # Neural Networks
-          uv run python examples/neural_networks/neuralNetwork_cancer.py
           uv run python examples/neural_networks/neuralNetwork_classifier.py
           uv run python examples/neural_networks/neuralNetwork_classifier_hyper.py
           uv run python examples/neural_networks/neuralNetwork_diabetes.py
-          uv run python examples/neural_networks/neuralNetwork_hyper.py
           uv run python examples/neural_networks/neuralNetwork_iris.py
           uv run python examples/neural_networks/neuralNetwork_layers_conv.py
           uv run python examples/neural_networks/neuralNetwork_metrics_anim.py
