@@ -40,15 +40,6 @@ jobs:
       - name: Install Required Libraries
         run: sudo apt-get install -y libgcc-12-dev
 
-      # Force reinstall numba and llvmlite to specific versions for compatibility
-      - name: Uninstall numba and llvmlite
-        run: |
-          .venv/bin/pip uninstall -y numba llvmlite
-
-      - name: Install numba and llvmlite
-        run: |
-          uv run uv pip install numba==0.61.0 llvmlite==0.44.0
-
       # Install dependencies using uv sync. This creates/uses .venv by default.
       # This uses the default Python version (3.12) and installs all extras from pyproject.toml.
       # setup-uv action should automatically handle caching.
