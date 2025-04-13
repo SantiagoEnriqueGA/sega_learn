@@ -27,13 +27,13 @@ def basic_example(num_trees=10, max_depth=5):
     )
 
     # Train GBDT model
-    gbdtDiab.fit(stats=True)
+    gbdtDiab.fit()
 
     # Predict target values
-    predictions = gbdtDiab.predict()
+    predictions = gbdtDiab.predict(X)
 
     # Get stats
-    stats = gbdtDiab.get_stats(predictions)
+    stats = gbdtDiab.get_stats(y, predictions)
     for stat in stats:
         print(f"{stat}: {stats[stat]:.4f}")
 

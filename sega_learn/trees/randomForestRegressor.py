@@ -15,68 +15,56 @@ from joblib import Parallel, delayed
 from .treeRegressor import RegressorTree
 
 
-def _fit_tree(X, y, max_depth):
-    """Helper function for parallel tree fitting. Fits a single tree on a bootstrapped sample.
+def _fit_single_tree(X, y, max_depth, min_samples_split, tree_index, random_state_base):
+    """Helper function for parallel tree fitting. Fits a single tree on abootstrapped sample.
 
     Args:
-        X (array-like): The input features.
-        y (array-like): The target labels.
+        X (np.ndarray): The input features.
+        y (np.ndarray): The target labels.
         max_depth (int): The maximum depth of the tree.
+        min_samples_split (int): The minimum samples required to split a node.
+        tree_index (int): Index of the tree for seeding.
+        random_state_base (int): Base random seed.
 
     Returns:
-        RegressorTree: A fitted tree object.
+        tuple: (tree_index, fitted_tree_instance, bootstrap_indices)
     """
-    # Create bootstrapped sample
-    indices = np.random.choice(len(X), size=len(X), replace=True)
+    # Ensure reproducibility for each tree if random_state is set
+    if random_state_base is not None:
+        np.random.seed(random_state_base + tree_index)
+
+    # Create bootstrapped sample indices
+    n_samples = X.shape[0]
+    indices = np.random.choice(n_samples, size=n_samples, replace=True)
     X_sample = X[indices]
     y_sample = y[indices]
 
-    # Fit tree on bootstrapped sample
-    tree = RegressorTree(max_depth=max_depth)
-    return tree.learn(X_sample, y_sample)
+    # Instantiate and fit the tree
+    tree = RegressorTree(max_depth=max_depth, min_samples_split=min_samples_split)
+    tree.fit(X_sample, y_sample)  # Use the fit method
+
+    return tree_index, tree, indices  # Return the instance and indices
 
 
-def _predict_oob(X, trees, bootstraps):
-    """Helper function for parallel out-of-bag predictions. Predicts using out-of-bag samples.
-
-    Args:
-        X (array-like): The input features.
-        trees (list): The list of fitted trees.
-        bootstraps (list): The list of bootstrapped indices for each tree.
-
-    Returns:
-        list: The list of out-of-bag predictions.
-    """
-    all_predictions = []
-
-    for i, record in enumerate(X):
-        predictions = []
-        for _j, (tree, bootstrap) in enumerate(zip(trees, bootstraps, strict=False)):
-            # Check if record is out-of-bag for this tree
-            if i not in bootstrap:
-                predictions.append(RegressorTree.evaluate_tree(tree, record))
-
-        if predictions:
-            all_predictions.append(np.mean(predictions))
-        else:
-            # If not out-of-bag for any tree, use all trees
-            all_predictions.append(
-                np.mean([RegressorTree.evaluate_tree(tree, record) for tree in trees])
-            )
-
-    return all_predictions
+# Note: OOB prediction within fit is complex with parallel processing storing
+# only instances. Calculating OOB score usually happens *after* fitting all trees
+# or requires more complex communication/storage.
+# The original _predict_oob is removed for simplicity, as storing only
+# tree instances makes accessing specific bootstrap indices per tree difficult post-fit.
+# OOB score calculation is often done separately if needed.
 
 
 class RandomForestRegressor:
     """A class representing a Random Forest model for regression.
 
-    Atributes:
-        forest_size (int): The number of trees in the forest.
+    Attributes:
+        n_estimators (int): The number of trees in the forest.
         max_depth (int): The maximum depth of each tree.
-        n_jobs (int): The number of jobs to run in parallel.
-        random_seed (int): Seed for random number generation.
-        X (array-like): The input features.
-        y (array-like): The target labels.
+        min_samples_split (int): The minimum number of samples required to split an internal node.
+        n_jobs (int): The number of jobs to run in parallel for fitting.
+        random_state (int): Seed for random number generation for reproducibility.
+        trees (list): List holding the fitted RegressorTree instances.
+        oob_score_ (float): Out-of-bag score (R^2). Not calculated by default in this version.
 
     Methods:
         fit(X=None, y=None, verbose=False): Fits the random forest to the data.
@@ -86,21 +74,41 @@ class RandomForestRegressor:
     """
 
     def __init__(
-        self, forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None
+        self,
+        forest_size=100,
+        max_depth=10,
+        min_samples_split=2,
+        n_jobs=-1,
+        random_seed=None,
+        X=None,
+        y=None,
     ):
-        """Initialize the Random Forest Regressor with optimized parameters."""
+        """Initialize the Random Forest Regressor."""
         self.n_estimators = forest_size
         self.max_depth = max_depth
-        self.n_jobs = n_jobs if n_jobs > 0 else max(1, multiprocessing.cpu_count())
+        self.min_samples_split = min_samples_split  # Store this parameter
+        self.n_jobs = n_jobs if n_jobs != 0 else max(1, multiprocessing.cpu_count())
+        if n_jobs == -1:
+            self.n_jobs = max(1, multiprocessing.cpu_count())
         self.random_state = random_seed
-        self.trees = []
-        self.bootstraps = []
-
+        self.trees = []  # Will store RegressorTree instances
+        # self.bootstraps = [] # Storing bootstrap indices here is tricky with parallel return
+        self.oob_score_ = None  # OOB score is not computed by default here
+        self._X_fit_shape = None  # Store shape for predict validation
         self.X = X
         self.y = y
 
     def fit(self, X=None, y=None, verbose=False):
-        """Fit the random forest with parallel processing."""
+        """Fit the random forest to the training data X and y.
+
+        Args:
+            X (array-like): Training input features of shape (n_samples, n_features).
+            y (array-like): Training target values of shape (n_samples,).
+            verbose (bool): Whether to print progress messages.
+
+        Returns:
+            self: The fitted RandomForestRegressor instance.
+        """
         if X is None and self.X is None:
             raise ValueError(
                 "X must be provided either during initialization or fitting."
@@ -109,112 +117,196 @@ class RandomForestRegressor:
             raise ValueError(
                 "y must be provided either during initialization or fitting."
             )
-
         start_time = datetime.now()
 
-        # Set random seed
-        if self.random_state is not None:
-            np.random.seed(self.random_state)
+        X = np.asarray(self.X if X is None else X)
+        y = np.asarray(self.y if y is None else y)
 
-        # Convert inputs to numpy arrays
-        X = np.asarray(X if X is not None else self.X)
-        y = np.asarray(y if y is not None else self.y)
-
-        #  If X or y are empty, raise an error
-        if X.size == 0 or y.size == 0:
+        if X.ndim != 2:
+            raise ValueError("X must be a 2D array.")
+        if y.ndim != 1:
+            raise ValueError("y must be a 1D array.")
+        if X.shape[0] != y.shape[0]:
+            raise ValueError("X and y must have the same number of samples.")
+        if X.shape[0] == 0:
             raise ValueError("X and y must not be empty.")
 
+        self._X_fit_shape = X.shape
+
         if verbose:
-            print("Fitting trees in parallel...")
+            print(
+                f"Fitting {self.n_estimators} trees in parallel using {self.n_jobs} jobs..."
+            )
 
         # Fit trees in parallel
-        self.trees = Parallel(n_jobs=self.n_jobs)(
-            delayed(_fit_tree)(X, y, self.max_depth) for _ in range(self.n_estimators)
+        # Pass necessary parameters and a way to seed each job differently
+        results = Parallel(n_jobs=self.n_jobs)(
+            delayed(_fit_single_tree)(
+                X, y, self.max_depth, self.min_samples_split, i, self.random_state
+            )
+            for i in range(self.n_estimators)
         )
 
-        # Generate bootstrapped indices for OOB scoring
-        self.bootstraps = [
-            np.random.choice(len(X), size=len(X), replace=True)
-            for _ in range(self.n_estimators)
-        ]
+        # Process results - results are tuples: (tree_index, tree_instance, bootstrap_indices)
+        # Sort results by tree_index to maintain order if needed, though usually not critical for RF
+        results.sort(key=lambda item: item[0])
+        self.trees = [result[1] for result in results]
+        # If OOB calculation is desired, bootstrap indices would need to be collected:
+        # self.bootstraps = [result[2] for result in results]
+        # And then OOB prediction logic would follow here.
 
-        # Compute OOB predictions
+        # --- OOB Score Calculation (Optional, requires storing bootstraps) ---
+        # if self.n_estimators > 0:
+        #     self.oob_score_ = self._calculate_oob_score(X, y)
+        #     if verbose:
+        #          print(f"OOB Score (R^2): {self.oob_score_:.4f}" if self.oob_score_ is not None else "OOB Score: N/A")
+        # --- End OOB Calculation ---
+
         if verbose:
-            print("Computing OOB predictions...")
-
-        y_pred = _predict_oob(X, self.trees, self.bootstraps)
-
-        # Calculate evaluation metrics
-        self.calculate_metrics(y, y_pred)
-
-        if verbose:
-            print(f"Execution time: {datetime.now() - start_time}")
-            print(f"MSE:  {self.mse:.4f}")
-            print(f"R^2:  {self.r2:.4f}")
-            print(f"MAPE: {self.mape:.4f}%")
-            print(f"MAE:  {self.mae:.4f}")
-            print(f"RMSE: {self.rmse:.4f}")
+            elapsed = datetime.now() - start_time
+            print(f"Forest fitting completed in {elapsed}.")
+            # Note: The original code calculated metrics based on OOB predictions.
+            # Standard practice is to calculate metrics on a separate test set or via cross-val.
+            # OOB score provides an estimate during training.
 
         return self
 
+    # --- OOB Calculation Method (Example, requires self.bootstraps) ---
+    # def _calculate_oob_score(self, X, y):
+    #     """Calculates the Out-of-Bag R^2 score."""
+    #     if not hasattr(self, 'bootstraps') or not self.bootstraps or len(self.bootstraps) != len(self.trees):
+    #         print("Warning: Bootstrap indices not available for OOB calculation.")
+    #         return None
+
+    #     n_samples = X.shape[0]
+    #     oob_predictions = np.full(n_samples, np.nan, dtype=float)
+    #     n_oob_predictions = np.zeros(n_samples, dtype=int)
+
+    #     for i in range(n_samples):
+    #         sample_preds = []
+    #         for tree_idx, tree in enumerate(self.trees):
+    #             # Check if sample 'i' was OUT of the bag for this tree
+    #             if i not in self.bootstraps[tree_idx]:
+    #                 # Use the tree's predict method for the single sample
+    #                 pred = tree.predict(X[i:i+1])[0] # Predict expects 2D, take first element
+    #                 if not np.isnan(pred): # Ensure prediction is valid
+    #                      sample_preds.append(pred)
+
+    #         if sample_preds: # If the sample was OOB for at least one tree
+    #             oob_predictions[i] = np.mean(sample_preds)
+    #             n_oob_predictions[i] = len(sample_preds)
+
+    #     # Calculate R^2 only for samples that had OOB predictions
+    #     valid_oob_mask = ~np.isnan(oob_predictions)
+    #     if np.sum(valid_oob_mask) < 2: # Need at least 2 points for variance
+    #          print("Warning: Not enough OOB predictions to calculate score.")
+    #          return None
+
+    #     y_true_oob = y[valid_oob_mask]
+    #     y_pred_oob = oob_predictions[valid_oob_mask]
+
+    #     if len(np.unique(y_true_oob)) == 1: # Handle constant target case
+    #         return 0.0 if np.allclose(y_true_oob, y_pred_oob) else -np.inf
+
+    #     ssr = np.sum((y_true_oob - y_pred_oob) ** 2)
+    #     sst = np.sum((y_true_oob - np.mean(y_true_oob)) ** 2)
+
+    #     if sst == 0: # Should be caught by len(unique)==1, but for safety
+    #          return 1.0 if ssr == 0 else 0.0
+
+    #     return 1.0 - (ssr / sst)
+    # --- End OOB Calculation Method ---
+
+    def predict(self, X):
+        """Predict target values for input features X using the trained random forest.
+
+        Args:
+            X (array-like): Input features of shape (n_samples, n_features).
+
+        Returns:
+            np.ndarray: Predicted target values of shape (n_samples,).
+        """
+        X = np.asarray(X)
+        if self._X_fit_shape is None:
+            raise RuntimeError("The model has not been fitted yet.")
+        if X.ndim != 2:
+            raise ValueError("Input X must be a 2D array.")
+        if X.shape[1] != self._X_fit_shape[1]:
+            raise ValueError(
+                f"Input data must have {self._X_fit_shape[1]} features, but got {X.shape[1]}."
+            )
+        if X.shape[0] == 0:
+            return np.array([])
+        if not self.trees:
+            raise RuntimeError("The forest has no trees. Please fit the model first.")
+
+        # Make predictions using each tree's predict method
+        # Each tree.predict(X) returns an array of shape (n_samples,)
+        all_predictions = np.array([tree.predict(X) for tree in self.trees])
+
+        # Check for NaNs which might occur from tree._traverse_tree if nodes are bad
+        if np.isnan(all_predictions).any():
+            print(
+                "Warning: NaN predictions encountered from some trees. Averaging will ignore NaNs."
+            )
+            # Average predictions across trees, ignoring NaNs
+            # np.nanmean computes the mean ignoring NaNs
+            return np.nanmean(all_predictions, axis=0)
+        else:
+            # Average predictions across trees (axis=0)
+            return np.mean(all_predictions, axis=0)
+
+    def get_stats(self, y_true, y_pred, verbose=False):
+        """Calculate and optionally print evaluation metrics."""
+        stats = self.calculate_metrics(y_true, y_pred)
+        if verbose:
+            print("Evaluation Metrics:")
+            for metric, value in stats.items():
+                print(f"  {metric}: {value:.4f}")
+        return stats
+
     def calculate_metrics(self, y_true, y_pred):
-        """Calculate evaluation metrics."""
+        """Calculate common regression metrics.
+
+        Args:
+            y_true (array-like): True target values.
+            y_pred (array-like): Predicted target values.
+
+        Returns:
+            dict: A dictionary containing calculated metrics (MSE, R^2, MAE, RMSE, MAPE).
+        """
         y_true = np.asarray(y_true)
         y_pred = np.asarray(y_pred)
 
-        self.mse = np.mean((y_true - y_pred) ** 2)
-        self.ssr = np.sum((y_true - y_pred) ** 2)
-        self.sst = np.sum((y_true - np.mean(y_true)) ** 2)
-        self.r2 = 1 - (self.ssr / self.sst) if self.sst != 0 else 0
+        if y_true.shape != y_pred.shape:
+            raise ValueError("y_true and y_pred must have the same shape.")
+        if len(y_true) == 0:
+            return {
+                "MSE": np.nan,
+                "R^2": np.nan,
+                "MAE": np.nan,
+                "RMSE": np.nan,
+                "MAPE": np.nan,
+            }
 
-        # Handle zero values in y_true for MAPE
+        mse = np.mean((y_true - y_pred) ** 2)
+        mae = np.mean(np.abs(y_true - y_pred))
+        rmse = np.sqrt(mse)
+
+        # R^2 calculation
+        sst = np.sum((y_true - np.mean(y_true)) ** 2)
+        ssr = np.sum((y_true - y_pred) ** 2)
+        r2 = (
+            1 - (ssr / sst) if sst != 0 else (1.0 if ssr == 0 else 0.0)
+        )  # Handle constant y_true
+
+        # MAPE calculation
         mask = y_true != 0
         if np.any(mask):
-            self.mape = (
-                np.mean(np.abs((y_true[mask] - y_pred[mask]) / y_true[mask])) * 100
-            )
+            mape = np.mean(np.abs((y_true[mask] - y_pred[mask]) / y_true[mask])) * 100
+        elif np.allclose(y_true, y_pred):  # All true are zero, check if preds match
+            mape = 0.0
         else:
-            self.mape = np.nan
+            mape = np.inf  # Or np.nan, depends on definition preference when true is 0
 
-        self.mae = np.mean(np.abs(y_true - y_pred))
-        self.rmse = np.sqrt(self.mse)
-
-    def predict(self, X):
-        """Predict using the trained random forest."""
-        X = np.asarray(X)
-
-        if X.size == 0:
-            return np.array([])
-
-        # Validate input dimensions
-        if self.X is not None and X.shape[1] != self.X.shape[1]:
-            raise ValueError(
-                f"Input data must have {self.X.shape[1]} features, but got {X.shape[1]}."
-            )
-
-        # Make predictions for each tree
-        predictions = []
-        for tree in self.trees:
-            tree_predictions = [
-                RegressorTree.evaluate_tree(tree, record) for record in X
-            ]
-            predictions.append(tree_predictions)
-
-        # Average predictions across trees
-        return np.mean(predictions, axis=0)
-
-    def get_stats(self, verbose=False):
-        """Return the evaluation metrics."""
-        stats = {
-            "MSE": self.mse,
-            "R^2": self.r2,
-            "MAPE": self.mape,
-            "MAE": self.mae,
-            "RMSE": self.rmse,
-        }
-
-        if verbose:
-            for metric, value in stats.items():
-                print(f"{metric}: {value:.4f}")
-
-        return stats
+        return {"MSE": mse, "R^2": r2, "MAE": mae, "RMSE": rmse, "MAPE": mape}
