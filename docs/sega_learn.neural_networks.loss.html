@@ -56,6 +56,9 @@ td.singlecolumn { width: 100%; }
 <dl>
 <dt class="heading-text"><a href="sega_learn.neural_networks.loss.html#BCEWithLogitsLoss">BCEWithLogitsLoss</a>
 </dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss.html#CrossEntropyLoss">CrossEntropyLoss</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss.html#HuberLoss">HuberLoss</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss.html#MeanAbsoluteErrorLoss">MeanAbsoluteErrorLoss</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss.html#MeanSquaredErrorLoss">MeanSquaredErrorLoss</a>
 </dt></dl>
 </dd>
 </dl>
@@ -111,6 +114,100 @@ Args:<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;cross&nbsp;entropy&nbsp;loss.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="HuberLoss">class <strong>HuberLoss</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Custom&nbsp;Huber&nbsp;loss&nbsp;implementation&nbsp;using&nbsp;numpy.<br>
+&nbsp;<br>
+Formula:&nbsp;mean(0.5&nbsp;*&nbsp;(y_true&nbsp;-&nbsp;y_pred)**2)&nbsp;if&nbsp;abs(y_true&nbsp;-&nbsp;y_pred)&nbsp;&lt;=&nbsp;delta&nbsp;else&nbsp;mean(delta&nbsp;*&nbsp;(abs(y_true&nbsp;-&nbsp;y_pred)&nbsp;-&nbsp;delta&nbsp;/&nbsp;2))<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#HuberLoss-__call__">__call__</a>(self,&nbsp;y_true,&nbsp;y_pred,&nbsp;delta=1.0):&nbsp;Calculate&nbsp;the&nbsp;Huber&nbsp;loss.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="HuberLoss-__call__"><strong>__call__</strong></a>(self, y_true, y_pred, delta=1.0)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;Huber&nbsp;loss.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true&nbsp;(np.ndarray):&nbsp;The&nbsp;true&nbsp;labels&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred&nbsp;(np.ndarray):&nbsp;The&nbsp;predicted&nbsp;values&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;delta&nbsp;(float):&nbsp;The&nbsp;threshold&nbsp;for&nbsp;the&nbsp;Huber&nbsp;loss.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;Huber&nbsp;loss.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="MeanAbsoluteErrorLoss">class <strong>MeanAbsoluteErrorLoss</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Custom&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss&nbsp;implementation&nbsp;using&nbsp;numpy.<br>
+&nbsp;<br>
+Formula:&nbsp;mean(abs(y_true&nbsp;-&nbsp;y_pred))<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#MeanAbsoluteErrorLoss-__call__">__call__</a>(self,&nbsp;y_true,&nbsp;y_pred):&nbsp;Calculate&nbsp;the&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="MeanAbsoluteErrorLoss-__call__"><strong>__call__</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true&nbsp;(np.ndarray):&nbsp;The&nbsp;true&nbsp;labels&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred&nbsp;(np.ndarray):&nbsp;The&nbsp;predicted&nbsp;values&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="MeanSquaredErrorLoss">class <strong>MeanSquaredErrorLoss</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Custom&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss&nbsp;implementation&nbsp;using&nbsp;numpy.<br>
+&nbsp;<br>
+Formula:&nbsp;mean((y_true&nbsp;-&nbsp;y_pred)&nbsp;**&nbsp;2)<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#MeanSquaredErrorLoss-__call__">__call__</a>(self,&nbsp;y_true,&nbsp;y_pred):&nbsp;Calculate&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="MeanSquaredErrorLoss-__call__"><strong>__call__</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true&nbsp;(np.ndarray):&nbsp;The&nbsp;true&nbsp;labels&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred&nbsp;(np.ndarray):&nbsp;The&nbsp;predicted&nbsp;values&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>

@@ -1,8 +1,8 @@
 ﻿wrote sega_learn.clustering.clustering.html
 wrote sega_learn.clustering._dbscan_jit_utils.html
 wrote sega_learn.clustering.__init__.html
-wrote sega_learn.linear_models.discriminantAnalysis.html
-wrote sega_learn.linear_models.linearModels.html
+wrote sega_learn.linear_models.classifiers.html
+wrote sega_learn.linear_models.regressors.html
 wrote sega_learn.linear_models._lasso_jit_utils.html
 wrote sega_learn.linear_models._ridge_jit_utils.html
 wrote sega_learn.linear_models.__init__.html

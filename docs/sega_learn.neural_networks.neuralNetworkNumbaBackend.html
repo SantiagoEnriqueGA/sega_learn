@@ -66,7 +66,7 @@ td.singlecolumn { width: 100%; }
 <td class="section-title" colspan=3>&nbsp;<br><a name="NumbaBackendNeuralNetwork">class <strong>NumbaBackendNeuralNetwork</strong></a>(<a href="sega_learn.neural_networks.neuralNetworkBase.html#NeuralNetworkBase">sega_learn.neural_networks.neuralNetworkBase.NeuralNetworkBase</a>)</td></tr>
 
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#NumbaBackendNeuralNetwork">NumbaBackendNeuralNetwork</a>(layers,&nbsp;dropout_rate=0.2,&nbsp;reg_lambda=0.01,&nbsp;activations=None,&nbsp;compile_numba=True,&nbsp;progress_bar=True)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#NumbaBackendNeuralNetwork">NumbaBackendNeuralNetwork</a>(layers,&nbsp;dropout_rate=0.2,&nbsp;reg_lambda=0.01,&nbsp;activations=None,&nbsp;loss_function=None,&nbsp;regressor=False,&nbsp;compile_numba=True,&nbsp;progress_bar=True)<br>
 &nbsp;<br>
 A&nbsp;neural&nbsp;network&nbsp;implementation&nbsp;using&nbsp;Numba&nbsp;for&nbsp;Just-In-Time&nbsp;(JIT)&nbsp;compilation&nbsp;to&nbsp;optimize&nbsp;performance.<br>
 &nbsp;<br>
@@ -118,13 +118,15 @@ Methods:<br>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="NumbaBackendNeuralNetwork-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None, compile_numba=True, progress_bar=True)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;Numba&nbsp;backend&nbsp;neural&nbsp;network.<br>
+<dl><dt><a name="NumbaBackendNeuralNetwork-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None, loss_function=None, regressor=False, compile_numba=True, progress_bar=True)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;Numba&nbsp;backend&nbsp;neural&nbsp;network.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;layers:&nbsp;(list)&nbsp;-&nbsp;List&nbsp;of&nbsp;layer&nbsp;sizes&nbsp;or&nbsp;Layer&nbsp;objects.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;dropout_rate:&nbsp;(float)&nbsp;-&nbsp;Dropout&nbsp;rate&nbsp;for&nbsp;regularization.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;reg_lambda:&nbsp;(float)&nbsp;-&nbsp;L2&nbsp;regularization&nbsp;parameter.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;activations:&nbsp;(list)&nbsp;-&nbsp;List&nbsp;of&nbsp;activation&nbsp;functions&nbsp;for&nbsp;each&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss_function:&nbsp;(callable)&nbsp;optional&nbsp;-&nbsp;Custom&nbsp;loss&nbsp;function&nbsp;(default:&nbsp;selects&nbsp;based&nbsp;on&nbsp;task).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;regressor:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;the&nbsp;model&nbsp;is&nbsp;a&nbsp;regressor&nbsp;(default&nbsp;is&nbsp;False).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;compile_numba:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;to&nbsp;compile&nbsp;Numba&nbsp;functions.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;progress_bar:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;to&nbsp;display&nbsp;a&nbsp;progress&nbsp;bar.</span></dd></dl>
 

@@ -29,12 +29,12 @@ td.multicolumn { width: 25%; }
 td.singlecolumn { width: 100%; }
 </style>
 <meta charset="utf-8">
-<title>Python: module sega_learn.linear_models.discriminantAnalysis</title>
+<title>Python: module sega_learn.linear_models.classifiers</title>
 </head><body>
 
 <table class="heading">
 <tr class="heading-text decor">
-<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.linear_models.html" class="white">linear_models</a>.discriminantAnalysis</strong></td>
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.linear_models.html" class="white">linear_models</a>.classifiers</strong></td>
 </tr></table>
     <p><span class="code">#&nbsp;Importing&nbsp;the&nbsp;required&nbsp;libraries</span></p>
 <p>
@@ -55,8 +55,10 @@ td.singlecolumn { width: 100%; }
 <dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
 </dt><dd>
 <dl>
-<dt class="heading-text"><a href="sega_learn.linear_models.discriminantAnalysis.html#LinearDiscriminantAnalysis">LinearDiscriminantAnalysis</a>
-</dt><dt class="heading-text"><a href="sega_learn.linear_models.discriminantAnalysis.html#QuadraticDiscriminantAnalysis">QuadraticDiscriminantAnalysis</a>
+<dt class="heading-text"><a href="sega_learn.linear_models.classifiers.html#LinearDiscriminantAnalysis">LinearDiscriminantAnalysis</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.classifiers.html#LogisticRegression">LogisticRegression</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.classifiers.html#Perceptron">Perceptron</a>
+</dt><dt class="heading-text"><a href="sega_learn.linear_models.classifiers.html#QuadraticDiscriminantAnalysis">QuadraticDiscriminantAnalysis</a>
 </dt></dl>
 </dd>
 </dl>
@@ -98,6 +100,92 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(np.ndarray)&nbsp;-&nbsp;Training&nbsp;target&nbsp;data.</span></dd></dl>
 
 <dl><dt><a name="LinearDiscriminantAnalysis-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Test&nbsp;feature&nbsp;data.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;predictions:&nbsp;(np.ndarray)&nbsp;-&nbsp;Predicted&nbsp;class&nbsp;labels.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="LogisticRegression">class <strong>LogisticRegression</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#LogisticRegression">LogisticRegression</a>(learning_rate=0.01,&nbsp;max_iter=1000)<br>
+&nbsp;<br>
+Implements&nbsp;Logistic&nbsp;Regression&nbsp;using&nbsp;gradient&nbsp;descent.&nbsp;Supports&nbsp;binary&nbsp;and&nbsp;multiclass&nbsp;classification.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float)&nbsp;-&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;gradient&nbsp;updates&nbsp;(default&nbsp;is&nbsp;0.01).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter:&nbsp;(int)&nbsp;-&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;(default&nbsp;is&nbsp;1000).<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="LogisticRegression-__init__"><strong>__init__</strong></a>(self, learning_rate=0.01, max_iter=1000)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;classifier&nbsp;with&nbsp;specified&nbsp;hyperparameters.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;step&nbsp;size&nbsp;for&nbsp;updating&nbsp;weights&nbsp;during&nbsp;training.&nbsp;Defaults&nbsp;to&nbsp;0.01.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;the&nbsp;training&nbsp;process.&nbsp;Defaults&nbsp;to&nbsp;1000.</span></dd></dl>
+
+<dl><dt><a name="LogisticRegression-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fits&nbsp;the&nbsp;Logistic&nbsp;Regression&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Training&nbsp;feature&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(np.ndarray)&nbsp;-&nbsp;Training&nbsp;target&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,).</span></dd></dl>
+
+<dl><dt><a name="LogisticRegression-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Test&nbsp;feature&nbsp;data.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;predictions:&nbsp;(np.ndarray)&nbsp;-&nbsp;Predicted&nbsp;class&nbsp;labels.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Perceptron">class <strong>Perceptron</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Perceptron">Perceptron</a>(max_iter=1000,&nbsp;learning_rate=0.01)<br>
+&nbsp;<br>
+Implements&nbsp;the&nbsp;<a href="#Perceptron">Perceptron</a>&nbsp;algorithm&nbsp;for&nbsp;binary&nbsp;and&nbsp;multiclass&nbsp;classification.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter:&nbsp;(int)&nbsp;-&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;(default&nbsp;is&nbsp;1000).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate:&nbsp;(float)&nbsp;-&nbsp;Learning&nbsp;rate&nbsp;for&nbsp;weight&nbsp;updates&nbsp;(default&nbsp;is&nbsp;0.01).<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Perceptron-__init__"><strong>__init__</strong></a>(self, max_iter=1000, learning_rate=0.01)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;classifier&nbsp;with&nbsp;the&nbsp;specified&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;and&nbsp;learning&nbsp;rate.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_iter&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations&nbsp;for&nbsp;the&nbsp;training&nbsp;process.&nbsp;Defaults&nbsp;to&nbsp;1000.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;The&nbsp;learning&nbsp;rate&nbsp;for&nbsp;the&nbsp;optimization&nbsp;algorithm.&nbsp;Defaults&nbsp;to&nbsp;0.01.</span></dd></dl>
+
+<dl><dt><a name="Perceptron-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fits&nbsp;the&nbsp;<a href="#Perceptron">Perceptron</a>&nbsp;model&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Training&nbsp;feature&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(np.ndarray)&nbsp;-&nbsp;Training&nbsp;target&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,).</span></dd></dl>
+
+<dl><dt><a name="Perceptron-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;input&nbsp;data.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(np.ndarray)&nbsp;-&nbsp;Test&nbsp;feature&nbsp;data.<br>

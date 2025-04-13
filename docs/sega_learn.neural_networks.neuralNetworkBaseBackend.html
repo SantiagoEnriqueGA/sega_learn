@@ -66,7 +66,7 @@ td.singlecolumn { width: 100%; }
 <td class="section-title" colspan=3>&nbsp;<br><a name="BaseBackendNeuralNetwork">class <strong>BaseBackendNeuralNetwork</strong></a>(<a href="sega_learn.neural_networks.neuralNetworkBase.html#NeuralNetworkBase">sega_learn.neural_networks.neuralNetworkBase.NeuralNetworkBase</a>)</td></tr>
 
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#BaseBackendNeuralNetwork">BaseBackendNeuralNetwork</a>(layers,&nbsp;dropout_rate=0.2,&nbsp;reg_lambda=0.01,&nbsp;activations=None)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#BaseBackendNeuralNetwork">BaseBackendNeuralNetwork</a>(layers,&nbsp;dropout_rate=0.2,&nbsp;reg_lambda=0.01,&nbsp;activations=None,&nbsp;loss_function=None,&nbsp;regressor=False)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;representing&nbsp;a&nbsp;backend&nbsp;implementation&nbsp;of&nbsp;a&nbsp;neural&nbsp;network&nbsp;with&nbsp;support&nbsp;for&nbsp;forward&nbsp;propagation,&nbsp;backward&nbsp;propagation,&nbsp;training,&nbsp;evaluation,&nbsp;and&nbsp;hyperparameter&nbsp;tuning.<br>
 &nbsp;<br>
@@ -91,9 +91,9 @@ Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;learning_rates&nbsp;(list):&nbsp;Learning&nbsp;rates&nbsp;over&nbsp;epochs.<br>
 &nbsp;<br>
 Methods:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseBackendNeuralNetwork-__init__">__init__</a>(layers,&nbsp;dropout_rate=0.2,&nbsp;reg_lambda=0.01,&nbsp;activations=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseBackendNeuralNetwork-__init__">__init__</a>(layers,&nbsp;dropout_rate=0.2,&nbsp;reg_lambda=0.01,&nbsp;activations=None,&nbsp;loss_function=None,&nbsp;regressor=False):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;neural&nbsp;network&nbsp;with&nbsp;the&nbsp;specified&nbsp;layers,&nbsp;dropout&nbsp;rate,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;regularization&nbsp;parameter,&nbsp;and&nbsp;activation&nbsp;functions.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;regularization&nbsp;parameter,&nbsp;activation&nbsp;functions,&nbsp;and&nbsp;optional&nbsp;loss&nbsp;function.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseBackendNeuralNetwork-initialize_new_layers">initialize_new_layers</a>():<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;layers&nbsp;of&nbsp;the&nbsp;neural&nbsp;network&nbsp;with&nbsp;random&nbsp;weights&nbsp;and&nbsp;biases.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseBackendNeuralNetwork-forward">forward</a>(X,&nbsp;training=True):<br>
@@ -124,13 +124,15 @@ Methods:<br>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="BaseBackendNeuralNetwork-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;Numba&nbsp;backend&nbsp;neural&nbsp;network.<br>
+<dl><dt><a name="BaseBackendNeuralNetwork-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None, loss_function=None, regressor=False)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;Numba&nbsp;backend&nbsp;neural&nbsp;network.<br>
 &nbsp;<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layer&nbsp;sizes&nbsp;or&nbsp;Layer&nbsp;objects.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;dropout_rate&nbsp;(float):&nbsp;Dropout&nbsp;rate&nbsp;for&nbsp;regularization.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float):&nbsp;L2&nbsp;regularization&nbsp;parameter.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;activations&nbsp;(list):&nbsp;List&nbsp;of&nbsp;activation&nbsp;functions&nbsp;for&nbsp;each&nbsp;layer.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;layers:&nbsp;(list)&nbsp;-&nbsp;List&nbsp;of&nbsp;layer&nbsp;sizes&nbsp;or&nbsp;Layer&nbsp;objects.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dropout_rate:&nbsp;(float)&nbsp;-&nbsp;Dropout&nbsp;rate&nbsp;for&nbsp;regularization.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda:&nbsp;(float)&nbsp;-&nbsp;L2&nbsp;regularization&nbsp;parameter.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activations:&nbsp;(list)&nbsp;-&nbsp;List&nbsp;of&nbsp;activation&nbsp;functions&nbsp;for&nbsp;each&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss_function:&nbsp;(callable)&nbsp;optional&nbsp;-&nbsp;Custom&nbsp;loss&nbsp;function&nbsp;to&nbsp;use&nbsp;(default&nbsp;is&nbsp;None,&nbsp;which&nbsp;uses&nbsp;the&nbsp;default&nbsp;calculate_loss&nbsp;implementation).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;regressor:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;the&nbsp;model&nbsp;is&nbsp;a&nbsp;regressor&nbsp;(default&nbsp;is&nbsp;False).</span></dd></dl>
 
 <dl><dt><a name="BaseBackendNeuralNetwork-backward"><strong>backward</strong></a>(self, y)</dt><dd><span class="code">Performs&nbsp;backward&nbsp;propagation&nbsp;to&nbsp;calculate&nbsp;the&nbsp;gradients.<br>
 &nbsp;<br>
@@ -153,8 +155,8 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(np.ndarray)&nbsp;-&nbsp;True&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;the&nbsp;input&nbsp;data.<br>
 &nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;accuracy:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;model's&nbsp;predictions.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;predicted:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;labels&nbsp;or&nbsp;classes&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;metric:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;evaluation&nbsp;metric&nbsp;(accuracy&nbsp;for&nbsp;classification,&nbsp;MSE&nbsp;for&nbsp;regression).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;predicted:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;labels&nbsp;or&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
 
 <dl><dt><a name="BaseBackendNeuralNetwork-fit"><strong>fit</strong></a>(self, X_train, y_train, X_val=None, y_val=None, optimizer=None, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=False, use_tqdm=False, n_jobs=1, track_metrics=False, track_adv_metrics=False, save_animation=False, save_path='training_animation.mp4', fps=1, dpi=100, frame_every=1)</dt><dd><span class="code">Fits&nbsp;the&nbsp;neural&nbsp;network&nbsp;to&nbsp;the&nbsp;training&nbsp;data.</span></dd></dl>
 
