@@ -55,6 +55,7 @@ class GradientBoostedRegressor:
         self.random_state = random_seed  # Store, passed to tree if needed later
 
         self.trees = []  # Will store RegressorTree instances
+        self.mean_absolute_residuals_ = []  # Store mean absolute residuals for each tree
         self.initial_prediction_ = None  # Store initial prediction (mean)
         self._X_fit_shape = None  # Store shape for predict validation
 
@@ -130,11 +131,13 @@ class GradientBoostedRegressor:
             # Store the fitted tree
             self.trees.append(tree)
 
+            # Calculate mean absolute residual for monitoring
+            self.mean_absolute_residuals_.append(
+                np.mean(np.abs(y - current_predictions))
+            )
             if verbose:
-                # Calculate mean absolute residual for monitoring
-                mean_abs_residual = np.mean(np.abs(y - current_predictions))
                 print(
-                    f"Tree {i + 1}/{self.n_estimators} fitted. Mean Absolute Residual: {mean_abs_residual:.4f}"
+                    f"Tree {i + 1}/{self.n_estimators} fitted. Mean Absolute Residual: {self.mean_absolute_residuals_[-1]:.4f}"
                 )
 
         return self

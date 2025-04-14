@@ -40,7 +40,7 @@ def basic_example(num_trees=10, max_depth=5):
 
 def cars_example(num_trees=50, max_depth=25):
     """Basic example of using the Gradient Boosted Regressor on the Cars.com dataset."""
-    print("\n\nRandom Forest Regressor on Cars.com dataset\n")
+    print("\n\nGradient Boosted Regressor on Cars.com dataset\n")
 
     # Load and prepare dataset
     df = pd.read_csv("example_datasets/output_May-06-2024_cleaned.csv")
@@ -62,13 +62,13 @@ def cars_example(num_trees=50, max_depth=25):
     )
 
     # Train GBDT model
-    gbdtDiab.fit(stats=True)
+    gbdtDiab.fit()
 
     # Predict target values
-    predictions = gbdtDiab.predict()
+    predictions = gbdtDiab.predict(X)
 
     # Get stats
-    stats = gbdtDiab.get_stats(predictions)
+    stats = gbdtDiab.get_stats(y, predictions)
     for stat in stats:
         print(f"{stat}: {stats[stat]:.4f}")
 
@@ -109,18 +109,18 @@ def grid_search():
             )
 
             # Train GBDT model
-            gbdtDiab.fit(stats=True)
+            gbdtDiab.fit()
 
             # Predict target values
-            predictions = gbdtDiab.predict()
+            predictions = gbdtDiab.predict(X)
 
             # Get stats
-            stats = gbdtDiab.get_stats(predictions)
+            stats = gbdtDiab.get_stats(y, predictions)
             for metric in results:
                 results[metric][i, j] = stats[metric]
-            mean_absolute_residuals[(num_trees, max_depth)] = stats[
-                "Mean_Absolute_Residuals"
-            ]
+            mean_absolute_residuals[(num_trees, max_depth)] = (
+                gbdtDiab.mean_absolute_residuals_
+            )
 
             print(f"Num Trees: {num_trees}, Max Depth: {max_depth}, Stats: {stats}\n")
 

@@ -174,21 +174,21 @@ class RegressorTree:
         return self.tree
 
     def predict(self, X):
-        """Predict the target value for a record using the decision tree.
+        """Predict the target value for a record or batch of records using the decision tree.
 
         Args:
             X: (array-like) - The input features.
 
         Returns:
-            float: The predicted target value.
+            np.ndarray: The predicted target values.
         """
-        if not isinstance(X, list | np.ndarray):
+        if not isinstance(X, (list | np.ndarray)):
             raise TypeError("X must be a list or NumPy array.")
 
-        if isinstance(X, np.ndarray):
-            X = X.tolist()
-
         X = np.asarray(X)
+        if X.ndim == 1:  # Handle single record
+            X = X.reshape(1, -1)
+
         predictions = [self._traverse_tree(x, self.tree) for x in X]
         return np.array(predictions)
 
