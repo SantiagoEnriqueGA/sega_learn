@@ -64,7 +64,7 @@ class GradientBoostedRegressor:
         if y is not None:
             self.y = np.asarray(y).astype(float)  # Ensure y is float for residuals
 
-    def fit(self, X=None, y=None, verbose=False):
+    def fit(self, X=None, y=None, verbose=0):
         """Fits the gradient boosted decision tree regressor to the training data.
 
         This method trains the ensemble of decision trees by iteratively fitting each tree to the residuals
@@ -74,7 +74,7 @@ class GradientBoostedRegressor:
         Args:
             X (array-like): Training input features of shape (n_samples, n_features).
             y (array-like): Training target values of shape (n_samples,).
-            verbose (bool): Whether to print progress messages (e.g., residuals).
+            verbose (int): Whether to print progress messages (e.g., residuals). 0 for no output, 1 for output, >1 for detailed output
 
         Returns:
             None
@@ -119,7 +119,12 @@ class GradientBoostedRegressor:
             tree = RegressorTree(
                 max_depth=self.max_depth, min_samples_split=self.min_samples_split
             )
-            tree.fit(X, residuals)  # Fit tree on current residuals
+
+            tree.fit(
+                X,
+                residuals,
+                verbose=True if verbose > 1 else False,  # noqa: SIM210
+            )  # Fit tree on current residuals
 
             # Get predictions from the new tree
             # Predict expects 2D array, returns 1D
@@ -135,7 +140,7 @@ class GradientBoostedRegressor:
             self.mean_absolute_residuals_.append(
                 np.mean(np.abs(y - current_predictions))
             )
-            if verbose:
+            if verbose > 0:
                 print(
                     f"Tree {i + 1}/{self.n_estimators} fitted. Mean Absolute Residual: {self.mean_absolute_residuals_[-1]:.4f}"
                 )

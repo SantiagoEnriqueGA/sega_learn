@@ -15,7 +15,9 @@ from joblib import Parallel, delayed
 from .treeRegressor import RegressorTree
 
 
-def _fit_single_tree(X, y, max_depth, min_samples_split, tree_index, random_state_base):
+def _fit_single_tree(
+    X, y, max_depth, min_samples_split, tree_index, random_state_base, verbose
+):
     """Helper function for parallel tree fitting. Fits a single tree on abootstrapped sample.
 
     Args:
@@ -25,6 +27,7 @@ def _fit_single_tree(X, y, max_depth, min_samples_split, tree_index, random_stat
         min_samples_split (int): The minimum samples required to split a node.
         tree_index (int): Index of the tree for seeding.
         random_state_base (int): Base random seed.
+        verbose (bool): If True, print detailed logs during fitting.
 
     Returns:
         tuple: (tree_index, fitted_tree_instance, bootstrap_indices)
@@ -41,7 +44,7 @@ def _fit_single_tree(X, y, max_depth, min_samples_split, tree_index, random_stat
 
     # Instantiate and fit the tree
     tree = RegressorTree(max_depth=max_depth, min_samples_split=min_samples_split)
-    tree.fit(X_sample, y_sample)  # Use the fit method
+    tree.fit(X_sample, y_sample, verbose)  # Use the fit method
 
     return tree_index, tree, indices  # Return the instance and indices
 
@@ -142,7 +145,13 @@ class RandomForestRegressor:
         # Pass necessary parameters and a way to seed each job differently
         results = Parallel(n_jobs=self.n_jobs)(
             delayed(_fit_single_tree)(
-                X, y, self.max_depth, self.min_samples_split, i, self.random_state
+                X,
+                y,
+                self.max_depth,
+                self.min_samples_split,
+                i,
+                self.random_state,
+                verbose,
             )
             for i in range(self.n_estimators)
         )

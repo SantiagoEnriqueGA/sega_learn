@@ -146,16 +146,19 @@ class RegressorTree:
         self._y = None  # Store reference to original y
         self._n_features = None
 
-    def fit(self, X, y):
+    def fit(self, X, y, verbose=False):
         """Fit the decision tree to the training data.
 
         Args:
             X: (array-like) - The input features.
             y: (array-like) - The target labels.
+            verbose: (bool) - If True, print detailed logs during fitting.
 
         Returns:
             dict: The learned decision tree.
         """
+        self.verbose = verbose
+
         # Convert only once and store references
         self._X = np.asarray(X)
         self._y = np.asarray(y)
@@ -171,6 +174,10 @@ class RegressorTree:
 
         initial_indices = np.arange(self._X.shape[0])
         self.tree = self._learn_recursive(initial_indices, depth=0)
+
+        if verbose:
+            print(f"Fitted tree with {len(X)} samples and max depth {self.max_depth}\n")
+
         return self.tree
 
     def predict(self, X):
@@ -234,11 +241,17 @@ class RegressorTree:
         leaf_value = self.utility.calculate_leaf_value(indices)
 
         if depth >= self.max_depth:
-            # print(f"Depth limit reached at depth {depth}. Leaf value: {leaf_value}")
+            if self.verbose:
+                print(
+                    f"\tDepth limit reached at depth {depth}. Leaf value: {leaf_value}"
+                )
             return {"value": leaf_value}
 
         if len(indices) < self.min_samples_split:
-            # print(f"Min samples limit reached ({len(indices)} < {self.min_samples_split}). Leaf value: {leaf_value}")
+            if self.verbose:
+                print(
+                    f"\tMin samples limit reached ({len(indices)} < {self.min_samples_split}). Leaf value: {leaf_value}"
+                )
             return {"value": leaf_value}
 
         # Find the best split for the current indices
@@ -246,10 +259,16 @@ class RegressorTree:
 
         # If no good split found (includes pure nodes, min_samples, no gain)
         if split_info is None:
-            # print(f"No good split found at depth {depth}. Leaf value: {leaf_value}")
+            if self.verbose:
+                print(
+                    f"\tNo good split found at depth {depth}. Leaf value: {leaf_value}"
+                )
             return {"value": leaf_value}
 
-        # print(f"Split at depth {depth}: Feature {split_info['feature_idx']} <= {split_info['threshold']:.2f}, Gain: {split_info['info_gain']:.4f}")
+        if self.verbose:
+            print(
+                f"\tSplit at depth {depth}: Feature {split_info['feature_idx']} <= {split_info['threshold']:.2f}, Gain: {split_info['info_gain']:.4f}"
+            )
 
         # Recursively build left and right subtrees
         left_subtree = self._learn_recursive(split_info["indices_left"], depth + 1)
@@ -262,6 +281,6 @@ class RegressorTree:
             "left": left_subtree,
             "right": right_subtree,
             # Optional: store gain, samples etc. for inspection
-            # "n_samples": len(indices),
-            # "info_gain": split_info['info_gain']
+            "n_samples": len(indices),
+            "info_gain": split_info["info_gain"],
         }

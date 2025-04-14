@@ -19,7 +19,7 @@ def basic_example(num_trees=10, max_depth=5):
 
     from sega_learn.utils import make_regression
 
-    X, y = make_regression(n_samples=1000, n_features=3, noise=5, random_state=42)
+    X, y = make_regression(n_samples=1000, n_features=3, noise=0.25, random_state=42)
 
     # Initialize GBDT object
     gbdtDiab = gbr.GradientBoostedRegressor(
@@ -27,7 +27,7 @@ def basic_example(num_trees=10, max_depth=5):
     )
 
     # Train GBDT model
-    gbdtDiab.fit()
+    gbdtDiab.fit(verbose=1)
 
     # Predict target values
     predictions = gbdtDiab.predict(X)
