@@ -1,179 +1,121 @@
 # Importing the required libraries
+import warnings
 
 import numpy as np
 
 
 class RegressorTreeUtility:
-    """Utility class for computing variance, partitioning classes, and calculating information gain."""
+    """Utility class containing helper functions for building the Regressor Tree.
 
-    def calculate_variance(self, y):
-        """Calculate the variance of a dataset.
+    Handles variance calculation, leaf value calculation, and finding the best split.
+    """
 
-        Variance is used as the measure of impurity in the case of regression.
-        """
-        if len(y) == 0:
-            return 0
-        return float(np.var(y))  # Ensure the result is a scalar
-
-    def partition_classes(self, X, y, split_attribute, split_val):
-        """Partitions the dataset into two subsets based on a given split attribute and value.
+    def __init__(self, X, y, min_samples_split, n_features):
+        """Initialize the utility class with references to data and parameters.
 
         Args:
-            X: (array-like) - The input features.
-            y: (array-like) - The target labels.
-            split_attribute: (int) - The index of the attribute to split on.
-            split_val: (float) - The value to split the attribute on.
-
-        Returns:
-            X_left: (array-like) - The subset of input features where the split attribute is less than or equal to the split value.
-            X_right: (array-like) - The subset of input features where the split attribute is greater than the split value.
-            y_left: (array-like) - The subset of target labels corresponding to X_left.
-            y_right: (array-like) - The subset of target labels corresponding to X_right.
+            X (np.ndarray): Reference to the feature data.
+            y (np.ndarray): Reference to the target data.
+            min_samples_split (int): Minimum number of samples required to split a node.
+            n_features (int): Total number of features in X.
         """
-        # Check type of X and y
-        if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
-            raise TypeError("X and y must be lists or NumPy arrays.")
+        self._X = X
+        self._y = y
+        self.min_samples_split = min_samples_split
+        self._n_features = n_features
 
-        # Convert X and y to NumPy arrays if they are not already
-        X = np.array(X) if not isinstance(X, np.ndarray) else X
-        y = np.array(y) if not isinstance(y, np.ndarray) else y
+    def calculate_variance(self, indices):
+        """Calculate variance for the subset defined by indices."""
+        if len(indices) == 0:
+            return 0.0
+        # Directly index the original y array stored in the utility instance
+        return np.var(self._y[indices])
 
-        if X.ndim == 1:  # If X is a 1D array
-            X = X.reshape(-1, 1)  # Convert to a 2D array with one column
+    def calculate_leaf_value(self, indices):
+        """Calculate the value for a leaf node (mean)."""
+        if len(indices) == 0:
+            return np.nan  # Or handle appropriately
+        # Directly index the original y array stored in the utility instance
+        return np.mean(self._y[indices])
 
-        # Use NumPy boolean indexing for partitioning
-        # X_left  contains rows where the split attribute is less than or equal to the split value
-        # X_right contains rows where the split attribute is greater than the split value
-        # y_left  contains target labels corresponding to X_left
-        # y_right contains target labels corresponding to X_right
-        # Vectorized partitioning using NumPy boolean indexing
-        mask = X[:, split_attribute] <= split_val
-        return X[mask], X[~mask], y[mask], y[~mask]
+    def best_split(self, indices):
+        """Finds the best split for the data subset defined by indices."""
+        n_samples_node = len(indices)
+        if n_samples_node < self.min_samples_split:
+            return None  # Not enough samples to split
 
-    def information_gain(self, parent_variance, current_y):
-        """Calculate the information gain from a split by subtracting the variance of child nodes from the variance of the parent node.
+        # Calculate variance of the current node using the utility's method
+        parent_variance = self.calculate_variance(indices)
+        if parent_variance == 0:  # Pure node already
+            return None
 
-        Args:
-            parent_variance: (float) - The precomputed variance of the parent node.
-            current_y: (list of array-like) - The target labels of the child nodes.
+        best_gain = -np.inf
+        best_split_info = None
 
-        Returns:
-            float: The information gain from the split.
-        """
-        if parent_variance == 0:  # If the parent node variance is 0
-            return 0  # Return 0 information gain
+        # Consider a subset of features
+        num_features_total = self._n_features
+        if num_features_total <= 0:
+            return None
+        num_features_to_consider = max(1, int(np.sqrt(num_features_total)))
+        if num_features_to_consider > num_features_total:
+            num_features_to_consider = num_features_total
 
-        # Compute total length of child nodes
-        total_len = sum(len(y) for y in current_y)
-        if total_len == 0:  # Avoid division by zero
-            return 0
-
-        # Compute weighted child variance
-        child_variance = (
-            sum(len(y) * self.calculate_variance(y) for y in current_y) / total_len
+        selected_feature_indices = np.random.choice(
+            num_features_total, size=num_features_to_consider, replace=False
         )
 
-        return parent_variance - child_variance
+        # Use data corresponding to current indices (referencing X stored in utility)
+        X_node = self._X[indices]
+        # y_node is implicitly used via self.calculate_variance
 
-    def best_split(self, X, y):
-        """Finds the best attribute and value to split the data based on information gain.
+        for feature_idx in selected_feature_indices:
+            feature_values = X_node[:, feature_idx]
+            potential_split_values = np.unique(
+                np.percentile(feature_values, [25, 50, 75])
+            )
 
-        Args:
-            X: (array-like) - The input features.
-            y: (array-like) - The target variable.
+            for split_val in potential_split_values:
+                # Partition INDICES, not data
+                # mask applies to the *subset* X_node
+                mask_left = feature_values <= split_val
+                indices_left = indices[mask_left]
+                indices_right = indices[~mask_left]
 
-        Returns:
-            dict: A dictionary containing the best split attribute, split value, left and right subsets of X and y,
-                and the information gain achieved by the split.
-        """
-        # Check type of X and y
-        if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
-            raise TypeError("X and y must be lists or NumPy arrays.")
+                n_left, n_right = len(indices_left), len(indices_right)
 
-        # Convert X and y to NumPy arrays if they are not already
-        X = np.array(X) if not isinstance(X, np.ndarray) else X
-        y = np.array(y) if not isinstance(y, np.ndarray) else y
-
-        if X.size == 0:  # If X is empty
-            return {
-                "split_attribute": None,
-                "split_val": None,
-                "X_left": np.empty((0, 1)),
-                "X_right": np.empty((0, 1)),
-                "y_left": np.empty((0,)),
-                "y_right": np.empty((0,)),
-                "info_gain": 0,
-            }
-
-        if X.shape[0] == 1:  # If X has a single value
-            return {
-                "split_attribute": None,
-                "split_val": None,
-                "X_left": np.empty((0, X.shape[1])),
-                "X_right": np.empty((0, X.shape[1])),
-                "y_left": np.empty((0,)),
-                "y_right": np.empty((0,)),
-                "info_gain": 0,
-            }
-
-        # Precompute the parent variance
-        parent_variance = self.calculate_variance(y)
-
-        # Randomly select a subset of attributes for splitting
-        num_features = int(np.sqrt(X.shape[1]))  # Square root of total attributes
-        selected_attributes = np.random.choice(
-            X.shape[1], size=num_features, replace=False
-        )  # Randomly select attributes
-
-        # Initialize the best information gain to negative infinity, others to None
-        best_info_gain = float("-inf")
-        best_split = None
-
-        # Use numpy's percentile function to reduce split points
-        for split_attribute in selected_attributes:
-            # Instead of trying all values, sample a subset of potential split points
-            feature_values = X[:, split_attribute]
-
-            # Use percentiles to get a representative sample of split points
-            percentiles = np.percentile(feature_values, [25, 50, 75])
-
-            for split_val in percentiles:
-                X_left, X_right, y_left, y_right = self.partition_classes(
-                    X, y, split_attribute, split_val
-                )
-
-                # Skip if split doesn't divide the data
-                if len(y_left) == 0 or len(y_right) == 0:
+                # Ensure split creates two non-empty children
+                # (Could add min_samples_leaf check here too)
+                if n_left == 0 or n_right == 0:
                     continue
 
-                # Compute information gain using the cached parent variance
-                info_gain = self.information_gain(parent_variance, [y_left, y_right])
+                # Calculate gain based on children's variance using the utility's method
+                var_left = self.calculate_variance(indices_left)
+                var_right = self.calculate_variance(indices_right)
 
-                if info_gain > best_info_gain:
-                    best_info_gain = info_gain
-                    best_split = {
-                        "split_attribute": split_attribute,
-                        "split_val": split_val,
-                        "X_left": X_left,
-                        "X_right": X_right,
-                        "y_left": y_left,
-                        "y_right": y_right,
+                # Weighted variance of children
+                child_variance = (
+                    n_left * var_left + n_right * var_right
+                ) / n_samples_node
+
+                # Information gain (variance reduction)
+                info_gain = parent_variance - child_variance
+
+                if info_gain > best_gain:
+                    best_gain = info_gain
+                    best_split_info = {
+                        "feature_idx": feature_idx,
+                        "threshold": split_val,
+                        "indices_left": indices_left,
+                        "indices_right": indices_right,
                         "info_gain": info_gain,
                     }
 
-        if best_split is None:
-            # If no good split found, return a default split
-            return {
-                "split_attribute": None,
-                "split_val": None,
-                "X_left": np.empty((0, X.shape[1])),
-                "X_right": np.empty((0, X.shape[1])),
-                "y_left": np.empty(0),
-                "y_right": np.empty(0),
-                "info_gain": 0,
-            }
+        # If no split improves variance (info_gain <= 0), best_split_info remains None
+        # Or if initial checks failed (e.g., pure node, not enough samples)
+        if best_gain <= 0:
+            return None
 
-        return best_split
+        return best_split_info
 
 
 class RegressorTree:
@@ -181,122 +123,180 @@ class RegressorTree:
 
     Args:
         max_depth: (int) - The maximum depth of the decision tree.
+        min_samples_split: (int) - The minimum number of samples required to split a node.
+        n_features: (int) - The number of features in the dataset.
+        X: (array-like) - The input features.
+        y: (array-like) - The target labels.
 
     Methods:
-        learn(X, y, par_node={}, depth=0): Builds the decision tree based on the given training data.
-        classify(record): Predicts the target value for a record using the decision tree.
+        fit(X, y, verbose=False): Fits the decision tree to the training data.
+        predict(X): Predicts the target values for the input features.
+        _traverse_tree(x, node): Traverses the decision tree for a single sample x.
+        _leran_recursive(indices, depth): Recursive helper function for learning.
     """
 
-    def __init__(self, max_depth=5):
-        """Initialize the decision tree."""
-        self.tree = {}  # Initialize an empty dictionary to represent the decision tree
-        self.max_depth = max_depth  # Set the maximum depth of the tree
+    def __init__(self, max_depth=5, min_samples_split=2):
+        """Initialize the decision tree.
 
-    def fit(self, X, y):
+        Args:
+            max_depth (int): The maximum depth of the decision tree.
+            min_samples_split (int): The minimum number of samples required to split a node.
+        """
+        self.max_depth = max_depth
+        self.min_samples_split = min_samples_split  # Minimum samples required to split
+        self.tree = {}
+        self._X = None  # Store reference to original X
+        self._y = None  # Store reference to original y
+        self._n_features = None
+
+    def fit(self, X, y, verbose=False):
         """Fit the decision tree to the training data.
 
         Args:
             X: (array-like) - The input features.
             y: (array-like) - The target labels.
+            verbose: (bool) - If True, print detailed logs during fitting.
 
         Returns:
             dict: The learned decision tree.
         """
-        self.tree = self.learn(X, y)
+        self.verbose = verbose
+
+        # Convert only once and store references
+        self._X = np.asarray(X)
+        self._y = np.asarray(y)
+        self._n_features = self._X.shape[1]
+
+        if self._X.shape[0] != self._y.shape[0]:
+            raise ValueError("X and y must have the same number of samples.")
+        elif self._X.shape[0] == 0 or self._y.shape[0] == 0:
+            raise ValueError("X and y must not be empty.")
+
+        # Initialize the utility class here, passing data references and params
+        self.utility = RegressorTreeUtility(
+            self._X, self._y, self.min_samples_split, self._n_features
+        )
+
+        initial_indices = np.arange(self._X.shape[0])
+        self.tree = self._learn_recursive(initial_indices, depth=0)
+
+        if verbose:
+            print(f"Fitted tree with {len(X)} samples and max depth {self.max_depth}\n")
+
         return self.tree
 
-    def learn(self, X, y, par_node=None, depth=0):
-        """Builds the decision tree based on the given training data.
-
-        Args:
-            X: (array-like) - The input features.
-            y: (array-like) - The target labels.
-            par_node: (dict) - The parent node of the current subtree (default: {}).
-            depth: (int) - The current depth of the subtree (default: 0).
-
-        Returns:
-            dict: The learned decision tree.
-        """
-        # Check type of X and y
-        if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
-            raise TypeError("X and y must be lists or NumPy arrays.")
-
-        y = (
-            y.tolist() if isinstance(y, np.ndarray) else y
-        )  # Convert y to a list if it is a NumPy array
-
-        # Convert X and y to NumPy arrays for faster computation
-        X = np.array(X)
-        y = np.array(y, dtype=float)
-
-        # If X and y are empty, return an empty dictionary
-        if X.size == 0 or y.size == 0:
-            return {}
-
-        # If X is empty, return mean of y
-        if X.size == 0:
-            return {"value": np.mean(y)}
-
-        # Base cases
-        if len(set(y)) == 1:  # If the node is pure (all labels are the same)
-            return {"value": y[0]}  # Return the label as the value of the leaf node
-
-        if depth >= self.max_depth:  # If the maximum depth is reached
-            return {
-                "value": np.mean(y)
-            }  # Return the mean of the target values as the value of the leaf node
-
-        # Find best split
-        utility = RegressorTreeUtility()
-        best_split = utility.best_split(X, y)
-
-        if best_split["split_attribute"] is None or best_split["info_gain"] <= 0:
-            return {"value": np.mean(y)}
-
-        # Build subtrees
-        left_tree = self.learn(
-            best_split["X_left"], best_split["y_left"], depth=depth + 1
-        )
-        right_tree = self.learn(
-            best_split["X_right"], best_split["y_right"], depth=depth + 1
-        )
-
-        return {
-            "split_attribute": best_split["split_attribute"],
-            "split_val": best_split["split_val"],
-            "left": left_tree,
-            "right": right_tree,
-        }
-
-    @staticmethod
-    def evaluate_tree(tree, record):
-        """Make a prediction using the decision tree."""
-        # If tree is empty, return None
-        if tree is None or tree == {}:
-            return None
-
-        if "value" in tree:
-            return tree["value"]
-
-        if record[tree["split_attribute"]] <= tree["split_val"]:
-            return RegressorTree.evaluate_tree(tree["left"], record)
-        else:
-            return RegressorTree.evaluate_tree(tree["right"], record)
-
     def predict(self, X):
-        """Predict the target value for a record using the decision tree.
+        """Predict the target value for a record or batch of records using the decision tree.
 
         Args:
             X: (array-like) - The input features.
 
         Returns:
-            float: The predicted target value.
+            np.ndarray: The predicted target values.
         """
-        if not isinstance(X, list | np.ndarray):
+        if not isinstance(X, (list | np.ndarray)):
             raise TypeError("X must be a list or NumPy array.")
+        # If not fitted, raise error (if tree is empty {})
+        if self.tree == {}:
+            raise RuntimeError("The model has not been fitted yet.")
 
-        if isinstance(X, np.ndarray):
-            X = X.tolist()
+        X = np.asarray(X)
+        if X.ndim == 1:  # Handle single record
+            X = X.reshape(1, -1)
 
-        predictions = [self.evaluate_tree(self.tree, record) for record in X]
-        return np.array(predictions) if len(predictions) > 1 else predictions[0]
+        predictions = [self._traverse_tree(x, self.tree) for x in X]
+        return np.array(predictions)
+
+    def _traverse_tree(self, x, node):
+        """Traverse the tree for a single sample x.
+
+        Args:
+            x (array-like): The input features.
+            node (dict): The current node in the decision tree.
+        """
+        # Check if it's a leaf node
+        if "value" in node:
+            return node["value"]
+
+        # Check if node is valid (basic check)
+        if "feature_idx" not in node or "threshold" not in node:
+            # This might happen if the tree is malformed or empty
+            # return NaN, assuming values are floats
+            warnings.warn("Malformed node encountered during prediction.", stacklevel=2)
+            return np.nan  # Or handle appropriately
+
+        # Decide which branch to follow
+        if x[node["feature_idx"]] <= node["threshold"]:
+            # Potential issue: If left node is empty or malformed
+            if isinstance(node.get("left"), dict):
+                return self._traverse_tree(x, node["left"])
+            else:
+                # Handle cases where subtree might not be a dict (e.g., None if pruning happened badly)
+                warnings.warn("Left node missing/malformed.", stacklevel=2)
+                return np.nan  # Or a default value based on parent? Hard to say without more context.
+        else:
+            if isinstance(node.get("right"), dict):
+                return self._traverse_tree(x, node["right"])
+            else:
+                warnings.warn("Right node missing/malformed.", stacklevel=2)
+                return np.nan
+
+    def _learn_recursive(self, indices, depth):
+        """Recursive helper function for learning.
+
+        Args:
+            indices (array-like): The indices of the current node.
+            depth (int): The current depth of the decision tree.
+        """
+        # Check termination conditions
+        # 1. Max depth reached
+        # 2. Node is pure (variance is 0) - checked implicitly by best_split gain > 0
+        # 3. Not enough samples to split - checked by best_split returning None
+        # 4. No split improves variance - checked by best_split gain > 0
+
+        # Calculate leaf value first (will be used if termination condition met)
+        leaf_value = self.utility.calculate_leaf_value(indices)
+
+        if depth >= self.max_depth:
+            if self.verbose:
+                print(
+                    f"\tDepth limit reached at depth {depth}. Leaf value: {leaf_value}"
+                )
+            return {"value": leaf_value}
+
+        if len(indices) < self.min_samples_split:
+            if self.verbose:
+                print(
+                    f"\tMin samples limit reached ({len(indices)} < {self.min_samples_split}). Leaf value: {leaf_value}"
+                )
+            return {"value": leaf_value}
+
+        # Find the best split for the current indices
+        split_info = self.utility.best_split(indices)
+
+        # If no good split found (includes pure nodes, min_samples, no gain)
+        if split_info is None:
+            if self.verbose:
+                print(
+                    f"\tNo good split found at depth {depth}. Leaf value: {leaf_value}"
+                )
+            return {"value": leaf_value}
+
+        if self.verbose:
+            print(
+                f"\tSplit at depth {depth}: Feature {split_info['feature_idx']} <= {split_info['threshold']:.2f}, Gain: {split_info['info_gain']:.4f}"
+            )
+
+        # Recursively build left and right subtrees
+        left_subtree = self._learn_recursive(split_info["indices_left"], depth + 1)
+        right_subtree = self._learn_recursive(split_info["indices_right"], depth + 1)
+
+        # Return internal node structure
+        return {
+            "feature_idx": split_info["feature_idx"],
+            "threshold": split_info["threshold"],
+            "left": left_subtree,
+            "right": right_subtree,
+            "n_samples": len(indices),
+            "info_gain": split_info["info_gain"],
+        }

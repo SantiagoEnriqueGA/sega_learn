@@ -649,7 +649,14 @@ Returns:<br>
 &nbsp;<br>
 Variance&nbsp;is&nbsp;used&nbsp;as&nbsp;the&nbsp;measure&nbsp;of&nbsp;impurity&nbsp;in&nbsp;the&nbsp;case&nbsp;of&nbsp;regression.</span></dd></dl>
 
-<dl><dt><a name="RegressorTreeUtility-information_gain"><strong>information_gain</strong></a>(self, previous_y, current_y)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;information&nbsp;gain&nbsp;from&nbsp;a&nbsp;split&nbsp;by&nbsp;subtracting&nbsp;the&nbsp;variance&nbsp;of&nbsp;child&nbsp;nodes&nbsp;from&nbsp;the&nbsp;variance&nbsp;of&nbsp;the&nbsp;parent&nbsp;node.</span></dd></dl>
+<dl><dt><a name="RegressorTreeUtility-information_gain"><strong>information_gain</strong></a>(self, parent_variance, current_y)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;information&nbsp;gain&nbsp;from&nbsp;a&nbsp;split&nbsp;by&nbsp;subtracting&nbsp;the&nbsp;variance&nbsp;of&nbsp;child&nbsp;nodes&nbsp;from&nbsp;the&nbsp;variance&nbsp;of&nbsp;the&nbsp;parent&nbsp;node.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;parent_variance:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;precomputed&nbsp;variance&nbsp;of&nbsp;the&nbsp;parent&nbsp;node.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;current_y:&nbsp;(list&nbsp;of&nbsp;array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels&nbsp;of&nbsp;the&nbsp;child&nbsp;nodes.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;information&nbsp;gain&nbsp;from&nbsp;the&nbsp;split.</span></dd></dl>
 
 <dl><dt><a name="RegressorTreeUtility-partition_classes"><strong>partition_classes</strong></a>(self, X, y, split_attribute, split_val)</dt><dd><span class="code">Partitions&nbsp;the&nbsp;dataset&nbsp;into&nbsp;two&nbsp;subsets&nbsp;based&nbsp;on&nbsp;a&nbsp;given&nbsp;split&nbsp;attribute&nbsp;and&nbsp;value.<br>
 &nbsp;<br>

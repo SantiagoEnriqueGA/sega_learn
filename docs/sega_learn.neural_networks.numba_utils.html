@@ -53,16 +53,29 @@ td.singlecolumn { width: 100%; }
 <td class="singlecolumn"><dl><dt><a name="-apply_dropout_jit"><strong>apply_dropout_jit</strong></a>(X, dropout_rate)</dt><dd><span class="code">Apply&nbsp;dropout&nbsp;to&nbsp;activation&nbsp;values.</span></dd></dl>
  <dl><dt><a name="-calculate_bce_with_logits_loss"><strong>calculate_bce_with_logits_loss</strong></a>(logits, targets)</dt><dd><span class="code">Calculate&nbsp;binary&nbsp;cross-entropy&nbsp;loss&nbsp;with&nbsp;logits.</span></dd></dl>
  <dl><dt><a name="-calculate_cross_entropy_loss"><strong>calculate_cross_entropy_loss</strong></a>(logits, targets)</dt><dd><span class="code">Calculate&nbsp;cross-entropy&nbsp;loss&nbsp;for&nbsp;multi-class&nbsp;classification.</span></dd></dl>
+ <dl><dt><a name="-calculate_huber_loss"><strong>calculate_huber_loss</strong></a>(y_pred, y_true, delta=1.0)</dt><dd><span class="code">Helper&nbsp;function&nbsp;to&nbsp;calculate&nbsp;the&nbsp;Huber&nbsp;loss.&nbsp;Handles&nbsp;1D&nbsp;and&nbsp;2D&nbsp;inputs.</span></dd></dl>
  <dl><dt><a name="-calculate_loss_from_outputs_binary"><strong>calculate_loss_from_outputs_binary</strong></a>(outputs, y, weights, reg_lambda)</dt><dd><span class="code">Calculate&nbsp;binary&nbsp;classification&nbsp;loss&nbsp;with&nbsp;L2&nbsp;regularization.</span></dd></dl>
  <dl><dt><a name="-calculate_loss_from_outputs_multi"><strong>calculate_loss_from_outputs_multi</strong></a>(outputs, y, weights, reg_lambda)</dt><dd><span class="code">Calculate&nbsp;multi-class&nbsp;classification&nbsp;loss&nbsp;with&nbsp;L2&nbsp;regularization.</span></dd></dl>
+ <dl><dt><a name="-calculate_mae_loss"><strong>calculate_mae_loss</strong></a>(y_pred, y_true)</dt><dd><span class="code">Helper&nbsp;function&nbsp;to&nbsp;calculate&nbsp;the&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss.&nbsp;Handles&nbsp;1D&nbsp;and&nbsp;2D&nbsp;inputs.</span></dd></dl>
+ <dl><dt><a name="-calculate_mse_loss"><strong>calculate_mse_loss</strong></a>(y_pred, y_true)</dt><dd><span class="code">Helper&nbsp;function&nbsp;to&nbsp;calculate&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss.&nbsp;Handles&nbsp;1D&nbsp;and&nbsp;2D&nbsp;inputs.</span></dd></dl>
  <dl><dt><a name="-compute_l2_reg"><strong>compute_l2_reg</strong></a>(weights)</dt><dd><span class="code">Compute&nbsp;L2&nbsp;regularization&nbsp;for&nbsp;weights.</span></dd></dl>
  <dl><dt><a name="-evaluate_batch"><strong>evaluate_batch</strong></a>(y_hat, y_true, is_binary)</dt><dd><span class="code">Evaluate&nbsp;accuracy&nbsp;for&nbsp;a&nbsp;batch&nbsp;of&nbsp;predictions.</span></dd></dl>
  <dl><dt><a name="-evaluate_jit"><strong>evaluate_jit</strong></a>(y_hat, y_true, is_binary)</dt><dd><span class="code">Evaluate&nbsp;model&nbsp;performance&nbsp;and&nbsp;return&nbsp;accuracy&nbsp;and&nbsp;predictions.</span></dd></dl>
+ <dl><dt><a name="-evaluate_regression_jit"><strong>evaluate_regression_jit</strong></a>(y_pred, y_true, loss_function)</dt><dd><span class="code">Evaluate&nbsp;model&nbsp;performance&nbsp;for&nbsp;regression&nbsp;tasks&nbsp;using&nbsp;Numba.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred&nbsp;(ndarray):&nbsp;Model&nbsp;predictions.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true&nbsp;(ndarray):&nbsp;True&nbsp;target&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss_function&nbsp;(object):&nbsp;The&nbsp;JIT&nbsp;loss&nbsp;function&nbsp;instance&nbsp;(e.g.,&nbsp;JITMeanSquaredErrorLoss).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;Metric&nbsp;value&nbsp;(e.g.,&nbsp;MSE)&nbsp;and&nbsp;the&nbsp;predictions.</span></dd></dl>
  <dl><dt><a name="-leaky_relu"><strong>leaky_relu</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Apply&nbsp;Leaky&nbsp;ReLU&nbsp;activation&nbsp;function.</span></dd></dl>
  <dl><dt><a name="-leaky_relu_derivative"><strong>leaky_relu_derivative</strong></a>(z, alpha=0.01)</dt><dd><span class="code">Compute&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;Leaky&nbsp;ReLU&nbsp;activation&nbsp;function.</span></dd></dl>
  <dl><dt><a name="-one_hot_encode"><strong>one_hot_encode</strong></a>(y, num_classes)</dt><dd><span class="code">One-hot&nbsp;encode&nbsp;a&nbsp;vector&nbsp;of&nbsp;class&nbsp;labels.</span></dd></dl>
  <dl><dt><a name="-process_batches_binary"><strong>process_batches_binary</strong></a>(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, dropout_layer_indices, reg_lambda, dWs_acc, dbs_acc)</dt><dd><span class="code">Process&nbsp;batches&nbsp;for&nbsp;binary&nbsp;classification.</span></dd></dl>
  <dl><dt><a name="-process_batches_multi"><strong>process_batches_multi</strong></a>(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, dropout_layer_indices, reg_lambda, dWs_acc, dbs_acc)</dt><dd><span class="code">Process&nbsp;batches&nbsp;for&nbsp;multi-class&nbsp;classification.</span></dd></dl>
+ <dl><dt><a name="-process_batches_regression_jit"><strong>process_batches_regression_jit</strong></a>(X_shuffled, y_shuffled, batch_size, layers, dropout_rate, dropout_layer_indices, reg_lambda, dWs_acc, dbs_acc, loss_calculator_func)</dt><dd><span class="code">Process&nbsp;batches&nbsp;for&nbsp;regression&nbsp;tasks&nbsp;using&nbsp;Numba.</span></dd></dl>
  <dl><dt><a name="-relu"><strong>relu</strong></a>(z)</dt><dd><span class="code">Apply&nbsp;ReLU&nbsp;activation&nbsp;function.</span></dd></dl>
  <dl><dt><a name="-relu_derivative"><strong>relu_derivative</strong></a>(z)</dt><dd><span class="code">Compute&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;ReLU&nbsp;activation&nbsp;function.</span></dd></dl>
  <dl><dt><a name="-sigmoid"><strong>sigmoid</strong></a>(z)</dt><dd><span class="code">Apply&nbsp;sigmoid&nbsp;activation&nbsp;function.</span></dd></dl>

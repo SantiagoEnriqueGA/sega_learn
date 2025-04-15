@@ -52,8 +52,7 @@ jobs:
       - name: Install project package
         run: uv run uv pip install --no-deps .
 
-       # --- Test Steps ---
-
+      # --- Test Steps ---
       # Step 1: Run main import tests first
       - name: Run Main Import Test (test_imports.py)
         run: uv run python -m unittest tests/test_imports.py

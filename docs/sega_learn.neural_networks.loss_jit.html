@@ -56,6 +56,9 @@ td.singlecolumn { width: 100%; }
 <dl>
 <dt class="heading-text"><a href="sega_learn.neural_networks.loss_jit.html#JITBCEWithLogitsLoss">JITBCEWithLogitsLoss</a>
 </dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss_jit.html#JITCrossEntropyLoss">JITCrossEntropyLoss</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss_jit.html#JITHuberLoss">JITHuberLoss</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss_jit.html#JITMeanAbsoluteErrorLoss">JITMeanAbsoluteErrorLoss</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss_jit.html#JITMeanSquaredErrorLoss">JITMeanSquaredErrorLoss</a>
 </dt></dl>
 </dd>
 </dl>
@@ -127,6 +130,81 @@ Args:<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;cross&nbsp;entropy&nbsp;loss.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="JITHuberLoss">class <strong>JITHuberLoss</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#JITHuberLoss">JITHuberLoss</a>(delta=1.0)<br>
+&nbsp;<br>
+Custom&nbsp;Huber&nbsp;loss&nbsp;implementation&nbsp;using&nbsp;numba.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;delta&nbsp;(float):&nbsp;The&nbsp;threshold&nbsp;parameter&nbsp;for&nbsp;Huber&nbsp;loss.&nbsp;Default&nbsp;is&nbsp;1.0.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="JITHuberLoss-__init__"><strong>__init__</strong></a>(self, delta=1.0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#JITHuberLoss">JITHuberLoss</a>&nbsp;instance.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;delta&nbsp;(float):&nbsp;The&nbsp;threshold&nbsp;at&nbsp;which&nbsp;the&nbsp;loss&nbsp;function&nbsp;transitions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from&nbsp;quadratic&nbsp;to&nbsp;linear.&nbsp;Default&nbsp;is&nbsp;1.0.</span></dd></dl>
+
+<dl><dt><a name="JITHuberLoss-calculate_loss"><strong>calculate_loss</strong></a>(self, y_pred, y_true)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;Huber&nbsp;loss&nbsp;using&nbsp;the&nbsp;stored&nbsp;delta.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred&nbsp;(np.ndarray):&nbsp;Predicted&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true&nbsp;(np.ndarray):&nbsp;True&nbsp;target&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;calculated&nbsp;Huber&nbsp;loss.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="JITMeanAbsoluteErrorLoss">class <strong>JITMeanAbsoluteErrorLoss</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Custom&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss&nbsp;implementation&nbsp;using&nbsp;numba.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="JITMeanAbsoluteErrorLoss-calculate_loss"><strong>calculate_loss</strong></a>(self, y_pred, y_true)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="JITMeanSquaredErrorLoss">class <strong>JITMeanSquaredErrorLoss</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Custom&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss&nbsp;implementation&nbsp;using&nbsp;numba.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="JITMeanSquaredErrorLoss-calculate_loss"><strong>calculate_loss</strong></a>(self, y_pred, y_true)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>

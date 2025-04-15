@@ -197,14 +197,20 @@ class AutoRegressor:
                 {"n_neighbors": [3, 5, 7, 9]},
                 {"distance_metric": ["euclidean", "manhattan"]},
             ],
-            "RegressorTree": [{"max_depth": [5, 10, 15, 20, 25, 50]}],
+            "RegressorTree": [
+                {"max_depth": [5, 10, 15, 20, 25, 50]},
+                {"min_samples_split": [2, 5, 10, 20, 25, 50]},
+            ],
             "RandomForestRegressor": [
                 {"forest_size": [50, 100, 200]},
                 {"max_depth": [5, 10, 15]},
+                {"min_samples_split": [2, 5, 10, 20, 25, 50]},
             ],
             "GradientBoostedRegressor": [
                 {"num_trees": [50, 100, 200]},
                 {"max_depth": [3, 5, 7]},
+                {"min_samples_split": [2, 5, 10, 20, 25, 50]},
+                {"learning_rate": [0.01, 0.1, 0.5, 1.0]},
             ],
         }
         # Note: Neural Network is excluded from this grid/random search tuning loop.

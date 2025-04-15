@@ -95,7 +95,7 @@ def grid_search():
 
             # Train random forest model and get stats
             rfObj.fit()
-            stats = rfObj.get_stats()
+            stats = rfObj.get_stats(y, rfObj.predict(X))
 
             for metric in results:
                 results[metric][i, j] = stats[metric]

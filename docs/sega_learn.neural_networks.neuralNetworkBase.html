@@ -66,7 +66,7 @@ td.singlecolumn { width: 100%; }
 <td class="section-title" colspan=3>&nbsp;<br><a name="NeuralNetworkBase">class <strong>NeuralNetworkBase</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
 
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#NeuralNetworkBase">NeuralNetworkBase</a>(layers,&nbsp;dropout_rate=0.0,&nbsp;reg_lambda=0.0,&nbsp;activations=None)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#NeuralNetworkBase">NeuralNetworkBase</a>(layers,&nbsp;dropout_rate=0.0,&nbsp;reg_lambda=0.0,&nbsp;activations=None,&nbsp;loss_function=None,&nbsp;regressor=False)<br>
 &nbsp;<br>
 <a href="#NeuralNetworkBase">NeuralNetworkBase</a>&nbsp;is&nbsp;an&nbsp;abstract&nbsp;base&nbsp;class&nbsp;for&nbsp;building&nbsp;neural&nbsp;networks.<br>
 &nbsp;<br>
@@ -86,7 +86,7 @@ Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;is_binary&nbsp;(bool):&nbsp;Whether&nbsp;the&nbsp;network&nbsp;is&nbsp;for&nbsp;binary&nbsp;classification.<br>
 &nbsp;<br>
 Methods:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#NeuralNetworkBase-__init__">__init__</a>(layers,&nbsp;dropout_rate=0.0,&nbsp;reg_lambda=0.0,&nbsp;activations=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#NeuralNetworkBase-__init__">__init__</a>(layers,&nbsp;dropout_rate=0.0,&nbsp;reg_lambda=0.0,&nbsp;activations=None,&nbsp;loss_function=None,&nbsp;regressor=False):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;neural&nbsp;network&nbsp;with&nbsp;the&nbsp;given&nbsp;layers&nbsp;and&nbsp;parameters.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#NeuralNetworkBase-initialize_layers">initialize_layers</a>():<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Abstract&nbsp;method&nbsp;to&nbsp;initialize&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;of&nbsp;the&nbsp;layers.<br>
@@ -117,13 +117,15 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;learning&nbsp;rate,&nbsp;and&nbsp;optionally&nbsp;precision,&nbsp;recall,&nbsp;and&nbsp;F1&nbsp;score.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="NeuralNetworkBase-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.0, reg_lambda=0.0, activations=None)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;neural&nbsp;network&nbsp;with&nbsp;the&nbsp;specified&nbsp;layers,&nbsp;dropout&nbsp;rate,&nbsp;regularization,&nbsp;and&nbsp;activations.<br>
+<dl><dt><a name="NeuralNetworkBase-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.0, reg_lambda=0.0, activations=None, loss_function=None, regressor=False)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;neural&nbsp;network&nbsp;with&nbsp;the&nbsp;specified&nbsp;layers,&nbsp;dropout&nbsp;rate,&nbsp;regularization,&nbsp;and&nbsp;activations.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;layers:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;integers&nbsp;representing&nbsp;the&nbsp;sizes&nbsp;of&nbsp;each&nbsp;layer&nbsp;or&nbsp;a&nbsp;list&nbsp;of&nbsp;Layer&nbsp;objects.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;dropout_rate:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;The&nbsp;dropout&nbsp;rate&nbsp;for&nbsp;regularization&nbsp;(default&nbsp;is&nbsp;0.0).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;reg_lambda:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;The&nbsp;regularization&nbsp;strength&nbsp;(default&nbsp;is&nbsp;0.0).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;activations:&nbsp;(list&nbsp;of&nbsp;str),&nbsp;optional&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;activation&nbsp;functions&nbsp;for&nbsp;each&nbsp;layer&nbsp;(default&nbsp;is&nbsp;None,&nbsp;which&nbsp;sets&nbsp;"relu"&nbsp;for&nbsp;hidden&nbsp;layers&nbsp;and&nbsp;"softmax"&nbsp;for&nbsp;the&nbsp;output&nbsp;layer).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss_function:&nbsp;(callable),&nbsp;optional&nbsp;-&nbsp;Custom&nbsp;loss&nbsp;function&nbsp;to&nbsp;use&nbsp;(default&nbsp;is&nbsp;None,&nbsp;which&nbsp;uses&nbsp;the&nbsp;default&nbsp;calculate_loss&nbsp;implementation).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;regressor:&nbsp;(bool),&nbsp;optional&nbsp;-&nbsp;If&nbsp;True,&nbsp;the&nbsp;network&nbsp;is&nbsp;treated&nbsp;as&nbsp;a&nbsp;regressor&nbsp;(default&nbsp;is&nbsp;False).<br>
 &nbsp;<br>
 Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;`layers`&nbsp;is&nbsp;not&nbsp;a&nbsp;list&nbsp;of&nbsp;integers&nbsp;or&nbsp;a&nbsp;list&nbsp;of&nbsp;Layer&nbsp;objects.</span></dd></dl>

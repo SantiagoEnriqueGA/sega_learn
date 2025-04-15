@@ -81,10 +81,16 @@ td.singlecolumn { width: 100%; }
 </dt><dt class="heading-text"><a href="sega_learn.neural_networks.layers_jit.html#JITRNNLayer">sega_learn.neural_networks.layers_jit.JITRNNLayer</a>
 </dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss.html#BCEWithLogitsLoss">sega_learn.neural_networks.loss.BCEWithLogitsLoss</a>
 </dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss.html#CrossEntropyLoss">sega_learn.neural_networks.loss.CrossEntropyLoss</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss.html#HuberLoss">sega_learn.neural_networks.loss.HuberLoss</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss.html#MeanAbsoluteErrorLoss">sega_learn.neural_networks.loss.MeanAbsoluteErrorLoss</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss.html#MeanSquaredErrorLoss">sega_learn.neural_networks.loss.MeanSquaredErrorLoss</a>
 </dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss_cupy.html#CuPyBCEWithLogitsLoss">sega_learn.neural_networks.loss_cupy.CuPyBCEWithLogitsLoss</a>
 </dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss_cupy.html#CuPyCrossEntropyLoss">sega_learn.neural_networks.loss_cupy.CuPyCrossEntropyLoss</a>
 </dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss_jit.html#JITBCEWithLogitsLoss">sega_learn.neural_networks.loss_jit.JITBCEWithLogitsLoss</a>
 </dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss_jit.html#JITCrossEntropyLoss">sega_learn.neural_networks.loss_jit.JITCrossEntropyLoss</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss_jit.html#JITHuberLoss">sega_learn.neural_networks.loss_jit.JITHuberLoss</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss_jit.html#JITMeanAbsoluteErrorLoss">sega_learn.neural_networks.loss_jit.JITMeanAbsoluteErrorLoss</a>
+</dt><dt class="heading-text"><a href="sega_learn.neural_networks.loss_jit.html#JITMeanSquaredErrorLoss">sega_learn.neural_networks.loss_jit.JITMeanSquaredErrorLoss</a>
 </dt><dt class="heading-text"><a href="sega_learn.neural_networks.neuralNetworkBase.html#NeuralNetworkBase">sega_learn.neural_networks.neuralNetworkBase.NeuralNetworkBase</a>
 </dt><dd>
 <dl>
@@ -361,7 +367,7 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="BaseBackendNeuralNetwork">class <strong>BaseBackendNeuralNetwork</strong></a>(<a href="sega_learn.neural_networks.neuralNetworkBase.html#NeuralNetworkBase">sega_learn.neural_networks.neuralNetworkBase.NeuralNetworkBase</a>)</td></tr>
 
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#BaseBackendNeuralNetwork">BaseBackendNeuralNetwork</a>(layers,&nbsp;dropout_rate=0.2,&nbsp;reg_lambda=0.01,&nbsp;activations=None)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#BaseBackendNeuralNetwork">BaseBackendNeuralNetwork</a>(layers,&nbsp;dropout_rate=0.2,&nbsp;reg_lambda=0.01,&nbsp;activations=None,&nbsp;loss_function=None,&nbsp;regressor=False)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;representing&nbsp;a&nbsp;backend&nbsp;implementation&nbsp;of&nbsp;a&nbsp;neural&nbsp;network&nbsp;with&nbsp;support&nbsp;for&nbsp;forward&nbsp;propagation,&nbsp;backward&nbsp;propagation,&nbsp;training,&nbsp;evaluation,&nbsp;and&nbsp;hyperparameter&nbsp;tuning.<br>
 &nbsp;<br>
@@ -386,9 +392,9 @@ Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;learning_rates&nbsp;(list):&nbsp;Learning&nbsp;rates&nbsp;over&nbsp;epochs.<br>
 &nbsp;<br>
 Methods:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseBackendNeuralNetwork-__init__">__init__</a>(layers,&nbsp;dropout_rate=0.2,&nbsp;reg_lambda=0.01,&nbsp;activations=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseBackendNeuralNetwork-__init__">__init__</a>(layers,&nbsp;dropout_rate=0.2,&nbsp;reg_lambda=0.01,&nbsp;activations=None,&nbsp;loss_function=None,&nbsp;regressor=False):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;neural&nbsp;network&nbsp;with&nbsp;the&nbsp;specified&nbsp;layers,&nbsp;dropout&nbsp;rate,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;regularization&nbsp;parameter,&nbsp;and&nbsp;activation&nbsp;functions.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;regularization&nbsp;parameter,&nbsp;activation&nbsp;functions,&nbsp;and&nbsp;optional&nbsp;loss&nbsp;function.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseBackendNeuralNetwork-initialize_new_layers">initialize_new_layers</a>():<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;layers&nbsp;of&nbsp;the&nbsp;neural&nbsp;network&nbsp;with&nbsp;random&nbsp;weights&nbsp;and&nbsp;biases.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#BaseBackendNeuralNetwork-forward">forward</a>(X,&nbsp;training=True):<br>
@@ -419,13 +425,15 @@ Methods:<br>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="BaseBackendNeuralNetwork-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;Numba&nbsp;backend&nbsp;neural&nbsp;network.<br>
+<dl><dt><a name="BaseBackendNeuralNetwork-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None, loss_function=None, regressor=False)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;Numba&nbsp;backend&nbsp;neural&nbsp;network.<br>
 &nbsp;<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;layers&nbsp;(list):&nbsp;List&nbsp;of&nbsp;layer&nbsp;sizes&nbsp;or&nbsp;Layer&nbsp;objects.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;dropout_rate&nbsp;(float):&nbsp;Dropout&nbsp;rate&nbsp;for&nbsp;regularization.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda&nbsp;(float):&nbsp;L2&nbsp;regularization&nbsp;parameter.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;activations&nbsp;(list):&nbsp;List&nbsp;of&nbsp;activation&nbsp;functions&nbsp;for&nbsp;each&nbsp;layer.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;layers:&nbsp;(list)&nbsp;-&nbsp;List&nbsp;of&nbsp;layer&nbsp;sizes&nbsp;or&nbsp;Layer&nbsp;objects.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dropout_rate:&nbsp;(float)&nbsp;-&nbsp;Dropout&nbsp;rate&nbsp;for&nbsp;regularization.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reg_lambda:&nbsp;(float)&nbsp;-&nbsp;L2&nbsp;regularization&nbsp;parameter.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;activations:&nbsp;(list)&nbsp;-&nbsp;List&nbsp;of&nbsp;activation&nbsp;functions&nbsp;for&nbsp;each&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss_function:&nbsp;(callable)&nbsp;optional&nbsp;-&nbsp;Custom&nbsp;loss&nbsp;function&nbsp;to&nbsp;use&nbsp;(default&nbsp;is&nbsp;None,&nbsp;which&nbsp;uses&nbsp;the&nbsp;default&nbsp;calculate_loss&nbsp;implementation).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;regressor:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;the&nbsp;model&nbsp;is&nbsp;a&nbsp;regressor&nbsp;(default&nbsp;is&nbsp;False).</span></dd></dl>
 
 <dl><dt><a name="BaseBackendNeuralNetwork-backward"><strong>backward</strong></a>(self, y)</dt><dd><span class="code">Performs&nbsp;backward&nbsp;propagation&nbsp;to&nbsp;calculate&nbsp;the&nbsp;gradients.<br>
 &nbsp;<br>
@@ -448,8 +456,8 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(np.ndarray)&nbsp;-&nbsp;True&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;the&nbsp;input&nbsp;data.<br>
 &nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;accuracy:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;accuracy&nbsp;of&nbsp;the&nbsp;model's&nbsp;predictions.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;predicted:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;labels&nbsp;or&nbsp;classes&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;metric:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;evaluation&nbsp;metric&nbsp;(accuracy&nbsp;for&nbsp;classification,&nbsp;MSE&nbsp;for&nbsp;regression).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;predicted:&nbsp;(np.ndarray)&nbsp;-&nbsp;The&nbsp;predicted&nbsp;labels&nbsp;or&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;data.</span></dd></dl>
 
 <dl><dt><a name="BaseBackendNeuralNetwork-fit"><strong>fit</strong></a>(self, X_train, y_train, X_val=None, y_val=None, optimizer=None, epochs=100, batch_size=32, early_stopping_threshold=10, lr_scheduler=None, p=False, use_tqdm=False, n_jobs=1, track_metrics=False, track_adv_metrics=False, save_animation=False, save_path='training_animation.mp4', fps=1, dpi=100, frame_every=1)</dt><dd><span class="code">Fits&nbsp;the&nbsp;neural&nbsp;network&nbsp;to&nbsp;the&nbsp;training&nbsp;data.</span></dd></dl>
 
@@ -1340,6 +1348,38 @@ Data descriptors defined here:<br>
 </td></tr></table> <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="HuberLoss">class <strong>HuberLoss</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Custom&nbsp;Huber&nbsp;loss&nbsp;implementation&nbsp;using&nbsp;numpy.<br>
+&nbsp;<br>
+Formula:&nbsp;mean(0.5&nbsp;*&nbsp;(y_true&nbsp;-&nbsp;y_pred)**2)&nbsp;if&nbsp;abs(y_true&nbsp;-&nbsp;y_pred)&nbsp;&lt;=&nbsp;delta&nbsp;else&nbsp;mean(delta&nbsp;*&nbsp;(abs(y_true&nbsp;-&nbsp;y_pred)&nbsp;-&nbsp;delta&nbsp;/&nbsp;2))<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#HuberLoss-__call__">__call__</a>(self,&nbsp;y_true,&nbsp;y_pred,&nbsp;delta=1.0):&nbsp;Calculate&nbsp;the&nbsp;Huber&nbsp;loss.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="HuberLoss-__call__"><strong>__call__</strong></a>(self, y_true, y_pred, delta=1.0)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;Huber&nbsp;loss.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true&nbsp;(np.ndarray):&nbsp;The&nbsp;true&nbsp;labels&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred&nbsp;(np.ndarray):&nbsp;The&nbsp;predicted&nbsp;values&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;delta&nbsp;(float):&nbsp;The&nbsp;threshold&nbsp;for&nbsp;the&nbsp;Huber&nbsp;loss.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;Huber&nbsp;loss.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="JITAdadeltaOptimizer">class <strong>JITAdadeltaOptimizer</strong></a>(JITAdadeltaOptimizer)</td></tr>
 
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
@@ -1365,7 +1405,7 @@ Args:<br>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>class_type</strong> = jitclass.JITAdadeltaOptimizer#1b9698a07d0&lt;learni...float64, 3d, C),E_delta_x2:array(float64, 3d, C)&gt;</dl>
+<dl><dt><strong>class_type</strong> = jitclass.JITAdadeltaOptimizer#2b784859b90&lt;learni...float64, 3d, C),E_delta_x2:array(float64, 3d, C)&gt;</dl>
 
 <hr>
 Methods inherited from JITAdadeltaOptimizer:<br>
@@ -1444,7 +1484,7 @@ Args:<br>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>class_type</strong> = jitclass.JITAdamOptimizer#1b969890450&lt;learning_r...t64, 2d, A),db:array(float64, 2d, A),index:int32&gt;</dl>
+<dl><dt><strong>class_type</strong> = jitclass.JITAdamOptimizer#2b7848496d0&lt;learning_r...t64, 2d, A),db:array(float64, 2d, A),index:int32&gt;</dl>
 
 <hr>
 Methods inherited from JITAdamOptimizer:<br>
@@ -1550,7 +1590,7 @@ A&nbsp;convolutional&nbsp;layer&nbsp;implementation&nbsp;for&nbsp;neural&nbsp;ne
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>class_type</strong> = jitclass.JITConvLayer#1b968dc7310&lt;in_channels:in...2,w_out:int32,input_size:int32,output_size:int32&gt;</dl>
+<dl><dt><strong>class_type</strong> = jitclass.JITConvLayer#2b783c7fed0&lt;in_channels:in...2,w_out:int32,input_size:int32,output_size:int32&gt;</dl>
 
 <hr>
 Methods inherited from JITConvLayer:<br>
@@ -1687,7 +1727,7 @@ Methods:<br>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>class_type</strong> = jitclass.JITDenseLayer#1b968da6d50&lt;weights:array...oat64, 2d, C),input_size:int32,output_size:int32&gt;</dl>
+<dl><dt><strong>class_type</strong> = jitclass.JITDenseLayer#2b783c6b250&lt;weights:array...oat64, 2d, C),input_size:int32,output_size:int32&gt;</dl>
 
 <hr>
 Methods inherited from JITDenseLayer:<br>
@@ -1747,7 +1787,7 @@ Useful&nbsp;for&nbsp;transitioning&nbsp;from&nbsp;convolutional&nbsp;layers&nbsp
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>class_type</strong> = jitclass.JITFlattenLayer#1b968dc4790&lt;input_shape...put_cache:array(float64, 4d, A),input_size:int32&gt;</dl>
+<dl><dt><strong>class_type</strong> = jitclass.JITFlattenLayer#2b783c7d290&lt;input_shape...put_cache:array(float64, 4d, A),input_size:int32&gt;</dl>
 
 <hr>
 Methods inherited from JITFlattenLayer:<br>
@@ -1782,6 +1822,81 @@ Returns:<br>
 
 <hr>
 Data descriptors inherited from JITFlattenLayer:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="JITHuberLoss">class <strong>JITHuberLoss</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#JITHuberLoss">JITHuberLoss</a>(delta=1.0)<br>
+&nbsp;<br>
+Custom&nbsp;Huber&nbsp;loss&nbsp;implementation&nbsp;using&nbsp;numba.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;delta&nbsp;(float):&nbsp;The&nbsp;threshold&nbsp;parameter&nbsp;for&nbsp;Huber&nbsp;loss.&nbsp;Default&nbsp;is&nbsp;1.0.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="JITHuberLoss-__init__"><strong>__init__</strong></a>(self, delta=1.0)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#JITHuberLoss">JITHuberLoss</a>&nbsp;instance.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;delta&nbsp;(float):&nbsp;The&nbsp;threshold&nbsp;at&nbsp;which&nbsp;the&nbsp;loss&nbsp;function&nbsp;transitions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from&nbsp;quadratic&nbsp;to&nbsp;linear.&nbsp;Default&nbsp;is&nbsp;1.0.</span></dd></dl>
+
+<dl><dt><a name="JITHuberLoss-calculate_loss"><strong>calculate_loss</strong></a>(self, y_pred, y_true)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;Huber&nbsp;loss&nbsp;using&nbsp;the&nbsp;stored&nbsp;delta.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred&nbsp;(np.ndarray):&nbsp;Predicted&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true&nbsp;(np.ndarray):&nbsp;True&nbsp;target&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;calculated&nbsp;Huber&nbsp;loss.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="JITMeanAbsoluteErrorLoss">class <strong>JITMeanAbsoluteErrorLoss</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Custom&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss&nbsp;implementation&nbsp;using&nbsp;numba.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="JITMeanAbsoluteErrorLoss-calculate_loss"><strong>calculate_loss</strong></a>(self, y_pred, y_true)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="JITMeanSquaredErrorLoss">class <strong>JITMeanSquaredErrorLoss</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Custom&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss&nbsp;implementation&nbsp;using&nbsp;numba.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="JITMeanSquaredErrorLoss-calculate_loss"><strong>calculate_loss</strong></a>(self, y_pred, y_true)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
 </dl>
@@ -1832,7 +1947,7 @@ Args:<br>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>class_type</strong> = jitclass.JITSGDOptimizer#1b969892750&lt;learning_ra...eg_lambda:float64,velocity:array(float64, 3d, C)&gt;</dl>
+<dl><dt><strong>class_type</strong> = jitclass.JITSGDOptimizer#2b78484bb90&lt;learning_ra...eg_lambda:float64,velocity:array(float64, 3d, C)&gt;</dl>
 
 <hr>
 Methods inherited from JITSGDOptimizer:<br>
@@ -1889,10 +2004,72 @@ Data descriptors inherited from JITSGDOptimizer:<br>
 </td></tr></table> <p>
 <table class="section">
 <tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="MeanAbsoluteErrorLoss">class <strong>MeanAbsoluteErrorLoss</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Custom&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss&nbsp;implementation&nbsp;using&nbsp;numpy.<br>
+&nbsp;<br>
+Formula:&nbsp;mean(abs(y_true&nbsp;-&nbsp;y_pred))<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#MeanAbsoluteErrorLoss-__call__">__call__</a>(self,&nbsp;y_true,&nbsp;y_pred):&nbsp;Calculate&nbsp;the&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="MeanAbsoluteErrorLoss-__call__"><strong>__call__</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true&nbsp;(np.ndarray):&nbsp;The&nbsp;true&nbsp;labels&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred&nbsp;(np.ndarray):&nbsp;The&nbsp;predicted&nbsp;values&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;mean&nbsp;absolute&nbsp;error&nbsp;loss.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="MeanSquaredErrorLoss">class <strong>MeanSquaredErrorLoss</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Custom&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss&nbsp;implementation&nbsp;using&nbsp;numpy.<br>
+&nbsp;<br>
+Formula:&nbsp;mean((y_true&nbsp;-&nbsp;y_pred)&nbsp;**&nbsp;2)<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#MeanSquaredErrorLoss-__call__">__call__</a>(self,&nbsp;y_true,&nbsp;y_pred):&nbsp;Calculate&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="MeanSquaredErrorLoss-__call__"><strong>__call__</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_true&nbsp;(np.ndarray):&nbsp;The&nbsp;true&nbsp;labels&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y_pred&nbsp;(np.ndarray):&nbsp;The&nbsp;predicted&nbsp;values&nbsp;of&nbsp;shape&nbsp;(num_samples,).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;mean&nbsp;squared&nbsp;error&nbsp;loss.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><a name="NeuralNetworkBase">class <strong>NeuralNetworkBase</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
 
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#NeuralNetworkBase">NeuralNetworkBase</a>(layers,&nbsp;dropout_rate=0.0,&nbsp;reg_lambda=0.0,&nbsp;activations=None)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#NeuralNetworkBase">NeuralNetworkBase</a>(layers,&nbsp;dropout_rate=0.0,&nbsp;reg_lambda=0.0,&nbsp;activations=None,&nbsp;loss_function=None,&nbsp;regressor=False)<br>
 &nbsp;<br>
 <a href="#NeuralNetworkBase">NeuralNetworkBase</a>&nbsp;is&nbsp;an&nbsp;abstract&nbsp;base&nbsp;class&nbsp;for&nbsp;building&nbsp;neural&nbsp;networks.<br>
 &nbsp;<br>
@@ -1912,7 +2089,7 @@ Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;is_binary&nbsp;(bool):&nbsp;Whether&nbsp;the&nbsp;network&nbsp;is&nbsp;for&nbsp;binary&nbsp;classification.<br>
 &nbsp;<br>
 Methods:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#NeuralNetworkBase-__init__">__init__</a>(layers,&nbsp;dropout_rate=0.0,&nbsp;reg_lambda=0.0,&nbsp;activations=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#NeuralNetworkBase-__init__">__init__</a>(layers,&nbsp;dropout_rate=0.0,&nbsp;reg_lambda=0.0,&nbsp;activations=None,&nbsp;loss_function=None,&nbsp;regressor=False):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializes&nbsp;the&nbsp;neural&nbsp;network&nbsp;with&nbsp;the&nbsp;given&nbsp;layers&nbsp;and&nbsp;parameters.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#NeuralNetworkBase-initialize_layers">initialize_layers</a>():<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Abstract&nbsp;method&nbsp;to&nbsp;initialize&nbsp;the&nbsp;weights&nbsp;and&nbsp;biases&nbsp;of&nbsp;the&nbsp;layers.<br>
@@ -1943,13 +2120,15 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;learning&nbsp;rate,&nbsp;and&nbsp;optionally&nbsp;precision,&nbsp;recall,&nbsp;and&nbsp;F1&nbsp;score.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="NeuralNetworkBase-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.0, reg_lambda=0.0, activations=None)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;neural&nbsp;network&nbsp;with&nbsp;the&nbsp;specified&nbsp;layers,&nbsp;dropout&nbsp;rate,&nbsp;regularization,&nbsp;and&nbsp;activations.<br>
+<dl><dt><a name="NeuralNetworkBase-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.0, reg_lambda=0.0, activations=None, loss_function=None, regressor=False)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;neural&nbsp;network&nbsp;with&nbsp;the&nbsp;specified&nbsp;layers,&nbsp;dropout&nbsp;rate,&nbsp;regularization,&nbsp;and&nbsp;activations.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;layers:&nbsp;(list)&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;integers&nbsp;representing&nbsp;the&nbsp;sizes&nbsp;of&nbsp;each&nbsp;layer&nbsp;or&nbsp;a&nbsp;list&nbsp;of&nbsp;Layer&nbsp;objects.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;dropout_rate:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;The&nbsp;dropout&nbsp;rate&nbsp;for&nbsp;regularization&nbsp;(default&nbsp;is&nbsp;0.0).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;reg_lambda:&nbsp;(float),&nbsp;optional&nbsp;-&nbsp;The&nbsp;regularization&nbsp;strength&nbsp;(default&nbsp;is&nbsp;0.0).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;activations:&nbsp;(list&nbsp;of&nbsp;str),&nbsp;optional&nbsp;-&nbsp;A&nbsp;list&nbsp;of&nbsp;activation&nbsp;functions&nbsp;for&nbsp;each&nbsp;layer&nbsp;(default&nbsp;is&nbsp;None,&nbsp;which&nbsp;sets&nbsp;"relu"&nbsp;for&nbsp;hidden&nbsp;layers&nbsp;and&nbsp;"softmax"&nbsp;for&nbsp;the&nbsp;output&nbsp;layer).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss_function:&nbsp;(callable),&nbsp;optional&nbsp;-&nbsp;Custom&nbsp;loss&nbsp;function&nbsp;to&nbsp;use&nbsp;(default&nbsp;is&nbsp;None,&nbsp;which&nbsp;uses&nbsp;the&nbsp;default&nbsp;calculate_loss&nbsp;implementation).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;regressor:&nbsp;(bool),&nbsp;optional&nbsp;-&nbsp;If&nbsp;True,&nbsp;the&nbsp;network&nbsp;is&nbsp;treated&nbsp;as&nbsp;a&nbsp;regressor&nbsp;(default&nbsp;is&nbsp;False).<br>
 &nbsp;<br>
 Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;`layers`&nbsp;is&nbsp;not&nbsp;a&nbsp;list&nbsp;of&nbsp;integers&nbsp;or&nbsp;a&nbsp;list&nbsp;of&nbsp;Layer&nbsp;objects.</span></dd></dl>
@@ -2012,7 +2191,7 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="NumbaBackendNeuralNetwork">class <strong>NumbaBackendNeuralNetwork</strong></a>(<a href="sega_learn.neural_networks.neuralNetworkBase.html#NeuralNetworkBase">sega_learn.neural_networks.neuralNetworkBase.NeuralNetworkBase</a>)</td></tr>
 
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#NumbaBackendNeuralNetwork">NumbaBackendNeuralNetwork</a>(layers,&nbsp;dropout_rate=0.2,&nbsp;reg_lambda=0.01,&nbsp;activations=None,&nbsp;compile_numba=True,&nbsp;progress_bar=True)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#NumbaBackendNeuralNetwork">NumbaBackendNeuralNetwork</a>(layers,&nbsp;dropout_rate=0.2,&nbsp;reg_lambda=0.01,&nbsp;activations=None,&nbsp;loss_function=None,&nbsp;regressor=False,&nbsp;compile_numba=True,&nbsp;progress_bar=True)<br>
 &nbsp;<br>
 A&nbsp;neural&nbsp;network&nbsp;implementation&nbsp;using&nbsp;Numba&nbsp;for&nbsp;Just-In-Time&nbsp;(JIT)&nbsp;compilation&nbsp;to&nbsp;optimize&nbsp;performance.<br>
 &nbsp;<br>
@@ -2064,13 +2243,15 @@ Methods:<br>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="NumbaBackendNeuralNetwork-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None, compile_numba=True, progress_bar=True)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;Numba&nbsp;backend&nbsp;neural&nbsp;network.<br>
+<dl><dt><a name="NumbaBackendNeuralNetwork-__init__"><strong>__init__</strong></a>(self, layers, dropout_rate=0.2, reg_lambda=0.01, activations=None, loss_function=None, regressor=False, compile_numba=True, progress_bar=True)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;Numba&nbsp;backend&nbsp;neural&nbsp;network.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;layers:&nbsp;(list)&nbsp;-&nbsp;List&nbsp;of&nbsp;layer&nbsp;sizes&nbsp;or&nbsp;Layer&nbsp;objects.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;dropout_rate:&nbsp;(float)&nbsp;-&nbsp;Dropout&nbsp;rate&nbsp;for&nbsp;regularization.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;reg_lambda:&nbsp;(float)&nbsp;-&nbsp;L2&nbsp;regularization&nbsp;parameter.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;activations:&nbsp;(list)&nbsp;-&nbsp;List&nbsp;of&nbsp;activation&nbsp;functions&nbsp;for&nbsp;each&nbsp;layer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss_function:&nbsp;(callable)&nbsp;optional&nbsp;-&nbsp;Custom&nbsp;loss&nbsp;function&nbsp;(default:&nbsp;selects&nbsp;based&nbsp;on&nbsp;task).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;regressor:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;the&nbsp;model&nbsp;is&nbsp;a&nbsp;regressor&nbsp;(default&nbsp;is&nbsp;False).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;compile_numba:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;to&nbsp;compile&nbsp;Numba&nbsp;functions.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;progress_bar:&nbsp;(bool)&nbsp;-&nbsp;Whether&nbsp;to&nbsp;display&nbsp;a&nbsp;progress&nbsp;bar.</span></dd></dl>
 
@@ -2425,5 +2606,5 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
 
 <tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>__all__</strong> = ['AdamOptimizer', 'SGDOptimizer', 'AdadeltaOptimizer', 'lr_scheduler_exp', 'lr_scheduler_plateau', 'lr_scheduler_step', 'CrossEntropyLoss', 'BCEWithLogitsLoss', 'DenseLayer', 'FlattenLayer', 'ConvLayer', 'RNNLayer', 'Activation', 'NeuralNetworkBase', 'BaseBackendNeuralNetwork', 'JITAdamOptimizer', 'JITSGDOptimizer', 'JITAdadeltaOptimizer', 'JITBCEWithLogitsLoss', 'JITCrossEntropyLoss', ...]</td></tr></table>
+<td class="singlecolumn"><strong>__all__</strong> = ['AdamOptimizer', 'SGDOptimizer', 'AdadeltaOptimizer', 'lr_scheduler_exp', 'lr_scheduler_plateau', 'lr_scheduler_step', 'CrossEntropyLoss', 'BCEWithLogitsLoss', 'MeanSquaredErrorLoss', 'MeanAbsoluteErrorLoss', 'HuberLoss', 'DenseLayer', 'FlattenLayer', 'ConvLayer', 'RNNLayer', 'Activation', 'NeuralNetworkBase', 'BaseBackendNeuralNetwork', 'JITAdamOptimizer', 'JITSGDOptimizer', ...]</td></tr></table>
 </body></html>
