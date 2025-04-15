@@ -392,5 +392,171 @@ class TestRandomForestClassifier(unittest.TestCase):
         self.assertIsInstance(oob_predictions, list)
 
 
+class TesGradientBoostedClassifier(unittest.TestCase):
+    """Set up the GradientBoostedClassifier instance for testing."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        """Initializes a new instance of the GradientBoostedClassifier class before each test method is run."""
+        print("\nTesting Gradient Boosted Classifier", end="", flush=True)
+
+    def setUp(self):  # NOQA D201
+        """Set up the GradientBoostedClassifier instance for testing."""
+        X, y = make_classification(n_samples=100, n_features=5, n_classes=2)
+        self.rf = GradientBoostedClassifier(
+            X=X, y=y, max_depth=5, n_estimators=10, min_samples_split=2, random_seed=0
+        )
+
+    def test_init(self):
+        """Tests the initialization of the GradientBoostedClassifier class."""
+        self.assertEqual(self.rf.max_depth, 5)
+        self.assertEqual(self.rf.n_estimators, 10)
+        self.assertEqual(self.rf.min_samples_split, 2)
+        self.assertIsInstance(self.rf.trees_, list)
+        self.assertIsInstance(self.rf.X, np.ndarray)
+        self.assertIsInstance(self.rf.y, np.ndarray)
+
+    def test_init_bad_n_estimators(self):
+        """Tests the initialization of the GradientBoostedClassifier class with a bad number of estimators."""
+        with self.assertRaises(ValueError):
+            GradientBoostedClassifier(X=self.rf.X, y=self.rf.y, n_estimators=-1)
+
+    def test_init_bad_learning_rate(self):
+        """Tests the initialization of the GradientBoostedClassifier class with a bad learning rate."""
+        with self.assertRaises(ValueError):
+            GradientBoostedClassifier(X=self.rf.X, y=self.rf.y, learning_rate=-0.1)
+
+    def test_init_bad_max_depth(self):
+        """Tests the initialization of the GradientBoostedClassifier class with a bad maximum depth."""
+        with self.assertRaises(ValueError):
+            GradientBoostedClassifier(X=self.rf.X, y=self.rf.y, max_depth=0)
+
+    def test_init_bad_min_samples_split(self):
+        """Tests the initialization of the GradientBoostedClassifier class with a bad minimum samples split."""
+        with self.assertRaises(ValueError):
+            GradientBoostedClassifier(X=self.rf.X, y=self.rf.y, min_samples_split=0)
+
+    def test_fit(self):
+        """Tests the fit method of the GradientBoostedClassifier class."""
+        self.rf.fit()
+        self.assertEqual(len(self.rf.trees_), 10)
+        self.assertIsInstance(self.rf.trees_[0], RegressorTree)
+
+    def test_fit_single_data_point(self):
+        """Test fitting the GradientBoostedClassifier with a single data point."""
+        X_single = np.random.rand(1, 5)  # Single sample, 5 features
+        y_single = np.array([1])  # Single label
+        self.rf.fit(X_single, y_single)
+        self.assertEqual(len(self.rf.trees_[0]), 10)
+
+    def test_fit_empty_dataset(self):
+        """Test fitting the GradientBoostedClassifier with an empty dataset."""
+        X_empty = np.empty((0, 5))  # No samples, 5 features
+        y_empty = np.empty((0,))
+        with self.assertRaises(ValueError):
+            self.rf.fit(X_empty, y_empty)
+
+    def test_fit_no_features(self):
+        """Test fitting the GradientBoostedClassifier with no features."""
+        X = np.empty((10, 0))  # 10 samples, 0 features
+        y = np.random.randint(0, 2, size=10)
+        self.rf.fit(X, y)
+
+    def test_fit_no_samples(self):
+        """Test fitting the GradientBoostedClassifier with no samples."""
+        X = np.empty((0, 5))  # 0 samples, 5 features
+        y = np.empty((0,))
+        with self.assertRaises(ValueError):
+            self.rf.fit(X, y)
+
+    def test_fit_single_class(self):
+        """Test fitting the GradientBoostedClassifier with a single class."""
+        X = np.random.rand(10, 5)  # 10 samples, 5 features
+        y = np.zeros(10)  # Single class
+        self.rf.fit(X, y)
+        self.assertEqual(len(self.rf.trees_[0]), 10)
+
+    def test_fit_no_X(self):
+        """Test fitting the GradientBoostedClassifier without X."""
+        y = np.random.randint(0, 2, size=10)
+        with self.assertRaises(ValueError):
+            self.rf.fit(X=None, y=y)
+
+    def test_fit_no_y(self):
+        """Test fitting the GradientBoostedClassifier without y."""
+        X = np.random.rand(10, 5)
+        with self.assertRaises(ValueError):
+            self.rf.fit(X=X, y=None)
+
+    def test_fit_invalid_X(self):
+        """Test fitting the GradientBoostedClassifier with invalid X."""
+        X = "not a numpy array"
+        y = np.random.randint(0, 2, size=10)
+        with self.assertRaises(ValueError):
+            self.rf.fit(X=X, y=y)
+
+    def test_fit_invalid_y(self):
+        """Test fitting the GradientBoostedClassifier with invalid y."""
+        X = np.random.rand(10, 5)
+        y = "not a numpy array"
+        with self.assertRaises(ValueError):
+            self.rf.fit(X=X, y=y)
+
+    def test_fit_invalid_shape(self):
+        """Test fitting the GradientBoostedClassifier with mismatched X and y shapes."""
+        X = np.random.rand(10, 5)
+        y = np.random.rand(5)
+        with self.assertRaises(ValueError):
+            self.rf.fit(X=X, y=y)
+
+    def test_fit_invalid_shape_X(self):
+        """Test fitting the GradientBoostedClassifier with invalid shape for X, not 2D."""
+        X = np.random.rand(10, 5, 1)
+        y = np.random.randint(0, 2, size=10)
+        with self.assertRaises(ValueError):
+            self.rf.fit(X=X, y=y)
+
+    def test_fit_invalid_shape_y(self):
+        """Test fitting the GradientBoostedClassifier with invalid shape for y."""
+        X = np.random.rand(10, 5)
+        y = np.random.rand(10, 1)
+        with self.assertRaises(ValueError):
+            self.rf.fit(X=X, y=y)
+
+    def test_predict(self):
+        """Test predicting with the GradientBoostedClassifier."""
+        self.rf.fit()
+        X_test = np.random.rand(10, 5)
+        predictions = self.rf.predict(X_test)
+        self.assertEqual(len(predictions), 10)
+        self.assertTrue(all(pred in self.rf.classes_ for pred in predictions))
+
+    def test_predict_proba(self):
+        """Test predicting probabilities with the GradientBoostedClassifier."""
+        self.rf.fit()
+        X_test = np.random.rand(10, 5)
+        probabilities = self.rf.predict_proba(X_test)
+        self.assertEqual(probabilities.shape, (10, 2))
+        self.assertTrue(np.allclose(probabilities.sum(axis=1), 1))
+
+    def test_decision_function(self):
+        """Test the decision function of the GradientBoostedClassifier."""
+        self.rf.fit()
+        X_test = np.random.rand(10, 5)
+        decision_scores = self.rf.decision_function(X_test)
+        self.assertEqual(len(decision_scores), 10)
+
+    def test_get_stats(self):
+        """Test the get_stats method of the GradientBoostedClassifier."""
+        self.rf.fit()
+        X_test, y_test = make_classification(n_samples=20, n_features=5, n_classes=2)
+        stats = self.rf.get_stats(y_test, X=X_test)
+        self.assertIn("Accuracy", stats)
+        self.assertIn("Precision", stats)
+        self.assertIn("Recall", stats)
+        self.assertIn("F1 Score", stats)
+        self.assertIn("Log Loss", stats)
+
+
 if __name__ == "__main__":
     unittest.main()
