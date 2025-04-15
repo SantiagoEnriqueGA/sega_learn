@@ -10,18 +10,15 @@ class GradientBoostedRegressor:
         random_seed (int): The random seed for the random number generator.
         num_trees (int): The number of decision trees in the ensemble.
         max_depth (int): The maximum depth of each decision tree.
-        display (bool): A flag to display the decision tree.
-        X (list): A list of input data features.
-        y (list): A list of target values.
-        XX (list): A list of input data features and target values.
-        numerical_cols (set): A set of indices of numeric attributes (columns).
+        learning_rate (float): The learning rate for the gradient boosted model.
+        min_samples_split (int): The minimum number of samples required to split a node.
+        random_seed (int): The random seed for the random number generator.
 
     Methods:
-        __init__(file_loc, num_trees=5, random_seed=0, max_depth=10): Initializes the GBDT object.
-        reset(): Resets the GBDT object.
-        fit(): Fits the GBDT model to the training data.
-        predict(): Predicts the target values for the input data.
-        get_stats(y_predicted): Calculates various evaluation metrics for the predicted target values.
+        fit(X=None, y=None, verbose=0): Fits the gradient boosted decision tree regressor to the training data.
+        predict(X): Predicts the target values for the input features.
+        calculate_metrics(y_true, y_pred): Calculates the evaluation metrics.
+        get_stats(y_true, y_pred, verbose=False): Returns the evaluation metrics.
     """
 
     def __init__(
@@ -44,9 +41,6 @@ class GradientBoostedRegressor:
             learning_rate (float): Step size shrinkage to prevent overfitting.
             min_samples_split (int): Minimum samples required to split a node.
             random_seed (int): Seed for reproducibility (currently affects feature selection within trees).
-
-        Returns:
-            None
         """
         self.n_estimators = num_trees
         self.max_depth = max_depth
@@ -77,7 +71,7 @@ class GradientBoostedRegressor:
             verbose (int): Whether to print progress messages (e.g., residuals). 0 for no output, 1 for output, >1 for detailed output
 
         Returns:
-            None
+            self: The fitted GradientBoostedRegressor instance.
         """
         if X is None and self.X is None:
             raise ValueError(
@@ -185,7 +179,15 @@ class GradientBoostedRegressor:
         return predictions
 
     def calculate_metrics(self, y_true, y_pred):
-        """Calculate common regression metrics."""
+        """Calculate common regression metrics.
+
+        Args:
+            y_true (array-like): True target values.
+            y_pred (array-like): Predicted target values.
+
+        Returns:
+            dict: A dictionary containing calculated metrics (MSE, R^2, MAE, RMSE, MAPE).
+        """
         y_true = np.asarray(y_true)
         y_pred = np.asarray(y_pred)
 
@@ -219,7 +221,16 @@ class GradientBoostedRegressor:
         return {"MSE": mse, "R^2": r2, "MAE": mae, "RMSE": rmse, "MAPE": mape}
 
     def get_stats(self, y_true, y_pred, verbose=False):
-        """Calculate and optionally print evaluation metrics."""
+        """Calculate and optionally print evaluation metrics.
+
+        Args:
+            y_true (array-like): True target values.
+            y_pred (array-like): Predicted target values.
+            verbose (bool): Whether to print progress messages (e.g., residuals).
+
+        Returns:
+            dict: A dictionary containing calculated metrics (MSE, R^2, MAE, RMSE, MAPE).
+        """
         # Ensure y_true is the original target values corresponding to the predictions
         stats = self.calculate_metrics(y_true, y_pred)
         if verbose:

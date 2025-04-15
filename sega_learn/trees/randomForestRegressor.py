@@ -1,10 +1,3 @@
-"""This module contains the implementation of a Random Forest Regressor.
-
-The module includes the following classes:
-- RandomForest: A class representing a Random Forest model.
-- runRandomForest: A class that runs the Random Forest algorithm.
-"""
-
 # Importing the required libraries
 import multiprocessing
 from datetime import datetime
@@ -49,14 +42,6 @@ def _fit_single_tree(
     return tree_index, tree, indices  # Return the instance and indices
 
 
-# Note: OOB prediction within fit is complex with parallel processing storing
-# only instances. Calculating OOB score usually happens *after* fitting all trees
-# or requires more complex communication/storage.
-# The original _predict_oob is removed for simplicity, as storing only
-# tree instances makes accessing specific bootstrap indices per tree difficult post-fit.
-# OOB score calculation is often done separately if needed.
-
-
 class RandomForestRegressor:
     """A class representing a Random Forest model for regression.
 
@@ -67,7 +52,8 @@ class RandomForestRegressor:
         n_jobs (int): The number of jobs to run in parallel for fitting.
         random_state (int): Seed for random number generation for reproducibility.
         trees (list): List holding the fitted RegressorTree instances.
-        oob_score_ (float): Out-of-bag score (R^2). Not calculated by default in this version.
+        X (numpy.ndarray or None): The feature matrix used for training.
+        y (numpy.ndarray or None): The target labels used for training.
 
     Methods:
         fit(X=None, y=None, verbose=False): Fits the random forest to the data.
@@ -95,8 +81,6 @@ class RandomForestRegressor:
             self.n_jobs = max(1, multiprocessing.cpu_count())
         self.random_state = random_seed
         self.trees = []  # Will store RegressorTree instances
-        # self.bootstraps = [] # Storing bootstrap indices here is tricky with parallel return
-        self.oob_score_ = None  # OOB score is not computed by default here
         self._X_fit_shape = None  # Store shape for predict validation
         self.X = X
         self.y = y
@@ -160,71 +144,12 @@ class RandomForestRegressor:
         # Sort results by tree_index to maintain order if needed, though usually not critical for RF
         results.sort(key=lambda item: item[0])
         self.trees = [result[1] for result in results]
-        # If OOB calculation is desired, bootstrap indices would need to be collected:
-        # self.bootstraps = [result[2] for result in results]
-        # And then OOB prediction logic would follow here.
-
-        # --- OOB Score Calculation (Optional, requires storing bootstraps) ---
-        # if self.n_estimators > 0:
-        #     self.oob_score_ = self._calculate_oob_score(X, y)
-        #     if verbose:
-        #          print(f"OOB Score (R^2): {self.oob_score_:.4f}" if self.oob_score_ is not None else "OOB Score: N/A")
-        # --- End OOB Calculation ---
 
         if verbose:
             elapsed = datetime.now() - start_time
             print(f"Forest fitting completed in {elapsed}.")
-            # Note: The original code calculated metrics based on OOB predictions.
-            # Standard practice is to calculate metrics on a separate test set or via cross-val.
-            # OOB score provides an estimate during training.
 
         return self
-
-    # --- OOB Calculation Method (Example, requires self.bootstraps) ---
-    # def _calculate_oob_score(self, X, y):
-    #     """Calculates the Out-of-Bag R^2 score."""
-    #     if not hasattr(self, 'bootstraps') or not self.bootstraps or len(self.bootstraps) != len(self.trees):
-    #         print("Warning: Bootstrap indices not available for OOB calculation.")
-    #         return None
-
-    #     n_samples = X.shape[0]
-    #     oob_predictions = np.full(n_samples, np.nan, dtype=float)
-    #     n_oob_predictions = np.zeros(n_samples, dtype=int)
-
-    #     for i in range(n_samples):
-    #         sample_preds = []
-    #         for tree_idx, tree in enumerate(self.trees):
-    #             # Check if sample 'i' was OUT of the bag for this tree
-    #             if i not in self.bootstraps[tree_idx]:
-    #                 # Use the tree's predict method for the single sample
-    #                 pred = tree.predict(X[i:i+1])[0] # Predict expects 2D, take first element
-    #                 if not np.isnan(pred): # Ensure prediction is valid
-    #                      sample_preds.append(pred)
-
-    #         if sample_preds: # If the sample was OOB for at least one tree
-    #             oob_predictions[i] = np.mean(sample_preds)
-    #             n_oob_predictions[i] = len(sample_preds)
-
-    #     # Calculate R^2 only for samples that had OOB predictions
-    #     valid_oob_mask = ~np.isnan(oob_predictions)
-    #     if np.sum(valid_oob_mask) < 2: # Need at least 2 points for variance
-    #          print("Warning: Not enough OOB predictions to calculate score.")
-    #          return None
-
-    #     y_true_oob = y[valid_oob_mask]
-    #     y_pred_oob = oob_predictions[valid_oob_mask]
-
-    #     if len(np.unique(y_true_oob)) == 1: # Handle constant target case
-    #         return 0.0 if np.allclose(y_true_oob, y_pred_oob) else -np.inf
-
-    #     ssr = np.sum((y_true_oob - y_pred_oob) ** 2)
-    #     sst = np.sum((y_true_oob - np.mean(y_true_oob)) ** 2)
-
-    #     if sst == 0: # Should be caught by len(unique)==1, but for safety
-    #          return 1.0 if ssr == 0 else 0.0
-
-    #     return 1.0 - (ssr / sst)
-    # --- End OOB Calculation Method ---
 
     def predict(self, X):
         """Predict target values for input features X using the trained random forest.
@@ -266,7 +191,16 @@ class RandomForestRegressor:
             return np.mean(all_predictions, axis=0)
 
     def get_stats(self, y_true, y_pred, verbose=False):
-        """Calculate and optionally print evaluation metrics."""
+        """Calculate and optionally print evaluation metrics.
+
+        Args:
+            y_true (array-like): True target values.
+            y_pred (array-like): Predicted target values.
+            verbose (bool): Whether to print progress messages (e.g., residuals).
+
+        Returns:
+            dict: A dictionary containing calculated metrics (MSE, R^2, MAE, RMSE, MAPE).
+        """
         stats = self.calculate_metrics(y_true, y_pred)
         if verbose:
             print("Evaluation Metrics:")

@@ -1,4 +1,5 @@
 # Importing the required libraries
+import warnings
 
 import numpy as np
 
@@ -69,15 +70,6 @@ class RegressorTreeUtility:
 
         for feature_idx in selected_feature_indices:
             feature_values = X_node[:, feature_idx]
-
-            # --- Optimization Point ---
-            # Original used fixed percentiles.
-            # A more robust (but potentially slower if not optimized) way is
-            # unique sorted values. Let's stick to percentiles for *this* optimization
-            # round focusing on index passing.
-            # If this is still too slow, the *next* step is the incremental variance
-            # update over sorted unique values.
-            # Using percentiles remains a fast heuristic. Ensure unique values.
             potential_split_values = np.unique(
                 np.percentile(feature_values, [25, 50, 75])
             )
@@ -131,14 +123,25 @@ class RegressorTree:
 
     Args:
         max_depth: (int) - The maximum depth of the decision tree.
+        min_samples_split: (int) - The minimum number of samples required to split a node.
+        n_features: (int) - The number of features in the dataset.
+        X: (array-like) - The input features.
+        y: (array-like) - The target labels.
 
     Methods:
-        learn(X, y, par_node={}, depth=0): Builds the decision tree based on the given training data.
-        classify(record): Predicts the target value for a record using the decision tree.
+        fit(X, y, verbose=False): Fits the decision tree to the training data.
+        predict(X): Predicts the target values for the input features.
+        _traverse_tree(x, node): Traverses the decision tree for a single sample x.
+        _leran_recursive(indices, depth): Recursive helper function for learning.
     """
 
     def __init__(self, max_depth=5, min_samples_split=2):
-        """Initialize the decision tree."""
+        """Initialize the decision tree.
+
+        Args:
+            max_depth (int): The maximum depth of the decision tree.
+            min_samples_split (int): The minimum number of samples required to split a node.
+        """
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split  # Minimum samples required to split
         self.tree = {}
@@ -166,6 +169,8 @@ class RegressorTree:
 
         if self._X.shape[0] != self._y.shape[0]:
             raise ValueError("X and y must have the same number of samples.")
+        elif self._X.shape[0] == 0 or self._y.shape[0] == 0:
+            raise ValueError("X and y must not be empty.")
 
         # Initialize the utility class here, passing data references and params
         self.utility = RegressorTreeUtility(
@@ -191,6 +196,9 @@ class RegressorTree:
         """
         if not isinstance(X, (list | np.ndarray)):
             raise TypeError("X must be a list or NumPy array.")
+        # If not fitted, raise error (if tree is empty {})
+        if self.tree == {}:
+            raise RuntimeError("The model has not been fitted yet.")
 
         X = np.asarray(X)
         if X.ndim == 1:  # Handle single record
@@ -200,7 +208,12 @@ class RegressorTree:
         return np.array(predictions)
 
     def _traverse_tree(self, x, node):
-        """Traverse the tree for a single sample x."""
+        """Traverse the tree for a single sample x.
+
+        Args:
+            x (array-like): The input features.
+            node (dict): The current node in the decision tree.
+        """
         # Check if it's a leaf node
         if "value" in node:
             return node["value"]
@@ -208,9 +221,8 @@ class RegressorTree:
         # Check if node is valid (basic check)
         if "feature_idx" not in node or "threshold" not in node:
             # This might happen if the tree is malformed or empty
-            # Consider returning a default value or raising an error
-            # Let's return NaN, assuming values are floats
-            # print("Warning: Malformed node encountered during prediction.")
+            # return NaN, assuming values are floats
+            warnings.warn("Malformed node encountered during prediction.", stacklevel=2)
             return np.nan  # Or handle appropriately
 
         # Decide which branch to follow
@@ -220,17 +232,22 @@ class RegressorTree:
                 return self._traverse_tree(x, node["left"])
             else:
                 # Handle cases where subtree might not be a dict (e.g., None if pruning happened badly)
-                # print("Warning: Left node missing/malformed.")
+                warnings.warn("Left node missing/malformed.", stacklevel=2)
                 return np.nan  # Or a default value based on parent? Hard to say without more context.
         else:
             if isinstance(node.get("right"), dict):
                 return self._traverse_tree(x, node["right"])
             else:
-                # print("Warning: Right node missing/malformed.")
+                warnings.warn("Right node missing/malformed.", stacklevel=2)
                 return np.nan
 
     def _learn_recursive(self, indices, depth):
-        """Recursive helper function for learning."""
+        """Recursive helper function for learning.
+
+        Args:
+            indices (array-like): The indices of the current node.
+            depth (int): The current depth of the decision tree.
+        """
         # Check termination conditions
         # 1. Max depth reached
         # 2. Node is pure (variance is 0) - checked implicitly by best_split gain > 0
@@ -280,7 +297,6 @@ class RegressorTree:
             "threshold": split_info["threshold"],
             "left": left_subtree,
             "right": right_subtree,
-            # Optional: store gain, samples etc. for inspection
             "n_samples": len(indices),
             "info_gain": split_info["info_gain"],
         }
