@@ -54,6 +54,7 @@ from .svm import (
 from .trees import (
     ClassifierTree,
     ClassifierTreeUtility,
+    GradientBoostedClassifier,
     GradientBoostedRegressor,
     IsolationForest,
     IsolationTree,
@@ -130,6 +131,7 @@ __all__ = [
     "RegressorTree",
     "RandomForestClassifier",
     "RandomForestRegressor",
+    "GradientBoostedClassifier",
     "GradientBoostedRegressor",
     "IsolationTree",
     "IsolationForest",
