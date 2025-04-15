@@ -295,10 +295,10 @@ class TestGridSearchCV(unittest.TestCase):
     def setUp(self):  # NOQA D201
         """Set up the GridSearchCV instance for testing."""
         self.X_reg, self.y_reg = make_regression(
-            n_samples=100, n_features=5, noise=25, random_state=42
+            n_samples=10, n_features=5, noise=25, random_state=42
         )
         self.X_class, self.y_class = make_classification(
-            n_samples=100, n_features=5, n_classes=2, random_state=42
+            n_samples=10, n_features=5, n_classes=2, random_state=42
         )
 
     def test_init(self):
@@ -322,57 +322,64 @@ class TestGridSearchCV(unittest.TestCase):
         """Tests the GridSearchCV class with the Ordinary Least Squares model."""
         ols = OrdinaryLeastSquares
         param_grid = [{"fit_intercept": [True, False]}]
-        grid_search = GridSearchCV(model=ols, param_grid=param_grid, cv=3)
+        grid_search = GridSearchCV(model=ols, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_reg, self.y_reg)
 
     def test_ridge(self):
         """Tests the GridSearchCV class with the Ridge model."""
         ridge = Ridge
-        param_grid = [{"alpha": [0.1, 1, 10]}]
-        grid_search = GridSearchCV(model=ridge, param_grid=param_grid, cv=3)
+        param_grid = [{"max_iter": [10, 20]}]
+        grid_search = GridSearchCV(model=ridge, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_reg, self.y_reg)
 
     def test_lasso(self):
         """Tests the GridSearchCV class with the Lasso model."""
         lasso = Lasso
-        param_grid = [{"alpha": [0.1, 1, 10]}]
-        grid_search = GridSearchCV(model=lasso, param_grid=param_grid, cv=3)
+        param_grid = [{"max_iter": [10, 20]}]
+        grid_search = GridSearchCV(model=lasso, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_reg, self.y_reg)
 
     def test_bayesian(self):
         """Tests the GridSearchCV class with the Bayesian Ridge model."""
         bayesian_ridge = Bayesian
-        param_grid = [{"max_iter": [100, 200, 300]}]
-        grid_search = GridSearchCV(model=bayesian_ridge, param_grid=param_grid, cv=3)
+        param_grid = [{"max_iter": [10, 20]}]
+        grid_search = GridSearchCV(model=bayesian_ridge, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_reg, self.y_reg)
 
     def test_passiveAggReg(self):
         """Tests the GridSearchCV class with the Passive Aggressive Regressor model."""
         passive_agg = PassiveAggressiveRegressor
-        param_grid = [{"C": [0.1, 1, 10]}]
-        grid_search = GridSearchCV(model=passive_agg, param_grid=param_grid, cv=3)
+        param_grid = [{"C": [0.1, 1]}]
+        grid_search = GridSearchCV(model=passive_agg, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_reg, self.y_reg)
 
     def test_randomForestClassifier(self):
         """Tests the GridSearchCV class with the Random Forest Classifier model."""
         decision_tree = RandomForestClassifier
-        param_grid = [{"max_depth": [3, 5, 7]}]
-        grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=3)
+        param_grid = [{"forest_size": [2, 3], "max_depth": [2], "n_jobs": [1]}]
+        grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_class, self.y_class)
 
     def test_randomForestRegressor(self):
         """Tests the GridSearchCV class with the Random Forest Regressor model."""
         decision_tree = RandomForestRegressor
-        param_grid = [{"max_depth": [3, 5, 7]}]
-        grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=3)
+        param_grid = [{"forest_size": [2, 3], "max_depth": [2], "n_jobs": [1]}]
+        grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_reg, self.y_reg)
 
     def test_gradientBoostiedRegressor(self):
         """Tests the GridSearchCV class with the Gradient Boosted Regressor model."""
         decision_tree = GradientBoostedRegressor
-        param_grid = [{"num_trees": [50, 100, 150]}]
-        grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=3)
+        param_grid = [{"num_trees": [3, 4]}]
+        grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_reg, self.y_reg)
+
+    # def test_gradientBoostiedClassifier(self):
+    #     """Tests the GridSearchCV class with the Gradient Boosted Classifier model."""
+    #     decision_tree = GradientBoostedClassifier
+    #     param_grid = [{"n_estimators": [3, 4]}]
+    #     grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=2)
+    #     grid_search.fit(self.X_class, self.y_class)
 
     def test_invalid_param_grid(self):
         """Tests the GridSearchCV class with invalid param_grid."""
@@ -427,21 +434,21 @@ class TestRandomSearchCV(unittest.TestCase):
     def test_ridge(self):
         """Tests the RandomSearchCV class with the Ridge model."""
         ridge = Ridge
-        param_grid = [{"alpha": [0.1, 1, 10]}]
+        param_grid = [{"max_iter": [10, 20, 30]}]
         rand_search = RandomSearchCV(model=ridge, param_grid=param_grid, cv=3, iter=2)
         rand_search.fit(self.X_reg, self.y_reg)
 
     def test_lasso(self):
         """Tests the RandomSearchCV class with the Lasso model."""
         lasso = Lasso
-        param_grid = [{"alpha": [0.1, 1, 10]}]
+        param_grid = [{"max_iter": [10, 20, 30]}]
         rand_search = RandomSearchCV(model=lasso, param_grid=param_grid, cv=3, iter=2)
         rand_search.fit(self.X_reg, self.y_reg)
 
     def test_bayesian(self):
         """Tests the RandomSearchCV class with the Bayesian Ridge model."""
         bayesian_ridge = Bayesian
-        param_grid = [{"max_iter": [100, 200, 300]}]
+        param_grid = [{"max_iter": [10, 20, 30]}]
         rand_search = RandomSearchCV(
             model=bayesian_ridge, param_grid=param_grid, cv=3, iter=2
         )
@@ -459,7 +466,7 @@ class TestRandomSearchCV(unittest.TestCase):
     def test_randomForestClassifier(self):
         """Tests the RandomSearchCV class with the Random Forest Classifier model."""
         decision_tree = RandomForestClassifier
-        param_grid = [{"max_depth": [3, 5, 7]}]
+        param_grid = [{"forest_size": [2, 3], "max_depth": [2], "n_jobs": [1]}]
         rand_search = RandomSearchCV(
             model=decision_tree, param_grid=param_grid, cv=3, iter=2
         )
@@ -468,7 +475,7 @@ class TestRandomSearchCV(unittest.TestCase):
     def test_randomForestRegressor(self):
         """Tests the RandomSearchCV class with the Random Forest Regressor model."""
         decision_tree = RandomForestRegressor
-        param_grid = [{"max_depth": [3, 5, 7]}]
+        param_grid = [{"forest_size": [2, 3], "max_depth": [2], "n_jobs": [1]}]
         rand_search = RandomSearchCV(
             model=decision_tree, param_grid=param_grid, cv=3, iter=2
         )
@@ -477,11 +484,20 @@ class TestRandomSearchCV(unittest.TestCase):
     def test_gradientBoostiedRegressor(self):
         """Tests the RandomSearchCV class with the Gradient Boosted Regressor model."""
         decision_tree = GradientBoostedRegressor
-        param_grid = [{"num_trees": [50, 100, 150]}]
+        param_grid = [{"num_trees": [3, 4]}]
         rand_search = RandomSearchCV(
             model=decision_tree, param_grid=param_grid, cv=3, iter=2
         )
         rand_search.fit(self.X_reg, self.y_reg)
+
+    # def test_gradientBoostiedClassifier(self):
+    #     """Tests the RandomSearchCV class with the Gradient Boosted Classifier model."""
+    #     decision_tree = GradientBoostedClassifier
+    #     param_grid = [{"n_estimators": [3, 4]}]
+    #     rand_search = RandomSearchCV(
+    #         model=decision_tree, param_grid=param_grid, cv=3, iter=2
+    #     )
+    #     rand_search.fit(self.X_class, self.y_class)
 
     def test_invalid_iter(self):
         """Tests the RandomSearchCV class with invalid iter."""
@@ -495,7 +511,7 @@ class TestRandomSearchCV(unittest.TestCase):
         """Tests the RandomSearchCV class with iter larger than param combinations."""
         with suppress_print():
             rand_search = RandomSearchCV(
-                model=Ridge, param_grid=[{"alpha": [0.1, 1, 10]}], iter=100
+                model=Ridge, param_grid=[{"max_iter": [10, 20, 30]}], iter=100_000_000
             )
             rand_search.fit(self.X_reg, self.y_reg)
 

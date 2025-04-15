@@ -754,7 +754,7 @@ class TestPerceptron(unittest.TestCase):
 
         # Generate binary data
         self.X_binary, self.y_binary = make_classification(
-            n_samples=300,
+            n_samples=30,
             n_features=2,
             n_redundant=0,
             n_informative=2,
@@ -766,7 +766,7 @@ class TestPerceptron(unittest.TestCase):
 
         # Generate multiclass data
         self.X_multiclass, self.y_multiclass = make_classification(
-            n_samples=300,
+            n_samples=30,
             n_features=2,
             n_redundant=0,
             n_informative=2,

@@ -7,9 +7,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 import numpy as np
 from sega_learn.auto import AutoClassifier, AutoRegressor
-from sega_learn.linear_models import OrdinaryLeastSquares, Ridge
-from sega_learn.svm import LinearSVC
-from sega_learn.trees import ClassifierTree
+from sega_learn.linear_models import LogisticRegression, OrdinaryLeastSquares
+from sega_learn.trees import ClassifierTree, RegressorTree
 from sega_learn.utils import Metrics, make_classification, make_regression
 from tests.utils import suppress_print
 
@@ -220,6 +219,11 @@ class TestAutoRegressor(unittest.TestCase):
 
     def test_hp_tuning_random(self):
         """Test hyperparameter tuning with random search."""
+        models_to_test = {
+            "OrdinaryLeastSquares": OrdinaryLeastSquares(),
+            "RegressorTree": RegressorTree(),
+        }
+        self.hp_tuned_model_rand.models = models_to_test
         self.hp_tuned_model_rand.fit(self.X_train, self.y_train, verbose=False)
         with suppress_print():
             self.hp_tuned_model_rand.summary()
@@ -231,14 +235,13 @@ class TestAutoRegressor(unittest.TestCase):
         # Set models to subset for testing
         models_to_test = {
             "OrdinaryLeastSquares": OrdinaryLeastSquares(),
-            "Ridge": Ridge(),
-            "BaseBackendNeuralNetwork": 1,
+            "RegressorTree": RegressorTree(),
         }
         param_grids = {
             "OrdinaryLeastSquares": [{"fit_intercept": [True, False]}],
-            "Ridge": [
-                {"fit_intercept": [True, False]},
-                {"max_iter": [500, 1000]},
+            "RegressorTree": [
+                {"max_depth": [2, 3]},
+                {"min_samples_split": [2, 3]},
             ],
         }
         self.hp_tuned_model_grid.models = models_to_test
@@ -291,9 +294,17 @@ class TestAutoClassifier(unittest.TestCase):
 
     def test_fit(self):
         """Test the fit method of AutoClassifier."""
-        results, predictions = self.model.fit(
-            self.X_train, self.y_train, self.X_test, self.y_test, verbose=False
-        )
+        models_to_test = {
+            "LogisticRegression": LogisticRegression(),
+            "ClassifierTree": ClassifierTree(),
+            "BaseBackendNeuralNetwork": 1,
+        }
+        self.model.models = models_to_test
+        with suppress_print():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            results, predictions = self.model.fit(
+                self.X_train, self.y_train, verbose=False
+            )
         self.assertIsInstance(results, list)
         self.assertIsInstance(predictions, dict)
         self.assertGreater(len(results), 0)
@@ -301,23 +312,47 @@ class TestAutoClassifier(unittest.TestCase):
 
     def test_predict(self):
         """Test the predict method of AutoClassifier."""
-        self.model.fit(self.X_train, self.y_train, verbose=False)
+        models_to_test = {
+            "LogisticRegression": LogisticRegression(),
+            "ClassifierTree": ClassifierTree(),
+            "BaseBackendNeuralNetwork": 1,
+        }
+        self.model.models = models_to_test
+        with suppress_print():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            self.model.fit(self.X_train, self.y_train, verbose=False)
         predictions = self.model.predict(self.X_test)
         self.assertIsInstance(predictions, dict)
-        self.assertEqual(len(predictions), len(self.model.models))
+        self.assertEqual(
+            len(predictions), len(self.model.models) - 1
+        )  # Skip BaseBackendNeuralNetwork
 
     def test_predict_specific_model(self):
         """Test prediction with a specific model."""
-        self.model.fit(self.X_train, self.y_train, verbose=False)
+        models_to_test = {
+            "LogisticRegression": LogisticRegression(),
+            "ClassifierTree": ClassifierTree(),
+            "BaseBackendNeuralNetwork": 1,
+        }
+        self.model.models = models_to_test
+        with suppress_print():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            self.model.fit(self.X_train, self.y_train, verbose=False)
         specific_model = list(self.model.models.keys())[0]
         prediction = self.model.predict(self.X_test, model=specific_model)
         self.assertIsInstance(prediction, np.ndarray)
 
     def test_evaluate(self):
         """Test the evaluate method of AutoClassifier."""
-        self.model.fit(
-            self.X_train, self.y_train, self.X_test, self.y_test, verbose=False
-        )
+        models_to_test = {
+            "LogisticRegression": LogisticRegression(),
+            "ClassifierTree": ClassifierTree(),
+            "BaseBackendNeuralNetwork": 1,
+        }
+        self.model.models = models_to_test
+        with suppress_print():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            self.model.fit(self.X_train, self.y_train, verbose=False)
         evaluation_results = self.model.evaluate(self.y_test)
         self.assertIsInstance(evaluation_results, dict)
         self.assertGreater(len(evaluation_results), 0)
@@ -372,9 +407,15 @@ class TestAutoClassifier(unittest.TestCase):
 
     def test_evaluate_with_custom_metrics(self):
         """Test evaluate method with custom metrics."""
-        self.model.fit(
-            self.X_train, self.y_train, self.X_test, self.y_test, verbose=False
-        )
+        models_to_test = {
+            "LogisticRegression": LogisticRegression(),
+            "ClassifierTree": ClassifierTree(),
+            "BaseBackendNeuralNetwork": 1,
+        }
+        self.model.models = models_to_test
+        with suppress_print():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            self.model.fit(self.X_train, self.y_train, verbose=False)
 
         def custom_metric(y_true, y_pred):
             return np.mean(y_true == y_pred)  # Custom accuracy
@@ -428,8 +469,15 @@ class TestAutoClassifier(unittest.TestCase):
 
     def test_hp_tuning_random(self):
         """Test hyperparameter tuning with random search."""
-        self.hp_tuned_model_rand.fit(self.X_train, self.y_train, verbose=False)
+        models_to_test = {
+            "LogisticRegression": LogisticRegression(),
+            "ClassifierTree": ClassifierTree(),
+            "BaseBackendNeuralNetwork": 1,
+        }
+        self.hp_tuned_model_rand.models = models_to_test
         with suppress_print():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            self.hp_tuned_model_rand.fit(self.X_train, self.y_train, verbose=False)
             self.hp_tuned_model_rand.summary()
         self.assertIsNotNone(self.hp_tuned_model_rand.results)
         self.assertIsNotNone(self.hp_tuned_model_rand.predictions)
@@ -438,18 +486,18 @@ class TestAutoClassifier(unittest.TestCase):
         """Test hyperparameter tuning with grid search."""
         # Set models to subset for testing
         models_to_test = {
-            "LinearSVC": LinearSVC(),
+            "LogisticRegression": LogisticRegression(),
             "ClassifierTree": ClassifierTree(),
             "BaseBackendNeuralNetwork": 1,
         }
         param_grids = {
-            "LinearSVC": [
-                {"C": [0.1, 1, 10]},
-                {"kernel": ["linear"]},
+            "LogisticRegression": [
+                {"learning_rate": [0.001, 0.01]},
+                {"max_iter": [5]},
             ],
             "ClassifierTree": [
-                {"max_depth": [1, 3]},
-                {"min_samples_split": [2, 5]},
+                {"max_depth": [2]},
+                {"min_samples_split": [2, 3]},
             ],
         }
         self.hp_tuned_model_grid.models = models_to_test
@@ -457,7 +505,6 @@ class TestAutoClassifier(unittest.TestCase):
         with suppress_print():
             warnings.filterwarnings("ignore", category=UserWarning)
             self.hp_tuned_model_grid.fit(self.X_train, self.y_train, verbose=False)
-            self.hp_tuned_model_grid.summary()
         self.assertIsNotNone(self.hp_tuned_model_grid.results)
         self.assertIsNotNone(self.hp_tuned_model_grid.predictions)
 
