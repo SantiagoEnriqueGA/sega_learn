@@ -18,6 +18,8 @@ class GradientBoostedClassifier:
     of the previous model's predictions.
 
     Attributes:
+        X (np.ndarray): Training input features of shape (n_samples, n_features).
+        y (np.ndarray): Training target class labels of shape (n_samples,).
         n_estimators (int): The number of boosting stages (trees) to perform.
         learning_rate (float): Step size shrinkage to prevent overfitting.
         max_depth (int): Maximum depth of the individual regression tree estimators.
