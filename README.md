@@ -82,6 +82,8 @@ The SEGA_LEARN library includes the following features:
 - **Random Forest Classifier**: Implements an ensemble classifier that fits multiple decision trees on random subsets of the data and averages their predictions.
 - **Random Forest Regressor**: Implements an ensemble regressor that fits multiple decision trees on random subsets of the data and averages their predictions.
 - **Gradient Boosted Regressor**: Implements a gradient boosted regressor that fits multiple decision trees sequentially, each one correcting the errors of the previous trees.
+- **Gradient Boosted Classifier**: Implements a gradient boosted classifier that fits multiple decision trees sequentially, each one correcting the errors of the previous trees.
+- **Isolation Forest**: Implements an anomaly detection algorithm that isolates anomalies by randomly partitioning the data.
 
 ### Utilities
 - **Data Preparation**: Implements utility functions for data preparation like train-test split, normalization, and standardization.
@@ -192,6 +194,7 @@ sega_learn/
 
 ### Trees
 - [`gradientBoostedRegressor.py`](examples/trees/gradientBoostedRegressor.py): Demonstrates Gradient Boosted Regressor.
+- [`gradientBoostedClassifier.py`](examples/trees/gradientBoostedClassifier.py): Demonstrates Gradient Boosted Classifier.
 - [`isolationForest_blob.py`](examples/utils/isolationForest_blob.py): Demonstrates Isolation Forest for anomaly detection.
 - [`isolationForest_boundary.py`](examples/utils/isolationForest_boundary.py): Demonstrates Isolation Forest for anomaly detection with boundary visualization.
 - [`isolationForest_reg.py`](examples/utils/isolationForest_reg.py): Demonstrates Isolation Forest for regression tasks.
