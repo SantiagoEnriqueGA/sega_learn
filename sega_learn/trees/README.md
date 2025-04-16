@@ -165,6 +165,31 @@ gb_regressor.fit(X, y)
 predictions = gb_regressor.predict(new_X)
 ```
 
+#### Gradient Boosted Classifier
+A gradient boosted classifier is an ensemble learning method that builds multiple decision trees sequentially, where each tree tries to correct the errors of the previous tree for classification tasks. This implementation of a gradient-boosted decision tree classifier model builds an ensemble of regression trees sequentially, where each tree is trained to predict the pseudo-residuals of the previous model's predictions.
+
+#### Algorithm
+1. Initialize the model with a constant value (e.g., the mean of the target values).
+2. For each iteration:
+   - Compute the pseudo-residuals (errors) of the current model.
+   - Train a decision tree on the pseudo-residuals.
+   - Update the model by adding the predictions of the new tree to the current model.
+3. Repeat step 2 for a specified number of iterations or until convergence.
+
+#### Usage
+```python
+from sega_learn.trees import GradientBoostedClassifier
+
+# Initialize the GradientBoostedClassifier object
+gb_classifier = GradientBoostedClassifier(num_trees=10, max_depth=5)
+
+# Fit the model
+gb_classifier.fit(X, y)
+
+# Predict class labels for new data
+gb_classifier.predict(new_X)
+```
+
 ## Examples
 
 ### Decision Tree Classifier Example
@@ -265,4 +290,24 @@ predictions = gb_regressor.predict(X)
 
 # Print predictions
 print(predictions)
+```
+
+### Gradient Boosted Classifier Example
+```python
+from sega_learn.trees import GradientBoostedClassifier
+import numpy as np
+
+# Generate sample data
+X = np.random.rand(100, 2)
+y = np.random.randint(0, 2, size=100)
+
+# Initialize and fit GradientBoostedClassifier
+gb_classifier = GradientBoostedClassifier(num_trees=10, max_depth=5)
+gb_classifier.fit(X, y)
+
+# Predict class labels
+labels = gb_classifier.predict(X)
+
+# Print class labels
+print(labels)
 ```
