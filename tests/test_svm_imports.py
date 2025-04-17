@@ -6,12 +6,6 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.svm import *
-from sega_learn.svm import BaseSVM as bsvm
-from sega_learn.svm import GeneralizedSVC as gsvc
-from sega_learn.svm import GeneralizedSVR as gsvr
-from sega_learn.svm import LinearSVC as lsvc
-from sega_learn.svm import LinearSVR as lsvr
-from sega_learn.svm import OneClassSVM as osvm
 
 
 class TestImportsSVM(unittest.TestCase):
@@ -29,6 +23,13 @@ class TestImportsSVM(unittest.TestCase):
 
     def test_individual_imports(self):
         """Tests that each module in the segadb package can be imported individually."""
+        from sega_learn.svm import BaseSVM as bsvm
+        from sega_learn.svm import GeneralizedSVC as gsvc
+        from sega_learn.svm import GeneralizedSVR as gsvr
+        from sega_learn.svm import LinearSVC as lsvc
+        from sega_learn.svm import LinearSVR as lsvr
+        from sega_learn.svm import OneClassSVM as osvm
+
         assert bsvm is not None
         assert lsvc is not None
         assert lsvr is not None
@@ -44,6 +45,36 @@ class TestImportsSVM(unittest.TestCase):
         assert OneClassSVM is not None
         assert GeneralizedSVR is not None
         assert GeneralizedSVC is not None
+
+    def test_LinearSVC(self):  # NOQA D201
+        from sega_learn.svm import LinearSVC
+
+        assert LinearSVC is not None
+
+    def test_LinearSVR(self):  # NOQA D201
+        from sega_learn.svm import LinearSVR
+
+        assert LinearSVR is not None
+
+    def test_OneClassSVM(self):  # NOQA D201
+        from sega_learn.svm import OneClassSVM
+
+        assert OneClassSVM is not None
+
+    def test_GeneralizedSVC(self):  # NOQA D201
+        from sega_learn.svm import GeneralizedSVC
+
+        assert GeneralizedSVC is not None
+
+    def test_GeneralizedSVR(self):  # NOQA D201
+        from sega_learn.svm import GeneralizedSVR
+
+        assert GeneralizedSVR is not None
+
+    def test_BaseSVM(self):  # NOQA D201
+        from sega_learn.svm import BaseSVM
+
+        assert BaseSVM is not None
 
 
 if __name__ == "__main__":

@@ -13,9 +13,12 @@ recall = Metrics.recall
 f1 = Metrics.f1_score
 
 
-def run_example(verbose=False):
+def run_example(verbose=False, test=False):
     """Runs the example."""
-    X, y = make_classification(n_samples=100, n_features=5, random_state=42)
+    if test:
+        X, y = make_classification(n_samples=100, n_features=5, random_state=42)
+    else:
+        X, y = make_classification(n_samples=1000, n_features=5, random_state=42)
 
     # ------------------------ AutoClassifier Fitting ------------------------
     # --- Default AutoClassifier Run ---
@@ -40,18 +43,21 @@ def run_example(verbose=False):
     print("\nTuned Summary (Random):")
     reg_tuned_random.summary()
 
-    # --- AutoClassifier Run with Hyperparameter Tuning (Grid Search) ---
-    # print("\n--- Running AutoClassifier with Hyperparameter Tuning (Grid Search) ---")
-    # reg_tuned_grid = AutoClassifier(
-    #     all_kernels=False,
-    #     tune_hyperparameters=True,
-    #     tuning_method="grid",
-    #     cv=2, # Keep low for example speed
-    #     tuning_metric="accuracy" # Optimize for accuracy
-    # )
-    # reg_tuned_grid.fit(X, y, verbose=verbose)
-    # print("\nTuned Summary (Grid):")
-    # reg_tuned_grid.summary()
+    if not test:
+        # --- AutoClassifier Run with Hyperparameter Tuning (Grid Search) ---
+        print(
+            "\n--- Running AutoClassifier with Hyperparameter Tuning (Grid Search) ---"
+        )
+        reg_tuned_grid = AutoClassifier(
+            all_kernels=False,
+            tune_hyperparameters=True,
+            tuning_method="grid",
+            cv=2,  # Keep low for example speed
+            tuning_metric="accuracy",  # Optimize for accuracy
+        )
+        reg_tuned_grid.fit(X, y, verbose=verbose)
+        print("\nTuned Summary (Grid):")
+        reg_tuned_grid.summary()
 
     # ------------------------ AutoClassifier Evaluation and Prediction ------------------------
     # --- Evaluation and Prediction (Using the tuned random model) ---

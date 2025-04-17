@@ -6,26 +6,6 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.utils import *
-from sega_learn.utils import PCA as pca
-from sega_learn.utils import SMOTE as smote
-from sega_learn.utils import SVD as svd
-from sega_learn.utils import Augmenter as augmenter
-from sega_learn.utils import DataPrep as dp
-from sega_learn.utils import GridSearchCV as gscv
-from sega_learn.utils import Metrics as metrics
-from sega_learn.utils import ModelSelectionUtility as msu
-from sega_learn.utils import PolynomialTransform as plt
-from sega_learn.utils import RandomOverSampler as ros
-from sega_learn.utils import RandomSearchCV as rscv
-from sega_learn.utils import RandomUnderSampler as rus
-from sega_learn.utils import Scaler as scaler
-from sega_learn.utils import VotingRegressor as vr
-from sega_learn.utils import make_blobs as mkblobs
-from sega_learn.utils import make_classification as mkcls
-from sega_learn.utils import make_regression as mkreg
-from sega_learn.utils import normalize as norm
-from sega_learn.utils import one_hot_encode as ohe
-from sega_learn.utils import train_test_split as tts
 
 
 class TestImportsSVM(unittest.TestCase):
@@ -43,6 +23,27 @@ class TestImportsSVM(unittest.TestCase):
 
     def test_individual_imports(self):
         """Tests that each module in the segadb package can be imported individually."""
+        from sega_learn.utils import PCA as pca
+        from sega_learn.utils import SMOTE as smote
+        from sega_learn.utils import SVD as svd
+        from sega_learn.utils import Augmenter as augmenter
+        from sega_learn.utils import DataPrep as dp
+        from sega_learn.utils import GridSearchCV as gscv
+        from sega_learn.utils import Metrics as metrics
+        from sega_learn.utils import ModelSelectionUtility as msu
+        from sega_learn.utils import PolynomialTransform as plt
+        from sega_learn.utils import RandomOverSampler as ros
+        from sega_learn.utils import RandomSearchCV as rscv
+        from sega_learn.utils import RandomUnderSampler as rus
+        from sega_learn.utils import Scaler as scaler
+        from sega_learn.utils import VotingRegressor as vr
+        from sega_learn.utils import make_blobs as mkblobs
+        from sega_learn.utils import make_classification as mkcls
+        from sega_learn.utils import make_regression as mkreg
+        from sega_learn.utils import normalize as norm
+        from sega_learn.utils import one_hot_encode as ohe
+        from sega_learn.utils import train_test_split as tts
+
         assert plt is not None
         assert dp is not None
         assert vr is not None
@@ -86,6 +87,106 @@ class TestImportsSVM(unittest.TestCase):
         assert one_hot_encode is not None
         assert normalize is not None
         assert Scaler is not None
+
+    def test_PCA(self):  # NOQA D201
+        from sega_learn.utils import PCA
+
+        assert PCA is not None
+
+    def test_SMOTE(self):  # NOQA D201
+        from sega_learn.utils import SMOTE
+
+        assert SMOTE is not None
+
+    def test_SVD(self):  # NOQA D201
+        from sega_learn.utils import SVD
+
+        assert SVD is not None
+
+    def test_Augmenter(self):  # NOQA D201
+        from sega_learn.utils import Augmenter
+
+        assert Augmenter is not None
+
+    def test_DataPrep(self):  # NOQA D201
+        from sega_learn.utils import DataPrep
+
+        assert DataPrep is not None
+
+    def test_GridSearchCV(self):  # NOQA D201
+        from sega_learn.utils import GridSearchCV
+
+        assert GridSearchCV is not None
+
+    def test_Metrics(self):  # NOQA D201
+        from sega_learn.utils import Metrics
+
+        assert Metrics is not None
+
+    def test_ModelSelectionUtility(self):  # NOQA D201
+        from sega_learn.utils import ModelSelectionUtility
+
+        assert ModelSelectionUtility is not None
+
+    def test_PolynomialTransform(self):  # NOQA D201
+        from sega_learn.utils import PolynomialTransform
+
+        assert PolynomialTransform is not None
+
+    def test_RandomOverSampler(self):  # NOQA D201
+        from sega_learn.utils import RandomOverSampler
+
+        assert RandomOverSampler is not None
+
+    def test_RandomSearchCV(self):  # NOQA D201
+        from sega_learn.utils import RandomSearchCV
+
+        assert RandomSearchCV is not None
+
+    def test_RandomUnderSampler(self):  # NOQA D201
+        from sega_learn.utils import RandomUnderSampler
+
+        assert RandomUnderSampler is not None
+
+    def test_Scaler(self):  # NOQA D201
+        from sega_learn.utils import Scaler
+
+        assert Scaler is not None
+
+    def test_VotingRegressor(self):  # NOQA D201
+        from sega_learn.utils import VotingRegressor
+
+        assert VotingRegressor is not None
+
+    def test_make_blobs(self):  # NOQA D201
+        from sega_learn.utils import make_blobs
+
+        assert make_blobs is not None
+
+    def test_make_classification(self):  # NOQA D201
+        from sega_learn.utils import make_classification
+
+        assert make_classification is not None
+
+    def test_make_regression(self):  # NOQA D201
+        from sega_learn.utils import make_regression
+
+        assert make_regression is not None
+
+    def test_normalize(self):  # NOQA D201
+        from sega_learn.utils import normalize
+
+        assert normalize is not None
+
+    def test_one_hot_encode(self):  # NOQA D201
+        from sega_learn.utils import one_hot_encode
+
+        assert one_hot_encode is not None
+
+    def test_train_test_split(self):  # NOQA D201
+        from sega_learn.utils import train_test_split
+
+        assert train_test_split is not None
 
 
 if __name__ == "__main__":

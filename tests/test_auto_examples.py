@@ -26,7 +26,7 @@ class TestExampleExceptions(unittest.TestCase):
                 flush=True,
             )
             with suppress_print():
-                run_example(verbose=False)
+                run_example(verbose=False, test=True)
 
         if "regressor.py" in example_file:
             from examples.auto.regressor import run_example
@@ -37,7 +37,7 @@ class TestExampleExceptions(unittest.TestCase):
                 flush=True,
             )
             with suppress_print():
-                run_example(verbose=False)
+                run_example(verbose=False, test=True)
 
 
 class TestExamplesAuto(unittest.TestCase):

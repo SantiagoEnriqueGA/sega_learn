@@ -13,10 +13,12 @@ root_mean_squared_error = Metrics.root_mean_squared_error
 mean_absolute_error = Metrics.mean_absolute_error
 
 
-def run_example(verbose=False):
+def run_example(verbose=False, test=False):
     """Runs the example demonstrating AutoRegressor with and without tuning."""
-    # X, y = make_regression(n_samples=1_000, n_features=5, noise=.5, random_state=1)
-    X, y = make_regression(n_samples=30, n_features=5, noise=0.5, random_state=1)
+    if test:
+        X, y = make_regression(n_samples=30, n_features=5, noise=0.5, random_state=1)
+    else:
+        X, y = make_regression(n_samples=1_000, n_features=5, noise=0.5, random_state=1)
 
     # ------------------------ AutoRegressor Fitting ------------------------
     # --- Default AutoRegressor Run ---
@@ -42,18 +44,21 @@ def run_example(verbose=False):
     print("\nTuned Summary (Random Search):")
     reg_tuned_random.summary()
 
-    # --- AutoRegressor Run with Hyperparameter Tuning (Grid Search) ---
-    # print("\n--- Running AutoRegressor with Hyperparameter Tuning (Grid Search) ---")
-    # reg_tuned_grid = AutoRegressor(
-    #     all_kernels=True,
-    #     tune_hyperparameters=True,
-    #     tuning_method="grid",       # Use grid search
-    #     cv=2,                       # Keep low for example speed
-    #     tuning_metric="neg_mean_squared_error" # Optimize for lowest MSE
-    # )
-    # reg_tuned_grid.fit(X, y, verbose=verbose)
-    # print("\nTuned Summary (Grid Search):")
-    # reg_tuned_grid.summary()
+    if not test:
+        # --- AutoRegressor Run with Hyperparameter Tuning (Grid Search) ---
+        print(
+            "\n--- Running AutoRegressor with Hyperparameter Tuning (Grid Search) ---"
+        )
+        reg_tuned_grid = AutoRegressor(
+            all_kernels=True,
+            tune_hyperparameters=True,
+            tuning_method="grid",  # Use grid search
+            cv=2,  # Keep low for example speed
+            tuning_metric="neg_mean_squared_error",  # Optimize for lowest MSE
+        )
+        reg_tuned_grid.fit(X, y, verbose=verbose)
+        print("\nTuned Summary (Grid Search):")
+        reg_tuned_grid.summary()
 
     # ------------------------ AutoRegressor Evaluation and Prediction ------------------------
     # --- Evaluation and Prediction (Using the tuned random model) ---

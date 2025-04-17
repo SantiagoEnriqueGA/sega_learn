@@ -6,8 +6,6 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.clustering import *
-from sega_learn.clustering import DBSCAN as dbs
-from sega_learn.clustering import KMeans as kms
 
 
 class TestImportsClustering(unittest.TestCase):
@@ -24,11 +22,24 @@ class TestImportsClustering(unittest.TestCase):
         print("\nTesting Imports - Clustering", end="", flush=True)
 
     def test_individual_imports(self):  # NOQA D201
+        from sega_learn.clustering import DBSCAN as dbs
+        from sega_learn.clustering import KMeans as kms
+
         assert dbs is not None
         assert kms is not None
 
     def test_wildcard_import(self):  # NOQA D201
         assert DBSCAN is not None
+        assert KMeans is not None
+
+    def test_DBSCAN(self):  # NOQA D201
+        from sega_learn.clustering import DBSCAN
+
+        assert DBSCAN is not None
+
+    def test_KMeans(self):  # NOQA D201
+        from sega_learn.clustering import KMeans
+
         assert KMeans is not None
 
 

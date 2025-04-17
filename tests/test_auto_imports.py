@@ -6,8 +6,6 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.auto import *
-from sega_learn.auto import AutoClassifier as clf
-from sega_learn.auto import AutoRegressor as reg
 
 
 class TestImportsLinear(unittest.TestCase):
@@ -24,12 +22,25 @@ class TestImportsLinear(unittest.TestCase):
         print("\nTesting Imports - Auto", end="", flush=True)
 
     def test_individual_imports(self):  # NOQA D201
+        from sega_learn.auto import AutoClassifier as clf
+        from sega_learn.auto import AutoRegressor as reg
+
         assert reg is not None
         assert clf is not None
 
     def test_wildcard_import(self):  # NOQA D201
         assert AutoRegressor is not None
         assert AutoClassifier is not None
+
+    def test_AutoClassifier(self):  # NOQA D201
+        from sega_learn.auto import AutoClassifier
+
+        assert AutoClassifier is not None
+
+    def test_AutoRegressor(self):  # NOQA D201
+        from sega_learn.auto import AutoRegressor
+
+        assert AutoRegressor is not None
 
 
 if __name__ == "__main__":
