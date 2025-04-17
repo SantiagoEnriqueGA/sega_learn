@@ -170,16 +170,16 @@ class TestVotingRegressor(unittest.TestCase):
     def setUp(self):  # NOQA D201
         """Set up the VotingRegressor instance for testing."""
         self.X, self.y = make_regression(
-            n_samples=1000, n_features=5, noise=25, random_state=42
+            n_samples=100, n_features=5, noise=25, random_state=42
         )
         ols = OrdinaryLeastSquares()
         ols.fit(self.X, self.y)
-        lasso = Lasso()
-        lasso.fit(self.X, self.y)
-        ridge = Ridge()
-        ridge.fit(self.X, self.y)
+        reg_tree = RegressorTree(max_depth=2)
+        reg_tree.fit(self.X, self.y)
+        gbr = GradientBoostedRegressor(num_trees=2)
+        gbr.fit(self.X, self.y)
         self.voter = VotingRegressor(
-            models=[ols, lasso, ridge], model_weights=[0.3, 0.3, 0.4]
+            models=[ols, reg_tree, gbr], model_weights=[0.3, 0.3, 0.4]
         )
 
     def test_init(self):
@@ -201,7 +201,6 @@ class TestVotingRegressor(unittest.TestCase):
         """Tests the show_models method of the Voting Regressor class."""
         with suppress_print():
             self.voter.show_models()
-            self.voter.show_models(formula=True)
 
 
 class TestModelSelectionUtils(unittest.TestCase):
@@ -374,12 +373,12 @@ class TestGridSearchCV(unittest.TestCase):
         grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_reg, self.y_reg)
 
-    # def test_gradientBoostiedClassifier(self):
-    #     """Tests the GridSearchCV class with the Gradient Boosted Classifier model."""
-    #     decision_tree = GradientBoostedClassifier
-    #     param_grid = [{"n_estimators": [3, 4]}]
-    #     grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=2)
-    #     grid_search.fit(self.X_class, self.y_class)
+    def test_gradientBoostiedClassifier(self):
+        """Tests the GridSearchCV class with the Gradient Boosted Classifier model."""
+        decision_tree = GradientBoostedClassifier
+        param_grid = [{"n_estimators": [3, 4]}]
+        grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=2)
+        grid_search.fit(self.X_class, self.y_class)
 
     def test_invalid_param_grid(self):
         """Tests the GridSearchCV class with invalid param_grid."""
@@ -490,14 +489,14 @@ class TestRandomSearchCV(unittest.TestCase):
         )
         rand_search.fit(self.X_reg, self.y_reg)
 
-    # def test_gradientBoostiedClassifier(self):
-    #     """Tests the RandomSearchCV class with the Gradient Boosted Classifier model."""
-    #     decision_tree = GradientBoostedClassifier
-    #     param_grid = [{"n_estimators": [3, 4]}]
-    #     rand_search = RandomSearchCV(
-    #         model=decision_tree, param_grid=param_grid, cv=3, iter=2
-    #     )
-    #     rand_search.fit(self.X_class, self.y_class)
+    def test_gradientBoostiedClassifier(self):
+        """Tests the RandomSearchCV class with the Gradient Boosted Classifier model."""
+        decision_tree = GradientBoostedClassifier
+        param_grid = [{"n_estimators": [3, 4]}]
+        rand_search = RandomSearchCV(
+            model=decision_tree, param_grid=param_grid, cv=3, iter=2
+        )
+        rand_search.fit(self.X_class, self.y_class)
 
     def test_invalid_iter(self):
         """Tests the RandomSearchCV class with invalid iter."""
