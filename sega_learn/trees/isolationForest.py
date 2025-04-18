@@ -239,11 +239,12 @@ class IsolationForest:
 
         self.classes_ = np.array([0, 1])  # Define the classes attribute
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         """Fits the isolation forest to the data.
 
         Args:
             X: (array-like) - The input features.
+            y: (array-like) - The target labels (not used in this implementation).
         """
         if self.max_samples is None:
             self.max_samples = min(256, len(X))
