@@ -9,6 +9,7 @@ from sklearn import metrics as sk_metrics
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.linear_models import *
+from sega_learn.svm import *
 from sega_learn.trees import *
 from sega_learn.utils import *
 from sega_learn.utils import make_classification, make_regression, train_test_split
@@ -317,6 +318,7 @@ class TestGridSearchCV(unittest.TestCase):
         )
         self.assertEqual(len(grid_search.param_combinations), 6)
 
+    ### Linear Models ###
     def test_ols(self):
         """Tests the GridSearchCV class with the Ordinary Least Squares model."""
         ols = OrdinaryLeastSquares
@@ -352,6 +354,84 @@ class TestGridSearchCV(unittest.TestCase):
         grid_search = GridSearchCV(model=passive_agg, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_reg, self.y_reg)
 
+    def test_ransac(self):
+        """Tests the GridSearchCV class with the RANSAC model."""
+        ransac = RANSAC
+        param_grid = [{"n": [2, 3], "d": [1, 2]}]
+        grid_search = GridSearchCV(model=ransac, param_grid=param_grid, cv=2)
+        grid_search.fit(self.X_reg, self.y_reg)
+
+    def test_perceptron(self):
+        """Tests the GridSearchCV class with the Perceptron model."""
+        perceptron = Perceptron
+        param_grid = [{"max_iter": [10, 20]}]
+        grid_search = GridSearchCV(model=perceptron, param_grid=param_grid, cv=2)
+        grid_search.fit(self.X_class, self.y_class)
+
+    def test_logisticRegression(self):
+        """Tests the GridSearchCV class with the Logistic Regression model."""
+        logistic_regression = LogisticRegression
+        param_grid = [{"max_iter": [10, 20]}]
+        grid_search = GridSearchCV(
+            model=logistic_regression, param_grid=param_grid, cv=2
+        )
+        grid_search.fit(self.X_class, self.y_class)
+
+    ### SVM ###
+    def test_generalizedLinearSVC(self):
+        """Tests the GridSearchCV class with the Generalized Linear SVC model."""
+        generalized_linear_svc = GeneralizedSVC
+        param_grid = [{"max_iter": [10, 20]}]
+        grid_search = GridSearchCV(
+            model=generalized_linear_svc, param_grid=param_grid, cv=2
+        )
+        grid_search.fit(self.X_class, self.y_class)
+
+    def test_generalizedLinearSVR(self):
+        """Tests the GridSearchCV class with the Generalized Linear SVR model."""
+        generalized_linear_svr = GeneralizedSVR
+        param_grid = [{"max_iter": [10, 20]}]
+        grid_search = GridSearchCV(
+            model=generalized_linear_svr, param_grid=param_grid, cv=2
+        )
+        grid_search.fit(self.X_reg, self.y_reg)
+
+    def test_linearSVC(self):
+        """Tests the GridSearchCV class with the Linear SVC model."""
+        linear_svc = LinearSVC
+        param_grid = [{"max_iter": [10, 20]}]
+        grid_search = GridSearchCV(model=linear_svc, param_grid=param_grid, cv=2)
+        grid_search.fit(self.X_class, self.y_class)
+
+    def test_linearSVR(self):
+        """Tests the GridSearchCV class with the Linear SVR model."""
+        linear_svr = LinearSVR
+        param_grid = [{"max_iter": [10, 20]}]
+        grid_search = GridSearchCV(model=linear_svr, param_grid=param_grid, cv=2)
+        grid_search.fit(self.X_reg, self.y_reg)
+
+    def test_oneClassSVM(self):
+        """Tests the GridSearchCV class with the One Class SVM model."""
+        one_class_svm = OneClassSVM
+        param_grid = [{"max_iter": [10, 20]}]
+        grid_search = GridSearchCV(model=one_class_svm, param_grid=param_grid, cv=2)
+        grid_search.fit(self.X_class, self.y_class)
+
+    ### Trees ###
+    def test_classifierTree(self):
+        """Tests the GridSearchCV class with the Classifier Tree model."""
+        classifier_tree = ClassifierTree
+        param_grid = [{"max_depth": [2, 3]}]
+        grid_search = GridSearchCV(model=classifier_tree, param_grid=param_grid, cv=2)
+        grid_search.fit(self.X_class, self.y_class)
+
+    def test_regressorTree(self):
+        """Tests the GridSearchCV class with the Regressor Tree model."""
+        regressor_tree = RegressorTree
+        param_grid = [{"max_depth": [2, 3], "min_samples_split": [2, 3]}]
+        grid_search = GridSearchCV(model=regressor_tree, param_grid=param_grid, cv=2)
+        grid_search.fit(self.X_reg, self.y_reg)
+
     def test_randomForestClassifier(self):
         """Tests the GridSearchCV class with the Random Forest Classifier model."""
         decision_tree = RandomForestClassifier
@@ -380,6 +460,13 @@ class TestGridSearchCV(unittest.TestCase):
         grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_class, self.y_class)
 
+    def test_isoForest(self):
+        """Tests the GridSearchCV class with the Isolation Forest model."""
+        iso_forest = IsolationForest
+        param_grid = [{"n_trees": [10, 20]}]
+        grid_search = GridSearchCV(model=iso_forest, param_grid=param_grid, cv=2)
+        grid_search.fit(self.X_class, self.y_class)
+
     def test_invalid_param_grid(self):
         """Tests the GridSearchCV class with invalid param_grid."""
         with self.assertRaises(AssertionError):
@@ -397,10 +484,10 @@ class TestRandomSearchCV(unittest.TestCase):
     def setUp(self):  # NOQA D201
         """Set up the RandomSearchCV instance for testing."""
         self.X_reg, self.y_reg = make_regression(
-            n_samples=100, n_features=5, noise=25, random_state=42
+            n_samples=10, n_features=5, noise=25, random_state=42
         )
         self.X_class, self.y_class = make_classification(
-            n_samples=100, n_features=5, n_classes=2, random_state=42
+            n_samples=10, n_features=5, n_classes=2, random_state=42
         )
 
     def test_init(self):
@@ -423,6 +510,7 @@ class TestRandomSearchCV(unittest.TestCase):
         )
         self.assertEqual(len(rand_search.param_combinations), 6)
 
+    ### Linear Models ###
     def test_ols(self):
         """Tests the RandomSearchCV class with the Ordinary Least Squares model."""
         ols = OrdinaryLeastSquares
@@ -462,6 +550,105 @@ class TestRandomSearchCV(unittest.TestCase):
         )
         rand_search.fit(self.X_reg, self.y_reg)
 
+    def test_perceptron(self):
+        """Tests the RandomSearchCV class with the Perceptron model."""
+        perceptron = Perceptron
+        param_grid = [{"max_iter": [10, 20]}]
+        rand_search = RandomSearchCV(
+            model=perceptron, param_grid=param_grid, cv=3, iter=2
+        )
+        rand_search.fit(self.X_class, self.y_class)
+
+    def test_logisticRegression(self):
+        """Tests the RandomSearchCV class with the Logistic Regression model."""
+        logistic_regression = LogisticRegression
+        param_grid = [{"max_iter": [10, 20]}]
+        rand_search = RandomSearchCV(
+            model=logistic_regression, param_grid=param_grid, cv=3, iter=2
+        )
+        rand_search.fit(self.X_class, self.y_class)
+
+    def test_ransac(self):
+        """Tests the RandomSearchCV class with the RANSAC model."""
+        ransac = RANSAC
+        param_grid = [{"n": [2, 3], "d": [1], "k": [2]}]
+        rand_search = RandomSearchCV(model=ransac, param_grid=param_grid, cv=3, iter=2)
+        rand_search.fit(self.X_reg, self.y_reg)
+
+    ### SVM ###
+    def test_generalizedLinearSVC(self):
+        """Tests the RandomSearchCV class with the Generalized Linear SVC model."""
+        generalized_linear_svc = GeneralizedSVC
+        param_grid = [{"max_iter": [10, 20]}]
+        rand_search = RandomSearchCV(
+            model=generalized_linear_svc, param_grid=param_grid, cv=3, iter=2
+        )
+        rand_search.fit(self.X_class, self.y_class)
+
+    def test_generalizedLinearSVR(self):
+        """Tests the RandomSearchCV class with the Generalized Linear SVR model."""
+        generalized_linear_svr = GeneralizedSVR
+        param_grid = [{"max_iter": [10, 20]}]
+        rand_search = RandomSearchCV(
+            model=generalized_linear_svr, param_grid=param_grid, cv=3, iter=2
+        )
+        rand_search.fit(self.X_reg, self.y_reg)
+
+    def test_linearSVC(self):
+        """Tests the RandomSearchCV class with the Linear SVC model."""
+        linear_svc = LinearSVC
+        param_grid = [{"max_iter": [10, 20]}]
+        rand_search = RandomSearchCV(
+            model=linear_svc, param_grid=param_grid, cv=3, iter=2
+        )
+        rand_search.fit(self.X_class, self.y_class)
+
+    def test_linearSVR(self):
+        """Tests the RandomSearchCV class with the Linear SVR model."""
+        linear_svr = LinearSVR
+        param_grid = [{"max_iter": [10, 20]}]
+        rand_search = RandomSearchCV(
+            model=linear_svr, param_grid=param_grid, cv=3, iter=2
+        )
+        rand_search.fit(self.X_reg, self.y_reg)
+
+    def test_oneClassSVM(self):
+        """Tests the RandomSearchCV class with the One Class SVM model."""
+        one_class_svm = OneClassSVM
+        param_grid = [{"max_iter": [10, 20]}]
+        rand_search = RandomSearchCV(
+            model=one_class_svm, param_grid=param_grid, cv=3, iter=2
+        )
+        rand_search.fit(self.X_class, self.y_class)
+
+    ### Trees ###
+    def test_classifierTree(self):
+        """Tests the RandomSearchCV class with the Classifier Tree model."""
+        classifier_tree = ClassifierTree
+        param_grid = [{"max_depth": [2, 3]}]
+        rand_search = RandomSearchCV(
+            model=classifier_tree, param_grid=param_grid, cv=3, iter=2
+        )
+        rand_search.fit(self.X_class, self.y_class)
+
+    def test_regressorTree(self):
+        """Tests the RandomSearchCV class with the Regressor Tree model."""
+        regressor_tree = RegressorTree
+        param_grid = [{"max_depth": [2, 3], "min_samples_split": [2, 3]}]
+        rand_search = RandomSearchCV(
+            model=regressor_tree, param_grid=param_grid, cv=3, iter=2
+        )
+        rand_search.fit(self.X_reg, self.y_reg)
+
+    def test_gradientBoostiedClassifier(self):
+        """Tests the RandomSearchCV class with the Gradient Boosted Classifier model."""
+        decision_tree = GradientBoostedClassifier
+        param_grid = [{"n_estimators": [3, 4]}]
+        rand_search = RandomSearchCV(
+            model=decision_tree, param_grid=param_grid, cv=3, iter=2
+        )
+        rand_search.fit(self.X_class, self.y_class)
+
     def test_randomForestClassifier(self):
         """Tests the RandomSearchCV class with the Random Forest Classifier model."""
         decision_tree = RandomForestClassifier
@@ -489,12 +676,12 @@ class TestRandomSearchCV(unittest.TestCase):
         )
         rand_search.fit(self.X_reg, self.y_reg)
 
-    def test_gradientBoostiedClassifier(self):
-        """Tests the RandomSearchCV class with the Gradient Boosted Classifier model."""
-        decision_tree = GradientBoostedClassifier
-        param_grid = [{"n_estimators": [3, 4]}]
+    def test_isoForest(self):
+        """Tests the RandomSearchCV class with the Isolation Forest model."""
+        iso_forest = IsolationForest
+        param_grid = [{"n_trees": [10, 20]}]
         rand_search = RandomSearchCV(
-            model=decision_tree, param_grid=param_grid, cv=3, iter=2
+            model=iso_forest, param_grid=param_grid, cv=3, iter=2
         )
         rand_search.fit(self.X_class, self.y_class)
 
