@@ -59,7 +59,7 @@ class TestTrainingAnimator(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):  # NOQA D201
-        print("\nTesting the TrainingAnimator Class", end="", flush=True)
+        print("\nTesting TrainingAnimator", end="", flush=True)
 
     def setUp(self):  # NOQA D201
         # Create an instance with specific figure size and dpi for testing.

@@ -17,7 +17,7 @@ class TestKNeighborsClassifier(unittest.TestCase):
     @classmethod
     def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
-        print("\nTesting KNeighborsClassifierKNeighborsBase Class", end="", flush=True)
+        print("\nTesting KNeighborsClassifierKNeighborsBase", end="", flush=True)
 
     def setUp(self):  # NOQA D201
         """Sets up the test environment before each test."""
@@ -125,7 +125,7 @@ class TestKNeighborsRegressor(unittest.TestCase):
     @classmethod
     def setUpClass(cls):  # NOQA D201
         """Initializes a new instance of the Index class before each test method is run."""
-        print("\nTesting KNeighborsRegressor Class", end="", flush=True)
+        print("\nTesting KNeighborsRegressor", end="", flush=True)
 
     def setUp(self):  # NOQA D201
         """Sets up the test environment before each test."""

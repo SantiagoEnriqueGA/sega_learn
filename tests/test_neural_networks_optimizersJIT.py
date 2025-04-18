@@ -32,7 +32,7 @@ class TestJITAdamOptimizer(unittest.TestCase):
     @classmethod
     def setUpClass(cls):  # NOQA D201
         """Print message before running tests."""
-        print("\nTesting the JITAdamOptimizer Class", end="", flush=True)
+        print("\nTesting JITAdamOptimizer", end="", flush=True)
 
     def setUp(self):  # NOQA D201
         """Initialize the JITAdamOptimizer class and layers."""
@@ -98,7 +98,7 @@ class TestJITSGDOptimizer(unittest.TestCase):
     @classmethod
     def setUpClass(cls):  # NOQA D201
         """Print message before running tests."""
-        print("\nTesting the JITSGDOptimizer Class", end="", flush=True)
+        print("\nTesting JITSGDOptimizer", end="", flush=True)
 
     def setUp(self):  # NOQA D201
         """Initialize the JITSGDOptimizer class and layers."""
@@ -165,7 +165,7 @@ class TestJITAdadeltaOptimizer(unittest.TestCase):
     @classmethod
     def setUpClass(cls):  # NOQA D201
         """Print message before running tests."""
-        print("\nTesting the JITAdadeltaOptimizer Class", end="", flush=True)
+        print("\nTesting JITAdadeltaOptimizer", end="", flush=True)
 
     def setUp(self):  # NOQA D201
         """Initialize the JITAdadeltaOptimizer class and layers."""

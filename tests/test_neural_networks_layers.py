@@ -17,7 +17,7 @@ class TestDenseLayer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):  # NOQA D201
-        print("\nTesting DenseLayer class", end="", flush=True)
+        print("\nTesting DenseLayer", end="", flush=True)
 
     def setUp(self):  # NOQA D201
         """Initialize test fixtures."""
@@ -245,7 +245,7 @@ class TestFlattenLayer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):  # NOQA D201
-        print("\nTesting FlattenLayer class", end="", flush=True)
+        print("\nTesting FlattenLayer", end="", flush=True)
 
     def setUp(self):  # NOQA D201
         """Initialize test fixtures."""
@@ -298,7 +298,7 @@ class TestConvLayer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):  # NOQA D201
-        print("\nTesting ConvLayer class", end="", flush=True)
+        print("\nTesting ConvLayer", end="", flush=True)
 
     def setUp(self):  # NOQA D201
         """Initialize test fixtures."""

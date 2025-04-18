@@ -24,7 +24,7 @@ class TestAdamOptimizer(unittest.TestCase):
     @classmethod
     def setUpClass(cls):  # NOQA D201
         """Print message before running tests."""
-        print("\nTesting the AdamOptimizer Class", end="", flush=True)
+        print("\nTesting AdamOptimizer", end="", flush=True)
 
     def setUp(self):  # NOQA D201
         """Initialize the AdamOptimizer class and layers."""
@@ -91,7 +91,7 @@ class TestSGDOptimizer(unittest.TestCase):
     @classmethod
     def setUpClass(cls):  # NOQA D201
         """Print message before running tests."""
-        print("\nTesting the SGDOptimizer Class", end="", flush=True)
+        print("\nTesting SGDOptimizer", end="", flush=True)
 
     def setUp(self):  # NOQA D201
         """Initialize the SGDOptimizer class and layers."""
@@ -154,7 +154,7 @@ class TestAdadeltaOptimizer(unittest.TestCase):
     @classmethod
     def setUpClass(cls):  # NOQA D201
         """Print message before running tests."""
-        print("\nTesting the AdadeltaOptimizer Class", end="", flush=True)
+        print("\nTesting AdadeltaOptimizer", end="", flush=True)
 
     def setUp(self):  # NOQA D201
         """Initialize the AdadeltaOptimizer class and layers."""

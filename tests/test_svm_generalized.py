@@ -193,7 +193,7 @@ class TestGeneralizedSVC(unittest.TestCase):
         model.fit(X, y)
         # Check if multiclass strategy is applied; this depends on BaseSVM's implementation
         if hasattr(model, "models_"):
-            self.assertEqual(len(model.models_), 3, "Should have one model per class")
+            self.assertEqual(len(model.models_), 3, "Should have one model per")
             for submodel in model.models_:
                 self.assertIsNotNone(
                     submodel.w, "Submodel weights should be initialized"

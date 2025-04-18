@@ -189,7 +189,7 @@ class TestLinearSVC(unittest.TestCase):
         self.assertTrue(
             hasattr(model, "models_"), "Multi-class models should be stored"
         )
-        self.assertEqual(len(model.models_), 3, "Should have one model per class")
+        self.assertEqual(len(model.models_), 3, "Should have one model per")
         for submodel in model.models_:
             self.assertIsInstance(
                 submodel, LinearSVC, "Submodels should be LinearSVC instances"

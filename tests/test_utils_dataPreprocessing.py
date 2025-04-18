@@ -19,7 +19,7 @@ class TestScaler(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):  # NOQA D201
-        print("\nTesting Scaler Class", end="", flush=True)
+        print("\nTesting Scaler", end="", flush=True)
 
     def setUp(self):
         """Set up test data and initialize Scaler instances for testing."""

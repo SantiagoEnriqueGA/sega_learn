@@ -15,7 +15,7 @@ class TestCrossEntropyLoss(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):  # NOQA D201
-        print("\nTesting the CrossEntropyLoss class", end="", flush=True)
+        print("\nTesting CrossEntropyLoss", end="", flush=True)
 
     def test_cross_entropy_loss_single_class(self):
         """Test the cross entropy loss for a single class."""
@@ -79,7 +79,7 @@ class TestBCEWithLogitsLoss(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):  # NOQA D201
-        print("\nTesting the BCEWithLogitsLoss class", end="", flush=True)
+        print("\nTesting BCEWithLogitsLoss", end="", flush=True)
 
     def test_bce_with_logits_loss(self):
         """Test the binary cross entropy loss with logits."""
@@ -121,7 +121,7 @@ class TestMeanSquaredErrorLoss(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):  # NOQA D201
-        print("\nTesting the MeanSquaredErrorLoss class", end="", flush=True)
+        print("\nTesting MeanSquaredErrorLoss", end="", flush=True)
 
     def test_mean_squared_error_loss(self):
         """Test the mean squared error loss."""
@@ -153,7 +153,7 @@ class TestMeanAbsoluteErrorLoss(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):  # NOQA D201
-        print("\nTesting the MeanAbsoluteErrorLoss class", end="", flush=True)
+        print("\nTesting MeanAbsoluteErrorLoss", end="", flush=True)
 
     def test_mean_absolute_error_loss(self):
         """Test the mean absolute error loss."""
@@ -185,7 +185,7 @@ class TestHuberLoss(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):  # NOQA D201
-        print("\nTesting the HuberLoss class", end="", flush=True)
+        print("\nTesting HuberLoss", end="", flush=True)
 
     def test_huber_loss_small_error(self):
         """Test the Huber loss for small errors."""
