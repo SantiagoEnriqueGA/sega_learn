@@ -49,6 +49,30 @@ class TestCrossEntropyLoss(unittest.TestCase):
 
         self.assertAlmostEqual(loss, expected_loss, places=5)
 
+    def test_cross_entropy_loss_empty_inputs(self):
+        """Test the cross entropy loss for empty inputs."""
+        loss_fn = CrossEntropyLoss()
+        logits = np.array([])
+        targets = np.array([])
+        with self.assertRaises((ValueError, IndexError)):
+            loss_fn(logits, targets)
+
+    def test_cross_entropy_loss_mismatched_shapes(self):
+        """Test the cross entropy loss for mismatched shapes."""
+        loss_fn = CrossEntropyLoss()
+        logits = np.array([[2.0, 1.0]])
+        targets = np.array([1, 0, 0])
+        with self.assertRaises(ValueError):
+            loss_fn(logits, targets)
+
+    def test_cross_entropy_loss_extreme_values(self):
+        """Test the cross entropy loss for extreme values."""
+        loss_fn = CrossEntropyLoss()
+        logits = np.array([[1000.0, -1000.0]])
+        targets = np.array([[1, 0]])
+        loss = loss_fn(logits, targets)
+        self.assertTrue(np.isfinite(loss))
+
 
 class TestBCEWithLogitsLoss(unittest.TestCase):
     """Unit tests for the BCEWithLogitsLoss class."""
@@ -84,6 +108,13 @@ class TestBCEWithLogitsLoss(unittest.TestCase):
         )
         self.assertAlmostEqual(loss, expected_loss, places=5)
 
+    def test_bce_with_logits_loss_empty_inputs(self):
+        """Test the binary cross entropy loss with empty inputs."""
+        loss_fn = BCEWithLogitsLoss()
+        logits = np.array([])
+        targets = np.array([])
+        loss_fn(logits, targets)
+
 
 class TestMeanSquaredErrorLoss(unittest.TestCase):
     """Unit tests for the MeanSquaredErrorLoss class."""
@@ -101,6 +132,21 @@ class TestMeanSquaredErrorLoss(unittest.TestCase):
         expected_loss = np.mean((y_true - y_pred) ** 2)
         self.assertAlmostEqual(loss, expected_loss, places=5)
 
+    def test_mean_squared_error_loss_empty_inputs(self):
+        """Test the mean squared error loss for empty inputs."""
+        loss_fn = MeanSquaredErrorLoss()
+        y_true = np.array([])
+        y_pred = np.array([])
+        loss_fn(y_true, y_pred)
+
+    def test_mean_squared_error_loss_mismatched_shapes(self):
+        """Test the mean squared error loss for mismatched shapes."""
+        loss_fn = MeanSquaredErrorLoss()
+        y_true = np.array([1.0, 2.0])
+        y_pred = np.array([1.0, 2.0, 3.0])
+        with self.assertRaises(ValueError):
+            loss_fn(y_true, y_pred)
+
 
 class TestMeanAbsoluteErrorLoss(unittest.TestCase):
     """Unit tests for the MeanAbsoluteErrorLoss class."""
@@ -117,6 +163,21 @@ class TestMeanAbsoluteErrorLoss(unittest.TestCase):
         loss = loss_fn(y_true, y_pred)
         expected_loss = np.mean(np.abs(y_true - y_pred))
         self.assertAlmostEqual(loss, expected_loss, places=5)
+
+    def test_mean_absolute_error_loss_empty_inputs(self):
+        """Test the mean absolute error loss for empty inputs."""
+        loss_fn = MeanAbsoluteErrorLoss()
+        y_true = np.array([])
+        y_pred = np.array([])
+        loss_fn(y_true, y_pred)
+
+    def test_mean_absolute_error_loss_mismatched_shapes(self):
+        """Test the mean absolute error loss for mismatched shapes."""
+        loss_fn = MeanAbsoluteErrorLoss()
+        y_true = np.array([1.0, 2.0])
+        y_pred = np.array([1.0, 2.0, 3.0])
+        with self.assertRaises(ValueError):
+            loss_fn(y_true, y_pred)
 
 
 class TestHuberLoss(unittest.TestCase):
@@ -147,6 +208,30 @@ class TestHuberLoss(unittest.TestCase):
         error = y_true - y_pred
         expected_loss = np.mean(delta * (np.abs(error) - 0.5 * delta))
         self.assertAlmostEqual(loss, expected_loss, places=5)
+
+    def test_huber_loss_empty_inputs(self):
+        """Test the Huber loss for empty inputs."""
+        loss_fn = HuberLoss()
+        y_true = np.array([])
+        y_pred = np.array([])
+        loss_fn(y_true, y_pred)
+
+    def test_huber_loss_mismatched_shapes(self):
+        """Test the Huber loss for mismatched shapes."""
+        loss_fn = HuberLoss()
+        y_true = np.array([1.0, 2.0])
+        y_pred = np.array([1.0, 2.0, 3.0])
+        with self.assertRaises(ValueError):
+            loss_fn(y_true, y_pred)
+
+    def test_huber_loss_extreme_values(self):
+        """Test the Huber loss for extreme values."""
+        loss_fn = HuberLoss()
+        y_true = np.array([1.0, 2.0])
+        y_pred = np.array([1e10, -1e10])
+        delta = 1.0
+        loss = loss_fn(y_true, y_pred, delta)
+        self.assertTrue(np.isfinite(loss))
 
 
 if __name__ == "__main__":

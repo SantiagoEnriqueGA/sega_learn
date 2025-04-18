@@ -1,6 +1,15 @@
 import numpy as np
 
 
+def _validate_shapes(logits, targets):
+    """Validate that logits and targets have compatible shapes."""
+    if logits.shape[0] != targets.shape[0]:
+        raise ValueError(
+            f"Shape mismatch: logits {logits.shape} vs targets {targets.shape}"
+        )
+    return logits, targets
+
+
 # Classifications loss functions
 class CrossEntropyLoss:
     """Custom cross entropy loss implementation using numpy for multi-class classification.
@@ -20,6 +29,9 @@ class CrossEntropyLoss:
         Returns:
             float: The cross entropy loss.
         """
+        # Validate shapes
+        logits, targets = _validate_shapes(logits, targets)
+
         # One-hot encode targets if they are not already
         if targets.ndim == 1:
             targets = np.eye(logits.shape[1])[targets]
@@ -56,6 +68,9 @@ class BCEWithLogitsLoss:
         Returns:
             float: The binary cross entropy loss.
         """
+        # Validate shapes
+        logits, targets = _validate_shapes(logits, targets)
+
         probs = 1 / (
             1 + np.exp(-logits)
         )  # Apply sigmoid to logits to get probabilities
@@ -86,6 +101,9 @@ class MeanSquaredErrorLoss:
         Returns:
             float: The mean squared error loss.
         """
+        # Validate shapes
+        y_true, y_pred = _validate_shapes(y_true, y_pred)
+
         # Ensure inputs are numpy arrays and have compatible shapes
         y_true = np.asarray(y_true)
         y_pred = np.asarray(y_pred)
@@ -121,6 +139,9 @@ class MeanAbsoluteErrorLoss:
         Returns:
             float: The mean absolute error loss.
         """
+        # Validate shapes
+        y_true, y_pred = _validate_shapes(y_true, y_pred)
+
         # Ensure inputs are numpy arrays and have compatible shapes
         y_true = np.asarray(y_true)
         y_pred = np.asarray(y_pred)
@@ -159,6 +180,9 @@ class HuberLoss:
         Returns:
             float: The Huber loss.
         """
+        # Validate shapes
+        y_true, y_pred = _validate_shapes(y_true, y_pred)
+
         # Ensure inputs are numpy arrays and have compatible shapes
         y_true = np.asarray(y_true)
         y_pred = np.asarray(y_pred)

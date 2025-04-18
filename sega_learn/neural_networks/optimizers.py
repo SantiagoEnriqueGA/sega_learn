@@ -95,10 +95,14 @@ class AdamOptimizer:
             1 - self.beta2**self.t
         )  # Bias-corrected second moment estimate, v / (1 - beta2^t)
 
-        layer.weights -= self.learning_rate * (
-            m_hat / (np.sqrt(v_hat) + self.epsilon) + self.reg_lambda * layer.weights
-        )  # Update weights, alpha * m_hat / (sqrt(v_hat) + epsilon) + lambda * weights
-        layer.biases -= self.learning_rate * db  # Update biases, alpha * db
+        weight_update = m_hat / (np.sqrt(v_hat) + self.epsilon)
+        if not np.allclose(
+            dW, 0
+        ):  # Apply regularization only if gradients are non-zero
+            weight_update += self.reg_lambda * layer.weights
+
+        layer.weights -= self.learning_rate * weight_update  # Update weights
+        layer.biases -= self.learning_rate * db  # Update biases
 
 
 class SGDOptimizer:

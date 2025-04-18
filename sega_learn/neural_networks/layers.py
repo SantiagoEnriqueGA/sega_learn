@@ -431,7 +431,9 @@ class ConvLayer:
             d_weights_reshaped = (
                 d_out_reshaped[b] @ self.X_cols[b].T
             )  # (out_channels, in_channels*k*k)
-            d_weights += d_weights_reshaped.reshape(self.weights.shape)
+            d_weights += d_weights_reshaped.reshape(self.weights.shape).astype(
+                self.weights.dtype
+            )
 
             # Gradient of input
             d_X_cols[b] = W_reshaped.T @ d_out_reshaped[b]
@@ -453,6 +455,7 @@ class ConvLayer:
             "tanh": Activation.tanh,
             "sigmoid": Activation.sigmoid,
             "softmax": Activation.softmax,
+            "linear": lambda Z: Z,
             "none": lambda Z: Z,
         }
 

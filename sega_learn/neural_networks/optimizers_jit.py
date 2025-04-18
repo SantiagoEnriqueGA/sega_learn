@@ -97,6 +97,9 @@ class JITAdamOptimizer:
         Returns:
             None
         """
+        if np.all(dW == 0) and np.all(db == 0):
+            return  # Skip update if gradients are zero
+
         self.t += 1  # Increment time step
         self.m[index][: dW.shape[0], : dW.shape[1]] = (
             self.beta1 * self.m[index][: dW.shape[0], : dW.shape[1]]

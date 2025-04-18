@@ -49,6 +49,30 @@ class TestJITCrossEntropyLoss(unittest.TestCase):
 
         self.assertAlmostEqual(loss, expected_loss, places=5)
 
+    def test_cross_entropy_loss_empty_inputs(self):
+        """Test the cross entropy loss for empty inputs."""
+        loss_fn = JITCrossEntropyLoss()
+        logits = np.array([])
+        targets = np.array([])
+        with self.assertRaises((ValueError, AttributeError)):
+            loss_fn.calculate_loss(logits, targets)
+
+    def test_cross_entropy_loss_mismatched_shapes(self):
+        """Test the cross entropy loss for mismatched shapes."""
+        loss_fn = JITCrossEntropyLoss()
+        logits = np.array([[2.0, 1.0]])
+        targets = np.array([1, 0, 0])
+        with self.assertRaises((ValueError, AttributeError)):
+            loss_fn.calculate_loss(logits, targets)
+
+    def test_cross_entropy_loss_extreme_values(self):
+        """Test the cross entropy loss for extreme values."""
+        loss_fn = JITCrossEntropyLoss()
+        logits = np.array([[1000.0, -1000.0]])
+        targets = np.array([[1, 0]])
+        loss = loss_fn.calculate_loss(logits, targets)
+        self.assertTrue(np.isfinite(loss))
+
 
 class TestJITBCEWithLogitsLoss(unittest.TestCase):
     """Unit tests for the JITBCEWithLogitsLoss class."""
@@ -84,6 +108,14 @@ class TestJITBCEWithLogitsLoss(unittest.TestCase):
         )
         self.assertAlmostEqual(loss, expected_loss, places=5)
 
+    def test_bce_with_logits_loss_empty_inputs(self):
+        """Test the binary cross entropy loss with empty inputs."""
+        loss_fn = JITBCEWithLogitsLoss()
+        logits = np.array([])
+        targets = np.array([])
+        with self.assertRaises((ValueError, ZeroDivisionError)):
+            loss_fn.calculate_loss(logits, targets)
+
 
 class TestMeanSquaredErrorLoss(unittest.TestCase):
     """Unit tests for the JITMeanSquaredErrorLoss class."""
@@ -101,6 +133,22 @@ class TestMeanSquaredErrorLoss(unittest.TestCase):
         expected_loss = np.mean((y_true - y_pred) ** 2)
         self.assertAlmostEqual(loss, expected_loss, places=5)
 
+    def test_mean_squared_error_loss_empty_inputs(self):
+        """Test the mean squared error loss for empty inputs."""
+        loss_fn = JITMeanSquaredErrorLoss()
+        y_true = np.array([])
+        y_pred = np.array([])
+        with self.assertRaises((ValueError, ZeroDivisionError)):
+            loss_fn.calculate_loss(y_true, y_pred)
+
+    def test_mean_squared_error_loss_mismatched_shapes(self):
+        """Test the mean squared error loss for mismatched shapes."""
+        loss_fn = JITMeanSquaredErrorLoss()
+        y_true = np.array([1.0, 2.0])
+        y_pred = np.array([1.0, 2.0, 3.0])
+        with self.assertRaises(ValueError):
+            loss_fn.calculate_loss(y_true, y_pred)
+
 
 class TestMeanAbsoluteErrorLoss(unittest.TestCase):
     """Unit tests for the JITMeanAbsoluteErrorLoss class."""
@@ -117,6 +165,22 @@ class TestMeanAbsoluteErrorLoss(unittest.TestCase):
         loss = loss_fn.calculate_loss(y_true, y_pred)
         expected_loss = np.mean(np.abs(y_true - y_pred))
         self.assertAlmostEqual(loss, expected_loss, places=5)
+
+    def test_mean_absolute_error_loss_empty_inputs(self):
+        """Test the mean absolute error loss for empty inputs."""
+        loss_fn = JITMeanAbsoluteErrorLoss()
+        y_true = np.array([])
+        y_pred = np.array([])
+        with self.assertRaises((ValueError, ZeroDivisionError)):
+            loss_fn.calculate_loss(y_true, y_pred)
+
+    def test_mean_absolute_error_loss_mismatched_shapes(self):
+        """Test the mean absolute error loss for mismatched shapes."""
+        loss_fn = JITMeanAbsoluteErrorLoss()
+        y_true = np.array([1.0, 2.0])
+        y_pred = np.array([1.0, 2.0, 3.0])
+        with self.assertRaises(ValueError):
+            loss_fn.calculate_loss(y_true, y_pred)
 
 
 class TestHuberLoss(unittest.TestCase):
@@ -147,6 +211,92 @@ class TestHuberLoss(unittest.TestCase):
         error = y_true - y_pred
         expected_loss = np.mean(delta * (np.abs(error) - 0.5 * delta))
         self.assertAlmostEqual(loss, expected_loss, places=5)
+
+    def test_huber_loss_empty_inputs(self):
+        """Test the Huber loss for empty inputs."""
+        loss_fn = JITHuberLoss()
+        y_true = np.array([])
+        y_pred = np.array([])
+        with self.assertRaises((ValueError, ZeroDivisionError)):
+            loss_fn.calculate_loss(y_true, y_pred)
+
+    def test_huber_loss_mismatched_shapes(self):
+        """Test the Huber loss for mismatched shapes."""
+        loss_fn = JITHuberLoss()
+        y_true = np.array([1.0, 2.0])
+        y_pred = np.array([1.0, 2.0, 3.0])
+        with self.assertRaises(ValueError):
+            loss_fn.calculate_loss(y_true, y_pred)
+
+    def test_huber_loss_extreme_values(self):
+        """Test the Huber loss for extreme values."""
+        loss_fn = JITHuberLoss()
+        y_true = np.array([1.0, 2.0])
+        y_pred = np.array([1e10, -1e10])
+        loss = loss_fn.calculate_loss(y_true, y_pred)
+        self.assertTrue(np.isfinite(loss))
+
+
+class TestJITvsNonJITLosses(unittest.TestCase):
+    """Unit tests to compare JIT and non-JIT loss implementations."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        print(
+            "\nTesting Comparing JIT and non-JIT loss implementations",
+            end="",
+            flush=True,
+        )
+
+    def test_cross_entropy_loss(self):
+        """Compare JIT and non-JIT CrossEntropyLoss."""
+        jit_loss_fn = JITCrossEntropyLoss()
+        non_jit_loss_fn = CrossEntropyLoss()
+        logits = np.array([[2.0, 1.0, 0.1], [0.5, 2.5, 1.0]])
+        targets = np.array([[1, 0, 0], [0, 1, 0]])
+        jit_loss = jit_loss_fn.calculate_loss(logits, targets)
+        non_jit_loss = non_jit_loss_fn(logits, targets)
+        self.assertAlmostEqual(jit_loss, non_jit_loss, places=5)
+
+    def test_bce_with_logits_loss(self):
+        """Compare JIT and non-JIT BCEWithLogitsLoss."""
+        jit_loss_fn = JITBCEWithLogitsLoss()
+        non_jit_loss_fn = BCEWithLogitsLoss()
+        logits = np.array([0.0, 2.0, -2.0])
+        targets = np.array([0, 1, 0])
+        jit_loss = jit_loss_fn.calculate_loss(logits, targets)
+        non_jit_loss = non_jit_loss_fn(logits, targets)
+        self.assertAlmostEqual(jit_loss, non_jit_loss, places=5)
+
+    def test_mean_squared_error_loss(self):
+        """Compare JIT and non-JIT MeanSquaredErrorLoss."""
+        jit_loss_fn = JITMeanSquaredErrorLoss()
+        non_jit_loss_fn = MeanSquaredErrorLoss()
+        y_true = np.array([1.0, 2.0, 3.0])
+        y_pred = np.array([1.5, 2.5, 3.5])
+        jit_loss = jit_loss_fn.calculate_loss(y_true, y_pred)
+        non_jit_loss = non_jit_loss_fn(y_true, y_pred)
+        self.assertAlmostEqual(jit_loss, non_jit_loss, places=5)
+
+    def test_mean_absolute_error_loss(self):
+        """Compare JIT and non-JIT MeanAbsoluteErrorLoss."""
+        jit_loss_fn = JITMeanAbsoluteErrorLoss()
+        non_jit_loss_fn = MeanAbsoluteErrorLoss()
+        y_true = np.array([1.0, 2.0, 3.0])
+        y_pred = np.array([1.5, 2.5, 3.5])
+        jit_loss = jit_loss_fn.calculate_loss(y_true, y_pred)
+        non_jit_loss = non_jit_loss_fn(y_true, y_pred)
+        self.assertAlmostEqual(jit_loss, non_jit_loss, places=5)
+
+    def test_huber_loss(self):
+        """Compare JIT and non-JIT HuberLoss."""
+        jit_loss_fn = JITHuberLoss(delta=1.0)
+        non_jit_loss_fn = HuberLoss()
+        y_true = np.array([1.0, 2.0, 3.0])
+        y_pred = np.array([1.1, 2.1, 3.1])
+        jit_loss = jit_loss_fn.calculate_loss(y_true, y_pred)
+        non_jit_loss = non_jit_loss_fn(y_true, y_pred, delta=1.0)
+        self.assertAlmostEqual(jit_loss, non_jit_loss, places=5)
 
 
 if __name__ == "__main__":

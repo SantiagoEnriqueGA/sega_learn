@@ -6,6 +6,15 @@ from .numba_utils import calculate_huber_loss, calculate_mae_loss, calculate_mse
 CACHE = False
 
 
+def _validate_shapes(logits, targets):
+    """Validate that logits and targets have compatible shapes."""
+    if logits.shape[0] != targets.shape[0]:
+        raise ValueError(
+            f"Shape mismatch: logits {logits.shape} vs targets {targets.shape}"
+        )
+    return logits, targets
+
+
 # JIT Classification Loss Classes
 class JITCrossEntropyLoss:
     """Custom cross entropy loss implementation using numba for multi-class classification.
@@ -37,6 +46,7 @@ class JITCrossEntropyLoss:
         Returns:
             float: The cross entropy loss.
         """
+        logits, targets = _validate_shapes(logits, targets)
         return calculate_cross_entropy_loss(logits, targets)
 
 
@@ -87,6 +97,7 @@ class JITBCEWithLogitsLoss:
         Returns:
             float: The binary cross entropy loss.
         """
+        logits, targets = _validate_shapes(logits, targets)
         return calculate_bce_with_logits_loss(logits, targets)
 
 
@@ -106,6 +117,7 @@ class JITMeanSquaredErrorLoss:
 
     def calculate_loss(self, y_pred, y_true):
         """Calculate the mean squared error loss."""
+        y_pred, y_true = _validate_shapes(y_pred, y_true)
         return calculate_mse_loss(y_pred, y_true)
 
 
@@ -114,6 +126,7 @@ class JITMeanAbsoluteErrorLoss:
 
     def calculate_loss(self, y_pred, y_true):
         """Calculate the mean absolute error loss."""
+        y_pred, y_true = _validate_shapes(y_pred, y_true)
         return calculate_mae_loss(y_pred, y_true)
 
 
@@ -143,5 +156,5 @@ class JITHuberLoss:
         Returns:
             float: The calculated Huber loss.
         """
-        # Pass the instance's delta value to the njit function
+        y_pred, y_true = _validate_shapes(y_pred, y_true)
         return calculate_huber_loss(y_pred, y_true, self.delta)
