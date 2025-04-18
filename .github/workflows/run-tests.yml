@@ -4,8 +4,12 @@ name: Run Python Tests
 on:
   push:
     branches: [ main ] # Runs on pushes to the main branch
+    paths:
+      - '**/*.py' # Trigger only when Python files are changed
   pull_request:
     branches: [ main ] # Runs on pull requests targeting the main branch
+    paths:
+      - '**/*.py' 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
