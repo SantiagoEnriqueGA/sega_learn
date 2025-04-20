@@ -23,6 +23,8 @@ class TestImportsLinear(unittest.TestCase):
 
     def test_individual_imports(self):
         """Tests that each module in the segadb package can be imported individually."""
+        from sega_learn.trees import AdaBoostClassifier as abc
+        from sega_learn.trees import AdaBoostRegressor as abr
         from sega_learn.trees import ClassifierTree as ct
         from sega_learn.trees import ClassifierTreeUtility as ctu
         from sega_learn.trees import GradientBoostedClassifier as gbc
@@ -40,6 +42,8 @@ class TestImportsLinear(unittest.TestCase):
         assert rfr is not None
         assert gbr is not None
         assert gbc is not None
+        assert abc is not None
+        assert abr is not None
 
     def test_wildcard_import(self):
         """Tests that the segadb package can be imported using a wildcard import."""
@@ -51,6 +55,8 @@ class TestImportsLinear(unittest.TestCase):
         assert RandomForestRegressor is not None
         assert GradientBoostedRegressor is not None
         assert GradientBoostedClassifier is not None
+        assert AdaBoostRegressor is not None
+        assert AdaBoostClassifier is not None
 
     def test_ClassifierTree(self):  # NOQA D201
         from sega_learn.trees import ClassifierTree
@@ -91,6 +97,16 @@ class TestImportsLinear(unittest.TestCase):
         from sega_learn.trees import RegressorTreeUtility
 
         assert RegressorTreeUtility is not None
+
+    def test_AdaBoostClassifier(self):  # NOQA D201
+        from sega_learn.trees import AdaBoostClassifier
+
+        assert AdaBoostClassifier is not None
+
+    def test_AdaBoostRegressor(self):  # NOQA D201
+        from sega_learn.trees import AdaBoostRegressor
+
+        assert AdaBoostRegressor is not None
 
 
 if __name__ == "__main__":

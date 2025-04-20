@@ -117,6 +117,8 @@ class TestImports(unittest.TestCase):
         assert RandomForestRegressor is not None
         assert RegressorTree is not None
         assert RegressorTreeUtility is not None
+        assert AdaBoostClassifier is not None
+        assert AdaBoostRegressor is not None
 
     def test_utils_imports(self):  # NOQA D201
         assert PCA is not None
