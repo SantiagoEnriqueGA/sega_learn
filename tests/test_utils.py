@@ -204,6 +204,101 @@ class TestVotingRegressor(unittest.TestCase):
             self.voter.show_models()
 
 
+class TestVotingClassifier(unittest.TestCase):
+    """Unit tests for the VotingClassifier class."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        print("\nTesting Voting Classifier", end="", flush=True)
+
+    def setUp(self):  # NOQA D201
+        """Set up the VotingClassifier instance for testing."""
+        self.X, self.y = make_classification(
+            n_samples=100, n_features=5, n_classes=2, random_state=42
+        )
+        # Fit some base classifiers
+        log = LogisticRegression(max_iter=100)
+        log.fit(self.X, self.y)
+        self.clf1 = log
+
+        clf_tree = ClassifierTree(max_depth=3)
+        clf_tree.fit(self.X, self.y)
+        self.clf2 = clf_tree
+
+        # Ensure LinearSVC uses {-1, 1} labels if needed, or adapt if it uses 0/1
+        y_svm = np.where(self.y == 0, -1, 1)
+        linear_svc = LinearSVC(max_iter=100)
+        linear_svc.fit(self.X, y_svm)
+        self.clf3 = linear_svc
+
+        # Wrap LinearSVC predict to return consistent 0/1 output for testing hard voting
+        original_predict_svc = self.clf3.predict
+        self.clf3.predict = lambda x: np.where(original_predict_svc(x) == -1, 0, 1)
+
+        self.estimators_hard = [self.clf1, self.clf2, self.clf3]
+        self.weights = [0.2, 0.5, 0.3]
+
+        self.voter_hard = VotingClassifier(estimators=self.estimators_hard)
+        self.voter_hard_weighted = VotingClassifier(
+            estimators=self.estimators_hard, weights=self.weights
+        )
+
+    def test_init_hard(self):
+        """Tests the initialization of the Voting Classifier (hard)."""
+        self.assertEqual(len(self.voter_hard.estimators), 3)
+        self.assertIsNone(self.voter_hard.weights)  # Default weights are None
+
+    def test_init_weights_mismatch(self):
+        """Tests error if number of weights mismatches estimators."""
+        with self.assertRaises(ValueError):
+            VotingClassifier(
+                estimators=self.estimators_hard, weights=[0.5, 0.5]
+            )  # Need 3 weights
+
+    def test_init_invalid_estimators(self):
+        """Tests error if estimators list is empty or invalid."""
+        with self.assertRaises(ValueError):
+            VotingClassifier(estimators=[])
+        with self.assertRaises(ValueError):
+            VotingClassifier(estimators="not_a_list")
+        with self.assertRaises(TypeError):  # If an object doesn't have predict
+            VotingClassifier(estimators=[self.clf1, "not_a_classifier"])
+
+    def test_predict_hard(self):
+        """Tests the predict method (hard voting)."""
+        y_pred = self.voter_hard.predict(self.X)
+        self.assertEqual(y_pred.shape[0], self.y.shape[0])
+        self.assertTrue(np.all(np.isin(y_pred, [0, 1])))  # Check labels are 0 or 1
+
+    def test_predict_hard_weighted(self):
+        """Tests the predict method (hard voting with weights)."""
+        y_pred = self.voter_hard_weighted.predict(self.X)
+        self.assertEqual(y_pred.shape[0], self.y.shape[0])
+        self.assertTrue(np.all(np.isin(y_pred, [0, 1])))
+        # Verify weights are used (predictions might differ from unweighted)
+        y_pred_unweighted = self.voter_hard.predict(self.X)
+        # It's possible they are the same by chance, but unlikely for many samples
+        if len(self.X) > 10:  # Only assert difference if enough samples
+            self.assertFalse(
+                np.array_equal(y_pred, y_pred_unweighted),
+                "Weighted prediction should differ from unweighted",
+            )
+
+    def test_get_params(self):
+        """Tests the get_params method."""
+        params = self.voter_hard_weighted.get_params()
+        self.assertEqual(len(params), 2)  # Only estimators and weights now
+        self.assertIn("estimators", params)
+        self.assertIn("weights", params)
+        np.testing.assert_array_equal(params["weights"], self.weights)
+
+    def test_show_models(self):
+        """Tests the show_models method."""
+        with suppress_print():
+            self.voter_hard.show_models()
+            self.voter_hard_weighted.show_models()
+
+
 class TestModelSelectionUtils(unittest.TestCase):
     """Unit tests for the Model Selection Utility class."""
 

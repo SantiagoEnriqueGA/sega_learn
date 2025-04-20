@@ -133,6 +133,7 @@ class TestImports(unittest.TestCase):
         assert RandomUnderSampler is not None
         assert Scaler is not None
         assert VotingRegressor is not None
+        assert VotingClassifier is not None
         assert make_blobs is not None
         assert make_classification is not None
         assert make_regression is not None

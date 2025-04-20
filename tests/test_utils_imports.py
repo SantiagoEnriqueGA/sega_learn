@@ -8,8 +8,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from sega_learn.utils import *
 
 
-class TestImportsSVM(unittest.TestCase):
-    """Tests that the SVM subpackage can be imported correctly.
+class TestImportsUtils(unittest.TestCase):
+    """Tests that the Utils subpackage can be imported correctly.
 
     Methods:
     - setUpClass: Initializes a new instance of the Index class before each test method is run.
@@ -36,6 +36,7 @@ class TestImportsSVM(unittest.TestCase):
         from sega_learn.utils import RandomSearchCV as rscv
         from sega_learn.utils import RandomUnderSampler as rus
         from sega_learn.utils import Scaler as scaler
+        from sega_learn.utils import VotingClassifier as vc
         from sega_learn.utils import VotingRegressor as vr
         from sega_learn.utils import make_blobs as mkblobs
         from sega_learn.utils import make_classification as mkcls
@@ -47,6 +48,7 @@ class TestImportsSVM(unittest.TestCase):
         assert plt is not None
         assert dp is not None
         assert vr is not None
+        assert vc is not None
         assert msu is not None
         assert gscv is not None
         assert rscv is not None
