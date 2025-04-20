@@ -24,28 +24,61 @@ class RegressorTreeUtility:
         self.min_samples_split = min_samples_split
         self._n_features = n_features
 
-    def calculate_variance(self, indices):
-        """Calculate variance for the subset defined by indices."""
-        if len(indices) == 0:
+    def calculate_variance(self, indices, sample_weight=None):
+        """Calculate weighted variance for the subset defined by indices."""
+        n_indices = len(indices)
+        if n_indices == 0:
             return 0.0
-        # Directly index the original y array stored in the utility instance
-        return np.var(self._y[indices])
 
-    def calculate_leaf_value(self, indices):
-        """Calculate the value for a leaf node (mean)."""
-        if len(indices) == 0:
-            return np.nan  # Or handle appropriately
-        # Directly index the original y array stored in the utility instance
-        return np.mean(self._y[indices])
+        y_subset = self._y[indices]
+        if sample_weight is None:
+            return np.var(y_subset)
+        else:
+            # Ensure weights correspond to the subset indices
+            weights_subset = sample_weight[indices]
+            total_weight = np.sum(weights_subset)
+            if total_weight <= 0:
+                return 0.0  # Avoid division by zero
 
-    def best_split(self, indices):
+            weighted_mean = np.average(y_subset, weights=weights_subset)
+            weighted_variance = np.average(
+                (y_subset - weighted_mean) ** 2, weights=weights_subset
+            )
+            return weighted_variance
+
+    def calculate_leaf_value(self, indices, sample_weight=None):
+        """Calculate the weighted mean value for a leaf node."""
+        n_indices = len(indices)
+        if n_indices == 0:
+            return np.nan
+
+        y_subset = self._y[indices]
+        if sample_weight is None:
+            return np.mean(y_subset)
+        else:
+            weights_subset = sample_weight[indices]
+            total_weight = np.sum(weights_subset)
+            if total_weight <= 0:
+                return np.mean(
+                    y_subset
+                )  # Fallback to unweighted mean if weights sum to 0
+
+            return np.average(y_subset, weights=weights_subset)
+
+    def best_split(self, indices, sample_weight=None):
         """Finds the best split for the data subset defined by indices."""
         n_samples_node = len(indices)
         if n_samples_node < self.min_samples_split:
             return None  # Not enough samples to split
 
+        if sample_weight is None:
+            current_sample_weight = np.ones(n_samples_node)
+        else:
+            # Get weights corresponding to the current node's indices
+            current_sample_weight = sample_weight[indices]
+
         # Calculate variance of the current node using the utility's method
-        parent_variance = self.calculate_variance(indices)
+        parent_variance = self.calculate_variance(indices, sample_weight)
         if parent_variance == 0:  # Pure node already
             return None
 
@@ -89,13 +122,28 @@ class RegressorTreeUtility:
                     continue
 
                 # Calculate gain based on children's variance using the utility's method
-                var_left = self.calculate_variance(indices_left)
-                var_right = self.calculate_variance(indices_right)
+                var_left = self.calculate_variance(indices_left, sample_weight)
+                var_right = self.calculate_variance(indices_right, sample_weight)
 
-                # Weighted variance of children
+                # # Weighted variance of children
+                # child_variance = (
+                #     n_left * var_left + n_right * var_right
+                # ) / n_samples_node
+
+                # Use total weight for weighting child variances
+                total_weight_node = np.sum(current_sample_weight)
+                if total_weight_node <= 0:
+                    continue  # Should not happen if validated earlier
+
+                weight_left = np.sum(current_sample_weight[mask_left])
+                weight_right = np.sum(current_sample_weight[~mask_left])
+
+                if weight_left <= 0 or weight_right <= 0:
+                    continue  # Avoid division by zero if weights are zero
+
                 child_variance = (
-                    n_left * var_left + n_right * var_right
-                ) / n_samples_node
+                    weight_left * var_left + weight_right * var_right
+                ) / total_weight_node
 
                 # Information gain (variance reduction)
                 info_gain = parent_variance - child_variance
@@ -149,12 +197,13 @@ class RegressorTree:
         self._y = None  # Store reference to original y
         self._n_features = None
 
-    def fit(self, X, y, verbose=False):
+    def fit(self, X, y, sample_weight=None, verbose=False):
         """Fit the decision tree to the training data.
 
         Args:
             X: (array-like) - The input features.
             y: (array-like) - The target labels.
+            sample_weight: (array-like) - The sample weights (default: None).
             verbose: (bool) - If True, print detailed logs during fitting.
 
         Returns:
@@ -167,6 +216,16 @@ class RegressorTree:
         self._y = np.asarray(y)
         self._n_features = self._X.shape[1]
 
+        # Handle sample_weight
+        if sample_weight is not None and sample_weight is not False:
+            sample_weight = np.asarray(sample_weight)
+            if sample_weight.shape[0] != self._X.shape[0]:
+                raise ValueError("sample_weight must have the same length as X.")
+        else:
+            # Use equal weights if none provided
+            sample_weight = np.ones(self._X.shape[0])
+
+        # validate input data
         if self._X.shape[0] != self._y.shape[0]:
             raise ValueError("X and y must have the same number of samples.")
         elif self._X.shape[0] == 0 or self._y.shape[0] == 0:
@@ -178,7 +237,9 @@ class RegressorTree:
         )
 
         initial_indices = np.arange(self._X.shape[0])
-        self.tree = self._learn_recursive(initial_indices, depth=0)
+        self.tree = self._learn_recursive(
+            initial_indices, depth=0, sample_weight=sample_weight
+        )
 
         if verbose:
             print(f"Fitted tree with {len(X)} samples and max depth {self.max_depth}\n")
@@ -241,12 +302,13 @@ class RegressorTree:
                 warnings.warn("Right node missing/malformed.", stacklevel=2)
                 return np.nan
 
-    def _learn_recursive(self, indices, depth):
+    def _learn_recursive(self, indices, depth, sample_weight):
         """Recursive helper function for learning.
 
         Args:
             indices (array-like): The indices of the current node.
             depth (int): The current depth of the decision tree.
+            sample_weight (array-like): The sample weights for the current node.
         """
         # Check termination conditions
         # 1. Max depth reached
@@ -255,8 +317,9 @@ class RegressorTree:
         # 4. No split improves variance - checked by best_split gain > 0
 
         # Calculate leaf value first (will be used if termination condition met)
-        leaf_value = self.utility.calculate_leaf_value(indices)
+        leaf_value = self.utility.calculate_leaf_value(indices, sample_weight)
 
+        # Base cases
         if depth >= self.max_depth:
             if self.verbose:
                 print(
@@ -271,8 +334,8 @@ class RegressorTree:
                 )
             return {"value": leaf_value}
 
-        # Find the best split for the current indices
-        split_info = self.utility.best_split(indices)
+        # Find the best split for the current indices, considering sample weights
+        split_info = self.utility.best_split(indices, sample_weight)
 
         # If no good split found (includes pure nodes, min_samples, no gain)
         if split_info is None:
@@ -288,8 +351,12 @@ class RegressorTree:
             )
 
         # Recursively build left and right subtrees
-        left_subtree = self._learn_recursive(split_info["indices_left"], depth + 1)
-        right_subtree = self._learn_recursive(split_info["indices_right"], depth + 1)
+        left_subtree = self._learn_recursive(
+            split_info["indices_left"], depth + 1, sample_weight
+        )
+        right_subtree = self._learn_recursive(
+            split_info["indices_right"], depth + 1, sample_weight
+        )
 
         # Return internal node structure
         return {
