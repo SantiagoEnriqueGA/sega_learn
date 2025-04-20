@@ -44,7 +44,8 @@ td.singlecolumn { width: 100%; }
 
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
-</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+</td><td class="multicolumn"><a href="warnings.html">warnings</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor index-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
@@ -65,51 +66,47 @@ td.singlecolumn { width: 100%; }
 <td class="section-title" colspan=3>&nbsp;<br><a name="RegressorTree">class <strong>RegressorTree</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
 
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RegressorTree">RegressorTree</a>(max_depth=5)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RegressorTree">RegressorTree</a>(max_depth=5,&nbsp;min_samples_split=2)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;representing&nbsp;a&nbsp;decision&nbsp;tree&nbsp;for&nbsp;regression.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;max_depth:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;decision&nbsp;tree.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;min_samples_split:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;minimum&nbsp;number&nbsp;of&nbsp;samples&nbsp;required&nbsp;to&nbsp;split&nbsp;a&nbsp;node.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_features:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;number&nbsp;of&nbsp;features&nbsp;in&nbsp;the&nbsp;dataset.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
 &nbsp;<br>
 Methods:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RegressorTree-learn">learn</a>(X,&nbsp;y,&nbsp;par_node={},&nbsp;depth=0):&nbsp;Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;classify(record):&nbsp;Predicts&nbsp;the&nbsp;target&nbsp;value&nbsp;for&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RegressorTree-fit">fit</a>(X,&nbsp;y,&nbsp;verbose=False):&nbsp;Fits&nbsp;the&nbsp;decision&nbsp;tree&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#RegressorTree-predict">predict</a>(X):&nbsp;Predicts&nbsp;the&nbsp;target&nbsp;values&nbsp;for&nbsp;the&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_traverse_tree(x,&nbsp;node):&nbsp;Traverses&nbsp;the&nbsp;decision&nbsp;tree&nbsp;for&nbsp;a&nbsp;single&nbsp;sample&nbsp;x.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_leran_recursive(indices,&nbsp;depth):&nbsp;Recursive&nbsp;helper&nbsp;function&nbsp;for&nbsp;learning.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RegressorTree-__init__"><strong>__init__</strong></a>(self, max_depth=5)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;decision&nbsp;tree.</span></dd></dl>
+<dl><dt><a name="RegressorTree-__init__"><strong>__init__</strong></a>(self, max_depth=5, min_samples_split=2)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;decision&nbsp;tree.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;decision&nbsp;tree.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;min_samples_split&nbsp;(int):&nbsp;The&nbsp;minimum&nbsp;number&nbsp;of&nbsp;samples&nbsp;required&nbsp;to&nbsp;split&nbsp;a&nbsp;node.</span></dd></dl>
 
-<dl><dt><a name="RegressorTree-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fit&nbsp;the&nbsp;decision&nbsp;tree&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+<dl><dt><a name="RegressorTree-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;decision&nbsp;tree&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;verbose:&nbsp;(bool)&nbsp;-&nbsp;If&nbsp;True,&nbsp;print&nbsp;detailed&nbsp;logs&nbsp;during&nbsp;fitting.<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;decision&nbsp;tree.</span></dd></dl>
 
-<dl><dt><a name="RegressorTree-learn"><strong>learn</strong></a>(self, X, y, par_node=None, depth=0)</dt><dd><span class="code">Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;par_node:&nbsp;(dict)&nbsp;-&nbsp;The&nbsp;parent&nbsp;node&nbsp;of&nbsp;the&nbsp;current&nbsp;subtree&nbsp;(default:&nbsp;{}).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;depth:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;subtree&nbsp;(default:&nbsp;0).<br>
-&nbsp;<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;decision&nbsp;tree.</span></dd></dl>
-
-<dl><dt><a name="RegressorTree-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;the&nbsp;target&nbsp;value&nbsp;for&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
+<dl><dt><a name="RegressorTree-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;the&nbsp;target&nbsp;value&nbsp;for&nbsp;a&nbsp;record&nbsp;or&nbsp;batch&nbsp;of&nbsp;records&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
 &nbsp;<br>
 Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;predicted&nbsp;target&nbsp;value.</span></dd></dl>
-
-<hr>
-Static methods defined here:<br>
-<dl><dt><a name="RegressorTree-evaluate_tree"><strong>evaluate_tree</strong></a>(tree, record)</dt><dd><span class="code">Make&nbsp;a&nbsp;prediction&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;np.ndarray:&nbsp;The&nbsp;predicted&nbsp;target&nbsp;values.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -125,45 +122,26 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="RegressorTreeUtility">class <strong>RegressorTreeUtility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
 
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code">Utility&nbsp;class&nbsp;for&nbsp;computing&nbsp;variance,&nbsp;partitioning&nbsp;classes,&nbsp;and&nbsp;calculating&nbsp;information&nbsp;gain.<br>&nbsp;</span></td></tr>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RegressorTreeUtility">RegressorTreeUtility</a>(X,&nbsp;y,&nbsp;min_samples_split,&nbsp;n_features)<br>
+&nbsp;<br>
+Utility&nbsp;class&nbsp;containing&nbsp;helper&nbsp;functions&nbsp;for&nbsp;building&nbsp;the&nbsp;Regressor&nbsp;Tree.<br>
+&nbsp;<br>
+Handles&nbsp;variance&nbsp;calculation,&nbsp;leaf&nbsp;value&nbsp;calculation,&nbsp;and&nbsp;finding&nbsp;the&nbsp;best&nbsp;split.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RegressorTreeUtility-best_split"><strong>best_split</strong></a>(self, X, y)</dt><dd><span class="code">Finds&nbsp;the&nbsp;best&nbsp;attribute&nbsp;and&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;data&nbsp;based&nbsp;on&nbsp;information&nbsp;gain.<br>
+<dl><dt><a name="RegressorTreeUtility-__init__"><strong>__init__</strong></a>(self, X, y, min_samples_split, n_features)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;utility&nbsp;class&nbsp;with&nbsp;references&nbsp;to&nbsp;data&nbsp;and&nbsp;parameters.<br>
 &nbsp;<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;variable.<br>
-&nbsp;<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;A&nbsp;dictionary&nbsp;containing&nbsp;the&nbsp;best&nbsp;split&nbsp;attribute,&nbsp;split&nbsp;value,&nbsp;left&nbsp;and&nbsp;right&nbsp;subsets&nbsp;of&nbsp;X&nbsp;and&nbsp;y,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;the&nbsp;information&nbsp;gain&nbsp;achieved&nbsp;by&nbsp;the&nbsp;split.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(np.ndarray):&nbsp;Reference&nbsp;to&nbsp;the&nbsp;feature&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(np.ndarray):&nbsp;Reference&nbsp;to&nbsp;the&nbsp;target&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;min_samples_split&nbsp;(int):&nbsp;Minimum&nbsp;number&nbsp;of&nbsp;samples&nbsp;required&nbsp;to&nbsp;split&nbsp;a&nbsp;node.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_features&nbsp;(int):&nbsp;Total&nbsp;number&nbsp;of&nbsp;features&nbsp;in&nbsp;X.</span></dd></dl>
 
-<dl><dt><a name="RegressorTreeUtility-calculate_variance"><strong>calculate_variance</strong></a>(self, y)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;variance&nbsp;of&nbsp;a&nbsp;dataset.<br>
-&nbsp;<br>
-Variance&nbsp;is&nbsp;used&nbsp;as&nbsp;the&nbsp;measure&nbsp;of&nbsp;impurity&nbsp;in&nbsp;the&nbsp;case&nbsp;of&nbsp;regression.</span></dd></dl>
+<dl><dt><a name="RegressorTreeUtility-best_split"><strong>best_split</strong></a>(self, indices)</dt><dd><span class="code">Finds&nbsp;the&nbsp;best&nbsp;split&nbsp;for&nbsp;the&nbsp;data&nbsp;subset&nbsp;defined&nbsp;by&nbsp;indices.</span></dd></dl>
 
-<dl><dt><a name="RegressorTreeUtility-information_gain"><strong>information_gain</strong></a>(self, parent_variance, current_y)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;information&nbsp;gain&nbsp;from&nbsp;a&nbsp;split&nbsp;by&nbsp;subtracting&nbsp;the&nbsp;variance&nbsp;of&nbsp;child&nbsp;nodes&nbsp;from&nbsp;the&nbsp;variance&nbsp;of&nbsp;the&nbsp;parent&nbsp;node.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;parent_variance:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;precomputed&nbsp;variance&nbsp;of&nbsp;the&nbsp;parent&nbsp;node.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;current_y:&nbsp;(list&nbsp;of&nbsp;array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels&nbsp;of&nbsp;the&nbsp;child&nbsp;nodes.<br>
-&nbsp;<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;information&nbsp;gain&nbsp;from&nbsp;the&nbsp;split.</span></dd></dl>
+<dl><dt><a name="RegressorTreeUtility-calculate_leaf_value"><strong>calculate_leaf_value</strong></a>(self, indices)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;value&nbsp;for&nbsp;a&nbsp;leaf&nbsp;node&nbsp;(mean).</span></dd></dl>
 
-<dl><dt><a name="RegressorTreeUtility-partition_classes"><strong>partition_classes</strong></a>(self, X, y, split_attribute, split_val)</dt><dd><span class="code">Partitions&nbsp;the&nbsp;dataset&nbsp;into&nbsp;two&nbsp;subsets&nbsp;based&nbsp;on&nbsp;a&nbsp;given&nbsp;split&nbsp;attribute&nbsp;and&nbsp;value.<br>
-&nbsp;<br>
-Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;split_attribute:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;attribute&nbsp;to&nbsp;split&nbsp;on.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;split_val:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;attribute&nbsp;on.<br>
-&nbsp;<br>
-Returns:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X_left:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;less&nbsp;than&nbsp;or&nbsp;equal&nbsp;to&nbsp;the&nbsp;split&nbsp;value.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X_right:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;greater&nbsp;than&nbsp;the&nbsp;split&nbsp;value.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y_left:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;X_left.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y_right:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;target&nbsp;labels&nbsp;corresponding&nbsp;to&nbsp;X_right.</span></dd></dl>
+<dl><dt><a name="RegressorTreeUtility-calculate_variance"><strong>calculate_variance</strong></a>(self, indices)</dt><dd><span class="code">Calculate&nbsp;variance&nbsp;for&nbsp;the&nbsp;subset&nbsp;defined&nbsp;by&nbsp;indices.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>

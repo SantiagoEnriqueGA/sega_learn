@@ -134,10 +134,11 @@ Args:<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;array:&nbsp;An&nbsp;array&nbsp;of&nbsp;anomaly&nbsp;scores.</span></dd></dl>
 
-<dl><dt><a name="IsolationForest-fit"><strong>fit</strong></a>(self, X)</dt><dd><span class="code">Fits&nbsp;the&nbsp;isolation&nbsp;forest&nbsp;to&nbsp;the&nbsp;data.<br>
+<dl><dt><a name="IsolationForest-fit"><strong>fit</strong></a>(self, X, y=None)</dt><dd><span class="code">Fits&nbsp;the&nbsp;isolation&nbsp;forest&nbsp;to&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels&nbsp;(not&nbsp;used&nbsp;in&nbsp;this&nbsp;implementation).</span></dd></dl>
 
 <dl><dt><a name="IsolationForest-predict"><strong>predict</strong></a>(self, X, threshold=0.5)</dt><dd><span class="code">Predicts&nbsp;whether&nbsp;samples&nbsp;are&nbsp;anomalies.<br>
 &nbsp;<br>
