@@ -77,10 +77,20 @@ class ClassifierTreeUtility:
         y_right = y[~mask]
 
         # Partition weights
-        sample_weight_left = sample_weight[mask]
-        sample_weight_right = sample_weight[~mask]
+        if sample_weight is not None:
+            sample_weight_left = sample_weight[mask]
+            sample_weight_right = sample_weight[~mask]
+            return (
+                X_left,
+                X_right,
+                y_left,
+                y_right,
+                sample_weight_left,
+                sample_weight_right,
+            )
 
-        return X_left, X_right, y_left, y_right, sample_weight_left, sample_weight_right
+        else:
+            return X_left, X_right, y_left, y_right, None, None
 
     def information_gain(
         self, previous_y, current_y, sample_weight_prev=None, sample_weight_current=None

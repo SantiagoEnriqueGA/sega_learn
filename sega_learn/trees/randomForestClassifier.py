@@ -36,7 +36,7 @@ def _fit_tree(X, y, max_depth):
 
     # Fit tree on bootstrapped sample
     tree = ClassifierTree(max_depth=max_depth)
-    return tree.learn(X_sample, y_sample)
+    return tree.fit(X_sample, y_sample)
 
 
 def _classify_oob(X, trees, bootstraps):
