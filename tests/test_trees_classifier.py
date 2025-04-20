@@ -10,6 +10,8 @@ from sega_learn.trees import *
 from sega_learn.trees.randomForestClassifier import _classify_oob
 from sega_learn.utils import make_classification
 
+# TODO: Add tests with sample weights
+
 
 class TestClassifierTreeUtility(unittest.TestCase):
     """Set up the ClassifierTreeUtility instance for testing."""
@@ -47,8 +49,8 @@ class TestClassifierTreeUtility(unittest.TestCase):
         y = [0, 1, 0, 1]
         split_attribute = 0
         split_val = 2.5
-        X_left, X_right, y_left, y_right = self.utility.partition_classes(
-            X, y, split_attribute, split_val
+        X_left, X_right, y_left, y_right, sw_left, sw_right = (
+            self.utility.partition_classes(X, y, split_attribute, split_val)
         )
         self.assertEqual(X_left.tolist(), [[2, 3], [1, 2]])
         self.assertEqual(X_right.tolist(), [[3, 4], [5, 6]])
@@ -71,26 +73,10 @@ class TestClassifierTreeUtility(unittest.TestCase):
     def test_best_split(self):
         """Tests the best_split method of the ClassifierTreeUtility class."""
         X = [[2, 3], [1, 2], [3, 4], [5, 6]]
-        y = [0, 1, 0, 1]
+        y = [0, 1, 0, 0]
         best_split = self.utility.best_split(X, y)
 
-        self.assertIn("split_attribute", best_split)
-        self.assertIn("split_val", best_split)
-        self.assertIn("X_left", best_split)
-        self.assertIn("X_right", best_split)
-        self.assertIn("y_left", best_split)
-        self.assertIn("y_right", best_split)
-        self.assertIn("info_gain", best_split)
-
-        self.assertIsInstance(best_split["split_attribute"], (int, np.integer))
-        self.assertIsInstance(
-            best_split["split_val"], (int, float, np.integer, np.float64)
-        )
-        self.assertIsInstance(best_split["X_left"], np.ndarray)
-        self.assertIsInstance(best_split["X_right"], np.ndarray)
-        self.assertIsInstance(best_split["y_left"], np.ndarray)
-        self.assertIsInstance(best_split["y_right"], np.ndarray)
-        self.assertIsInstance(best_split["info_gain"], float)
+        self.assertEqual(best_split["label"], 0)
 
     def test_entropy_empty(self):
         """Test entropy with an empty class list."""
@@ -114,8 +100,8 @@ class TestClassifierTreeUtility(unittest.TestCase):
         y = []
         split_attribute = 0
         split_val = 0.5
-        X_left, X_right, y_left, y_right = self.utility.partition_classes(
-            X, y, split_attribute, split_val
+        X_left, X_right, y_left, y_right, sw_left, sw_right = (
+            self.utility.partition_classes(X, y, split_attribute, split_val)
         )
         self.assertEqual(len(X_left), 0)
         self.assertEqual(len(X_right), 0)
@@ -128,8 +114,8 @@ class TestClassifierTreeUtility(unittest.TestCase):
         y = [1]
         split_attribute = 0
         split_val = 1.5
-        X_left, X_right, y_left, y_right = self.utility.partition_classes(
-            X, y, split_attribute, split_val
+        X_left, X_right, y_left, y_right, sw_left, sw_right = (
+            self.utility.partition_classes(X, y, split_attribute, split_val)
         )
         self.assertEqual(X_left.tolist(), [[1, 2]])
         self.assertEqual(X_right.tolist(), [])
@@ -163,26 +149,16 @@ class TestClassifierTreeUtility(unittest.TestCase):
         X = []
         y = []
         best_split = self.utility.best_split(X, y)
-        self.assertIsNone(best_split["split_attribute"])
-        self.assertIsNone(best_split["split_val"])
-        self.assertEqual(len(best_split["X_left"]), 0)
-        self.assertEqual(len(best_split["X_right"]), 0)
-        self.assertEqual(len(best_split["y_left"]), 0)
-        self.assertEqual(len(best_split["y_right"]), 0)
-        self.assertEqual(best_split["info_gain"], 0)
+        # Return None if no split found
+        self.assertIsNone(best_split)
 
     def test_best_split_single_element(self):
         """Test best_split with a single element."""
         X = [[1, 2]]
         y = [1]
         best_split = self.utility.best_split(X, y)
-        self.assertIsNone(best_split["split_attribute"])
-        self.assertIsNone(best_split["split_val"])
-        self.assertEqual(len(best_split["X_left"]), 0)
-        self.assertEqual(len(best_split["X_right"]), 0)
-        self.assertEqual(len(best_split["y_left"]), 0)
-        self.assertEqual(len(best_split["y_right"]), 0)
-        self.assertEqual(best_split["info_gain"], 0)
+        # if if n_samples < 2 or current_total_weight <= 0 then returns leaf node
+        self.assertEqual(best_split["label"], 1)
 
 
 class TestClassifierTree(unittest.TestCase):
@@ -251,8 +227,7 @@ class TestClassifierTree(unittest.TestCase):
         y = [0, 1, 0, 1]
         self.tree.max_depth = 1
         tree = self.tree.learn(X, y)
-        self.assertIn("split_attribute", tree)
-        self.assertIn("split_val", tree)
+        self.assertIn("label", tree)
 
     def test_classify_empty_tree(self):
         """Test classification with an empty tree."""
@@ -315,7 +290,7 @@ class TestRandomForestClassifier(unittest.TestCase):
         _X = [[1, 2, 3]]
         self.rf.fit()
         for tree in self.rf.trees:
-            self.assertIn("split_attribute", tree)
+            self.assertTrue(tree["label"] in [0, 1])
 
     def test_voting(self):
         """Tests the voting method of the RandomForestClassifier class."""

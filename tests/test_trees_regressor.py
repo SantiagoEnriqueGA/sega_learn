@@ -45,6 +45,8 @@ N_FEATURES = 4
 RANDOM_STATE = 42
 MIN_SAMPLES_SPLIT = 5
 
+# TODO: Add tests with sample weights
+
 
 class TestRegressorTreeUtility(unittest.TestCase):
     """Tests for the updated RegressorTreeUtility class."""
