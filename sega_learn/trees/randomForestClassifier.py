@@ -18,13 +18,15 @@ from sega_learn.utils.metrics import Metrics
 from .treeClassifier import ClassifierTree
 
 
-def _fit_tree(X, y, max_depth):
+def _fit_tree(X, y, max_depth, min_samples_split, sample_weight=None):
     """Helper function for parallel tree fitting. Fits a single tree on a bootstrapped sample.
 
     Args:
         X: (array-like) - The input features.
         y: (array-like) - The target labels.
         max_depth: (int) - The maximum depth of the tree.
+        min_samples_split: (int) - The minimum samples required to split a node.
+        sample_weight: (array-like or None) - The weights for each sample.
 
     Returns:
         ClassifierTree: A fitted tree object.
@@ -35,8 +37,8 @@ def _fit_tree(X, y, max_depth):
     y_sample = y[indices]
 
     # Fit tree on bootstrapped sample
-    tree = ClassifierTree(max_depth=max_depth)
-    return tree.learn(X_sample, y_sample)
+    tree = ClassifierTree(max_depth=max_depth, min_samples_split=min_samples_split)
+    return tree.fit(X_sample, y_sample, sample_weight)
 
 
 def _classify_oob(X, trees, bootstraps):
@@ -101,11 +103,19 @@ class RandomForestClassifier:
     """
 
     def __init__(
-        self, forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None
+        self,
+        forest_size=100,
+        max_depth=10,
+        min_samples_split=2,
+        n_jobs=-1,
+        random_seed=None,
+        X=None,
+        y=None,
     ):
         """Initializes the RandomForest object."""
         self.n_estimators = forest_size
         self.max_depth = max_depth
+        self.min_samples_split = min_samples_split
         self.n_jobs = n_jobs if n_jobs > 0 else max(1, multiprocessing.cpu_count())
         self.random_state = random_seed
         self.trees = []
@@ -117,7 +127,17 @@ class RandomForestClassifier:
             self.X = X
         self.y = y
 
-    def fit(self, X=None, y=None, verbose=False):
+    def get_params(self):
+        """Get the parameters of the RandomForestClassifier."""
+        return {
+            "forest_size": self.n_estimators,
+            "max_depth": self.max_depth,
+            "min_samples_split": self.min_samples_split,
+            "n_jobs": self.n_jobs,
+            "random_seed": self.random_state,
+        }
+
+    def fit(self, X=None, y=None, sample_weight=None, verbose=False):
         """Fit the random forest with parallel processing."""
         if X is None and self.X is None:
             raise ValueError(
@@ -142,12 +162,23 @@ class RandomForestClassifier:
         if X.size == 0 or y.size == 0:
             raise ValueError("X and y must not be empty.")
 
+        # Sample weight handling
+        if sample_weight is None:
+            sample_weight = np.ones(len(y), dtype=np.float64)
+        else:
+            sample_weight = np.asarray(sample_weight, dtype=np.float64)
+            if sample_weight.shape[0] != len(y):
+                raise ValueError("sample_weight length mismatch.")
+
         if verbose:
             print("Fitting trees in parallel...")
 
         # Fit trees in parallel
         self.trees = Parallel(n_jobs=self.n_jobs)(
-            delayed(_fit_tree)(X, y, self.max_depth) for _ in range(self.n_estimators)
+            delayed(_fit_tree)(
+                X, y, self.max_depth, self.min_samples_split, sample_weight
+            )
+            for _ in range(self.n_estimators)
         )
 
         # Generate bootstrapped indices for OOB scoring
@@ -208,6 +239,64 @@ class RandomForestClassifier:
             predictions.append(majority_class)
 
         return predictions
+
+    def predict_proba(self, X):
+        """Predict class probabilities for the provided data.
+
+        Args:
+            X (array-like): The input features.
+
+        Returns:
+            np.ndarray: A 2D array where each row represents the probability distribution
+                        over the classes for a record.
+        """
+
+        def traverse_tree(tree, record):
+            """Helper function to traverse the tree and collect class probabilities."""
+            if "label" in tree:
+                # If it's a leaf node, return the probability as 1 for the majority class
+                return {tree["label"]: 1.0}
+
+            # Traverse left or right subtree based on the split condition
+            if record[tree["split_attribute"]] <= tree["split_val"]:
+                return traverse_tree(tree["left"], record)
+            else:
+                return traverse_tree(tree["right"], record)
+
+        X = np.asarray(X)
+
+        # Validate input dimensions
+        if self.X is not None and X.shape[1] != self.X.shape[1]:
+            raise ValueError(
+                f"Input data must have {self.X.shape[1]} features, but got {X.shape[1]}."
+            )
+
+        # Initialize an array to store the sum of probabilities for each class
+        n_classes = len(np.unique(self.y))
+        probabilities = np.zeros((X.shape[0], n_classes))
+
+        # Aggregate probabilities from all trees
+        for tree in self.trees:
+            for _i, record in enumerate(X):
+                # Traverse the tree to get class probabilities for the record
+                tree_probs = traverse_tree(tree, record)
+
+                # Convert probabilities to a numpy array
+                tree_probs = np.array(
+                    [tree_probs.get(cls, 0) for cls in range(n_classes)]
+                )
+
+                # Normalize the probabilities to sum to 1
+                tree_probs /= np.sum(tree_probs)
+
+            # Sum probabilities for each class
+            for i in range(X.shape[0]):
+                probabilities[i] += tree_probs
+
+        # Normalize probabilities to ensure they sum to 1 for each record
+        probabilities /= len(self.trees)
+
+        return probabilities
 
     def get_stats(self, verbose=False):
         """Return the evaluation metrics."""

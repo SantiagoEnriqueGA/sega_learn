@@ -9,7 +9,14 @@ from .treeRegressor import RegressorTree
 
 
 def _fit_single_tree(
-    X, y, max_depth, min_samples_split, tree_index, random_state_base, verbose
+    X,
+    y,
+    max_depth,
+    min_samples_split,
+    sample_weight,
+    tree_index,
+    random_state_base,
+    verbose,
 ):
     """Helper function for parallel tree fitting. Fits a single tree on abootstrapped sample.
 
@@ -18,6 +25,7 @@ def _fit_single_tree(
         y (np.ndarray): The target labels.
         max_depth (int): The maximum depth of the tree.
         min_samples_split (int): The minimum samples required to split a node.
+        sample_weight (array-like): Sample weights for each instance in X.
         tree_index (int): Index of the tree for seeding.
         random_state_base (int): Base random seed.
         verbose (bool): If True, print detailed logs during fitting.
@@ -37,7 +45,7 @@ def _fit_single_tree(
 
     # Instantiate and fit the tree
     tree = RegressorTree(max_depth=max_depth, min_samples_split=min_samples_split)
-    tree.fit(X_sample, y_sample, verbose)  # Use the fit method
+    tree.fit(X_sample, y_sample, sample_weight, verbose)  # Use the fit method
 
     return tree_index, tree, indices  # Return the instance and indices
 
@@ -85,12 +93,27 @@ class RandomForestRegressor:
         self.X = X
         self.y = y
 
-    def fit(self, X=None, y=None, verbose=False):
+    def get_params(self):
+        """Get the parameters of the Random Forest Regressor.
+
+        Returns:
+            dict: A dictionary containing the parameters of the model.
+        """
+        return {
+            "forest_size": self.n_estimators,
+            "max_depth": self.max_depth,
+            "min_samples_split": self.min_samples_split,
+            "n_jobs": self.n_jobs,
+            "random_seed": self.random_state,
+        }
+
+    def fit(self, X=None, y=None, sample_weight=None, verbose=False):
         """Fit the random forest to the training data X and y.
 
         Args:
             X (array-like): Training input features of shape (n_samples, n_features).
             y (array-like): Training target values of shape (n_samples,).
+            sample_weight (array-like): Sample weights for each instance in X.
             verbose (bool): Whether to print progress messages.
 
         Returns:
@@ -118,6 +141,14 @@ class RandomForestRegressor:
         if X.shape[0] == 0:
             raise ValueError("X and y must not be empty.")
 
+        # Sample weight handling
+        if sample_weight is None:
+            sample_weight = np.ones(len(y), dtype=np.float64)
+        else:
+            sample_weight = np.asarray(sample_weight, dtype=np.float64)
+            if sample_weight.shape[0] != len(y):
+                raise ValueError("sample_weight length mismatch.")
+
         self._X_fit_shape = X.shape
 
         if verbose:
@@ -133,6 +164,7 @@ class RandomForestRegressor:
                 y,
                 self.max_depth,
                 self.min_samples_split,
+                sample_weight,
                 i,
                 self.random_state,
                 verbose,

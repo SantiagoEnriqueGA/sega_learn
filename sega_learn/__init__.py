@@ -52,6 +52,8 @@ from .svm import (
     OneClassSVM,
 )
 from .trees import (
+    AdaBoostClassifier,
+    AdaBoostRegressor,
     ClassifierTree,
     ClassifierTreeUtility,
     GradientBoostedClassifier,
@@ -138,6 +140,8 @@ __all__ = [
     "IsolationTree",
     "IsolationForest",
     "IsolationUtils",
+    "AdaBoostClassifier",
+    "AdaBoostRegressor",
     # Neural Networks
     "Activation",
     "AdadeltaOptimizer",

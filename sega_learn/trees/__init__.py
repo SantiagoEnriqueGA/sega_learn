@@ -1,3 +1,5 @@
+from .adaBoostClassifier import AdaBoostClassifier
+from .adaBoostRegressor import AdaBoostRegressor
 from .gradientBoostedClassifier import GradientBoostedClassifier
 from .gradientBoostedRegressor import GradientBoostedRegressor
 from .isolationForest import IsolationForest, IsolationTree, IsolationUtils
@@ -18,4 +20,6 @@ __all__ = [
     "IsolationForest",
     "IsolationTree",
     "IsolationUtils",
+    "AdaBoostClassifier",
+    "AdaBoostRegressor",
 ]

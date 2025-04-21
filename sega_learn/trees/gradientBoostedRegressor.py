@@ -58,7 +58,17 @@ class GradientBoostedRegressor:
         if y is not None:
             self.y = np.asarray(y).astype(float)  # Ensure y is float for residuals
 
-    def fit(self, X=None, y=None, verbose=0):
+    def get_params(self):
+        """Get the parameters of the GradientBoostedRegressor."""
+        return {
+            "num_trees": self.n_estimators,
+            "max_depth": self.max_depth,
+            "learning_rate": self.learning_rate,
+            "min_samples_split": self.min_samples_split,
+            "random_seed": self.random_state,
+        }
+
+    def fit(self, X=None, y=None, sample_weight=None, verbose=0):
         """Fits the gradient boosted decision tree regressor to the training data.
 
         This method trains the ensemble of decision trees by iteratively fitting each tree to the residuals
@@ -68,6 +78,7 @@ class GradientBoostedRegressor:
         Args:
             X (array-like): Training input features of shape (n_samples, n_features).
             y (array-like): Training target values of shape (n_samples,).
+            sample_weight (array-like): Sample weights for each instance (not used in this implementation).
             verbose (int): Whether to print progress messages (e.g., residuals). 0 for no output, 1 for output, >1 for detailed output
 
         Returns:
@@ -94,6 +105,14 @@ class GradientBoostedRegressor:
         if X.shape[0] == 0:
             raise ValueError("X and y must not be empty.")
 
+        # Sample weight handling
+        if sample_weight is None:
+            sample_weight = np.ones(len(y), dtype=np.float64)
+        else:
+            sample_weight = np.asarray(sample_weight, dtype=np.float64)
+            if sample_weight.shape[0] != len(y):
+                raise ValueError("sample_weight length mismatch.")
+
         self._X_fit_shape = X.shape
         n_samples = X.shape[0]
 
@@ -117,6 +136,7 @@ class GradientBoostedRegressor:
             tree.fit(
                 X,
                 residuals,
+                sample_weight,
                 verbose=True if verbose > 1 else False,  # noqa: SIM210
             )  # Fit tree on current residuals
 

@@ -7,11 +7,9 @@ import numpy as np
 # Ensure the module path is correct
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-# Import necessary classes from your library
-# Assuming your structure is sega_learn/trees/treeRegressor.py etc.
 from sega_learn.trees import *
 
-# Import utility functions if available (adjust path if necessary)
+# Import utility functions if available
 try:
     from tests.utils import suppress_print, synthetic_data_regression
 except ImportError:
@@ -70,12 +68,85 @@ class TestRegressorTreeUtility(unittest.TestCase):
         )
         self.all_indices = np.arange(self.X.shape[0])
 
+    def test_init(self):
+        """Tests the initialization of the RegressorTreeUtility class."""
+        self.assertEqual(self.utility.min_samples_split, MIN_SAMPLES_SPLIT)
+        self.assertIsInstance(self.utility._X, np.ndarray)
+        self.assertIsInstance(self.utility._y, np.ndarray)
+        self.assertEqual(self.utility._X.shape, (N_SAMPLES, N_FEATURES))
+        self.assertEqual(self.utility._y.shape, (N_SAMPLES,))
+
     def test_calculate_variance(self):
         """Tests calculate_variance with all indices."""
         indices = self.all_indices
         expected_variance = np.var(self.y[indices])
         calculated_variance = self.utility.calculate_variance(indices)
         self.assertAlmostEqual(calculated_variance, expected_variance, places=6)
+
+    def test_calculate_variance_invalid_indices(self):
+        """Tests calculate_variance with invalid indices."""
+        indices = np.array([0, 1, 2, 3, 4, N_SAMPLES + 1])
+        with self.assertRaises(IndexError):
+            self.utility.calculate_variance(indices)
+
+    def test_calculate_variance_single_index(self):
+        """Tests calculate_variance with a single index."""
+        indices = np.array([0])
+        expected_variance = 0.0
+        calculated_variance = self.utility.calculate_variance(indices)
+        self.assertEqual(calculated_variance, expected_variance)
+
+    def test_calculate_variance_multiple_indices(self):
+        """Tests calculate_variance with multiple indices."""
+        indices = np.array([0, 1, 2, 3, 4])
+        if len(indices) > N_SAMPLES:
+            indices = indices[:N_SAMPLES]
+        expected_variance = np.var(self.y[indices])
+        calculated_variance = self.utility.calculate_variance(indices)
+        self.assertAlmostEqual(calculated_variance, expected_variance, places=6)
+
+    def test_calculate_variance_sample_weights(self):
+        """Tests calculate_variance with sample weights."""
+        indices = np.array([0, 1, 2, 3, 4])
+        sample_weights = np.array([1, 2, 3, 4, 5])
+        if len(indices) > N_SAMPLES:
+            indices = indices[:N_SAMPLES]
+        calculated_variance = self.utility.calculate_variance(indices, sample_weights)
+        self.assertGreater(calculated_variance, 0)  # Variance should be positive
+
+    def test_calculate_variance_invalid_sample_weights(self):
+        """Tests calculate_variance with invalid sample weights."""
+        indices = np.array([0, 1, 2, 3, 4])
+        sample_weights = np.array([1, 2])
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.calculate_variance(indices, sample_weights)
+
+    def test_calculate_variance_non_numeric_sample_weights(self):
+        """Tests calculate_variance with non-numeric sample weights."""
+        indices = np.array([0, 1, 2, 3, 4])
+        sample_weights = np.array(["a", "b", "c", "d", "e"])
+        with self.assertRaises(TypeError):
+            self.utility.calculate_variance(indices, sample_weights)
+
+    def test_calculate_variance_non_numeric_indices(self):
+        """Tests calculate_variance with non-numeric indices."""
+        indices = np.array(["a", "b", "c", "d", "e"])
+        with self.assertRaises((TypeError, IndexError)):
+            self.utility.calculate_variance(indices)
+
+    def test_calculate_variance_sample_weights_shape_mismatch(self):
+        """Tests calculate_variance with sample weights of different shape."""
+        indices = np.array([0, 1, 2, 3, 4])
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.calculate_variance(indices, sample_weights)
+
+    def test_calculate_variance_sample_weights_empty(self):
+        """Tests calculate_variance with empty sample weights."""
+        indices = np.array([0, 1, 2, 3, 4])
+        sample_weights = np.array([])
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.calculate_variance(indices, sample_weights)
 
     def test_calculate_variance_subset(self):
         """Tests calculate_variance with a subset of indices."""
@@ -125,6 +196,58 @@ class TestRegressorTreeUtility(unittest.TestCase):
         indices = np.array([], dtype=int)
         calculated_value = self.utility.calculate_leaf_value(indices)
         self.assertTrue(np.isnan(calculated_value))
+
+    def test_calculate_leaf_value_single_index(self):
+        """Tests calculate_leaf_value with a single index."""
+        indices = np.array([0])
+        expected_value = self.y[0]
+        calculated_value = self.utility.calculate_leaf_value(indices)
+        self.assertEqual(calculated_value, expected_value)
+
+    def test_calculate_leaf_value_invalid_indices(self):
+        """Tests calculate_leaf_value with invalid indices."""
+        indices = np.array([0, 1, 2, 3, 4, N_SAMPLES + 1])
+        with self.assertRaises(IndexError):
+            self.utility.calculate_leaf_value(indices)
+
+    def test_calculate_leaf_value_non_numeric_indices(self):
+        """Tests calculate_leaf_value with non-numeric indices."""
+        indices = np.array(["a", "b", "c", "d", "e"])
+        with self.assertRaises((TypeError, IndexError)):
+            self.utility.calculate_leaf_value(indices)
+
+    def test_calculate_leaf_value_sample_weights(self):
+        """Tests calculate_leaf_value with sample weights."""
+        indices = np.array([0, 1, 2, 3, 4])
+        sample_weights = np.array([1, 2, 3, 4, 5])
+        if len(indices) > N_SAMPLES:
+            indices = indices[:N_SAMPLES]
+        calculated_value = self.utility.calculate_leaf_value(indices, sample_weights)
+        expected_value = np.average(
+            self.y[indices], weights=sample_weights[: len(indices)]
+        )
+        self.assertAlmostEqual(calculated_value, expected_value, places=6)
+
+    def test_calculate_leaf_value_invalid_sample_weights(self):
+        """Tests calculate_leaf_value with invalid sample weights."""
+        indices = np.array([0, 1, 2, 3, 4])
+        sample_weights = np.array([1, 2])
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.calculate_leaf_value(indices, sample_weights)
+
+    def test_calculate_leaf_value_non_numeric_sample_weights(self):
+        """Tests calculate_leaf_value with non-numeric sample weights."""
+        indices = np.array([0, 1, 2, 3, 4])
+        sample_weights = np.array(["a", "b", "c", "d", "e"])
+        with self.assertRaises(TypeError):
+            self.utility.calculate_leaf_value(indices, sample_weights)
+
+    def test_calculate_leaf_value_sample_weights_shape_mismatch(self):
+        """Tests calculate_leaf_value with sample weights of different shape."""
+        indices = np.array([0, 1, 2, 3, 4])
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.calculate_leaf_value(indices, sample_weights)
 
     def test_best_split(self):
         """Tests the best_split method returns the correct structure."""
@@ -180,6 +303,108 @@ class TestRegressorTreeUtility(unittest.TestCase):
         if len(indices) > 0:  # Only run if we can actually select fewer samples
             best_split = self.utility.best_split(indices)
             self.assertIsNone(best_split)
+
+    def test_best_split_single_index(self):
+        """Tests best_split with a single index."""
+        indices = np.array([0])
+        best_split = self.utility.best_split(indices)
+        self.assertIsNone(best_split)
+
+    def test_best_split_single_value(self):
+        """Tests best_split with a single value dataset."""
+        X_single = self.X[0:1, :]
+        y_single = self.y[0:1]
+        utility_single = RegressorTreeUtility(X_single, y_single, 2, 2)
+        indices = np.array([0])
+        best_split = utility_single.best_split(indices)
+        self.assertIsNone(best_split)
+
+    def test_best_split_non_numeric_indices(self):
+        """Tests best_split with non-numeric indices."""
+        indices = np.array(["a", "b", "c", "d", "e"])
+        with self.assertRaises((TypeError, IndexError)):
+            self.utility.best_split(indices)
+
+    def test_best_split_invalid_indices(self):
+        """Tests best_split with invalid indices."""
+        indices = np.array([0, 1, 2, 3, 4, N_SAMPLES + 1])
+        with self.assertRaises(IndexError):
+            self.utility.best_split(indices)
+
+    def test_best_split_sample_weights(self):
+        """Tests best_split with sample weights."""
+        indices = self.all_indices
+        sample_weights = np.random.rand(len(indices))  # Random weights for testing
+        best_split = self.utility.best_split(indices, sample_weights)
+
+        if best_split is not None:
+            self.assertIsInstance(best_split, dict)
+            self.assertIn("feature_idx", best_split)
+            self.assertIn("threshold", best_split)
+            self.assertIn("indices_left", best_split)
+            self.assertIn("indices_right", best_split)
+            self.assertIn("info_gain", best_split)
+            self.assertGreater(best_split["info_gain"], 0)
+
+            left_set = set(best_split["indices_left"])
+            right_set = set(best_split["indices_right"])
+            original_set = set(indices)
+            self.assertEqual(left_set.union(right_set), original_set)
+            self.assertTrue(left_set.isdisjoint(right_set))
+            self.assertGreater(len(left_set), 0)
+            self.assertGreater(len(right_set), 0)
+        else:
+            self.assertIsNone(best_split)  # Handle case where no split is found
+
+    def test_best_split_invalid_sample_weights(self):
+        """Tests best_split with invalid sample weights."""
+        indices = self.all_indices
+        sample_weights = np.array([1, 2])
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.best_split(indices, sample_weights)
+
+    def test_best_split_non_numeric_sample_weights(self):
+        """Tests best_split with non-numeric sample weights."""
+        indices = self.all_indices
+        sample_weights = np.array(["a", "b", "c", "d", "e"])
+        with self.assertRaises((TypeError, IndexError)):
+            self.utility.best_split(indices, sample_weights)
+
+    def test_best_split_sample_weights_shape_mismatch(self):
+        """Tests best_split with sample weights of different shape."""
+        indices = self.all_indices
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.best_split(indices, sample_weights)
+
+    def test_best_split_sample_weights_empty(self):
+        """Tests best_split with empty sample weights."""
+        indices = self.all_indices
+        sample_weights = np.array([])
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.best_split(indices, sample_weights)
+
+    def test_best_split_min_samples_split(self):
+        """Tests best_split with min_samples_split."""
+        indices = self.all_indices[: self.utility.min_samples_split - 1]
+        best_split = self.utility.best_split(indices)
+        self.assertIsNone(best_split)
+
+    def test_best_split_min_samples_split_large(self):
+        """Tests best_split with a large min_samples_split."""
+        indices = self.all_indices[: self.utility.min_samples_split + 1]
+        best_split = self.utility.best_split(indices)
+        self.assertIsNotNone(best_split)
+
+    def test_best_split_single_value_indices(self):
+        """Tests best_split with indices pointing to the same value."""
+        # Create data where some values are identical
+        X_const, y_const = synthetic_data_regression(n_samples=10, n_features=2)
+        y_const[:5] = 5.0
+        utility_const = RegressorTreeUtility(X_const, y_const, 2, 2)
+        indices = np.arange(5)
+        best_split = utility_const.best_split(indices)
+        self.assertIsNone(best_split)  # No split should be found
 
 
 class TestRegressorTree(unittest.TestCase):
@@ -250,6 +475,38 @@ class TestRegressorTree(unittest.TestCase):
         # Children should be leaf nodes
         self.assertIn("value", self.tree.tree["left"])
         self.assertIn("value", self.tree.tree["right"])
+
+    def test_fit_sample_weights(self):
+        """Tests fitting with sample weights."""
+        sample_weights = np.random.rand(self.X.shape[0])
+        self.tree.fit(self.X, self.y, sample_weight=sample_weights)
+        # Check if tree structure is still valid
+        self.assertIsInstance(self.tree.tree, dict)
+        self.assertGreater(len(self.tree.tree), 0)
+
+    def test_fit_invalid_sample_weights(self):
+        """Tests fitting with invalid sample weights."""
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.tree.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_non_numeric_sample_weights(self):
+        """Tests fitting with non-numeric sample weights."""
+        sample_weights = np.array(["a", "b", "c"])
+        with self.assertRaises((ValueError, IndexError)):
+            self.tree.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_shape_mismatch(self):
+        """Tests fitting with sample weights of different shape."""
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.tree.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_empty(self):
+        """Tests fitting with empty sample weights."""
+        sample_weights = np.array([])
+        with self.assertRaises((ValueError, IndexError)):
+            self.tree.fit(self.X, self.y, sample_weight=sample_weights)
 
     def test_predict_before_fit(self):
         """Tests prediction before fitting."""
@@ -343,6 +600,43 @@ class TestRandomForestRegressor(unittest.TestCase):
         self.rf.fit(X_single, y_single)
         self.assertEqual(len(self.rf.trees), self.rf.n_estimators)
         self.assertIsInstance(self.rf.trees[0], RegressorTree)
+
+    def test_fit_sample_weights(self):
+        """Tests fitting with sample weights."""
+        sample_weights = np.random.rand(self.X.shape[0])
+        self.rf.fit(self.X, self.y, sample_weight=sample_weights)
+        # Check if trees seem fitted (have structure)
+        self.assertEqual(len(self.rf.trees), self.rf.n_estimators)
+
+    def test_fit_invalid_sample_weights(self):
+        """Tests fitting with invalid sample weights."""
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_non_numeric_sample_weights(self):
+        """Tests fitting with non-numeric sample weights."""
+        sample_weights = np.array(["a", "b", "c"])
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_shape_mismatch(self):
+        """Tests fitting with sample weights of different shape."""
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_empty(self):
+        """Tests fitting with empty sample weights."""
+        sample_weights = np.array([])
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_none(self):
+        """Tests fitting with None sample weights."""
+        self.rf.fit(self.X, self.y, sample_weight=None)
+        # Check if trees seem fitted (have structure)
+        self.assertEqual(len(self.rf.trees), self.rf.n_estimators)
 
     def test_predict_before_fit(self):
         """Tests predict before fitting."""
@@ -454,6 +748,43 @@ class TestGradientBoostedRegressor(unittest.TestCase):
         self.assertEqual(len(self.gbr.trees), self.gbr.n_estimators)
         self.assertIsInstance(self.gbr.trees[0], RegressorTree)
         self.assertAlmostEqual(self.gbr.initial_prediction_, y_single[0])
+
+    def test_fit_sample_weights(self):
+        """Tests fitting with sample weights."""
+        sample_weights = np.random.rand(self.X.shape[0])
+        self.gbr.fit(self.X, self.y, sample_weight=sample_weights)
+        # Check if trees seem fitted (have structure)
+        self.assertEqual(len(self.gbr.trees), self.gbr.n_estimators)
+
+    def test_fit_invalid_sample_weights(self):
+        """Tests fitting with invalid sample weights."""
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.gbr.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_non_numeric_sample_weights(self):
+        """Tests fitting with non-numeric sample weights."""
+        sample_weights = np.array(["a", "b", "c"])
+        with self.assertRaises((ValueError, IndexError)):
+            self.gbr.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_shape_mismatch(self):
+        """Tests fitting with sample weights of different shape."""
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.gbr.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_empty(self):
+        """Tests fitting with empty sample weights."""
+        sample_weights = np.array([])
+        with self.assertRaises((ValueError, IndexError)):
+            self.gbr.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_none(self):
+        """Tests fitting with None sample weights."""
+        self.gbr.fit(self.X, self.y, sample_weight=None)
+        # Check if trees seem fitted (have structure)
+        self.assertEqual(len(self.gbr.trees), self.gbr.n_estimators)
 
     def test_predict_before_fit(self):
         """Tests predict before fitting."""

@@ -80,6 +80,16 @@ class GradientBoostedClassifier:
         if y is not None:
             self.y = np.asarray(y).astype(float)  # Ensure y is float for residuals
 
+    def get_params(self):
+        """Get the parameters of the GradientBoostedClassifier."""
+        return {
+            "n_estimators": self.n_estimators,
+            "learning_rate": self.learning_rate,
+            "max_depth": self.max_depth,
+            "min_samples_split": self.min_samples_split,
+            "random_seed": self.random_state,
+        }
+
     def _validate_input(self, X, y):
         """Validates input data X and y."""
         if not isinstance(X, np.ndarray):
@@ -128,12 +138,13 @@ class GradientBoostedClassifier:
             self.init_estimator_ = np.log(priors)
             # Center log-odds so they sum approximately to 0? Not strictly necessary due to softmax.
 
-    def fit(self, X=None, y=None, verbose=0):
+    def fit(self, X=None, y=None, sample_weight=None, verbose=0):
         """Fits the gradient boosted classifier to the training data.
 
         Args:
             X (array-like): Training input features of shape (n_samples, n_features).
             y (array-like): Training target class labels of shape (n_samples,).
+            sample_weight (array-like, optional): Sample weights for the training data.
             verbose (int): Controls the verbosity of the fitting process.
                            0 for no output, 1 for basic output.
 
@@ -155,6 +166,14 @@ class GradientBoostedClassifier:
         X, y = self._validate_input(X, y)
         self._X_fit_shape = X.shape
         n_samples = X.shape[0]
+
+        # Sample weight handling
+        if sample_weight is None:
+            sample_weight = np.ones(len(y), dtype=np.float64)
+        else:
+            sample_weight = np.asarray(sample_weight, dtype=np.float64)
+            if sample_weight.shape[0] != len(y):
+                raise ValueError("sample_weight length mismatch.")
 
         self._init_predict(y)  # Determine classes, n_classes, loss, init_estimator_
 
@@ -194,7 +213,7 @@ class GradientBoostedClassifier:
                 tree = RegressorTree(
                     max_depth=self.max_depth, min_samples_split=self.min_samples_split
                 )
-                tree.fit(X, residuals)
+                tree.fit(X, residuals, sample_weight=sample_weight)
 
                 # Get leaf values (updates for log-odds)
                 update = tree.predict(X)

@@ -23,6 +23,11 @@ class TestClassifierTreeUtility(unittest.TestCase):
         """Set up the ClassifierTreeUtility instance for testing."""
         self.utility = ClassifierTreeUtility()
 
+    def test_init(self):
+        """Tests the initialization of the ClassifierTreeUtility class."""
+        self.assertIsInstance(self.utility, ClassifierTreeUtility)
+        self.assertEqual(self.utility.min_samples_split, 2)
+
     def test_entropy(self):
         """Tests the entropy method of the ClassifierTreeUtility class."""
         class_y = [0, 0, 1, 1, 1, 1]
@@ -41,19 +46,123 @@ class TestClassifierTreeUtility(unittest.TestCase):
             self.utility.entropy(class_y), expected_entropy, places=5
         )
 
+    def test_entropy_with_empty_list(self):
+        """Tests the entropy method with an empty list."""
+        class_y = []
+        expected_entropy = 0.0
+        self.assertAlmostEqual(
+            self.utility.entropy(class_y), expected_entropy, places=5
+        )
+
+    def test_entropy_with_single_element(self):
+        """Tests the entropy method with a single element."""
+        class_y = [1]
+        expected_entropy = 0.0
+        self.assertAlmostEqual(
+            self.utility.entropy(class_y), expected_entropy, places=5
+        )
+
+    def test_entropy_with_two_classes(self):
+        """Tests the entropy method with two classes."""
+        class_y = [0, 1, 0, 1, 0, 1]
+        expected_entropy = 1.0
+        self.assertAlmostEqual(
+            self.utility.entropy(class_y), expected_entropy, places=5
+        )
+
+    def test_entropy_with_sample_weights(self):
+        """Tests the entropy method with sample weights."""
+        class_y = [0, 1, 0, 1, 0, 1]
+        sample_weights = [1, 2, 1, 2, 1, 2]
+        expected_entropy = 0.9182958340544867  # Calculated manually
+        self.assertAlmostEqual(
+            self.utility.entropy(class_y, sample_weights), expected_entropy, places=5
+        )
+
+    def test_entropy_with_sample_weights_empty(self):
+        """Tests the entropy method with empty sample weights."""
+        class_y = [0, 1, 0, 1, 0, 1]
+        sample_weights = []
+        with self.assertRaises(ValueError):
+            self.utility.entropy(class_y, sample_weights)
+
+    def test_entropy_with_sample_weights_different_length(self):
+        """Tests the entropy method with sample weights of different length."""
+        class_y = [0, 1, 0, 1, 0, 1]
+        sample_weights = [1, 2]
+        with self.assertRaises(ValueError):
+            self.utility.entropy(class_y, sample_weights)
+
+    def test_entropy_with_sample_weights_single_class(self):
+        """Tests the entropy method with sample weights for a single class."""
+        class_y = [0, 0, 0, 0, 0, 0]
+        sample_weights = [1, 2, 3, 4, 5, 6]
+        expected_entropy = 0.0
+        self.assertAlmostEqual(
+            self.utility.entropy(class_y, sample_weights), expected_entropy, places=5
+        )
+
+    def test_entropy_with_sample_weights_single_element(self):
+        """Tests the entropy method with sample weights for a single element."""
+        class_y = [1]
+        sample_weights = [1]
+        expected_entropy = 0.0
+        self.assertAlmostEqual(
+            self.utility.entropy(class_y, sample_weights), expected_entropy, places=5
+        )
+
     def test_partition_classes(self):
         """Tests the partition_classes method of the ClassifierTreeUtility class."""
         X = [[2, 3], [1, 2], [3, 4], [5, 6]]
         y = [0, 1, 0, 1]
         split_attribute = 0
         split_val = 2.5
-        X_left, X_right, y_left, y_right = self.utility.partition_classes(
-            X, y, split_attribute, split_val
+        X_left, X_right, y_left, y_right, sw_left, sw_right = (
+            self.utility.partition_classes(X, y, split_attribute, split_val)
         )
         self.assertEqual(X_left.tolist(), [[2, 3], [1, 2]])
         self.assertEqual(X_right.tolist(), [[3, 4], [5, 6]])
         self.assertEqual(y_left.tolist(), [0, 1])
         self.assertEqual(y_right.tolist(), [0, 1])
+
+    def test_partition_classes_with_sample_weights(self):
+        """Tests the partition_classes method with sample weights."""
+        X = [[2, 3], [1, 2], [3, 4], [5, 6]]
+        y = [0, 1, 0, 1]
+        sample_weights = [1, 2, 3, 4]
+        split_attribute = 0
+        split_val = 2.5
+        X_left, X_right, y_left, y_right, sw_left, sw_right = (
+            self.utility.partition_classes(
+                X, y, split_attribute, split_val, sample_weights
+            )
+        )
+        self.assertEqual(sw_left.tolist(), [1, 2])
+        self.assertEqual(sw_right.tolist(), [3, 4])
+
+    def test_partition_classes_with_empty_sample_weights(self):
+        """Tests the partition_classes method with empty sample weights."""
+        X = [[2, 3], [1, 2], [3, 4], [5, 6]]
+        y = [0, 1, 0, 1]
+        sample_weights = []
+        split_attribute = 0
+        split_val = 2.5
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.partition_classes(
+                X, y, split_attribute, split_val, sample_weights
+            )
+
+    def test_partition_classes_with_different_length_sample_weights(self):
+        """Tests the partition_classes method with sample weights of different length."""
+        X = [[2, 3], [1, 2], [3, 4], [5, 6]]
+        y = [0, 1, 0, 1]
+        sample_weights = [1, 2]
+        split_attribute = 0
+        split_val = 2.5
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.partition_classes(
+                X, y, split_attribute, split_val, sample_weights
+            )
 
     def test_information_gain(self):
         """Tests the information_gain method of the ClassifierTreeUtility class."""
@@ -68,10 +177,53 @@ class TestClassifierTreeUtility(unittest.TestCase):
             places=5,
         )
 
+    def test_information_gain_with_sample_weights(self):
+        """Tests the information_gain method with sample weights."""
+        previous_y = [0, 0, 1, 1, 1, 1]
+        current_y = [[0, 0], [1, 1, 1, 1]]
+        sample_weights = [1, 2, 3, 4, 5, 6]
+        expected_info_gain = (
+            0.5916727785823249  # Expected information gain value (calculated manually)
+        )
+        self.assertAlmostEqual(
+            self.utility.information_gain(previous_y, current_y, sample_weights),
+            expected_info_gain,
+            places=5,
+        )
+
+    def test_information_gain_with_none_sample_weights(self):
+        """Tests the information_gain method with None sample weights."""
+        previous_y = [0, 0, 1, 1, 1, 1]
+        current_y = [[0, 0], [1, 1, 1, 1]]
+        expected_info_gain = (
+            0.9182958340544896  # Expected information gain value (calculated manually)
+        )
+        self.assertAlmostEqual(
+            self.utility.information_gain(previous_y, current_y),
+            expected_info_gain,
+            places=5,
+        )
+
+    def test_information_gain_with_empty_sample_weights(self):
+        """Tests the information_gain method with empty sample weights."""
+        previous_y = [0, 0, 1, 1, 1, 1]
+        current_y = [[0, 0], [1, 1, 1, 1]]
+        sample_weights = []
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.information_gain(previous_y, current_y, sample_weights)
+
+    def test_information_gain_with_different_length_sample_weights(self):
+        """Tests the information_gain method with sample weights of different length."""
+        previous_y = [0, 0, 1, 1, 1, 1]
+        current_y = [[0, 0], [1, 1, 1, 1]]
+        sample_weights = [1, 2]
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.information_gain(previous_y, current_y, sample_weights)
+
     def test_best_split(self):
         """Tests the best_split method of the ClassifierTreeUtility class."""
         X = [[2, 3], [1, 2], [3, 4], [5, 6]]
-        y = [0, 1, 0, 1]
+        y = [0, 1, 0, 0]
         best_split = self.utility.best_split(X, y)
 
         self.assertIn("split_attribute", best_split)
@@ -91,6 +243,83 @@ class TestClassifierTreeUtility(unittest.TestCase):
         self.assertIsInstance(best_split["y_left"], np.ndarray)
         self.assertIsInstance(best_split["y_right"], np.ndarray)
         self.assertIsInstance(best_split["info_gain"], float)
+
+    def test_best_split_with_sample_weights(self):
+        """Tests the best_split method with sample weights."""
+        X = [[2, 3], [1, 2], [3, 4], [5, 6]]
+        y = [0, 1, 0, 0]
+        sample_weights = [1, 2, 3, 4]
+        best_split = self.utility.best_split(X, y, sample_weight=sample_weights)
+
+        self.assertIn("split_attribute", best_split)
+        self.assertIn("split_val", best_split)
+        self.assertIn("X_left", best_split)
+        self.assertIn("X_right", best_split)
+        self.assertIn("y_left", best_split)
+        self.assertIn("y_right", best_split)
+        self.assertIn("info_gain", best_split)
+
+    def test_best_split_with_none_sample_weights(self):
+        """Tests the best_split method with None sample weights."""
+        X = [[2, 3], [1, 2], [3, 4], [5, 6]]
+        y = [0, 1, 0, 0]
+        best_split = self.utility.best_split(X, y, sample_weight=None)
+
+        self.assertIn("split_attribute", best_split)
+        self.assertIn("split_val", best_split)
+        self.assertIn("X_left", best_split)
+        self.assertIn("X_right", best_split)
+        self.assertIn("y_left", best_split)
+        self.assertIn("y_right", best_split)
+        self.assertIn("info_gain", best_split)
+
+    def test_best_split_with_empty_sample_weights(self):
+        """Tests the best_split method with empty sample weights."""
+        X = [[2, 3], [1, 2], [3, 4], [5, 6]]
+        y = [0, 1, 0, 0]
+        sample_weights = []
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.best_split(X, y, sample_weight=sample_weights)
+
+    def test_best_split_with_different_length_sample_weights(self):
+        """Tests the best_split method with sample weights of different length."""
+        X = [[2, 3], [1, 2], [3, 4], [5, 6]]
+        y = [0, 1, 0, 0]
+        sample_weights = [1, 2]
+        with self.assertRaises((ValueError, IndexError)):
+            self.utility.best_split(X, y, sample_weight=sample_weights)
+
+    def test_best_split_with_min_samples_split(self):
+        """Tests the best_split method with min_samples_split."""
+        X = [[2, 3], [1, 2], [3, 4], [5, 6]]
+        y = [0, 1, 0, 0]
+        min_samples_split = 2
+        self.utility.min_samples_split = min_samples_split
+        best_split = self.utility.best_split(X, y)
+
+        self.assertIn("split_attribute", best_split)
+        self.assertIn("split_val", best_split)
+        self.assertIn("X_left", best_split)
+        self.assertIn("X_right", best_split)
+        self.assertIn("y_left", best_split)
+        self.assertIn("y_right", best_split)
+        self.assertIn("info_gain", best_split)
+
+    def test_best_split_with_3_min_samples_split(self):
+        """Tests the best_split method with min_samples_split set to 3."""
+        X = [[2, 3], [1, 2], [3, 4], [5, 6]]
+        y = [0, 1, 0, 0]
+        min_samples_split = 3
+        self.utility.min_samples_split = min_samples_split
+        best_split = self.utility.best_split(X, y)
+
+        self.assertIn("split_attribute", best_split)
+        self.assertIn("split_val", best_split)
+        self.assertIn("X_left", best_split)
+        self.assertIn("X_right", best_split)
+        self.assertIn("y_left", best_split)
+        self.assertIn("y_right", best_split)
+        self.assertIn("info_gain", best_split)
 
     def test_entropy_empty(self):
         """Test entropy with an empty class list."""
@@ -114,8 +343,8 @@ class TestClassifierTreeUtility(unittest.TestCase):
         y = []
         split_attribute = 0
         split_val = 0.5
-        X_left, X_right, y_left, y_right = self.utility.partition_classes(
-            X, y, split_attribute, split_val
+        X_left, X_right, y_left, y_right, sw_left, sw_right = (
+            self.utility.partition_classes(X, y, split_attribute, split_val)
         )
         self.assertEqual(len(X_left), 0)
         self.assertEqual(len(X_right), 0)
@@ -128,8 +357,8 @@ class TestClassifierTreeUtility(unittest.TestCase):
         y = [1]
         split_attribute = 0
         split_val = 1.5
-        X_left, X_right, y_left, y_right = self.utility.partition_classes(
-            X, y, split_attribute, split_val
+        X_left, X_right, y_left, y_right, sw_left, sw_right = (
+            self.utility.partition_classes(X, y, split_attribute, split_val)
         )
         self.assertEqual(X_left.tolist(), [[1, 2]])
         self.assertEqual(X_right.tolist(), [])
@@ -163,26 +392,16 @@ class TestClassifierTreeUtility(unittest.TestCase):
         X = []
         y = []
         best_split = self.utility.best_split(X, y)
-        self.assertIsNone(best_split["split_attribute"])
-        self.assertIsNone(best_split["split_val"])
-        self.assertEqual(len(best_split["X_left"]), 0)
-        self.assertEqual(len(best_split["X_right"]), 0)
-        self.assertEqual(len(best_split["y_left"]), 0)
-        self.assertEqual(len(best_split["y_right"]), 0)
-        self.assertEqual(best_split["info_gain"], 0)
+        # Return None if no split found
+        self.assertIsNone(best_split)
 
     def test_best_split_single_element(self):
         """Test best_split with a single element."""
         X = [[1, 2]]
         y = [1]
         best_split = self.utility.best_split(X, y)
-        self.assertIsNone(best_split["split_attribute"])
-        self.assertIsNone(best_split["split_val"])
-        self.assertEqual(len(best_split["X_left"]), 0)
-        self.assertEqual(len(best_split["X_right"]), 0)
-        self.assertEqual(len(best_split["y_left"]), 0)
-        self.assertEqual(len(best_split["y_right"]), 0)
-        self.assertEqual(best_split["info_gain"], 0)
+        # if if n_samples < 2 or current_total_weight <= 0 then returns leaf node
+        self.assertEqual(best_split["label"], 1)
 
 
 class TestClassifierTree(unittest.TestCase):
@@ -196,18 +415,53 @@ class TestClassifierTree(unittest.TestCase):
     def setUp(self):
         """Set up the ClassifierTree instance for testing."""
         self.tree = ClassifierTree(max_depth=5)
+        self.X, self.y = make_classification(n_samples=100, n_features=5, n_classes=2)
 
     def test_init(self):
         """Tests the initialization of the ClassifierTree class."""
         self.assertEqual(self.tree.max_depth, 5)
+        self.assertEqual(self.tree.min_samples_split, 2)
         self.assertDictEqual(self.tree.tree, {})
+        self.assertIsInstance(self.tree.utility, ClassifierTreeUtility)
 
     def test_learn(self):
         """Tests the learn method of the ClassifierTree class."""
-        from sega_learn.utils import make_classification
+        self.tree.learn(self.X, self.y)
+        self.assertIsInstance(self.tree.tree, dict)
 
-        X, y = make_classification(n_samples=100, n_features=5, n_classes=2)
-        self.tree.learn(X, y)
+    def test_learn_with_sample_weights(self):
+        """Tests the learn method with sample weights."""
+        sample_weights = np.random.rand(len(self.X))
+        self.tree.learn(self.X, self.y, sample_weight=sample_weights)
+        self.assertIsInstance(self.tree.tree, dict)
+
+    def test_learn_with_none_sample_weights(self):
+        """Tests the learn method with None sample weights."""
+        self.tree.learn(self.X, self.y, sample_weight=None)
+        self.assertIsInstance(self.tree.tree, dict)
+
+    def test_learn_with_empty_sample_weights(self):
+        """Tests the learn method with empty sample weights."""
+        sample_weights = []
+        with self.assertRaises((ValueError, IndexError)):
+            self.tree.learn(self.X, self.y, sample_weight=sample_weights)
+
+    def test_learn_with_different_length_sample_weights(self):
+        """Tests the learn method with sample weights of different length."""
+        sample_weights = np.random.rand(len(self.X) - 1)
+        with self.assertRaises((ValueError, IndexError)):
+            self.tree.learn(self.X, self.y, sample_weight=sample_weights)
+
+    def test_learn_min_samples_split(self):
+        """Tests the learn method with min_samples_split."""
+        self.tree.min_samples_split = 3
+        self.tree.learn(self.X, self.y)
+        self.assertIsInstance(self.tree.tree, dict)
+
+    def test_learn_min_samples_split_not_enough_samples(self):
+        """Tests the learn method with min_samples_split not enough samples."""
+        self.tree.min_samples_split = 10
+        self.tree.learn(self.X, self.y)
         self.assertIsInstance(self.tree.tree, dict)
 
     def test_learn_single_value(self):
@@ -295,7 +549,7 @@ class TestRandomForestClassifier(unittest.TestCase):
         """Set up the RandomForestClassifier instance for testing."""
         X, y = make_classification(n_samples=100, n_features=5, n_classes=2)
         self.rf = RandomForestClassifier(
-            X=X, y=y, max_depth=10, forest_size=10, random_seed=0
+            X=X, y=y, max_depth=10, forest_size=10, random_seed=0, n_jobs=1
         )
 
     def test_init(self):
@@ -374,6 +628,39 @@ class TestRandomForestClassifier(unittest.TestCase):
         for tree in self.rf.trees:
             self.assertEqual(tree["label"], 0)
 
+    def test_fit_sample_weights(self):
+        """Test fitting the RandomForestClassifier with sample weights."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        sample_weights = np.random.rand(10)
+        self.rf.fit(X, y, sample_weight=sample_weights)
+        self.assertEqual(len(self.rf.trees), 10)
+        for tree in self.rf.trees:
+            self.assertIsInstance(tree, dict)
+
+    def test_fit_sample_weights_empty(self):
+        """Test fitting the RandomForestClassifier with empty sample weights."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        sample_weights = []
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(X, y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_different_length(self):
+        """Test fitting the RandomForestClassifier with sample weights of different length."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        sample_weights = np.random.rand(5)
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(X, y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_none(self):
+        """Test fitting the RandomForestClassifier with None sample weights."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        self.rf.fit(X, y, sample_weight=None)
+        self.assertEqual(len(self.rf.trees), 10)
+
     def test_predict_single_sample(self):
         """Test predicting with a single sample."""
         X = [[1, 2, 3, 4, 5]]
@@ -390,6 +677,13 @@ class TestRandomForestClassifier(unittest.TestCase):
         oob_predictions = _classify_oob(X, self.rf.trees, self.rf.bootstraps)
         self.assertEqual(len(oob_predictions), len(X))
         self.assertIsInstance(oob_predictions, list)
+
+    def test_predict_proba(self):
+        """Test predicting probabilities."""
+        X = np.random.rand(10, 5)
+        self.rf.fit()
+        proba = self.rf.predict_proba(X)
+        self.assertEqual(proba.shape, (10, 2))
 
 
 class TesGradientBoostedClassifier(unittest.TestCase):
@@ -522,6 +816,37 @@ class TesGradientBoostedClassifier(unittest.TestCase):
         y = np.random.rand(10, 1)
         with self.assertRaises(ValueError):
             self.rf.fit(X=X, y=y)
+
+    def test_fit_sample_weights(self):
+        """Test fitting the GradientBoostedClassifier with sample weights."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        sample_weights = np.random.rand(10)
+        self.rf.fit(X, y, sample_weight=sample_weights)
+        self.assertEqual(len(self.rf.trees_), 10)
+
+    def test_fit_sample_weights_empty(self):
+        """Test fitting the GradientBoostedClassifier with empty sample weights."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        sample_weights = []
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(X, y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_different_length(self):
+        """Test fitting the GradientBoostedClassifier with sample weights of different length."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        sample_weights = np.random.rand(5)
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(X, y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_none(self):
+        """Test fitting the GradientBoostedClassifier with None sample weights."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        self.rf.fit(X, y, sample_weight=None)
+        self.assertEqual(len(self.rf.trees_), 10)
 
     def test_predict(self):
         """Test predicting with the GradientBoostedClassifier."""
