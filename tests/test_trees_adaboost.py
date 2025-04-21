@@ -8,12 +8,7 @@ import numpy as np
 # Adjust sys.path to import from the parent directory
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from sega_learn.trees import (
-    AdaBoostClassifier,
-    AdaBoostRegressor,
-    ClassifierTree,
-    RegressorTree,
-)
+from sega_learn.trees import *
 from sega_learn.utils import Metrics, make_classification, make_regression
 from tests.utils import suppress_print
 
@@ -167,22 +162,68 @@ class TestAdaBoostClassifier(unittest.TestCase):
 
     def test_early_stopping_perfect_fit(self):
         """Test if boosting stops early on a perfectly separable dataset."""
-        pass
-        # TODO: Fix this test, when ClassifierTree supports min_samples_split
-        # # Use data perfectly separable by a stump
-        # X_perfect = np.array([[1], [2], [10], [11]])
-        # y_perfect = np.array([0, 0, 1, 1])
-        # # Use a base estimator guaranteed to split perfectly if possible
-        # # Need min_samples_split=1 for this tiny dataset to guarantee split
-        # # But our ClassifierTree doesn't support min_samples_split yet.
-        # # Let's stick with default max_depth=1 which *should* work here.
-        # model = AdaBoostClassifier(n_estimators=20)
-        # model.fit(X_perfect, y_perfect)
-        # # The first stump should perfectly separate it
-        # self.assertLessEqual(len(model.estimators_), 1)
-        # # Check if the error of the first estimator is indeed 0
-        # if len(model.estimators_) > 0:
-        #      self.assertEqual(model.estimator_errors_[0], 0)
+        # Use data perfectly separable by a stump
+        X_perfect = np.array([[1], [2], [10], [11]])
+        y_perfect = np.array([0, 0, 1, 1])
+        model = AdaBoostClassifier(n_estimators=20, min_samples_split=1)
+        model.fit(X_perfect, y_perfect)
+        # The first stump should perfectly separate it
+        self.assertLessEqual(len(model.estimators_), 1)
+        # Check if the error of the first estimator is indeed 0
+        if len(model.estimators_) > 0:
+            self.assertEqual(model.estimator_errors_[0], 0)
+
+    def test_custom_base_estimator_tree(self):
+        """Test using a custom base estimator (tree)."""
+        base_est = ClassifierTree(max_depth=1, min_samples_split=5)
+        model = AdaBoostClassifier(base_estimator=base_est, n_estimators=5)
+        model.fit(self.X_binary, self.y_binary)
+        # Check if the fitted estimators have the correct depth (approx check)
+        self.assertTrue(
+            all(
+                hasattr(est, "max_depth") and est.max_depth == 1
+                for est in model.estimators_
+            )
+        )
+
+    def test_custom_base_estimator_forrest(self):
+        """Test using a custom base estimator (forest)."""
+        base_est = RandomForestClassifier(
+            forest_size=1, max_depth=1, min_samples_split=1, n_jobs=1
+        )
+        # Catch warnings
+        with warnings.catch_warnings(record=True) as _w:
+            warnings.simplefilter("always")
+            model = AdaBoostClassifier(base_estimator=base_est, n_estimators=5)
+            model.fit(self.X_binary, self.y_binary)
+        self.assertTrue(
+            all(
+                hasattr(est, "max_depth") and est.max_depth == 1
+                for est in model.estimators_
+            )
+        )
+
+    def test_custom_base_estimator_gradient(self):
+        """Test using a custom base estimator (gradient)."""
+        base_est = GradientBoostedClassifier(
+            n_estimators=1, max_depth=1, learning_rate=0.1
+        )
+        # Catch warnings
+        with warnings.catch_warnings(record=True) as _w:
+            warnings.simplefilter("always")
+            model = AdaBoostClassifier(base_estimator=base_est, n_estimators=5)
+            model.fit(self.X_binary, self.y_binary)
+        self.assertTrue(
+            all(
+                hasattr(est, "max_depth") and est.max_depth == 1
+                for est in model.estimators_
+            )
+        )
+
+    def test_custom_base_estimator_invalid(self):
+        """Test using an invalid base estimator."""
+        with self.assertRaises(AttributeError):
+            AdaBoostClassifier(base_estimator="invalid_estimator")
 
 
 class TestAdaBoostRegressor(unittest.TestCase):
@@ -315,6 +356,56 @@ class TestAdaBoostRegressor(unittest.TestCase):
         # Check if the error of the first estimator is indeed 0
         if len(model.estimators_) > 0:
             self.assertEqual(model.estimator_errors_[0], 0)
+
+    def test_custom_base_estimator_tree(self):
+        """Test using a custom base estimator (tree)."""
+        base_est = RegressorTree(max_depth=1, min_samples_split=5)
+        model = AdaBoostRegressor(base_estimator=base_est, n_estimators=2)
+        model.fit(self.X, self.y)
+        # Check if the fitted estimators have the correct depth (approx check)
+        self.assertTrue(
+            all(
+                hasattr(est, "max_depth") and est.max_depth == 1
+                for est in model.estimators_
+            )
+        )
+
+    def test_custom_base_estimator_forrest(self):
+        """Test using a custom base estimator (forest)."""
+        base_est = RandomForestRegressor(
+            forest_size=1, max_depth=1, min_samples_split=1, n_jobs=1
+        )
+        # Catch warnings
+        with warnings.catch_warnings(record=True) as _w:
+            warnings.simplefilter("always")
+            model = AdaBoostRegressor(base_estimator=base_est, n_estimators=2)
+            model.fit(self.X, self.y)
+        self.assertTrue(
+            all(
+                hasattr(est, "max_depth") and est.max_depth == 1
+                for est in model.estimators_
+            )
+        )
+
+    def test_custom_base_estimator_gradient(self):
+        """Test using a custom base estimator (gradient)."""
+        base_est = GradientBoostedRegressor(num_trees=1, max_depth=1, learning_rate=0.1)
+        # Catch warnings
+        with warnings.catch_warnings(record=True) as _w:
+            warnings.simplefilter("always")
+            model = AdaBoostRegressor(base_estimator=base_est, n_estimators=2)
+            model.fit(self.X, self.y)
+        self.assertTrue(
+            all(
+                hasattr(est, "max_depth") and est.max_depth == 1
+                for est in model.estimators_
+            )
+        )
+
+    def test_custom_base_estimator_invalid(self):
+        """Test using an invalid base estimator."""
+        with self.assertRaises(AttributeError):
+            AdaBoostClassifier(base_estimator="invalid_estimator")
 
 
 if __name__ == "__main__":
