@@ -30,6 +30,12 @@ A key difference is in the way they handle the target variable:
     - where $S$ is the dataset, $N$ is the total number of instances, $N_L$ and $N_R$ are the number of instances in the left and right subsets, and $S_L$ and $S_R$ are the left and right subsets after the split.
 
 
+## Random Forests
+Random Forests are an ensemble learning method that constructs multiple decision trees during training and outputs the mode of the classes for classification tasks or the mean prediction for regression tasks. They are designed to improve the accuracy and robustness of decision trees by reducing overfitting and increasing generalization. The final prediction is made by aggregating the predictions from all the trees in the forest.
+- **Bootstrap Aggregating (Bagging)**: A technique used in Random Forests where multiple bootstrapped datasets are created from the original dataset. Each tree is trained on a different bootstrapped dataset, and the final prediction is made by aggregating the predictions from all trees.
+- **Feature Randomness**: In addition to using bootstrapped datasets, Random Forests also introduce randomness in the feature selection process. At each split, a random subset of features is chosen to determine the best split. This helps to reduce correlation between trees and improve the overall performance of the ensemble.
+- **Out-of-Bag (OOB) Error**: A method for estimating the performance of the Random Forest model without using a separate validation set. For each tree, the instances that were not included in the bootstrapped dataset are used to evaluate the model's performance. The OOB error is the average error across all trees.
+
 ## Gradient Boosted Trees
 Gradient Boosted Trees are an ensemble learning method that builds multiple decision trees sequentially.
 By combining the predictions of multiple weak learners (single trees), it creates a strong predictive model.
@@ -43,6 +49,17 @@ Each tree tries to correct the errors of the previous tree, resulting in a stron
   - $F_m(x) = F_{m-1}(x) + \eta \cdot h_m(x)$
   - where $F_m(x)$ is the updated model at the $m$-th iteration, $\eta$ is the learning rate, and $h_m(x)$ is the prediction from the new tree at the $m$-th iteration.
 
+## Adaboost
+Adaboost (Adaptive Boosting) is an ensemble learning method that combines multiple weak classifiers to create a strong classifier. It works by sequentially training weak classifiers, where each classifier focuses on the instances that were misclassified by the previous classifiers. The final prediction is made by combining the predictions of all classifiers, with more weight given to the classifiers that performed well on the training data. Adaboost can be used with any weak classifier, but it is commonly used with decision trees (stumps) as the base learner.
+- **Weight Update**: The weights of the instances are updated based on the performance of the previous classifier. Instances that were misclassified receive higher weights, while correctly classified instances receive lower weights.
+  - $w_i^{(m)} = w_i^{(m-1)} \cdot \exp(-\alpha_m \cdot y_i \cdot h_m(x_i))$
+  - where $w_i^{(m)}$ is the weight for the $i$-th instance at the $m$-th iteration, $\alpha_m$ is the weight of the $m$-th classifier, and $h_m(x_i)$ is the prediction from the $m$-th classifier.
+- **Final Prediction**: The final prediction is made by combining the predictions of all classifiers, with more weight given to the classifiers that performed well on the training data.
+  - $F(x) = \sum_{m=1}^{M} \alpha_m \cdot h_m(x)$
+  - where $F(x)$ is the final prediction, $M$ is the total number of classifiers, and $\alpha_m$ is the weight of the $m$-th classifier.
+- **Learning Rate**: A hyperparameter that controls the contribution of each classifier to the final prediction. A smaller learning rate results in a more robust model, but requires more iterations to converge.
+  - $\eta \in (0, 1]$
+  - where $\eta$ is the learning rate.
 
 ## Algorithms
 
@@ -190,6 +207,60 @@ gb_classifier.fit(X, y)
 gb_classifier.predict(new_X)
 ```
 
+#### Adaboost Classifier
+Adaboost (Adaptive Boosting) is an ensemble learning method that combines multiple weak classifiers to create a strong classifier. It works by sequentially training weak classifiers, where each classifier focuses on the instances that were misclassified by the previous classifiers.
+
+#### Algorithm
+1. Initialize the weights of the instances in the training set.
+2. For each iteration:
+   - Train a weak classifier on the weighted training set.
+   - Compute the error of the weak classifier.
+   - Update the weights of the instances based on the performance of the weak classifier.
+3. Compute the weight of the weak classifier based on its error.
+4. Combine the predictions of all weak classifiers to make the final prediction.
+5. Update the model by adding the weighted predictions of the weak classifiers to the final prediction.
+
+#### Usage
+```python
+from sega_learn.trees import AdaboostClassifier
+
+# Initialize the AdaboostClassifier object
+adaboost_classifier = AdaboostClassifier(n_estimators=50, learning_rate=1.0)
+
+# Fit the model
+adaboost_classifier.fit(X, y)
+
+# Predict class labels for new data
+adaboost_labels = adaboost_classifier.predict(new_X)
+```
+
+#### Adaboost Regressor
+Adaboost (Adaptive Boosting) is an ensemble learning method that combines multiple weak regressors to create a strong regressor. It works by sequentially training weak regressors, where each regressor focuses on the instances that were misclassified by the previous regressors.
+
+#### Algorithm
+1. Initialize the weights of the instances in the training set.
+2. For each iteration:
+   - Train a weak regressor on the weighted training set.
+   - Compute the error of the weak regressor.
+   - Update the weights of the instances based on the performance of the weak regressor.
+3. Compute the weight of the weak regressor based on its error.
+4. Combine the predictions of all weak regressors to make the final prediction.
+5. Update the model by adding the weighted predictions of the weak regressors to the final prediction.
+
+#### Usage
+```python
+from sega_learn.trees import AdaboostRegressor
+
+# Initialize the AdaboostRegressor object
+adaboost_regressor = AdaboostRegressor(n_estimators=50, learning_rate=1.0)
+
+# Fit the model
+adaboost_regressor.fit(X, y)
+
+# Predict target values for new data
+adaboost_predictions = adaboost_regressor.predict(new_X)
+```
+
 ## Examples
 
 ### Decision Tree Classifier Example
@@ -310,4 +381,44 @@ labels = gb_classifier.predict(X)
 
 # Print class labels
 print(labels)
+```
+
+### Adaboost Classifier Example
+```python
+from sega_learn.trees import AdaboostClassifier
+import numpy as np
+
+# Generate sample data
+X = np.random.rand(100, 2)
+y = np.random.randint(0, 2, size=100)
+
+# Initialize and fit AdaboostClassifier
+adaboost_classifier = AdaboostClassifier(n_estimators=50, learning_rate=1.0)
+adaboost_classifier.fit(X, y)
+
+# Predict class labels
+labels = adaboost_classifier.predict(X)
+
+# Print class labels
+print(labels)
+```
+
+### Adaboost Regressor Example
+```python
+from sega_learn.trees import AdaboostRegressor
+import numpy as np
+
+# Generate sample data
+X = np.random.rand(100, 2)
+y = np.random.rand(100)
+
+# Initialize and fit AdaboostRegressor
+adaboost_regressor = AdaboostRegressor(n_estimators=50, learning_rate=1.0)
+adaboost_regressor.fit(X, y)
+
+# Predict target values
+predictions = adaboost_regressor.predict(X)
+
+# Print predictions
+print(predictions)
 ```
