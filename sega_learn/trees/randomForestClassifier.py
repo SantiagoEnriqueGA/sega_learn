@@ -240,6 +240,64 @@ class RandomForestClassifier:
 
         return predictions
 
+    def predict_proba(self, X):
+        """Predict class probabilities for the provided data.
+
+        Args:
+            X (array-like): The input features.
+
+        Returns:
+            np.ndarray: A 2D array where each row represents the probability distribution
+                        over the classes for a record.
+        """
+
+        def traverse_tree(tree, record):
+            """Helper function to traverse the tree and collect class probabilities."""
+            if "label" in tree:
+                # If it's a leaf node, return the probability as 1 for the majority class
+                return {tree["label"]: 1.0}
+
+            # Traverse left or right subtree based on the split condition
+            if record[tree["split_attribute"]] <= tree["split_val"]:
+                return traverse_tree(tree["left"], record)
+            else:
+                return traverse_tree(tree["right"], record)
+
+        X = np.asarray(X)
+
+        # Validate input dimensions
+        if self.X is not None and X.shape[1] != self.X.shape[1]:
+            raise ValueError(
+                f"Input data must have {self.X.shape[1]} features, but got {X.shape[1]}."
+            )
+
+        # Initialize an array to store the sum of probabilities for each class
+        n_classes = len(np.unique(self.y))
+        probabilities = np.zeros((X.shape[0], n_classes))
+
+        # Aggregate probabilities from all trees
+        for tree in self.trees:
+            for _i, record in enumerate(X):
+                # Traverse the tree to get class probabilities for the record
+                tree_probs = traverse_tree(tree, record)
+
+                # Convert probabilities to a numpy array
+                tree_probs = np.array(
+                    [tree_probs.get(cls, 0) for cls in range(n_classes)]
+                )
+
+                # Normalize the probabilities to sum to 1
+                tree_probs /= np.sum(tree_probs)
+
+            # Sum probabilities for each class
+            for i in range(X.shape[0]):
+                probabilities[i] += tree_probs
+
+        # Normalize probabilities to ensure they sum to 1 for each record
+        probabilities /= len(self.trees)
+
+        return probabilities
+
     def get_stats(self, verbose=False):
         """Return the evaluation metrics."""
         stats = {

@@ -492,3 +492,37 @@ class ClassifierTree:
             predictions.append(prediction)
 
         return predictions
+
+    def predict_proba(self, X):
+        """Predicts the probabilities for a given set of records using the decision tree.
+
+        Args:
+            X: (array-like) - The input features.
+
+        Returns:
+            list: A list of dictionaries where each dictionary represents the probability distribution
+                  over the classes for a record.
+        """
+
+        def traverse_tree(tree, record):
+            """Helper function to traverse the tree and collect class probabilities."""
+            if "label" in tree:
+                # If it's a leaf node, return the probability as 1 for the majority class
+                return {tree["label"]: 1.0}
+
+            # Traverse left or right subtree based on the split condition
+            if record[tree["split_attribute"]] <= tree["split_val"]:
+                return traverse_tree(tree["left"], record)
+            else:
+                return traverse_tree(tree["right"], record)
+
+        if self.tree is None or self.tree == {}:
+            return None
+
+        probabilities = []
+
+        for record in X:
+            prob = traverse_tree(self.tree, record)
+            probabilities.append(prob)
+
+        return probabilities

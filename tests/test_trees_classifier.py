@@ -678,6 +678,13 @@ class TestRandomForestClassifier(unittest.TestCase):
         self.assertEqual(len(oob_predictions), len(X))
         self.assertIsInstance(oob_predictions, list)
 
+    def test_predict_proba(self):
+        """Test predicting probabilities."""
+        X = np.random.rand(10, 5)
+        self.rf.fit()
+        proba = self.rf.predict_proba(X)
+        self.assertEqual(proba.shape, (10, 2))
+
 
 class TesGradientBoostedClassifier(unittest.TestCase):
     """Set up the GradientBoostedClassifier instance for testing."""
