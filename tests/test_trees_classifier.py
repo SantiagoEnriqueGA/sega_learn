@@ -76,7 +76,23 @@ class TestClassifierTreeUtility(unittest.TestCase):
         y = [0, 1, 0, 0]
         best_split = self.utility.best_split(X, y)
 
-        self.assertEqual(best_split["label"], 0)
+        self.assertIn("split_attribute", best_split)
+        self.assertIn("split_val", best_split)
+        self.assertIn("X_left", best_split)
+        self.assertIn("X_right", best_split)
+        self.assertIn("y_left", best_split)
+        self.assertIn("y_right", best_split)
+        self.assertIn("info_gain", best_split)
+
+        self.assertIsInstance(best_split["split_attribute"], (int, np.integer))
+        self.assertIsInstance(
+            best_split["split_val"], (int, float, np.integer, np.float64)
+        )
+        self.assertIsInstance(best_split["X_left"], np.ndarray)
+        self.assertIsInstance(best_split["X_right"], np.ndarray)
+        self.assertIsInstance(best_split["y_left"], np.ndarray)
+        self.assertIsInstance(best_split["y_right"], np.ndarray)
+        self.assertIsInstance(best_split["info_gain"], float)
 
     def test_entropy_empty(self):
         """Test entropy with an empty class list."""
@@ -227,7 +243,8 @@ class TestClassifierTree(unittest.TestCase):
         y = [0, 1, 0, 1]
         self.tree.max_depth = 1
         tree = self.tree.learn(X, y)
-        self.assertIn("label", tree)
+        self.assertIn("split_attribute", tree)
+        self.assertIn("split_val", tree)
 
     def test_classify_empty_tree(self):
         """Test classification with an empty tree."""
@@ -290,7 +307,7 @@ class TestRandomForestClassifier(unittest.TestCase):
         _X = [[1, 2, 3]]
         self.rf.fit()
         for tree in self.rf.trees:
-            self.assertTrue(tree["label"] in [0, 1])
+            self.assertIn("split_attribute", tree)
 
     def test_voting(self):
         """Tests the voting method of the RandomForestClassifier class."""

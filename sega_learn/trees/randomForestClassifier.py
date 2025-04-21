@@ -18,13 +18,14 @@ from sega_learn.utils.metrics import Metrics
 from .treeClassifier import ClassifierTree
 
 
-def _fit_tree(X, y, max_depth):
+def _fit_tree(X, y, max_depth, min_samples_split):
     """Helper function for parallel tree fitting. Fits a single tree on a bootstrapped sample.
 
     Args:
         X: (array-like) - The input features.
         y: (array-like) - The target labels.
         max_depth: (int) - The maximum depth of the tree.
+        min_samples_split: (int) - The minimum samples required to split a node.
 
     Returns:
         ClassifierTree: A fitted tree object.
@@ -35,7 +36,7 @@ def _fit_tree(X, y, max_depth):
     y_sample = y[indices]
 
     # Fit tree on bootstrapped sample
-    tree = ClassifierTree(max_depth=max_depth)
+    tree = ClassifierTree(max_depth=max_depth, min_samples_split=min_samples_split)
     return tree.fit(X_sample, y_sample)
 
 
@@ -101,11 +102,19 @@ class RandomForestClassifier:
     """
 
     def __init__(
-        self, forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None
+        self,
+        forest_size=100,
+        max_depth=10,
+        min_samples_split=2,
+        n_jobs=-1,
+        random_seed=None,
+        X=None,
+        y=None,
     ):
         """Initializes the RandomForest object."""
         self.n_estimators = forest_size
         self.max_depth = max_depth
+        self.min_samples_split = min_samples_split
         self.n_jobs = n_jobs if n_jobs > 0 else max(1, multiprocessing.cpu_count())
         self.random_state = random_seed
         self.trees = []
@@ -147,7 +156,8 @@ class RandomForestClassifier:
 
         # Fit trees in parallel
         self.trees = Parallel(n_jobs=self.n_jobs)(
-            delayed(_fit_tree)(X, y, self.max_depth) for _ in range(self.n_estimators)
+            delayed(_fit_tree)(X, y, self.max_depth, self.min_samples_split)
+            for _ in range(self.n_estimators)
         )
 
         # Generate bootstrapped indices for OOB scoring

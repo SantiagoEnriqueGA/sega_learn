@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 from scipy.special import expit as sigmoid
 
@@ -26,7 +28,12 @@ class AdaBoostClassifier:
     """
 
     def __init__(
-        self, base_estimator=None, n_estimators=50, learning_rate=1.0, random_state=None
+        self,
+        base_estimator=None,
+        n_estimators=50,
+        learning_rate=1.0,
+        random_state=None,
+        min_samples_split=2,
     ):
         """Initialize the AdaBoostClassifier.
 
@@ -39,17 +46,26 @@ class AdaBoostClassifier:
             learning_rate (float, optional): Weight applied to each classifier's contribution. Defaults to 1.0.
             random_state (int, optional): Controls the random seed given to the base estimator at each boosting iteration.
                                           Defaults to None.
+            min_samples_split (int, optional): The minimum number of samples required to split an internal node
+                                               when using the default `ClassifierTree` base estimator. Defaults to 2.
         """
         if base_estimator is None:
-            # Default to a decision stump (depth=1)
-            self.base_estimator_ = ClassifierTree(max_depth=1)
+            # Default to a decision stump (depth=1) and pass min_samples_split
+            self.base_estimator_ = ClassifierTree(
+                max_depth=1, min_samples_split=min_samples_split
+            )
         else:
+            # If a custom estimator is provided, use it as is.
+            # We assume the user has configured it appropriately (including min_samples_split if applicable).
             # TODO: Add check if base_estimator supports sample_weight
             self.base_estimator_ = base_estimator
 
         self.n_estimators = n_estimators
         self.learning_rate = learning_rate
         self.random_state = random_state  # Currently not used directly in boosting logic but could be for base estimator seeding
+
+        # Store min_samples_split for potential use if recreating default estimator
+        self._min_samples_split_default = min_samples_split
 
         self.estimators_ = []
         self.estimator_weights_ = np.zeros(self.n_estimators, dtype=np.float64)
@@ -60,25 +76,51 @@ class AdaBoostClassifier:
     def _fit(self, X, y):
         """Build a boosted classifier from the training set (X, y)."""
         n_samples = X.shape[0]
+        self.classes_, y_encoded = np.unique(
+            y, return_inverse=True
+        )  # Use encoded y internally
+        self.n_classes_ = len(self.classes_)
 
         # Initialize weights
         sample_weight = np.full(n_samples, 1 / n_samples)
 
         for iboost in range(self.n_estimators):
             # Fit a classifier on the current weighted sample
-            # Note: Need a way to deepcopy the base estimator if it's stateful,
-            # or ensure the base_estimator class can be instantiated fresh.
-            # Assuming ClassifierTree can be instantiated fresh.
-            estimator = ClassifierTree(
-                max_depth=self.base_estimator_.max_depth
-            )  # Create new instance
-            estimator.fit(X, y, sample_weight=sample_weight)
+
+            # Create a new instance of the base estimator for this iteration
+            # Ensure parameters like max_depth and min_samples_split are correctly passed
+            # from the template (self.base_estimator_)
+            if isinstance(self.base_estimator_, ClassifierTree):
+                # If default tree, instantiate with stored params
+                estimator = ClassifierTree(
+                    max_depth=self.base_estimator_.max_depth,
+                    min_samples_split=self.base_estimator_.min_samples_split,
+                )
+            else:
+                # If custom estimator, attempt to clone it (requires sklearn compatibility or careful handling)
+                # For simplicity, let's assume custom estimators are stateless or handled externally
+                # This might need adjustment based on how custom estimators behave.
+                # A safer approach might be to require custom estimators to be factory functions.
+                try:
+                    # Try scikit-learn's clone mechanism if available
+                    from sklearn.base import clone
+
+                    estimator = clone(self.base_estimator_)
+                except ImportError:
+                    # Basic fallback: Re-initialize if possible (might not preserve all settings)
+                    estimator = type(self.base_estimator_)(
+                        **self.base_estimator_.get_params()
+                    )
+
+            estimator.fit(
+                X, y_encoded, sample_weight=sample_weight
+            )  # Fit on encoded labels
 
             # Predict
             y_pred = estimator.predict(X)
 
             # Identify misclassified samples
-            incorrect = y_pred != y
+            incorrect = y_pred != y_encoded
 
             # Calculate weighted error
             estimator_error = np.dot(sample_weight, incorrect) / np.sum(sample_weight)
@@ -94,29 +136,40 @@ class AdaBoostClassifier:
                 # Worse than random guessing or error is 1 (all wrong)
                 # Stop if only one estimator is fitted
                 if len(self.estimators_) == 0:
-                    raise ValueError(
-                        "Base estimator initial fit failed or had error >= 1 - 1/K."
+                    # Don't add the failed estimator
+                    warnings.warn(
+                        "Base estimator initial fit failed or had error >= 1 - 1/K. Stopping.",
+                        UserWarning,
+                        stacklevel=2,
                     )
+                    break  # Stop without adding estimator
                 # Otherwise, stop boosting (don't add this poor estimator)
+                warnings.warn(
+                    f"Estimator error {estimator_error:.4f} >= {1.0 - (1.0 / self.n_classes_):.4f}. Stopping.",
+                    UserWarning,
+                    stacklevel=2,
+                )
                 break
 
             # Calculate estimator weight (alpha) using SAMME formula
+            # Add epsilon to avoid log(0) if error is very close to 0
+            epsilon = 1e-10
             alpha = self.learning_rate * (
-                np.log((1.0 - estimator_error) / estimator_error)
+                np.log((1.0 - estimator_error + epsilon) / (estimator_error + epsilon))
                 + np.log(self.n_classes_ - 1.0)
             )
 
             # Update sample weights
-            # Increase weights for misclassified samples
-            # exp(alpha) for misclassified, exp(0)=1 for correctly classified (in standard AdaBoost binary)
             # SAMME update: w_i *= exp(alpha * I(y_i != h_m(x_i)))
-            sample_weight *= np.exp(
-                alpha * incorrect * ((sample_weight > 0) | (alpha < 0))
-            )  # Add check for weights>0
+            # Multiply weights of misclassified samples by exp(alpha)
+            sample_weight *= np.exp(alpha * incorrect)
 
             # Normalize weights
             sample_weight_sum = np.sum(sample_weight)
             if sample_weight_sum <= 0:  # Avoid division by zero if all weights became 0
+                warnings.warn(
+                    "Sample weights sum to zero. Stopping.", UserWarning, stacklevel=2
+                )
                 break
             sample_weight /= sample_weight_sum
 
@@ -125,24 +178,30 @@ class AdaBoostClassifier:
             self.estimator_weights_[iboost] = alpha
             self.estimator_errors_[iboost] = estimator_error
 
-            # Early termination if error is zero
-            if estimator_error == 0:
-                break
+            # Early termination if error is zero (already handled above)
+            # if estimator_error == 0: break
 
         # Trim arrays if boosting stopped early
         actual_n_estimators = len(self.estimators_)
-        self.estimator_weights_ = self.estimator_weights_[:actual_n_estimators]
-        self.estimator_errors_ = self.estimator_errors_[:actual_n_estimators]
+        if actual_n_estimators < self.n_estimators:
+            self.estimator_weights_ = self.estimator_weights_[:actual_n_estimators]
+            self.estimator_errors_ = self.estimator_errors_[:actual_n_estimators]
+            # Reset n_estimators? Or keep original requested? Keep original for now.
+            # self.n_estimators = actual_n_estimators
 
         return self
 
     def fit(self, X, y):
         """Build a boosted classifier from the training set (X, y)."""
         X, y = np.asarray(X), np.asarray(y)
-        self.classes_ = np.unique(y)
-        self.n_classes_ = len(self.classes_)
-        if self.n_classes_ < 2:
+        unique_classes = np.unique(y)
+        n_classes = len(unique_classes)
+        if n_classes < 2:
             raise ValueError("Need at least 2 classes for classification.")
+
+        # Store original classes before fitting
+        self.classes_ = unique_classes
+        self.n_classes_ = n_classes
 
         self._fit(X, y)
         return self
@@ -153,28 +212,76 @@ class AdaBoostClassifier:
         n_classes = self.n_classes_
         n_samples = X.shape[0]
 
+        if not hasattr(self, "estimators_") or not self.estimators_:
+            # Return zero scores if not fitted or no estimators were added
+            if n_classes == 2:
+                return np.zeros(n_samples)
+            else:
+                return np.zeros((n_samples, n_classes))
+
         pred = np.zeros((n_samples, n_classes))
 
         for i, estimator in enumerate(self.estimators_):
-            # Get predictions from the weak learner
-            estimator_pred = estimator.predict(X)
+            # Get predictions from the weak learner (expecting encoded 0, 1, ..., K-1)
+            estimator_pred_encoded_list = estimator.predict(X)
+            # Convert list prediction to numpy array
+            estimator_pred_encoded = np.array(estimator_pred_encoded_list)
 
-            # Convert predictions to one-hot encoding based on self.classes_
-            estimator_pred_indices = np.searchsorted(self.classes_, estimator_pred)
+            # Handle potential None predictions if tree couldn't classify some samples
+            if np.any(estimator_pred_encoded is None):  # Check for None
+                warnings.warn(
+                    f"Estimator {i} produced None predictions. Skipping its contribution.",
+                    UserWarning,
+                    stacklevel=2,
+                )
+                continue  # Skip this estimator if predictions are bad
+
+            # Ensure predictions are integers for indexing
+            try:
+                estimator_pred_encoded = estimator_pred_encoded.astype(int)
+            except ValueError:
+                warnings.warn(
+                    f"Estimator {i} predictions could not be cast to int. Skipping contribution.",
+                    UserWarning,
+                    stacklevel=2,
+                )
+                continue
+
+            # Ensure predictions are within the valid range of indices
+            if not np.all(
+                (estimator_pred_encoded >= 0) & (estimator_pred_encoded < n_classes)
+            ):
+                warnings.warn(
+                    f"Estimator {i} produced out-of-bounds class indices. Skipping its contribution.",
+                    UserWarning,
+                    stacklevel=2,
+                )
+                continue  # Skip this estimator if predictions are bad
+
+            # Convert predictions to one-hot encoding
             y_pred_coded = np.zeros((n_samples, n_classes))
-            y_pred_coded[np.arange(n_samples), estimator_pred_indices] = 1
+            y_pred_coded[np.arange(n_samples), estimator_pred_encoded] = (
+                1  # Use the numpy array directly
+            )
 
             # Add weighted prediction to the total score
-            pred += self.estimator_weights_[i] * y_pred_coded
+            # Ensure estimator_weights_ has the right length
+            if i < len(self.estimator_weights_):
+                pred += self.estimator_weights_[i] * y_pred_coded
+            else:
+                # This case shouldn't happen if trimming in _fit is correct
+                warnings.warn(
+                    f"Mismatch between estimators and weights at index {i}. Stopping decision function loop.",
+                    UserWarning,
+                    stacklevel=2,
+                )
+                break
 
-        # Normalize decision function ouput? Usually not necessary for argmax.
-        # For SAMME.R, need probability estimates. For SAMME, this is sufficient.
-        # Divide by sum of weights?
-        pred /= self.estimator_weights_.sum()
+        # Normalize? SAMME doesn't require normalization for argmax, but might affect decision scores range
+        # pred /= self.estimator_weights_.sum() # Optional normalization
 
         if n_classes == 2:
-            # Return score for the positive class (often class 1)
-            # The score difference: score(class 1) - score(class 0)
+            # Return score difference for the positive class (class at index 1)
             return pred[:, 1] - pred[:, 0]
         else:
             return pred
