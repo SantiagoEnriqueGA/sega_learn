@@ -70,7 +70,7 @@ The&nbsp;module&nbsp;includes&nbsp;the&nbsp;following&nbsp;classes:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="RandomForestClassifier">class <strong>RandomForestClassifier</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
 
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestClassifier">RandomForestClassifier</a>(forest_size=100,&nbsp;max_depth=10,&nbsp;n_jobs=-1,&nbsp;random_seed=None,&nbsp;X=None,&nbsp;y=None)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#RandomForestClassifier">RandomForestClassifier</a>(forest_size=100,&nbsp;max_depth=10,&nbsp;min_samples_split=2,&nbsp;n_jobs=-1,&nbsp;random_seed=None,&nbsp;X=None,&nbsp;y=None)<br>
 &nbsp;<br>
 <a href="#RandomForestClassifier">RandomForestClassifier</a>&nbsp;is&nbsp;a&nbsp;custom&nbsp;implementation&nbsp;of&nbsp;a&nbsp;Random&nbsp;Forest&nbsp;classifier.<br>
 &nbsp;<br>
@@ -102,15 +102,26 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns&nbsp;the&nbsp;evaluation&nbsp;metrics&nbsp;(accuracy,&nbsp;precision,&nbsp;recall,&nbsp;F1&nbsp;score,&nbsp;and&nbsp;log&nbsp;loss)&nbsp;as&nbsp;a&nbsp;dictionary.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="RandomForestClassifier-__init__"><strong>__init__</strong></a>(self, forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
+<dl><dt><a name="RandomForestClassifier-__init__"><strong>__init__</strong></a>(self, forest_size=100, max_depth=10, min_samples_split=2, n_jobs=-1, random_seed=None, X=None, y=None)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;RandomForest&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
 
 <dl><dt><a name="RandomForestClassifier-calculate_metrics"><strong>calculate_metrics</strong></a>(self, y_true, y_pred)</dt><dd><span class="code">Calculate&nbsp;evaluation&nbsp;metrics&nbsp;for&nbsp;classification.</span></dd></dl>
 
-<dl><dt><a name="RandomForestClassifier-fit"><strong>fit</strong></a>(self, X=None, y=None, verbose=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;random&nbsp;forest&nbsp;with&nbsp;parallel&nbsp;processing.</span></dd></dl>
+<dl><dt><a name="RandomForestClassifier-fit"><strong>fit</strong></a>(self, X=None, y=None, sample_weight=None, verbose=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;random&nbsp;forest&nbsp;with&nbsp;parallel&nbsp;processing.</span></dd></dl>
+
+<dl><dt><a name="RandomForestClassifier-get_params"><strong>get_params</strong></a>(self)</dt><dd><span class="code">Get&nbsp;the&nbsp;parameters&nbsp;of&nbsp;the&nbsp;<a href="#RandomForestClassifier">RandomForestClassifier</a>.</span></dd></dl>
 
 <dl><dt><a name="RandomForestClassifier-get_stats"><strong>get_stats</strong></a>(self, verbose=False)</dt><dd><span class="code">Return&nbsp;the&nbsp;evaluation&nbsp;metrics.</span></dd></dl>
 
 <dl><dt><a name="RandomForestClassifier-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;class&nbsp;labels&nbsp;for&nbsp;the&nbsp;provided&nbsp;data.</span></dd></dl>
+
+<dl><dt><a name="RandomForestClassifier-predict_proba"><strong>predict_proba</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;class&nbsp;probabilities&nbsp;for&nbsp;the&nbsp;provided&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(array-like):&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;np.ndarray:&nbsp;A&nbsp;2D&nbsp;array&nbsp;where&nbsp;each&nbsp;row&nbsp;represents&nbsp;the&nbsp;probability&nbsp;distribution<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;over&nbsp;the&nbsp;classes&nbsp;for&nbsp;a&nbsp;record.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>

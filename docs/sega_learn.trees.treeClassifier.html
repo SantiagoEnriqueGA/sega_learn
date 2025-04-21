@@ -65,7 +65,7 @@ td.singlecolumn { width: 100%; }
 <td class="section-title" colspan=3>&nbsp;<br><a name="ClassifierTree">class <strong>ClassifierTree</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
 
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#ClassifierTree">ClassifierTree</a>(max_depth=5)<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#ClassifierTree">ClassifierTree</a>(max_depth=5,&nbsp;min_samples_split=2)<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;representing&nbsp;a&nbsp;decision&nbsp;tree.<br>
 &nbsp;<br>
@@ -77,21 +77,23 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#ClassifierTree-classify">classify</a>(record):&nbsp;Classifies&nbsp;a&nbsp;record&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="ClassifierTree-__init__"><strong>__init__</strong></a>(self, max_depth=5)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#ClassifierTree">ClassifierTree</a>&nbsp;with&nbsp;a&nbsp;maximum&nbsp;depth.</span></dd></dl>
+<dl><dt><a name="ClassifierTree-__init__"><strong>__init__</strong></a>(self, max_depth=5, min_samples_split=2)</dt><dd><span class="code">Initializes&nbsp;the&nbsp;<a href="#ClassifierTree">ClassifierTree</a>&nbsp;with&nbsp;a&nbsp;maximum&nbsp;depth.</span></dd></dl>
 
-<dl><dt><a name="ClassifierTree-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Fits&nbsp;the&nbsp;decision&nbsp;tree&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+<dl><dt><a name="ClassifierTree-fit"><strong>fit</strong></a>(self, X, y, sample_weight=None)</dt><dd><span class="code">Fits&nbsp;the&nbsp;decision&nbsp;tree&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sample_weight:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;sample&nbsp;weights&nbsp;(default:&nbsp;None).</span></dd></dl>
 
-<dl><dt><a name="ClassifierTree-learn"><strong>learn</strong></a>(self, X, y, par_node=None, depth=0)</dt><dd><span class="code">Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
+<dl><dt><a name="ClassifierTree-learn"><strong>learn</strong></a>(self, X, y, par_node=None, depth=0, sample_weight=None)</dt><dd><span class="code">Builds&nbsp;the&nbsp;decision&nbsp;tree&nbsp;based&nbsp;on&nbsp;the&nbsp;given&nbsp;training&nbsp;data.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;par_node:&nbsp;(dict)&nbsp;-&nbsp;The&nbsp;parent&nbsp;node&nbsp;of&nbsp;the&nbsp;current&nbsp;subtree&nbsp;(default:&nbsp;{}).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;depth:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;current&nbsp;depth&nbsp;of&nbsp;the&nbsp;subtree&nbsp;(default:&nbsp;0).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sample_weight:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;sample&nbsp;weights&nbsp;(default:&nbsp;None).<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;The&nbsp;learned&nbsp;decision&nbsp;tree.</span></dd></dl>
@@ -103,6 +105,15 @@ Args:<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;list:&nbsp;A&nbsp;list&nbsp;of&nbsp;predicted&nbsp;labels&nbsp;for&nbsp;each&nbsp;record.</span></dd></dl>
+
+<dl><dt><a name="ClassifierTree-predict_proba"><strong>predict_proba</strong></a>(self, X)</dt><dd><span class="code">Predicts&nbsp;the&nbsp;probabilities&nbsp;for&nbsp;a&nbsp;given&nbsp;set&nbsp;of&nbsp;records&nbsp;using&nbsp;the&nbsp;decision&nbsp;tree.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;list:&nbsp;A&nbsp;list&nbsp;of&nbsp;dictionaries&nbsp;where&nbsp;each&nbsp;dictionary&nbsp;represents&nbsp;the&nbsp;probability&nbsp;distribution<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;over&nbsp;the&nbsp;classes&nbsp;for&nbsp;a&nbsp;record.</span></dd></dl>
 
 <hr>
 Static methods defined here:<br>
@@ -129,43 +140,52 @@ Data descriptors defined here:<br>
 <td class="section-title" colspan=3>&nbsp;<br><a name="ClassifierTreeUtility">class <strong>ClassifierTreeUtility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
 
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code">Utility&nbsp;class&nbsp;for&nbsp;computing&nbsp;entropy,&nbsp;partitioning&nbsp;classes,&nbsp;and&nbsp;calculating&nbsp;information&nbsp;gain.<br>&nbsp;</span></td></tr>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#ClassifierTreeUtility">ClassifierTreeUtility</a>(min_samples_split=2)<br>
+&nbsp;<br>
+Utility&nbsp;class&nbsp;for&nbsp;computing&nbsp;entropy,&nbsp;partitioning&nbsp;classes,&nbsp;and&nbsp;calculating&nbsp;information&nbsp;gain.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="ClassifierTreeUtility-best_split"><strong>best_split</strong></a>(self, X, y)</dt><dd><span class="code">Finds&nbsp;the&nbsp;best&nbsp;attribute&nbsp;and&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;data&nbsp;based&nbsp;on&nbsp;information&nbsp;gain.<br>
+<dl><dt><a name="ClassifierTreeUtility-__init__"><strong>__init__</strong></a>(self, min_samples_split=2)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;utility&nbsp;class.</span></dd></dl>
+
+<dl><dt><a name="ClassifierTreeUtility-best_split"><strong>best_split</strong></a>(self, X, y, sample_weight=None)</dt><dd><span class="code">Finds&nbsp;the&nbsp;best&nbsp;attribute&nbsp;and&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;data&nbsp;based&nbsp;on&nbsp;information&nbsp;gain.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;variable.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sample_weight:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;sample&nbsp;weights&nbsp;(default:&nbsp;None).<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;A&nbsp;dictionary&nbsp;containing&nbsp;the&nbsp;best&nbsp;split&nbsp;attribute,&nbsp;split&nbsp;value,&nbsp;left&nbsp;and&nbsp;right&nbsp;subsets&nbsp;of&nbsp;X&nbsp;and&nbsp;y,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;the&nbsp;information&nbsp;gain&nbsp;achieved&nbsp;by&nbsp;the&nbsp;split.</span></dd></dl>
 
-<dl><dt><a name="ClassifierTreeUtility-entropy"><strong>entropy</strong></a>(self, class_y)</dt><dd><span class="code">Computes&nbsp;the&nbsp;entropy&nbsp;for&nbsp;a&nbsp;given&nbsp;class.<br>
+<dl><dt><a name="ClassifierTreeUtility-entropy"><strong>entropy</strong></a>(self, class_y, sample_weight=None)</dt><dd><span class="code">Computes&nbsp;the&nbsp;entropy&nbsp;for&nbsp;a&nbsp;given&nbsp;class.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;class_y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;class&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sample_weight:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;sample&nbsp;weights&nbsp;(default:&nbsp;None).<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;entropy&nbsp;value.</span></dd></dl>
 
-<dl><dt><a name="ClassifierTreeUtility-information_gain"><strong>information_gain</strong></a>(self, previous_y, current_y)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;information&nbsp;gain&nbsp;between&nbsp;the&nbsp;previous&nbsp;and&nbsp;current&nbsp;values&nbsp;of&nbsp;y.<br>
+<dl><dt><a name="ClassifierTreeUtility-information_gain"><strong>information_gain</strong></a>(self, previous_y, current_y, sample_weight_prev=None, sample_weight_current=None)</dt><dd><span class="code">Calculates&nbsp;the&nbsp;information&nbsp;gain&nbsp;between&nbsp;the&nbsp;previous&nbsp;and&nbsp;current&nbsp;values&nbsp;of&nbsp;y.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;previous_y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;previous&nbsp;values&nbsp;of&nbsp;y.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;current_y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;current&nbsp;values&nbsp;of&nbsp;y.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sample_weight_prev:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;sample&nbsp;weights&nbsp;for&nbsp;the&nbsp;previous&nbsp;y&nbsp;values&nbsp;(default:&nbsp;None).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sample_weight_current:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;sample&nbsp;weights&nbsp;for&nbsp;the&nbsp;current&nbsp;y&nbsp;values&nbsp;(default:&nbsp;None).<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;float:&nbsp;The&nbsp;information&nbsp;gain&nbsp;between&nbsp;the&nbsp;previous&nbsp;and&nbsp;current&nbsp;values&nbsp;of&nbsp;y.</span></dd></dl>
 
-<dl><dt><a name="ClassifierTreeUtility-partition_classes"><strong>partition_classes</strong></a>(self, X, y, split_attribute, split_val)</dt><dd><span class="code">Partitions&nbsp;the&nbsp;dataset&nbsp;into&nbsp;two&nbsp;subsets&nbsp;based&nbsp;on&nbsp;a&nbsp;given&nbsp;split&nbsp;attribute&nbsp;and&nbsp;value.<br>
+<dl><dt><a name="ClassifierTreeUtility-partition_classes"><strong>partition_classes</strong></a>(self, X, y, split_attribute, split_val, sample_weight=None)</dt><dd><span class="code">Partitions&nbsp;the&nbsp;dataset&nbsp;into&nbsp;two&nbsp;subsets&nbsp;based&nbsp;on&nbsp;a&nbsp;given&nbsp;split&nbsp;attribute&nbsp;and&nbsp;value.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;split_attribute:&nbsp;(int)&nbsp;-&nbsp;The&nbsp;index&nbsp;of&nbsp;the&nbsp;attribute&nbsp;to&nbsp;split&nbsp;on.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;split_val:&nbsp;(float)&nbsp;-&nbsp;The&nbsp;value&nbsp;to&nbsp;split&nbsp;the&nbsp;attribute&nbsp;on.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sample_weight:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;sample&nbsp;weights&nbsp;(default:&nbsp;None).<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;X_left:&nbsp;&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;subset&nbsp;of&nbsp;input&nbsp;features&nbsp;where&nbsp;the&nbsp;split&nbsp;attribute&nbsp;is&nbsp;less&nbsp;than&nbsp;or&nbsp;equal&nbsp;to&nbsp;the&nbsp;split&nbsp;value.<br>

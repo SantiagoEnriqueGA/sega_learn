@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body { background-color: #f0f0f8; }
+table.heading tr { background-color: #7799ee; }
+.decor { color: #ffffff; }
+.title-decor { background-color: #ffc8d8; color: #000000; }
+.pkg-content-decor { background-color: #aa55cc; }
+.index-decor { background-color: #ee77aa; }
+.functions-decor { background-color: #eeaa77; }
+.data-decor { background-color: #55aa55; }
+.author-decor { background-color: #7799ee; }
+.credits-decor { background-color: #7799ee; }
+.error-decor { background-color: #bb0000; }
+.grey { color: #909090; }
+.white { color: #ffffff; }
+.repr { color: #c040c0; }
+table.heading tr td.title, table.heading tr td.extra { vertical-align: bottom; }
+table.heading tr td.extra { text-align: right; }
+.heading-text { font-family: helvetica, arial; }
+.bigsection { font-size: larger; }
+.title { font-size: x-large; }
+.code { font-family: monospace; }
+table { width: 100%; border-spacing: 0; border-collapse: collapse; border: 0; }
+td { padding: 2; }
+td.section-title, td.multicolumn { vertical-align: bottom; }
+td.multicolumn { width: 25%; }
+td.singlecolumn { width: 100%; }
+</style>
+<meta charset="utf-8">
+<title>Python: module sega_learn.trees.adaBoostRegressor</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="sega_learn.html" class="white">sega_learn</a>.<a href="sega_learn.trees.html" class="white">trees</a>.adaBoostRegressor</strong></td>
+</tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="inspect.html">inspect</a><br>
+</td><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="sega_learn.trees.adaBoostRegressor.html#AdaBoostRegressor">AdaBoostRegressor</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="AdaBoostRegressor">class <strong>AdaBoostRegressor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#AdaBoostRegressor">AdaBoostRegressor</a>(base_estimator=None,&nbsp;n_estimators=50,&nbsp;learning_rate=1.0,&nbsp;loss='linear',&nbsp;random_state=None,&nbsp;max_depth=3,&nbsp;min_samples_split=2)<br>
+&nbsp;<br>
+AdaBoost&nbsp;regressor.<br>
+&nbsp;<br>
+Builds&nbsp;an&nbsp;additive&nbsp;model&nbsp;by&nbsp;sequentially&nbsp;fitting&nbsp;weak&nbsp;regressors&nbsp;(default:&nbsp;decision&nbsp;trees)<br>
+on&nbsp;modified&nbsp;versions&nbsp;of&nbsp;the&nbsp;data.&nbsp;The&nbsp;weights&nbsp;of&nbsp;instances&nbsp;are&nbsp;adjusted&nbsp;at&nbsp;each&nbsp;iteration<br>
+so&nbsp;that&nbsp;subsequent&nbsp;regressors&nbsp;focus&nbsp;more&nbsp;on&nbsp;instances&nbsp;with&nbsp;larger&nbsp;errors.<br>
+&nbsp;<br>
+Uses&nbsp;the&nbsp;AdaBoost.R2&nbsp;algorithm.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;base_estimator_&nbsp;(<a href="builtins.html#object">object</a>):&nbsp;The&nbsp;base&nbsp;estimator&nbsp;template&nbsp;used&nbsp;for&nbsp;fitting.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_estimators&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;estimators&nbsp;at&nbsp;which&nbsp;boosting&nbsp;is&nbsp;terminated.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float):&nbsp;Contribution&nbsp;of&nbsp;each&nbsp;regressor&nbsp;to&nbsp;the&nbsp;final&nbsp;prediction.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(str):&nbsp;The&nbsp;loss&nbsp;function&nbsp;to&nbsp;use&nbsp;when&nbsp;updating&nbsp;the&nbsp;weights&nbsp;('linear',&nbsp;'square',&nbsp;'exponential').<br>
+&nbsp;&nbsp;&nbsp;&nbsp;estimators_&nbsp;(list):&nbsp;The&nbsp;collection&nbsp;of&nbsp;fitted&nbsp;base&nbsp;estimators.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;estimator_weights_&nbsp;(np.ndarray):&nbsp;Weights&nbsp;for&nbsp;each&nbsp;estimator&nbsp;(alpha&nbsp;values,&nbsp;specifically&nbsp;log(1/beta)).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;estimator_errors_&nbsp;(np.ndarray):&nbsp;Loss&nbsp;value&nbsp;for&nbsp;each&nbsp;estimator&nbsp;on&nbsp;the&nbsp;weighted&nbsp;training&nbsp;data.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="AdaBoostRegressor-__init__"><strong>__init__</strong></a>(self, base_estimator=None, n_estimators=50, learning_rate=1.0, loss='linear', random_state=None, max_depth=3, min_samples_split=2)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#AdaBoostRegressor">AdaBoostRegressor</a>.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;base_estimator&nbsp;(<a href="builtins.html#object">object</a>,&nbsp;optional):&nbsp;The&nbsp;base&nbsp;estimator&nbsp;from&nbsp;which&nbsp;the&nbsp;boosted&nbsp;ensemble&nbsp;is&nbsp;built.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Support&nbsp;for&nbsp;sample&nbsp;weighting&nbsp;is&nbsp;required.&nbsp;If&nbsp;None,&nbsp;then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;base&nbsp;estimator&nbsp;is&nbsp;DecisionTreeRegressor(max_depth=3).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_estimators&nbsp;(int,&nbsp;optional):&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;estimators.&nbsp;Defaults&nbsp;to&nbsp;50.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;learning_rate&nbsp;(float,&nbsp;optional):&nbsp;Shrinks&nbsp;the&nbsp;contribution&nbsp;of&nbsp;each&nbsp;regressor&nbsp;by&nbsp;learning_rate.&nbsp;Defaults&nbsp;to&nbsp;1.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;(str,&nbsp;optional):&nbsp;The&nbsp;loss&nbsp;function&nbsp;to&nbsp;use&nbsp;when&nbsp;updating&nbsp;sample&nbsp;weights&nbsp;('linear',&nbsp;'square',&nbsp;'exponential').<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defaults&nbsp;to&nbsp;'linear'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;random_state&nbsp;(int,&nbsp;optional):&nbsp;Controls&nbsp;the&nbsp;random&nbsp;seed.&nbsp;Defaults&nbsp;to&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int,&nbsp;optional):&nbsp;Maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;base&nbsp;estimator.&nbsp;Defaults&nbsp;to&nbsp;3.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;min_samples_split&nbsp;(int,&nbsp;optional):&nbsp;Minimum&nbsp;number&nbsp;of&nbsp;samples&nbsp;required&nbsp;to&nbsp;split&nbsp;an&nbsp;internal&nbsp;node.&nbsp;Defaults&nbsp;to&nbsp;2.</span></dd></dl>
+
+<dl><dt><a name="AdaBoostRegressor-fit"><strong>fit</strong></a>(self, X, y)</dt><dd><span class="code">Build&nbsp;a&nbsp;boosted&nbsp;regressor&nbsp;from&nbsp;the&nbsp;training&nbsp;set&nbsp;(X,&nbsp;y).</span></dd></dl>
+
+<dl><dt><a name="AdaBoostRegressor-get_stats"><strong>get_stats</strong></a>(self, y_true, X=None, y_pred=None, verbose=False)</dt><dd><span class="code">Calculate&nbsp;and&nbsp;optionally&nbsp;print&nbsp;evaluation&nbsp;metrics.&nbsp;Requires&nbsp;either&nbsp;X&nbsp;or&nbsp;y_pred.</span></dd></dl>
+
+<dl><dt><a name="AdaBoostRegressor-predict"><strong>predict</strong></a>(self, X)</dt><dd><span class="code">Predict&nbsp;regression&nbsp;target&nbsp;for&nbsp;X.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>

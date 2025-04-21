@@ -17,6 +17,8 @@ wrote sega_learn.utils.modelSelection.html
 wrote sega_learn.utils.polynomialTransform.html
 wrote sega_learn.utils.voting.html
 wrote sega_learn.utils.__init__.html
+wrote sega_learn.trees.adaBoostClassifier.html
+wrote sega_learn.trees.adaBoostRegressor.html
 wrote sega_learn.trees.gradientBoostedClassifier.html
 wrote sega_learn.trees.gradientBoostedRegressor.html
 wrote sega_learn.trees.isolationForest.html

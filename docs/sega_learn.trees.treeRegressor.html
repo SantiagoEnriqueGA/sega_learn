@@ -90,11 +90,12 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;max_depth&nbsp;(int):&nbsp;The&nbsp;maximum&nbsp;depth&nbsp;of&nbsp;the&nbsp;decision&nbsp;tree.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;min_samples_split&nbsp;(int):&nbsp;The&nbsp;minimum&nbsp;number&nbsp;of&nbsp;samples&nbsp;required&nbsp;to&nbsp;split&nbsp;a&nbsp;node.</span></dd></dl>
 
-<dl><dt><a name="RegressorTree-fit"><strong>fit</strong></a>(self, X, y, verbose=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;decision&nbsp;tree&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
+<dl><dt><a name="RegressorTree-fit"><strong>fit</strong></a>(self, X, y, sample_weight=None, verbose=False)</dt><dd><span class="code">Fit&nbsp;the&nbsp;decision&nbsp;tree&nbsp;to&nbsp;the&nbsp;training&nbsp;data.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;X:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;input&nbsp;features.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;y:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;target&nbsp;labels.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sample_weight:&nbsp;(array-like)&nbsp;-&nbsp;The&nbsp;sample&nbsp;weights&nbsp;(default:&nbsp;None).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;verbose:&nbsp;(bool)&nbsp;-&nbsp;If&nbsp;True,&nbsp;print&nbsp;detailed&nbsp;logs&nbsp;during&nbsp;fitting.<br>
 &nbsp;<br>
 Returns:<br>
@@ -137,11 +138,11 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;min_samples_split&nbsp;(int):&nbsp;Minimum&nbsp;number&nbsp;of&nbsp;samples&nbsp;required&nbsp;to&nbsp;split&nbsp;a&nbsp;node.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;n_features&nbsp;(int):&nbsp;Total&nbsp;number&nbsp;of&nbsp;features&nbsp;in&nbsp;X.</span></dd></dl>
 
-<dl><dt><a name="RegressorTreeUtility-best_split"><strong>best_split</strong></a>(self, indices)</dt><dd><span class="code">Finds&nbsp;the&nbsp;best&nbsp;split&nbsp;for&nbsp;the&nbsp;data&nbsp;subset&nbsp;defined&nbsp;by&nbsp;indices.</span></dd></dl>
+<dl><dt><a name="RegressorTreeUtility-best_split"><strong>best_split</strong></a>(self, indices, sample_weight=None)</dt><dd><span class="code">Finds&nbsp;the&nbsp;best&nbsp;split&nbsp;for&nbsp;the&nbsp;data&nbsp;subset&nbsp;defined&nbsp;by&nbsp;indices.</span></dd></dl>
 
-<dl><dt><a name="RegressorTreeUtility-calculate_leaf_value"><strong>calculate_leaf_value</strong></a>(self, indices)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;value&nbsp;for&nbsp;a&nbsp;leaf&nbsp;node&nbsp;(mean).</span></dd></dl>
+<dl><dt><a name="RegressorTreeUtility-calculate_leaf_value"><strong>calculate_leaf_value</strong></a>(self, indices, sample_weight=None)</dt><dd><span class="code">Calculate&nbsp;the&nbsp;weighted&nbsp;mean&nbsp;value&nbsp;for&nbsp;a&nbsp;leaf&nbsp;node.</span></dd></dl>
 
-<dl><dt><a name="RegressorTreeUtility-calculate_variance"><strong>calculate_variance</strong></a>(self, indices)</dt><dd><span class="code">Calculate&nbsp;variance&nbsp;for&nbsp;the&nbsp;subset&nbsp;defined&nbsp;by&nbsp;indices.</span></dd></dl>
+<dl><dt><a name="RegressorTreeUtility-calculate_variance"><strong>calculate_variance</strong></a>(self, indices, sample_weight=None)</dt><dd><span class="code">Calculate&nbsp;weighted&nbsp;variance&nbsp;for&nbsp;the&nbsp;subset&nbsp;defined&nbsp;by&nbsp;indices.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
