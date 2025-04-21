@@ -56,6 +56,8 @@ The SEGA_LEARN library includes the following features:
 - **Passive Aggressive Regressor**: Passive Aggressive Regressor is a linear regression model that updates its parameters using a passive or aggressive strategy based on the loss function.
 - **Quadratic Discriminant Analysis**: Quadratic Discriminant Analysis (QDA) is a classification algorithm that finds the quadratic combination of features that best separates two or more classes.
 - **RANSAC Regression**: Random Sample Consensus (RANSAC) regression is a linear regression model that fits a model to the data by iteratively selecting a subset of inliers and estimating the model parameters.
+- **Logistic Regression**: Logistic regression is a linear model for binary classification that uses the logistic function to model the probability of a class label.
+- **Perceptron**: The Perceptron is a simple linear binary classifier that makes its predictions based on a linear predictor function combining a set of weights with the feature vector.
 
 ### Nearest Neighbors
 - **KNeighborsClassifier**: Implements the K-Nearest Neighbors algorithm for classification tasks.
@@ -84,6 +86,8 @@ The SEGA_LEARN library includes the following features:
 - **Gradient Boosted Regressor**: Implements a gradient boosted regressor that fits multiple decision trees sequentially, each one correcting the errors of the previous trees.
 - **Gradient Boosted Classifier**: Implements a gradient boosted classifier that fits multiple decision trees sequentially, each one correcting the errors of the previous trees.
 - **Isolation Forest**: Implements an anomaly detection algorithm that isolates anomalies by randomly partitioning the data.
+- **AdaBoost Classifier**: Implements an ensemble classifier that combines multiple weak classifiers to create a strong classifier.
+- **AdaBoost Regressor**: Implements an ensemble regressor that combines multiple weak regressors to create a strong regressor.
 
 ### Utilities
 - **Data Preparation**: Implements utility functions for data preparation like train-test split, normalization, and standardization.
@@ -154,16 +158,20 @@ sega_learn/
 - [`dbscan_3d_aimated.py`](examples/clustering/dbscan_3d_aimated.py): Demonstrates DBSCAN with 3D data and animated plot.
 
 ### Linear Models
-- [`ols.py`](examples/linear_models/ols.py): Demonstrates Ordinary Least Squares.
-- [`ridge.py`](examples/linear_models/ridge.py): Demonstrates Ridge Regression.
-- [`lasso.py`](examples/linear_models/lasso.py): Demonstrates Lasso Regression.
 - [`bayes.py`](examples/linear_models/bayes.py): Demonstrates Bayesian Regression.
-- [`ransac.py`](examples/linear_models/ransac.py): Demonstrates RANSAC Regression.
-- [`ransac_vis.py`](examples/linear_models/ransac_vis.py): Demonstrates RANSAC Regression with visualization.
-- [`passiveAggressive.py`](examples/linear_models/passiveAggressive.py): Demonstrates Passive Aggressive Regressor.
-- [`passiveAggressive_vis.py`](examples/linear_models/passiveAggressive_vis.py): Demonstrates Passive Aggressive Regressor with visualization.
+- [`lasso.py`](examples/linear_models/lasso.py): Demonstrates Lasso Regression.
 - [`lda.py`](examples/linear_models/lda.py): Demonstrates Linear Discriminant Analysis.
+- [`lda_comparison.py`](examples/linear_models/lda_comparison.py): Demonstrates Linear Discriminant Analysis with different solvers.
+- [`lda_vs_qda_comparison.py`](examples/linear_models/lda_vs_qda_comparison.py): Demonstrates Linear Discriminant Analysis vs Quadratic Discriminant Analysis.
+- [`logisticRegression.py`](examples/linear_models/logisticRegression.py): Demonstrates Logistic Regression.
+- [`ols.py`](examples/linear_models/ols.py): Demonstrates Ordinary Least Squares.
+- [`passiveAggressive_vis.py`](examples/linear_models/passiveAggressive_vis.py): Demonstrates Passive Aggressive Regressor with visualization.
+- [`passiveAggressive.py`](examples/linear_models/passiveAggressive.py): Demonstrates Passive Aggressive Regressor.
+- [`perceptron.py`](examples/linear_models/perceptron.py): Demonstrates Perceptron.
 - [`qda.py`](examples/linear_models/qda.py): Demonstrates Quadratic Discriminant Analysis.
+- [`ransac_vis.py`](examples/linear_models/ransac_vis.py): Demonstrates RANSAC Regression with visualization.
+- [`ransac.py`](examples/linear_models/ransac.py): Demonstrates RANSAC Regression.
+- [`ridge.py`](examples/linear_models/ridge.py): Demonstrates Ridge Regression.
 
 ### Nearest Neighbors
 - [`nearestNeighborsClassifier.py`](examples/nearest_neighbors/nearestNeighborsClassifier.py): Demonstrates KNeighborsClassifier.
@@ -193,6 +201,8 @@ sega_learn/
 - [`oneClassSVM.py`](examples/svm/oneClassSVM.py): Demonstrates the One-Class SVM for anomaly detection.
 
 ### Trees
+- [`adaBoostClassifier.py`](examples/trees/adaBoostClassifier.py): Demonstrates AdaBoost Classifier.
+- [`adaBoostRegressor.py`](examples/trees/adaBoostRegressor.py): Demonstrates AdaBoost Regressor.
 - [`gradientBoostedRegressor.py`](examples/trees/gradientBoostedRegressor.py): Demonstrates Gradient Boosted Regressor.
 - [`gradientBoostedClassifier.py`](examples/trees/gradientBoostedClassifier.py): Demonstrates Gradient Boosted Classifier.
 - [`isolationForest_blob.py`](examples/utils/isolationForest_blob.py): Demonstrates Isolation Forest for anomaly detection.
