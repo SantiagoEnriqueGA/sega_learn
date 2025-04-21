@@ -27,41 +27,46 @@ ada_regressor = AdaBoostRegressor(
     random_state=42,
 )
 
-# Example with different loss function
-# ada_regressor_square = AdaBoostRegressor(
-#     n_estimators=100,
-#     learning_rate=0.1,
-#     loss='square',
-#     random_state=42
-# )
+# Example with custom base estimator
+from sega_learn.trees import RandomForestRegressor  # noqa: E402, I001
+
+ada_regressor_custom = AdaBoostRegressor(
+    base_estimator=RandomForestRegressor(n_jobs=1, forest_size=5),
+    n_estimators=10,
+    learning_rate=0.1,
+    loss="linear",
+    random_state=42,
+)
 
 # --- Model Training ---
 print("\n--- Training AdaBoost Regressor ---")
 ada_regressor.fit(X_train, y_train)
 print("Training complete.")
 
-# print("\n--- Training AdaBoost Regressor (Square Loss) ---")
-# ada_regressor_square.fit(X_train, y_train)
-# print("Training complete.")
+print("\n--- Training AdaBoost Regressor Custom Base Estimator ---")
+ada_regressor_custom.fit(X_train, y_train)
+print("Training complete.")
 
 # --- Prediction ---
 print("\n--- Making Predictions ---")
 y_pred = ada_regressor.predict(X_test)
-# y_pred_square = ada_regressor_square.predict(X_test)
+y_pred_custom = ada_regressor_custom.predict(X_test)
 
 print("True values for first 5 test samples:", y_test[:5].round(2))
-print("Predictions for first 5 test samples (Linear Loss):", y_pred[:5].round(2))
-# print("Predictions for first 5 test samples (Square Loss):", y_pred_square[:5].round(2))
+print("Predictions for first 5 test samples (Default):", y_pred[:5].round(2))
+print("Predictions for first 5 test samples (Custom):", y_pred_custom[:5].round(2))
 
 # --- Evaluation ---
-print("\n--- Evaluating AdaBoost Regressor (Linear Loss) ---")
+print("\n--- Evaluating AdaBoost Regressor ---")
 stats = ada_regressor.get_stats(y_test, y_pred=y_pred, verbose=True)
 
-# print("\n--- Evaluating AdaBoost Regressor (Square Loss) ---")
-# stats_square = ada_regressor_square.get_stats(y_test, y_pred=y_pred_square, verbose=True)
+print("\n--- Evaluating AdaBoost Regressor (Custom Base Estimator) ---")
+stats_custom = ada_regressor_custom.get_stats(
+    y_test, y_pred=y_pred_custom, verbose=True
+)
 
 # Optional: Direct metric calculation
-# r2 = Metrics.r_squared(y_test, y_pred)
-# mse = Metrics.mean_squared_error(y_test, y_pred)
-# mae = Metrics.mean_absolute_error(y_test, y_pred)
-# print(f"\nDirect Metrics (Linear Loss): R2={r2:.4f}, MSE={mse:.4f}, MAE={mae:.4f}")
+# r2 = Metrics.r_squared(y_test, y_pred_custom)
+# mse = Metrics.mean_squared_error(y_test, y_pred_custom)
+# mae = Metrics.mean_absolute_error(y_test, y_pred_custom)
+# print(f"\nDirect Metrics (Custom): R2={r2:.4f}, MSE={mse:.4f}, MAE={mae:.4f}")

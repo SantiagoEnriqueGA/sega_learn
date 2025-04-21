@@ -1,4 +1,4 @@
-# sega_learn/trees/adaBoostRegressor.py
+import inspect
 
 import numpy as np
 
@@ -32,6 +32,8 @@ class AdaBoostRegressor:
         learning_rate=1.0,
         loss="linear",
         random_state=None,
+        max_depth=3,
+        min_samples_split=2,
     ):
         """Initialize the AdaBoostRegressor.
 
@@ -44,12 +46,21 @@ class AdaBoostRegressor:
             loss (str, optional): The loss function to use when updating sample weights ('linear', 'square', 'exponential').
                                   Defaults to 'linear'.
             random_state (int, optional): Controls the random seed. Defaults to None.
+            max_depth (int, optional): Maximum depth of the base estimator. Defaults to 3.
+            min_samples_split (int, optional): Minimum number of samples required to split an internal node. Defaults to 2.
         """
         if base_estimator is None:
             # Default to a slightly deeper tree than for classifier
-            self.base_estimator_ = RegressorTree(max_depth=3)
+            self.base_estimator_ = RegressorTree(
+                max_depth=max_depth, min_samples_split=min_samples_split
+            )
         else:
-            # TODO: Add check if base_estimator supports sample_weight
+            # Check if the base_estimator supports sample_weight
+            if not self._supports_sample_weight(base_estimator):
+                raise ValueError(
+                    "The provided base_estimator does not support sample_weight. "
+                    "Please provide an estimator that supports sample weighting."
+                )
             self.base_estimator_ = base_estimator
 
         self.n_estimators = n_estimators
@@ -63,20 +74,37 @@ class AdaBoostRegressor:
         self.estimator_weights_ = np.zeros(self.n_estimators, dtype=np.float64)
         self.estimator_errors_ = np.zeros(self.n_estimators, dtype=np.float64)
 
+    def _supports_sample_weight(self, estimator):
+        """Check if the estimator's fit method supports sample_weight."""
+        fit_signature = inspect.signature(estimator.fit)
+        return "sample_weight" in fit_signature.parameters
+
     def _fit(self, X, y):
         """Build a boosted regressor from the training set (X, y)."""
         n_samples = X.shape[0]
 
         # Initialize weights
         sample_weight = np.full(n_samples, 1 / n_samples)
+        self.estimators_ = []  # Reset estimators for each fit
 
         for iboost in range(self.n_estimators):
-            # Fit a regressor on the current weighted sample
-            # Assuming RegressorTree can be instantiated fresh
-            estimator = RegressorTree(
-                max_depth=self.base_estimator_.max_depth,
-                min_samples_split=self.base_estimator_.min_samples_split,
-            )
+            # Create a new instance of the base estimator for this iteration
+            # Ensure parameters like max_depth and min_samples_split are correctly passed
+            # from the template (self.base_estimator_)
+            if isinstance(self.base_estimator_, RegressorTree):
+                # If default tree, instantiate with stored params
+                estimator = RegressorTree(
+                    max_depth=self.base_estimator_.max_depth,
+                    min_samples_split=self.base_estimator_.min_samples_split,
+                )
+            else:
+                try:
+                    estimator = self.base_estimator_.__class__(
+                        **self.base_estimator_.get_params()
+                    )
+                except Exception as e:  # Catch any exception and handle it
+                    raise ValueError(f"Error creating estimator: {e}") from "_fit"
+
             estimator.fit(X, y, sample_weight=sample_weight)  # Pass weights
 
             # Predict

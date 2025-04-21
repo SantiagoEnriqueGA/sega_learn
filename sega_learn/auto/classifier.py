@@ -21,7 +21,7 @@ from ..linear_models import LogisticRegression, Perceptron
 from ..nearest_neighbors import KNeighborsClassifier
 from ..neural_networks import AdamOptimizer, BaseBackendNeuralNetwork
 from ..svm import GeneralizedSVC, LinearSVC, OneClassSVM
-from ..trees import ClassifierTree, RandomForestClassifier
+from ..trees import AdaBoostClassifier, ClassifierTree, RandomForestClassifier
 
 # from ..linear_models import LogisticRegression, SGDClassifier # Uncomment if implemented
 
@@ -75,6 +75,7 @@ class AutoClassifier:
             # Trees
             "ClassifierTree": ClassifierTree,
             "RandomForestClassifier": RandomForestClassifier,
+            "AdaBoostClassifier": AdaBoostClassifier,
             # Neural Networks (will be initialized in fit if needed)
             "BaseBackendNeuralNetwork": BaseBackendNeuralNetwork,
             # Linear Models
@@ -89,6 +90,7 @@ class AutoClassifier:
             "KNeighborsClassifier": KNeighborsClassifier(),
             "ClassifierTree": ClassifierTree(),
             "RandomForestClassifier": RandomForestClassifier(),
+            "AdaBoostClassifier": AdaBoostClassifier(),
             "BaseBackendNeuralNetwork": None,  # Placeholder
             "LogisticRegression": LogisticRegression(),
             "Perceptron": Perceptron(),
@@ -105,6 +107,7 @@ class AutoClassifier:
             "KNeighborsClassifier": "Nearest Neighbors",
             "ClassifierTree": "Trees",
             "RandomForestClassifier": "Trees",
+            "AdaBoostClassifier": "Trees",
             "BaseBackendNeuralNetwork": "Neural Networks",
             "LogisticRegression": "Linear Models",
             "Perceptron": "Linear Models",
@@ -159,6 +162,12 @@ class AutoClassifier:
             "RandomForestClassifier": [
                 {"forest_size": [50, 100, 200]},
                 {"max_depth": [5, 10, 15]},
+            ],
+            "AdaBoostClassifier": [
+                {"n_estimators": [50, 100, 200]},
+                {"learning_rate": [0.001, 0.01, 0.1]},
+                {"min_samples_split": [2, 5, 10]},
+                {"max_depth": [1, 3, 5]},
             ],
             # Note: OneClassSVM tuning is often complex/specific, adding basic grid for demonstration
             "OneClassSVM - Linear": [

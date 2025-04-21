@@ -18,7 +18,7 @@ from sega_learn.utils.metrics import Metrics
 from .treeClassifier import ClassifierTree
 
 
-def _fit_tree(X, y, max_depth, min_samples_split):
+def _fit_tree(X, y, max_depth, min_samples_split, sample_weight=None):
     """Helper function for parallel tree fitting. Fits a single tree on a bootstrapped sample.
 
     Args:
@@ -26,6 +26,7 @@ def _fit_tree(X, y, max_depth, min_samples_split):
         y: (array-like) - The target labels.
         max_depth: (int) - The maximum depth of the tree.
         min_samples_split: (int) - The minimum samples required to split a node.
+        sample_weight: (array-like or None) - The weights for each sample.
 
     Returns:
         ClassifierTree: A fitted tree object.
@@ -37,7 +38,7 @@ def _fit_tree(X, y, max_depth, min_samples_split):
 
     # Fit tree on bootstrapped sample
     tree = ClassifierTree(max_depth=max_depth, min_samples_split=min_samples_split)
-    return tree.fit(X_sample, y_sample)
+    return tree.fit(X_sample, y_sample, sample_weight)
 
 
 def _classify_oob(X, trees, bootstraps):
@@ -126,7 +127,17 @@ class RandomForestClassifier:
             self.X = X
         self.y = y
 
-    def fit(self, X=None, y=None, verbose=False):
+    def get_params(self):
+        """Get the parameters of the RandomForestClassifier."""
+        return {
+            "forest_size": self.n_estimators,
+            "max_depth": self.max_depth,
+            "min_samples_split": self.min_samples_split,
+            "n_jobs": self.n_jobs,
+            "random_seed": self.random_state,
+        }
+
+    def fit(self, X=None, y=None, sample_weight=None, verbose=False):
         """Fit the random forest with parallel processing."""
         if X is None and self.X is None:
             raise ValueError(
@@ -151,12 +162,22 @@ class RandomForestClassifier:
         if X.size == 0 or y.size == 0:
             raise ValueError("X and y must not be empty.")
 
+        # Sample weight handling
+        if sample_weight is None:
+            sample_weight = np.ones(len(y), dtype=np.float64)
+        else:
+            sample_weight = np.asarray(sample_weight, dtype=np.float64)
+            if sample_weight.shape[0] != len(y):
+                raise ValueError("sample_weight length mismatch.")
+
         if verbose:
             print("Fitting trees in parallel...")
 
         # Fit trees in parallel
         self.trees = Parallel(n_jobs=self.n_jobs)(
-            delayed(_fit_tree)(X, y, self.max_depth, self.min_samples_split)
+            delayed(_fit_tree)(
+                X, y, self.max_depth, self.min_samples_split, sample_weight
+            )
             for _ in range(self.n_estimators)
         )
 

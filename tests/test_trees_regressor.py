@@ -7,11 +7,9 @@ import numpy as np
 # Ensure the module path is correct
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-# Import necessary classes from your library
-# Assuming your structure is sega_learn/trees/treeRegressor.py etc.
 from sega_learn.trees import *
 
-# Import utility functions if available (adjust path if necessary)
+# Import utility functions if available
 try:
     from tests.utils import suppress_print, synthetic_data_regression
 except ImportError:
@@ -44,8 +42,6 @@ N_SAMPLES = 50
 N_FEATURES = 4
 RANDOM_STATE = 42
 MIN_SAMPLES_SPLIT = 5
-
-# TODO: Add tests with sample weights
 
 
 class TestRegressorTreeUtility(unittest.TestCase):
@@ -605,6 +601,43 @@ class TestRandomForestRegressor(unittest.TestCase):
         self.assertEqual(len(self.rf.trees), self.rf.n_estimators)
         self.assertIsInstance(self.rf.trees[0], RegressorTree)
 
+    def test_fit_sample_weights(self):
+        """Tests fitting with sample weights."""
+        sample_weights = np.random.rand(self.X.shape[0])
+        self.rf.fit(self.X, self.y, sample_weight=sample_weights)
+        # Check if trees seem fitted (have structure)
+        self.assertEqual(len(self.rf.trees), self.rf.n_estimators)
+
+    def test_fit_invalid_sample_weights(self):
+        """Tests fitting with invalid sample weights."""
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_non_numeric_sample_weights(self):
+        """Tests fitting with non-numeric sample weights."""
+        sample_weights = np.array(["a", "b", "c"])
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_shape_mismatch(self):
+        """Tests fitting with sample weights of different shape."""
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_empty(self):
+        """Tests fitting with empty sample weights."""
+        sample_weights = np.array([])
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_none(self):
+        """Tests fitting with None sample weights."""
+        self.rf.fit(self.X, self.y, sample_weight=None)
+        # Check if trees seem fitted (have structure)
+        self.assertEqual(len(self.rf.trees), self.rf.n_estimators)
+
     def test_predict_before_fit(self):
         """Tests predict before fitting."""
         with self.assertRaises(RuntimeError):
@@ -715,6 +748,43 @@ class TestGradientBoostedRegressor(unittest.TestCase):
         self.assertEqual(len(self.gbr.trees), self.gbr.n_estimators)
         self.assertIsInstance(self.gbr.trees[0], RegressorTree)
         self.assertAlmostEqual(self.gbr.initial_prediction_, y_single[0])
+
+    def test_fit_sample_weights(self):
+        """Tests fitting with sample weights."""
+        sample_weights = np.random.rand(self.X.shape[0])
+        self.gbr.fit(self.X, self.y, sample_weight=sample_weights)
+        # Check if trees seem fitted (have structure)
+        self.assertEqual(len(self.gbr.trees), self.gbr.n_estimators)
+
+    def test_fit_invalid_sample_weights(self):
+        """Tests fitting with invalid sample weights."""
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.gbr.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_non_numeric_sample_weights(self):
+        """Tests fitting with non-numeric sample weights."""
+        sample_weights = np.array(["a", "b", "c"])
+        with self.assertRaises((ValueError, IndexError)):
+            self.gbr.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_shape_mismatch(self):
+        """Tests fitting with sample weights of different shape."""
+        sample_weights = np.array([1, 2, 3])
+        with self.assertRaises((ValueError, IndexError)):
+            self.gbr.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_empty(self):
+        """Tests fitting with empty sample weights."""
+        sample_weights = np.array([])
+        with self.assertRaises((ValueError, IndexError)):
+            self.gbr.fit(self.X, self.y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_none(self):
+        """Tests fitting with None sample weights."""
+        self.gbr.fit(self.X, self.y, sample_weight=None)
+        # Check if trees seem fitted (have structure)
+        self.assertEqual(len(self.gbr.trees), self.gbr.n_estimators)
 
     def test_predict_before_fit(self):
         """Tests predict before fitting."""

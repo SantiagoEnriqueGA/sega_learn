@@ -46,7 +46,7 @@ class TestAdaBoostClassifier(unittest.TestCase):
         """Test default initialization."""
         model = AdaBoostClassifier()
         self.assertIsInstance(model.base_estimator_, ClassifierTree)
-        self.assertEqual(model.base_estimator_.max_depth, 1)
+        self.assertEqual(model.base_estimator_.max_depth, 3)
         self.assertEqual(model.n_estimators, 50)
         self.assertEqual(model.learning_rate, 1.0)
         self.assertIsNone(model.random_state)

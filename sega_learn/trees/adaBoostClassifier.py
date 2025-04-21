@@ -1,3 +1,4 @@
+import inspect
 import warnings
 
 import numpy as np
@@ -33,6 +34,7 @@ class AdaBoostClassifier:
         n_estimators=50,
         learning_rate=1.0,
         random_state=None,
+        max_depth=3,
         min_samples_split=2,
     ):
         """Initialize the AdaBoostClassifier.
@@ -46,18 +48,22 @@ class AdaBoostClassifier:
             learning_rate (float, optional): Weight applied to each classifier's contribution. Defaults to 1.0.
             random_state (int, optional): Controls the random seed given to the base estimator at each boosting iteration.
                                           Defaults to None.
+            max_depth (int, optional): The maximum depth of the base estimator. Defaults to 3.
             min_samples_split (int, optional): The minimum number of samples required to split an internal node
                                                when using the default `ClassifierTree` base estimator. Defaults to 2.
         """
         if base_estimator is None:
-            # Default to a decision stump (depth=1) and pass min_samples_split
+            # Default to a decision stump (depth=3) and pass min_samples_split
             self.base_estimator_ = ClassifierTree(
-                max_depth=1, min_samples_split=min_samples_split
+                max_depth=max_depth, min_samples_split=min_samples_split
             )
         else:
-            # If a custom estimator is provided, use it as is.
-            # We assume the user has configured it appropriately (including min_samples_split if applicable).
-            # TODO: Add check if base_estimator supports sample_weight
+            # Check if the base_estimator supports sample_weight
+            if not self._supports_sample_weight(base_estimator):
+                raise ValueError(
+                    "The provided base_estimator does not support sample_weight. "
+                    "Please provide an estimator that supports sample weighting."
+                )
             self.base_estimator_ = base_estimator
 
         self.n_estimators = n_estimators
@@ -73,6 +79,11 @@ class AdaBoostClassifier:
         self.classes_ = None
         self.n_classes_ = None
 
+    def _supports_sample_weight(self, estimator):
+        """Check if the estimator's fit method supports sample_weight."""
+        fit_signature = inspect.signature(estimator.fit)
+        return "sample_weight" in fit_signature.parameters
+
     def _fit(self, X, y):
         """Build a boosted classifier from the training set (X, y)."""
         n_samples = X.shape[0]
@@ -83,6 +94,7 @@ class AdaBoostClassifier:
 
         # Initialize weights
         sample_weight = np.full(n_samples, 1 / n_samples)
+        self.estimators_ = []  # Reset estimators for each fit
 
         for iboost in range(self.n_estimators):
             # Fit a classifier on the current weighted sample
@@ -97,20 +109,12 @@ class AdaBoostClassifier:
                     min_samples_split=self.base_estimator_.min_samples_split,
                 )
             else:
-                # If custom estimator, attempt to clone it (requires sklearn compatibility or careful handling)
-                # For simplicity, let's assume custom estimators are stateless or handled externally
-                # This might need adjustment based on how custom estimators behave.
-                # A safer approach might be to require custom estimators to be factory functions.
                 try:
-                    # Try scikit-learn's clone mechanism if available
-                    from sklearn.base import clone
-
-                    estimator = clone(self.base_estimator_)
-                except ImportError:
-                    # Basic fallback: Re-initialize if possible (might not preserve all settings)
-                    estimator = type(self.base_estimator_)(
+                    estimator = self.base_estimator_.__class__(
                         **self.base_estimator_.get_params()
                     )
+                except Exception as e:  # Catch any exception and handle it
+                    raise ValueError(f"Error creating estimator: {e}") from "_fit"
 
             estimator.fit(
                 X, y_encoded, sample_weight=sample_weight
@@ -186,8 +190,10 @@ class AdaBoostClassifier:
         if actual_n_estimators < self.n_estimators:
             self.estimator_weights_ = self.estimator_weights_[:actual_n_estimators]
             self.estimator_errors_ = self.estimator_errors_[:actual_n_estimators]
-            # Reset n_estimators? Or keep original requested? Keep original for now.
-            # self.n_estimators = actual_n_estimators
+            self.estimators_ = self.estimators_[:actual_n_estimators]
+
+        # Ensure the number of weights matches the number of estimators
+        self.n_estimators = len(self.estimators_)
 
         return self
 

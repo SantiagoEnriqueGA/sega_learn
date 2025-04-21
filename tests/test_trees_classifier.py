@@ -628,6 +628,39 @@ class TestRandomForestClassifier(unittest.TestCase):
         for tree in self.rf.trees:
             self.assertEqual(tree["label"], 0)
 
+    def test_fit_sample_weights(self):
+        """Test fitting the RandomForestClassifier with sample weights."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        sample_weights = np.random.rand(10)
+        self.rf.fit(X, y, sample_weight=sample_weights)
+        self.assertEqual(len(self.rf.trees), 10)
+        for tree in self.rf.trees:
+            self.assertIsInstance(tree, dict)
+
+    def test_fit_sample_weights_empty(self):
+        """Test fitting the RandomForestClassifier with empty sample weights."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        sample_weights = []
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(X, y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_different_length(self):
+        """Test fitting the RandomForestClassifier with sample weights of different length."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        sample_weights = np.random.rand(5)
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(X, y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_none(self):
+        """Test fitting the RandomForestClassifier with None sample weights."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        self.rf.fit(X, y, sample_weight=None)
+        self.assertEqual(len(self.rf.trees), 10)
+
     def test_predict_single_sample(self):
         """Test predicting with a single sample."""
         X = [[1, 2, 3, 4, 5]]
@@ -776,6 +809,37 @@ class TesGradientBoostedClassifier(unittest.TestCase):
         y = np.random.rand(10, 1)
         with self.assertRaises(ValueError):
             self.rf.fit(X=X, y=y)
+
+    def test_fit_sample_weights(self):
+        """Test fitting the GradientBoostedClassifier with sample weights."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        sample_weights = np.random.rand(10)
+        self.rf.fit(X, y, sample_weight=sample_weights)
+        self.assertEqual(len(self.rf.trees_), 10)
+
+    def test_fit_sample_weights_empty(self):
+        """Test fitting the GradientBoostedClassifier with empty sample weights."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        sample_weights = []
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(X, y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_different_length(self):
+        """Test fitting the GradientBoostedClassifier with sample weights of different length."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        sample_weights = np.random.rand(5)
+        with self.assertRaises((ValueError, IndexError)):
+            self.rf.fit(X, y, sample_weight=sample_weights)
+
+    def test_fit_sample_weights_none(self):
+        """Test fitting the GradientBoostedClassifier with None sample weights."""
+        X = np.random.rand(10, 5)
+        y = np.random.randint(0, 2, size=10)
+        self.rf.fit(X, y, sample_weight=None)
+        self.assertEqual(len(self.rf.trees_), 10)
 
     def test_predict(self):
         """Test predicting with the GradientBoostedClassifier."""

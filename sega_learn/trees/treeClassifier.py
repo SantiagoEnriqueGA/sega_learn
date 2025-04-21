@@ -103,7 +103,9 @@ class ClassifierTreeUtility:
 
         # Partition weights
         if sample_weight is not None:
-            sample_weight = np.array(sample_weight)  # Ensure sample_weight is a NumPy array
+            sample_weight = np.array(
+                sample_weight
+            )  # Ensure sample_weight is a NumPy array
             sample_weight_left = sample_weight[mask]
             sample_weight_right = sample_weight[~mask]
             return (

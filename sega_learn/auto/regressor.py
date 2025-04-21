@@ -31,7 +31,12 @@ from ..neural_networks import (
     MeanSquaredErrorLoss,
 )
 from ..svm import GeneralizedSVR, LinearSVR
-from ..trees import GradientBoostedRegressor, RandomForestRegressor, RegressorTree
+from ..trees import (
+    AdaBoostRegressor,
+    GradientBoostedRegressor,
+    RandomForestRegressor,
+    RegressorTree,
+)
 from ..utils import Scaler
 
 r_squared = Metrics.r_squared
@@ -91,6 +96,7 @@ class AutoRegressor:
             "RegressorTree": RegressorTree,
             "RandomForestRegressor": RandomForestRegressor,
             "GradientBoostedRegressor": GradientBoostedRegressor,
+            "AdaBoostRegressor": AdaBoostRegressor,
             # Neural Networks
             "BaseBackendNeuralNetwork": BaseBackendNeuralNetwork,
         }
@@ -108,6 +114,7 @@ class AutoRegressor:
             "RegressorTree": RegressorTree(),
             "RandomForestRegressor": RandomForestRegressor(),
             "GradientBoostedRegressor": GradientBoostedRegressor(),
+            "AdaBoostRegressor": AdaBoostRegressor(),
             "BaseBackendNeuralNetwork": None,  # Placeholder, defined in fit()
         }
 
@@ -126,6 +133,7 @@ class AutoRegressor:
             "RegressorTree": "Trees",
             "RandomForestRegressor": "Trees",
             "GradientBoostedRegressor": "Trees",
+            "AdaBoostRegressor": "Trees",
             "BaseBackendNeuralNetwork": "Neural Networks",
         }
 
@@ -211,6 +219,12 @@ class AutoRegressor:
                 {"max_depth": [3, 5, 7]},
                 {"min_samples_split": [2, 5, 10, 20, 25, 50]},
                 {"learning_rate": [0.01, 0.1, 0.5, 1.0]},
+            ],
+            "AdaBoostRegressor": [
+                {"n_estimators": [50, 100, 200]},
+                {"learning_rate": [0.001, 0.01, 0.1]},
+                {"min_samples_split": [2, 5, 10]},
+                {"max_depth": [1, 3, 5]},
             ],
         }
         # Note: Neural Network is excluded from this grid/random search tuning loop.

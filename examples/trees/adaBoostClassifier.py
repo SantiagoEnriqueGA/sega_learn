@@ -17,7 +17,7 @@ X, y = make_classification(
     n_informative=5,  # Number of informative features
     n_redundant=2,  # Number of redundant features (linear combinations)
     n_classes=2,  # Binary classification
-    class_sep=1.0,  # How separated the classes are
+    class_sep=0.5,  # How separated the classes are
     flip_y=0.05,  # Add some noise to labels
     random_state=42,
 )
@@ -39,31 +39,32 @@ ada_classifier_default = AdaBoostClassifier(
     random_state=42,
 )
 
-# Initialize with slightly deeper trees as base estimators
-# from sega_learn.trees import ClassifierTree
-# ada_classifier_deeper = AdaBoostClassifier(
-#     base_estimator=ClassifierTree(max_depth=3), # Use trees of depth 3
-#     n_estimators=100,
-#     learning_rate=0.5,
-#     random_state=42
-# )
+# Initialize with custom base estimator
+from sega_learn.trees import RandomForestClassifier  # noqa: E402, I001
+
+ada_classifier_custom = AdaBoostClassifier(
+    base_estimator=RandomForestClassifier(n_jobs=1, forest_size=10),
+    n_estimators=10,
+    learning_rate=0.5,
+    random_state=42,
+)
 
 # --- Model Training ---
 print("\n--- Training Default AdaBoost Classifier ---")
 ada_classifier_default.fit(X_train, y_train)
 print("Training complete.")
 
-# print("\n--- Training AdaBoost Classifier with Deeper Trees ---")
-# ada_classifier_deeper.fit(X_train, y_train)
-# print("Training complete.")
+print("\n--- Training AdaBoost Classifier with Custom Base Estimator ---")
+ada_classifier_custom.fit(X_train, y_train)
+print("Training complete.")
 
 # --- Prediction ---
 print("\n--- Making Predictions ---")
 y_pred_default = ada_classifier_default.predict(X_test)
-# y_pred_deeper = ada_classifier_deeper.predict(X_test)
+y_pred_deeper = ada_classifier_custom.predict(X_test)
 
 print("Predictions made for first 5 test samples (Default Model):", y_pred_default[:5])
-# print("Predictions made for first 5 test samples (Deeper Model):", y_pred_deeper[:5])
+print("Predictions made for first 5 test samples (Custom Model):", y_pred_deeper[:5])
 
 # --- Evaluation ---
 print("\n--- Evaluating Default AdaBoost Classifier ---")
@@ -71,8 +72,10 @@ stats_default = ada_classifier_default.get_stats(
     y_test, y_pred=y_pred_default, verbose=True
 )
 
-# print("\n--- Evaluating AdaBoost Classifier with Deeper Trees ---")
-# stats_deeper = ada_classifier_deeper.get_stats(y_test, y_pred=y_pred_deeper, verbose=True)
+print("\n--- Evaluating AdaBoost Classifier with Custom Base Estimator ---")
+stats_custom = ada_classifier_custom.get_stats(
+    y_test, y_pred=y_pred_deeper, verbose=True
+)
 
 # Optional: Direct metric calculation
 # accuracy = Metrics.accuracy(y_test, y_pred_default)
