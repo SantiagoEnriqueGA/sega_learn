@@ -64,15 +64,7 @@ class ARIMA:
         ar_coefficients = self._fit_ar_model(differenced_series, self.p)
 
         # Step 3: Compute residuals from the AR model
-        residuals = differenced_series[self.p :] - np.dot(
-            np.array(
-                [
-                    differenced_series[i : len(differenced_series) - self.p + i]
-                    for i in range(self.p)
-                ]
-            ).T,
-            ar_coefficients,
-        )
+        residuals = self._compute_residuals(differenced_series, ar_coefficients)
 
         # Step 4: Fit the MA (Moving Average) component
         ma_coefficients = self._fit_ma_model(residuals, self.q)
@@ -104,6 +96,26 @@ class ARIMA:
         )
 
         return forecasted_values
+
+    def _compute_residuals(self, differenced_series, ar_coefficients):
+        """Compute residuals from the AR model."""
+        return differenced_series[self.p :] - np.dot(
+            np.array(
+                [
+                    differenced_series[i : len(differenced_series) - self.p + i]
+                    for i in range(self.p)
+                ]
+            ).T,
+            ar_coefficients,
+        )
+
+    def _compute_ar_part(self, ar_coefficients, forecasted_values, p):
+        """Compute the AR contribution to the forecast."""
+        return sum(ar_coefficients[i] * forecasted_values[-i - 1] for i in range(p))
+
+    def _compute_ma_part(self, ma_coefficients, residuals, q):
+        """Compute the MA contribution to the forecast."""
+        return sum(ma_coefficients[i] * residuals[-i - 1] for i in range(q))
 
     def _difference_series(self, time_series, d):
         """Perform differencing on the time series to make it stationary.
@@ -226,13 +238,9 @@ class ARIMA:
         )  # Use the last `q` residuals from the fitted model
 
         for _ in range(steps):
-            # Compute AR contribution
-            ar_part = sum(
-                ar_coefficients[i] * forecasted_values[-i - 1] for i in range(p)
-            )
-
-            # Compute MA contribution
-            ma_part = sum(ma_coefficients[i] * residuals[-i - 1] for i in range(q))
+            # Compute AR and MA contributions
+            ar_part = self._compute_ar_part(ar_coefficients, forecasted_values, p)
+            ma_part = self._compute_ma_part(ma_coefficients, residuals, q)
 
             # Forecast next value
             next_value = ar_part + ma_part
