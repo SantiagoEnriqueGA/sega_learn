@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from sega_learn import *
 
 
+# TODO: add time series imports
 class TestImports(unittest.TestCase):
     """Tests that the main package can be imported correctly."""
 

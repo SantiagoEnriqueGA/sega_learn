@@ -85,10 +85,13 @@ from .utils import (
     make_blobs,
     make_classification,
     make_regression,
+    make_time_series,
     normalize,
     one_hot_encode,
     train_test_split,
 )
+
+# TODO: add time series imports
 
 __all__ = [
     # Utils
@@ -108,6 +111,7 @@ __all__ = [
     "Augmenter",
     "make_blobs",
     "make_regression",
+    "make_time_series",
     "make_classification",
     "train_test_split",
     "one_hot_encode",
