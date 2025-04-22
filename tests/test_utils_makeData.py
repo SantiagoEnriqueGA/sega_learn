@@ -5,7 +5,12 @@ import unittest
 import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from sega_learn.utils import make_blobs, make_classification, make_regression
+from sega_learn.utils import (
+    make_blobs,
+    make_classification,
+    make_regression,
+    make_time_series,
+)
 
 
 class TestMakeData(unittest.TestCase):
@@ -561,6 +566,134 @@ class TestMakeData(unittest.TestCase):
         )
 
         self.assertEqual(X.shape, (n_samples, n_features))
+
+    # === Tests for make_time_series ===
+    def test_make_time_series_basic(self):
+        """Test basic functionality of make_time_series."""
+        n_samples, n_timestamps, n_features = 10, 50, 1
+        X = make_time_series(
+            n_samples=n_samples,
+            n_timestamps=n_timestamps,
+            n_features=n_features,
+            random_state=self.random_state,
+        )
+
+        self.assertEqual(X.shape, (n_samples, n_timestamps, n_features))
+        self.assertTrue(np.issubdtype(X.dtype, np.floating))
+
+    def test_make_time_series_trend(self):
+        """Test trend parameter affects time series shape."""
+        n_samples, n_timestamps, n_features = 5, 100, 1
+
+        X_linear = make_time_series(
+            n_samples=n_samples,
+            n_timestamps=n_timestamps,
+            n_features=n_features,
+            trend="linear",
+            seasonality=None,
+            noise=0,
+            random_state=self.random_state,
+        )
+        X_quadratic = make_time_series(
+            n_samples=n_samples,
+            n_timestamps=n_timestamps,
+            n_features=n_features,
+            trend="quadratic",
+            seasonality=None,
+            noise=0,
+            random_state=self.random_state,
+        )
+
+        # Check linear trend, all values should be increasing
+        self.assertTrue(np.all(np.diff(X_linear[0, :, 0]) > 0))
+
+        # Check quadratic trend, all second differences should be positiveW
+        self.assertTrue(np.all(np.diff(np.diff(X_quadratic[0, :, 0])) > 0))
+
+    def test_make_time_series_seasonality(self):
+        """Test seasonality parameter affects time series periodicity."""
+        n_samples, n_timestamps, n_features = 1, 100, 1
+        seasonality_period = 50
+
+        X_sine = make_time_series(
+            n_samples=n_samples,
+            n_timestamps=n_timestamps,
+            n_features=n_features,
+            trend=None,
+            seasonality="sine",
+            seasonality_period=seasonality_period,
+            noise=0,
+            random_state=self.random_state,
+        )
+        X_cosine = make_time_series(
+            n_samples=n_samples,
+            n_timestamps=n_timestamps,
+            n_features=n_features,
+            trend=None,
+            seasonality="cosine",
+            seasonality_period=seasonality_period,
+            noise=0,
+            random_state=self.random_state,
+        )
+
+        # Check sine seasonality
+        self.assertAlmostEqual(X_sine[0, seasonality_period // 4, 0], 1, delta=0.1)
+        self.assertAlmostEqual(X_sine[0, seasonality_period // 2, 0], 0, delta=0.1)
+        self.assertAlmostEqual(X_sine[0, 3 * seasonality_period // 4, 0], -1, delta=0.1)
+        self.assertAlmostEqual(X_sine[0, seasonality_period, 0], 0, delta=0.1)
+
+        # Check cosine seasonality
+        self.assertAlmostEqual(X_cosine[0, seasonality_period // 4, 0], 0, delta=0.1)
+        self.assertAlmostEqual(X_cosine[0, seasonality_period // 2, 0], -1, delta=0.1)
+        self.assertAlmostEqual(
+            X_cosine[0, 3 * seasonality_period // 4, 0], 0, delta=0.1
+        )
+        self.assertAlmostEqual(X_cosine[0, seasonality_period, 0], 1, delta=0.1)
+
+    def test_make_time_series_noise(self):
+        """Test noise parameter affects time series variability."""
+        n_samples, n_timestamps, n_features = 5, 100, 1
+        noise_low, noise_high = 0.1, 1.0
+
+        X_low_noise = make_time_series(
+            n_samples=n_samples,
+            n_timestamps=n_timestamps,
+            n_features=n_features,
+            noise=noise_low,
+            random_state=self.random_state,
+        )
+        X_high_noise = make_time_series(
+            n_samples=n_samples,
+            n_timestamps=n_timestamps,
+            n_features=n_features,
+            noise=noise_high,
+            random_state=self.random_state,
+        )
+
+        # Higher noise should result in higher variance
+        self.assertLess(np.var(X_low_noise), np.var(X_high_noise))
+
+    def test_make_time_series_multiple_features(self):
+        """Test make_time_series with multiple features."""
+        n_samples, n_timestamps, n_features = 5, 50, 3
+        X = make_time_series(
+            n_samples=n_samples,
+            n_timestamps=n_timestamps,
+            n_features=n_features,
+            random_state=self.random_state,
+        )
+
+        self.assertEqual(X.shape, (n_samples, n_timestamps, n_features))
+
+    def test_make_time_series_invalid_trend(self):
+        """Test error handling for invalid trend parameter."""
+        with self.assertRaises(ValueError):
+            make_time_series(trend="invalid", random_state=self.random_state)
+
+    def test_make_time_series_invalid_seasonality(self):
+        """Test error handling for invalid seasonality parameter."""
+        with self.assertRaises(ValueError):
+            make_time_series(seasonality="invalid", random_state=self.random_state)
 
 
 if __name__ == "__main__":

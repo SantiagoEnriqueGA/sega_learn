@@ -4,7 +4,7 @@ from .dataPrep import DataPrep
 from .modelSelection import ModelSelectionUtility, GridSearchCV, RandomSearchCV
 from .metrics import Metrics
 from .decomposition import PCA, SVD
-from .makeData import make_regression, make_classification, make_blobs
+from .makeData import make_regression, make_classification, make_blobs, make_time_series
 from .dataSplitting import train_test_split
 from .dataAugmentation import (
     RandomOverSampler,
@@ -36,6 +36,7 @@ __all__ = [
     "make_regression",
     "make_classification",
     "make_blobs",
+    "make_time_series",
     "train_test_split",
     "one_hot_encode",
     "normalize",

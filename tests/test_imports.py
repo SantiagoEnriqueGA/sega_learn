@@ -139,6 +139,7 @@ class TestImports(unittest.TestCase):
         assert make_blobs is not None
         assert make_classification is not None
         assert make_regression is not None
+        assert make_time_series is not None
         assert normalize is not None
         assert one_hot_encode is not None
         assert train_test_split is not None
