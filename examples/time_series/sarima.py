@@ -54,8 +54,6 @@ statsmodels_arima_model = StatsmodelsARIMA(
     train_series, order=order, seasonal_order=seasonal_order
 )
 statsmodels_arima_model_fit = statsmodels_arima_model.fit()
-
-# Forecast future values using the Statsmodels SARIMA model
 forecasted_values_statsmodels = statsmodels_arima_model_fit.forecast(
     steps=forecast_steps
 )

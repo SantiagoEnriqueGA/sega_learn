@@ -829,8 +829,200 @@ class SARIMA(ARIMA):
         return best_order
 
 
-class SARIMAX:
-    """SARIMAX model for time series forecasting."""
+class SARIMAX(SARIMA):
+    """SARIMAX model with exogenous regressors.
 
-    # Implementation of SARIMAX model
-    pass
+    Two-step approach:
+      1. OLS regression of y on exog to get beta + residuals
+      2. SARIMA fit on the residuals
+    Forecast = SARIMA_forecast(resid) + exog_future @ beta
+
+    Attributes:
+        beta (np.ndarray): The beta coefficients.
+        k_exog (int): The number of exogenous variables.
+    """
+
+    def __init__(self, order=(0, 0, 0), seasonal_order=(0, 0, 0, 1)):
+        """Initialize the SARIMAX model.
+
+        Args:
+            order (tuple): Non-seasonal ARIMA order (p, d, q).
+            seasonal_order (tuple): Seasonal order (P, D, Q, m).
+        """
+        super().__init__(order=order, seasonal_order=seasonal_order)
+        self.beta = None
+        self.k_exog = None
+
+    def fit(self, time_series, exog):
+        """Fit the SARIMAX model to the given time series and exogenous regressors.
+
+        Args:
+            time_series (array-like): The time series data.
+            exog (array-like): The exogenous regressors.
+
+        Returns:
+            self: The fitted SARIMAX model.
+        """
+        y = np.asarray(time_series, dtype=float)
+        X = np.asarray(exog, dtype=float)
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+        if len(y) != len(X):
+            raise ValueError("y and exog must have the same length")
+
+        # OLS to estimate beta
+        beta, *_ = np.linalg.lstsq(X, y, rcond=None)
+        self.beta = beta
+        self.k_exog = X.shape[1]
+
+        # Residuals + SARIMA fit
+        resid = y - X.dot(beta)
+        super().fit(resid)
+
+        # keep full y for seasonal inversion
+        self.original_series = y.copy()
+        return self
+
+    def forecast(self, steps, exog_future):
+        """Forecast future values using the fitted SARIMAX model.
+
+        Args:
+            steps (int): The number of steps to forecast.
+            exog_future (array-like): The exogenous regressors for the future values.
+
+        Returns:
+            array-like: The forecasted values.
+        """
+        if self.beta is None or self.fitted_model is None:
+            raise ValueError("Fit model before forecasting")
+
+        # Validate exog_future
+        Xf = np.asarray(exog_future, dtype=float)
+        if Xf.ndim == 1:
+            Xf = Xf.reshape(-1, 1)
+        if Xf.shape[1] != self.k_exog:
+            raise ValueError(f"exog_future must have {self.k_exog} columns")
+
+        # SARIMA forecast on residuals
+        resid_fc = super().forecast(steps)
+
+        # Add exogenous effect back
+        return resid_fc + Xf.dot(self.beta)
+
+    @staticmethod
+    def suggest_order(  # noqa: D417
+        endog,
+        exog,
+        max_p=3,
+        max_d=2,
+        max_q=3,
+        max_P=2,
+        max_D=1,
+        max_Q=2,
+        max_m=100,
+    ):
+        """Suggest ((p,d,q),(P,D,Q,m)) for SARIMAX.
+
+        Regress endog on exog to get residuals, then call SARIMA.suggest_order on residuals.
+
+        Args:
+            endog (array-like): The endogenous variable.
+            exog (array-like): The exogenous regressors.
+            max_p, max_d, max_q: Maximum values for non-seasonal components.
+            max_P, max_D, max_Q, max_m: Maximum values for seasonal components.
+
+        Returns:
+            tuple: The optimal orders (p, d, q, P, D, Q, m).
+        """
+        y = np.asarray(endog, dtype=float)
+        X = np.asarray(exog, dtype=float)
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+        beta, *_ = np.linalg.lstsq(X, y, rcond=None)
+        resid = y - X.dot(beta)
+        return SARIMA.suggest_order(
+            resid,
+            max_p=max_p,
+            max_d=max_d,
+            max_q=max_q,
+            max_P=max_P,
+            max_D=max_D,
+            max_Q=max_Q,
+            max_m=max_m,
+        )
+
+    @staticmethod
+    def find_best_order(  # noqa: D417
+        train_endog,
+        test_endog,
+        train_exog,
+        test_exog,
+        max_p=2,
+        max_d=1,
+        max_q=2,
+        max_P=1,
+        max_D=1,
+        max_Q=1,
+        max_m=12,
+    ):
+        """Grid-search over ((p,d,q),(P,D,Q,m)) to minimize MSE on test set.
+
+        Args:
+            train_endog (array-like): The training endogenous variable.
+            test_endog (array-like): The testing endogenous variable.
+            train_exog (array-like): The training exogenous regressors.
+            test_exog (array-like): The testing exogenous regressors.
+            max_p, max_d, max_q: Maximum values for non-seasonal components.
+            max_P, max_D, max_Q, max_m: Maximum values for seasonal components.
+
+        Returns:
+            tuple: The best orders ((p,d,q),(P,D,Q,m)).
+        """
+        y_train = np.asarray(train_endog, dtype=float)
+        y_test = np.asarray(test_endog, dtype=float)
+        X_train = np.asarray(train_exog, dtype=float)
+        X_test = np.asarray(test_exog, dtype=float)
+        if X_train.ndim == 1:
+            X_train = X_train.reshape(-1, 1)
+            X_test = X_test.reshape(-1, 1)
+
+        best_mse = float("inf")
+        best_order = ((0, 0, 0), (0, 0, 0, 1))
+
+        # Determine candidate seasonal periods
+        m_candidates = [1]
+        if len(y_train) > 2:
+            from statsmodels.tsa.stattools import acf
+
+            acf_vals = acf(y_train, nlags=min(len(y_train) // 2, max_m))
+            peaks = [
+                i
+                for i in range(2, len(acf_vals) - 1)
+                if acf_vals[i] > acf_vals[i - 1]
+                and acf_vals[i] > acf_vals[i + 1]
+                and acf_vals[i] > 0.2
+            ]
+            m_candidates = [1] + peaks[:2]
+
+        # Grid search
+        for m in m_candidates:
+            for p in range(max_p + 1):
+                for d in range(max_d + 1):
+                    for q in range(max_q + 1):
+                        for P in range(max_P + 1):
+                            for D in range(max_D + 1):
+                                for Q in range(max_Q + 1):
+                                    try:
+                                        model = SARIMAX(
+                                            order=(p, d, q), seasonal_order=(P, D, Q, m)
+                                        )
+                                        model.fit(y_train, X_train)
+                                        fc = model.forecast(len(y_test), X_test)
+                                        mse = np.mean((y_test - fc) ** 2)
+                                        if mse < best_mse:
+                                            best_mse = mse
+                                            best_order = ((p, d, q), (P, D, Q, m))
+                                    except Exception:
+                                        continue
+
+        return best_order

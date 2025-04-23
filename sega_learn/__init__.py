@@ -51,6 +51,11 @@ from .svm import (
     LinearSVR,
     OneClassSVM,
 )
+from .time_series import (
+    ARIMA,
+    SARIMA,
+    SARIMAX,
+)
 from .trees import (
     AdaBoostClassifier,
     AdaBoostRegressor,
@@ -90,8 +95,6 @@ from .utils import (
     one_hot_encode,
     train_test_split,
 )
-
-# TODO: add time series imports
 
 __all__ = [
     # Utils
@@ -178,6 +181,10 @@ __all__ = [
     # Auto
     "AutoRegressor",
     "AutoClassifier",
+    # Time Series
+    "ARIMA",
+    "SARIMA",
+    "SARIMAX",
 ]
 
 try:
