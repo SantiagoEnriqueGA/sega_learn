@@ -93,7 +93,7 @@ class ARIMA:
         # We fit MA on the residuals of the AR part.
         if len(self._residuals) <= self.q:
             raise ValueError("Residual series is too short for the specified q order.")
-        ma_coefficients = self._fit_ma_model(self._residuals, self.q)
+        ma_coefficients = self._fit_ma_model(self._residuals, self.q, ar_coefficients)
 
         # Step 5: Combine AR and MA components into a single model
         self.fitted_model = self._combine_ar_ma(ar_coefficients, ma_coefficients)
@@ -221,7 +221,7 @@ class ARIMA:
 
         return ar_coefficients
 
-    def _fit_ma_model(self, residuals, q):
+    def _fit_ma_model(self, residuals, q, ar_coefficients):
         """Fit the Moving Average (MA) component.
 
         Note: Fitting MA model properly often requires non-linear optimization
@@ -274,7 +274,7 @@ class ARIMA:
             target = self._differenced_series[self.p + q :]  # Part not explained by AR
             if self.p > 0:
                 ar_preds_aligned = self._predict_ar(
-                    self._differenced_series, self.fitted_model["ar_coefficients"]
+                    self._differenced_series, ar_coefficients
                 )[q:]  # Predict AR part for the target period
                 target = target - ar_preds_aligned
 
@@ -342,63 +342,79 @@ class ARIMA:
             tuple: The optimal order (p, d, q).
         """
         try:
-            from statsmodels.tsa.arima.model import (
-                ARIMA as sm_ARIMA,  # Use statsmodels for evaluation
-            )
-            from statsmodels.tsa.stattools import acf, adfuller, pacf  # noqa: F401
+            from statsmodels.tsa.stattools import acf, adfuller, pacf
         except ImportError as e:
             raise ImportError(
                 "Please install the required dependencies for this function: statsmodels."
             ) from e
 
-        best_aic = float("inf")
-        best_order = (0, 0, 0)
-        time_series_np = np.asarray(time_series)
+        # Step 1: Determine d (degree of differencing) using the ADF test
+        d = 0
+        while True:
+            try:
+                adf_test = adfuller(time_series)
+                if adf_test[1] <= 0.05:  # p-value <= 0.05 indicates stationarity
+                    break
+                time_series = np.diff(time_series, prepend=time_series[0])
+                d += 1
+            except Exception as e:
+                raise ValueError(f"Error during ADF test: {e}") from e
 
-        print("Finding best ARIMA order using statsmodels AIC:")
-        for d in range(max_d + 1):
-            if d > 0:
-                np.diff(time_series_np, n=d)
+        # Step 2: Determine p (AR order) using the PACF plot
+        try:
+            pacf_values = pacf(time_series, nlags=20)
+            p = min(
+                next(
+                    (
+                        i
+                        for i, val in enumerate(pacf_values)
+                        if abs(val) < 1.96 / np.sqrt(len(time_series))
+                    ),
+                    max_p,
+                ),
+                max_p,
+            )
+        except Exception as e:
+            p = 0  # Default to 0 if PACF fails
+            warnings.warn(
+                f"Error determining p using PACF: {e}. Defaulting p to 0.",
+                UserWarning,
+                stacklevel=2,
+            )
 
-            # Check stationarity (optional here as we iterate d)
-            # try:
-            #     adf_result = adfuller(diff_series)
-            #     if adf_result[1] > 0.05: # If not stationary, continue to next d
-            #         continue
-            # except Exception:
-            #     continue # Skip if ADF fails
+        # Step 3: Determine q (MA order) using the ACF plot
+        try:
+            acf_values = acf(time_series, nlags=20)
+            q = min(
+                next(
+                    (
+                        i
+                        for i, val in enumerate(acf_values)
+                        if abs(val) < 1.96 / np.sqrt(len(time_series))
+                    ),
+                    max_q,
+                ),
+                max_q,
+            )
+        except Exception as e:
+            q = 0  # Default to 0 if ACF fails
+            warnings.warn(
+                f"Error determining q using ACF: {e}. Defaulting q to 0.",
+                UserWarning,
+                stacklevel=2,
+            )
 
-            for p in range(max_p + 1):
-                for q in range(max_q + 1):
-                    if p == 0 and q == 0:
-                        continue  # Skip (0,d,0) trivial model for ARMA part
-
-                    current_order = (p, d, q)
-                    print(f"Trying order {current_order}...")
-                    try:
-                        # Use statsmodels ARIMA to evaluate AIC
-                        sm_model = sm_ARIMA(time_series_np, order=current_order)
-                        sm_fit = sm_model.fit()
-                        current_aic = sm_fit.aic
-                        print(f"  AIC: {current_aic}")
-
-                        if current_aic < best_aic:
-                            best_aic = current_aic
-                            best_order = current_order
-                            print(
-                                f"  New best order found: {best_order} with AIC {best_aic}"
-                            )
-
-                    except Exception as e:
-                        # Handle convergence errors, etc.
-                        print(f"  Failed for order {current_order}: {e}")
-                        continue
-        print(f"\nSuggested best order: {best_order}")
-        return best_order
+        return (p, min(d, max_d), q)
 
     @staticmethod
     def find_best_order(
-        train_series, test_series, max_p=5, max_d=2, max_q=5, subset_size=1.0
+        train_series,
+        test_series,
+        max_p=5,
+        max_d=2,
+        max_q=5,
+        subset_size=1.0,
+        verbose=False,
     ):
         """Find the best ARIMA order using grid search based on test set MSE.
 
@@ -408,40 +424,41 @@ class ARIMA:
             max_p (int): Maximum order for AR component.
             max_d (int): Maximum degree of differencing.
             max_q (int): Maximum order for MA component.
-            subset_size (float): Proportion of the training set to use for fitting (Note: This simple implementation doesn't use subset_size yet).
+            subset_size (float): Proportion of the training set to use for fitting.
+            verbose (bool): If True, print detailed output.
 
         Returns:
             tuple: The best order (p, d, q).
         """
         # Validate input data
-        train_series = np.asarray(train_series)
-        test_series = np.asarray(test_series)
-        if not isinstance(train_series, np.ndarray) or not isinstance(
-            test_series, np.ndarray
+        if not isinstance(train_series, list | np.ndarray) or not isinstance(
+            test_series, list | np.ndarray
         ):
             raise ValueError(
-                "train_series and test_series must be convertible to numpy arrays."
+                "train_series and test_series must be list or numpy array."
             )
         if len(train_series) < 1 or len(test_series) < 1:
             raise ValueError("train_series and test_series must not be empty.")
-        # Basic subset implementation (consider if needed)
-        # if not (0 < subset_size <= 1.0):
-        #     raise ValueError("subset_size must be between 0 and 1.")
-        # if subset_size < 1.0:
-        #     subset_idx = int(len(train_series) * subset_size)
-        #     train_series = train_series[-subset_idx:] # Use the most recent subset
+        if not (0 < subset_size <= 1.0):
+            raise ValueError("subset_size must be between 0 and 1.")
+
+        if subset_size < 1.0:
+            subset_idx = int(len(train_series) * subset_size)
+            train_series = train_series[-subset_idx:]  # Use the most recent subset
 
         best_order = None
         best_mse = float("inf")
         n_test = len(test_series)
 
-        print("Finding best ARIMA order using grid search (Test Set MSE):")
+        if verbose:
+            print("Finding best ARIMA order using grid search (Test Set MSE):")
         # Loop through all combinations of (p, d, q) within the specified limits
         for p in range(max_p + 1):
             for d in range(max_d + 1):
                 for q in range(max_q + 1):
                     current_order = (p, d, q)
-                    print(f"Trying order {current_order}...")
+                    if verbose:
+                        print(f"Trying order {current_order}...")
                     # For each combination, create an ARIMA model and fit it
                     try:
                         # Use the implemented ARIMA class
@@ -450,28 +467,33 @@ class ARIMA:
                         forecasted_values = arima_model.forecast(steps=n_test)
 
                         if len(forecasted_values) != n_test:
-                            print(
-                                f"  Warning: Forecast length mismatch ({len(forecasted_values)} vs {n_test}). Skipping."
-                            )
+                            if verbose:
+                                print(
+                                    f"  Warning: Forecast length mismatch ({len(forecasted_values)} vs {n_test}). Skipping."
+                                )
                             continue
 
                         mse = np.mean((test_series - forecasted_values) ** 2)
-                        print(f"  MSE: {mse}")
+                        if verbose:
+                            print(f"  MSE: {mse}")
 
                         # If the MSE is lower than the best found so far, update best order
                         if mse < best_mse:
                             best_mse = mse
                             best_order = current_order
-                            print(
-                                f"  New best order found: {best_order} with MSE {best_mse}"
-                            )
+                            if verbose:
+                                print(
+                                    f"  New best order found: {best_order} with MSE {best_mse}"
+                                )
 
                     # Handle any exceptions that may arise during fitting or forecasting
                     except Exception as e:
-                        print(f"  Failed for order {current_order}: {e}")
+                        if verbose:
+                            print(f"  Failed for order {current_order}: {e}")
                         continue
 
-        print(f"\nBest order found: {best_order}")
+        if verbose:
+            print(f"\nBest order found: {best_order}")
         return best_order
 
 

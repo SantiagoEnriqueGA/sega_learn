@@ -1,6 +1,7 @@
 import warnings
 
 import numpy as np
+from scipy.optimize import minimize
 
 
 class ARIMA:
@@ -20,6 +21,8 @@ class ARIMA:
         q (int): The order of the Moving Average (MA) component.
         model (array-like): The original time series data.
         fitted_model (dict): The fitted ARIMA model containing AR and MA components.
+        _differenced_series (array-like): The differenced series used for fitting ARMA.
+        _residuals (array-like): The residuals after fitting the AR component.
     """
 
     def __init__(self, order):
@@ -50,6 +53,8 @@ class ARIMA:
         self.q = order[2]
         self.model = None
         self.fitted_model = None
+        self._differenced_series = None
+        self._residuals = None
 
     def fit(self, time_series):
         """Fit the ARIMA model to the given time series data.
@@ -57,23 +62,29 @@ class ARIMA:
         Args:
             time_series (array-like): The time series data to fit the model to.
         """
+        # Store the original time series for inverse differencing during forecasting
+        self.model = np.asarray(time_series, dtype=float)
+        if len(self.model) <= self.d:
+            raise ValueError(
+                "Time series length must be greater than the differencing order d."
+            )
+
         # Step 1: Perform differencing to make the series stationary
-        differenced_series = self._difference_series(time_series, self.d)
+        self._differenced_series = self._difference_series(time_series, self.d)
 
         # Step 2: Fit the AR (Auto-Regressive) component
-        ar_coefficients = self._fit_ar_model(differenced_series, self.p)
+        ar_coefficients = self._fit_ar_model(self._differenced_series, self.p)
 
         # Step 3: Compute residuals from the AR model
-        residuals = self._compute_residuals(differenced_series, ar_coefficients)
+        self._residuals = self._compute_residuals(
+            self._differenced_series, ar_coefficients
+        )
 
         # Step 4: Fit the MA (Moving Average) component
-        ma_coefficients = self._fit_ma_model(residuals, self.q)
+        ma_coefficients = self._fit_ma_model(self._residuals, self.q)
 
         # Step 5: Combine AR and MA components into a single model
         self.fitted_model = self._combine_ar_ma(ar_coefficients, ma_coefficients)
-
-        # Store the original time series for inverse differencing during forecasting
-        self.model = time_series
 
     def forecast(self, steps):
         """Forecast future values using the fitted ARIMA model.
@@ -86,6 +97,8 @@ class ARIMA:
         """
         if self.fitted_model is None:
             raise ValueError("The model must be fitted before forecasting.")
+        if steps <= 0:
+            return np.array([])
 
         # Step 1: Forecast future values using the fitted ARIMA model
         forecasted_values = self._forecast_arima(self.fitted_model, steps)
@@ -153,7 +166,13 @@ class ARIMA:
         # Construct the design matrix for AR(p)
         # X is a matrix where each row contains p lagged values of the time series
         # X[i] = [time_series[i], time_series[i-1], ..., time_series[i-p+1]]
-        X = np.array([time_series[i : len(time_series) - p + i] for i in range(p)]).T
+        # X = np.array([time_series[i : len(time_series) - p + i] for i in range(p)]).T
+        X = np.column_stack(
+            [time_series[i : len(time_series) - p + i] for i in range(p)]
+        )
+
+        # # Reverse columns so X[t] = [y_{t-1}, y_{t-2}, ..., y_{t-p}]
+        X = X[:, ::-1]
 
         # y is the current value of the time series
         # y[i] = time_series[i+p]
@@ -163,8 +182,30 @@ class ARIMA:
         if len(X) != len(y):
             X = X[: len(y)]
 
-        # Compute and return the AR coefficients using least squares
-        return np.linalg.lstsq(X, y, rcond=None)[0]
+        # First use OLS to get initial AR coefficients
+        # Standard ARIMA often assumes zero mean for differenced series, so no intercept.
+        try:
+            ar_coefficients, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
+        except np.linalg.LinAlgError:
+            warnings.warn(
+                "Singular matrix encountered in AR fitting. Coefficients might be unstable.",
+                UserWarning,
+                stacklevel=2,
+            )
+            # Fallback, return zeros
+            ar_coefficients = np.zeros(p)
+
+        # Use scipy's minimize to optimize the AR coefficients, non-linear optimization
+        def objective_function(ar_params):
+            """Objective function for AR fitting, sum of squared errors."""
+            predicted_values = self._compute_ar_part(ar_params, y, p)
+            return np.sum((y - predicted_values) ** 2)
+
+        initial_guess = ar_coefficients
+        result = minimize(objective_function, initial_guess, method="BFGS")
+        ar_coefficients = result.x
+
+        return ar_coefficients
 
     def _fit_ma_model(self, residuals, q):
         """Fit the Moving Average (MA) component of the model.
@@ -183,7 +224,8 @@ class ARIMA:
         # Construct the design matrix for MA(q)
         # X is a matrix where each row contains q lagged residuals
         # X[i] = [residuals[i], residuals[i-1], ..., residuals[i-q+1]]
-        X = np.array([residuals[i : len(residuals) - q + i] for i in range(q)]).T
+        # X = np.array([residuals[i : len(residuals) - q + i] for i in range(q)]).T
+        X = np.column_stack([residuals[i : len(residuals) - q + i] for i in range(q)])
 
         # y is the current value of the residuals
         # y[i] = residuals[i+q]
@@ -194,8 +236,30 @@ class ARIMA:
         if len(X) != len(y):
             X = X[: len(y)]
 
-        # Compute and return the MA coefficients using least squares
-        return np.linalg.lstsq(X, y, rcond=None)[0]
+        # First use OLS to get initial MA coefficients
+        try:
+            ma_coefficients, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
+        except np.linalg.LinAlgError:
+            warnings.warn(
+                "Singular matrix encountered in MA fitting. Coefficients might be unstable.",
+                UserWarning,
+                stacklevel=2,
+            )
+            ma_coefficients = np.zeros(q)
+        except ValueError as _e:
+            ma_coefficients = np.zeros(q)
+
+        # Use scipy's minimize to optimize the MA coefficients, non-linear optimization
+        def objective_function(ma_params):
+            """Objective function for MA fitting, sum of squared errors."""
+            predicted_residuals = self._compute_ma_part(ma_params, residuals, q)
+            return np.sum((residuals[q:] - predicted_residuals) ** 2)
+
+        initial_guess = ma_coefficients
+        result = minimize(objective_function, initial_guess, method="BFGS")
+        ma_coefficients = result.x
+
+        return ma_coefficients
 
     def _combine_ar_ma(self, ar_coefficients, ma_coefficients):
         """Combine AR and MA components into a single model.
@@ -706,7 +770,7 @@ class SARIMA(ARIMA):
         max_P=1,
         max_D=1,
         max_Q=1,
-        max_m=12,
+        max_m=100,
     ):
         """Find the best SARIMA order using grid search.
 
@@ -833,9 +897,15 @@ class SARIMA(ARIMA):
 class SARIMAX(SARIMA):
     """SARIMAX model with exogenous regressors.
 
+    SARIMAX takes the same time_series input as SARIMA, but also allows for exogenous regressors.
+    These are additional variables that can help explain the time series.
+
     Two-step approach:
       1. OLS regression of y on exog to get beta + residuals
-      2. SARIMA fit on the residuals
+        - beta = (X'X)^-1 X'y
+        - resid = y - X @ beta
+      2. SARIMA fit on the residuals of the OLS regression
+
     Forecast = SARIMA_forecast(resid) + exog_future @ beta
 
     Attributes:
@@ -854,12 +924,14 @@ class SARIMAX(SARIMA):
         self.beta = None
         self.k_exog = None
 
-    def fit(self, time_series, exog):
+    def fit(self, time_series, exog, bound_lower=None, bound_upper=None):
         """Fit the SARIMAX model to the given time series and exogenous regressors.
 
         Args:
             time_series (array-like): The time series data.
             exog (array-like): The exogenous regressors.
+            bound_lower (float): Lower bound for beta coefficients.
+            bound_upper (float): Upper bound for beta coefficients.
 
         Returns:
             self: The fitted SARIMAX model.
@@ -871,16 +943,30 @@ class SARIMAX(SARIMA):
         if len(y) != len(X):
             raise ValueError("y and exog must have the same length")
 
-        # OLS to estimate beta
-        beta, *_ = np.linalg.lstsq(X, y, rcond=None)
-        self.beta = beta
+        # Step 1: OLS to estimate initial beta
+        beta_ols, *_ = np.linalg.lstsq(X, y, rcond=None)
+
+        # Step 2: Non-linear optimization of beta using scipy's minimize
+        def objective_function(beta):
+            """Objective function for beta optimization: sum of squared residuals."""
+            residuals = y - X.dot(beta)
+            return np.sum(residuals**2)
+
+        bounds = [(bound_lower, bound_upper) for _ in range(X.shape[1])]
+        # Use L-BFGS-B method for bounded optimization
+        result = minimize(
+            objective_function, beta_ols, method="L-BFGS-B", bounds=bounds
+        )
+        self.beta = result.x
         self.k_exog = X.shape[1]
 
-        # Residuals + SARIMA fit
-        resid = y - X.dot(beta)
+        # Step 3: Compute residuals using optimized beta
+        resid = y - X.dot(self.beta)
+
+        # Step 4: Fit SARIMA on residuals
         super().fit(resid)
 
-        # keep full y for seasonal inversion
+        # Keep full y for seasonal inversion
         self.original_series = y.copy()
         return self
 
@@ -964,7 +1050,7 @@ class SARIMAX(SARIMA):
         max_P=1,
         max_D=1,
         max_Q=1,
-        max_m=12,
+        max_m=100,
     ):
         """Grid-search over ((p,d,q),(P,D,Q,m)) to minimize MSE on test set.
 

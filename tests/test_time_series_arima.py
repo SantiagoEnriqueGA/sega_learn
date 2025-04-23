@@ -93,7 +93,10 @@ class TestARIMA(unittest.TestCase):
         """Test fitting when differencing degree exceeds data length."""
         short_series = np.array([1, 2], dtype=float)
         arima_d2 = ARIMA(order=(1, 2, 1))
-        with self.assertRaisesRegex(ValueError, "Differencing degree exceeds"):
+        with self.assertRaisesRegex(
+            ValueError,
+            "Time series length must be greater than the differencing order d.",
+        ):
             arima_d2.fit(short_series)
 
     def test_forecast(self):

@@ -3,6 +3,7 @@ import sys
 import warnings
 
 import matplotlib.pyplot as plt
+import numpy as np
 from statsmodels.tsa.statespace.sarimax import SARIMAX as StatsmodelsSARIMAX
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
@@ -25,21 +26,24 @@ time_series = make_time_series(
     random_state=1,
 )
 # Split into target y and exogenous X
-y = time_series[..., 0].flatten()
-X = time_series[..., 1].flatten().reshape(-1, 1)
+exog = time_series[..., 1].flatten().reshape(-1, 1)
+time_series = time_series[..., 0].flatten()
+
+# Add random noise to the exogenous variable
+exog += np.random.normal(0, 0.25, size=exog.shape)
 
 # Split into training and testing sets
-train_size = int(len(y) * 0.8)
-y_train, y_test = y[:train_size], y[train_size:]
-X_train, X_test = X[:train_size], X[train_size:]
+train_size = int(len(time_series) * 0.8)
+y_train, y_test = time_series[:train_size], time_series[train_size:]
+X_train, X_test = exog[:train_size], exog[train_size:]
 
 
 # Find the best SARIMAX order using the custom ARIMA class
 order, seasonal_order = SARIMAX.suggest_order(y_train, X_train)
-print(f"Suggested ARIMA order: {order, seasonal_order}")
+print(f"Suggested SARIMAX order: {order, seasonal_order}")
 
 order, seasonal_orders = SARIMAX.find_best_order(y_train, y_test, X_train, X_test)
-print(f"Best ARIMA order: {order, seasonal_orders}")
+print(f"Best SARIMAX order: {order, seasonal_orders}")
 
 # Specify non-seasonal & seasonal orders
 # order = (2, 1, 2)
@@ -73,7 +77,7 @@ print(f"Statsmodels SARIMAX Mean Squared Error: {mse_sm:.4f}")
 
 # Plot the forecasted values
 plt.figure(figsize=(10, 6))
-plt.plot(range(len(y)), y, label="Original y")
+plt.plot(range(len(time_series)), time_series, label="Original y")
 plt.plot(
     range(train_size, train_size + forecast_steps),
     y_pred_custom,

@@ -17,7 +17,7 @@ mean_squared_error = Metrics.mean_squared_error
 # Generate a synthetic time series
 time_series = make_time_series(
     n_samples=1,
-    n_timestamps=100,
+    n_timestamps=300,
     n_features=1,
     trend="linear",
     seasonality="cosine",
@@ -42,7 +42,7 @@ print(f"Best ARIMA order: {order}")
 
 
 # Initialize and fit the custom ARIMA model
-# order = (2, 2, 4)  # Adjusted ARIMA(p, d, q) order
+order = (1, 2, 1)  # Adjusted ARIMA(p, d, q) order
 arima_model = ARIMA(order=order)
 arima_model.fit(train_series)
 
