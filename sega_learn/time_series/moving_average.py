@@ -59,6 +59,8 @@ class SimpleMovingAverage:
         self.smoothed_values = np.pad(ma_values, (num_nans, 0), constant_values=np.nan)
         self._last_ma = ma_values[-1] if len(ma_values) > 0 else np.nan
 
+        return self.smoothed_values
+
     def get_smoothed(self):
         """Return the calculated moving average series."""
         if self.smoothed_values is None:
@@ -182,6 +184,8 @@ class WeightedMovingAverage:
         num_nans = n - len(ma_values)
         self.smoothed_values = np.pad(ma_values, (num_nans, 0), constant_values=np.nan)
         self._last_ma = ma_values[-1] if len(ma_values) > 0 else np.nan
+
+        return self.smoothed_values
 
     def get_smoothed(self):
         """Return the calculated moving average series."""
