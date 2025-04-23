@@ -8,7 +8,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from sega_learn import *
 
 
-# TODO: add time series imports
 class TestImports(unittest.TestCase):
     """Tests that the main package can be imported correctly."""
 
@@ -28,6 +27,7 @@ class TestImports(unittest.TestCase):
         assert sega_learn.nearest_neighbors is not None
         assert sega_learn.svm is not None
         assert sega_learn.auto is not None
+        assert sega_learn.time_series is not None
         assert sega_learn.make_sample_data is not None
 
     def test_module_imports(self):  # NOQA D201
@@ -39,6 +39,7 @@ class TestImports(unittest.TestCase):
             nearest_neighbors,
             neural_networks,
             svm,
+            time_series,
             trees,
             utils,
         )
@@ -51,6 +52,7 @@ class TestImports(unittest.TestCase):
         assert trees is not None
         assert nearest_neighbors is not None
         assert auto is not None
+        assert time_series is not None
         assert make_sample_data is not None
 
     def test_auto_imports(self):  # NOQA D201
@@ -120,6 +122,11 @@ class TestImports(unittest.TestCase):
         assert RegressorTreeUtility is not None
         assert AdaBoostClassifier is not None
         assert AdaBoostRegressor is not None
+
+    def test_time_series_imports(self):  # NOQA D201
+        assert ARIMA is not None
+        assert SARIMA is not None
+        assert SARIMAX is not None
 
     def test_utils_imports(self):  # NOQA D201
         assert PCA is not None

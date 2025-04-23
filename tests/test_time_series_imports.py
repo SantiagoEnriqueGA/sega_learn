@@ -42,6 +42,16 @@ class TestImportsTimeSeries(unittest.TestCase):
 
         assert ARIMA is not None
 
+    def test_SARIMA(self):  # NOQA D201
+        from sega_learn.time_series import SARIMA
+
+        assert SARIMA is not None
+
+    def test_SARIMAX(self):  # NOQA D201
+        from sega_learn.time_series import SARIMAX
+
+        assert SARIMAX is not None
+
 
 if __name__ == "__main__":
     unittest.main()

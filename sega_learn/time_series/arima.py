@@ -452,6 +452,7 @@ class SARIMA(ARIMA):
 
         super().__init__(order)
         # Store the seasonal components
+        self.seasonal_order = seasonal_order
         self.P, self.D, self.Q, self.m = seasonal_order
         self.original_series = None
 
