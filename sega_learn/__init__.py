@@ -55,6 +55,9 @@ from .time_series import (
     ARIMA,
     SARIMA,
     SARIMAX,
+    DoubleExponentialSmoothing,
+    SimpleExponentialSmoothing,
+    TripleExponentialSmoothing,
 )
 from .trees import (
     AdaBoostClassifier,
@@ -185,6 +188,9 @@ __all__ = [
     "ARIMA",
     "SARIMA",
     "SARIMAX",
+    "DoubleExponentialSmoothing",
+    "SimpleExponentialSmoothing",
+    "TripleExponentialSmoothing",
 ]
 
 try:

@@ -26,16 +26,25 @@ class TestImportsTimeSeries(unittest.TestCase):
         from sega_learn.time_series import ARIMA as arima
         from sega_learn.time_series import SARIMA as sarima
         from sega_learn.time_series import SARIMAX as sarimax
+        from sega_learn.time_series import DoubleExponentialSmoothing as des
+        from sega_learn.time_series import SimpleExponentialSmoothing as exps
+        from sega_learn.time_series import TripleExponentialSmoothing as tes
 
         assert arima is not None
         assert sarima is not None
         assert sarimax is not None
+        assert exps is not None
+        assert des is not None
+        assert tes is not None
 
     def test_wildcard_import(self):
         """Tests that the segadb package can be imported using a wildcard import."""
         assert ARIMA is not None
         assert SARIMA is not None
         assert SARIMAX is not None
+        assert DoubleExponentialSmoothing is not None
+        assert SimpleExponentialSmoothing is not None
+        assert TripleExponentialSmoothing is not None
 
     def test_ARIMA(self):  # NOQA D201
         from sega_learn.time_series import ARIMA
@@ -51,6 +60,21 @@ class TestImportsTimeSeries(unittest.TestCase):
         from sega_learn.time_series import SARIMAX
 
         assert SARIMAX is not None
+
+    def test_SimpleExponentialSmoothing(self):  # NOQA D201
+        from sega_learn.time_series import SimpleExponentialSmoothing
+
+        assert SimpleExponentialSmoothing is not None
+
+    def test_DoubleExponentialSmoothing(self):  # NOQA D201
+        from sega_learn.time_series import DoubleExponentialSmoothing
+
+        assert DoubleExponentialSmoothing is not None
+
+    def test_TripleExponentialSmoothing(self):  # NOQA D201ss
+        from sega_learn.time_series import TripleExponentialSmoothing
+
+        assert TripleExponentialSmoothing is not None
 
 
 if __name__ == "__main__":

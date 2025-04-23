@@ -127,6 +127,9 @@ class TestImports(unittest.TestCase):
         assert ARIMA is not None
         assert SARIMA is not None
         assert SARIMAX is not None
+        assert DoubleExponentialSmoothing is not None
+        assert SimpleExponentialSmoothing is not None
+        assert TripleExponentialSmoothing is not None
 
     def test_utils_imports(self):  # NOQA D201
         assert PCA is not None
