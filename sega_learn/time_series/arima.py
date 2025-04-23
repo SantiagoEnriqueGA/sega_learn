@@ -422,70 +422,59 @@ class SARIMA(ARIMA):
     SARIMA extends ARIMA by including seasonal components.
 
     Attributes:
+        order (tuple): The non-seasonal order of the ARIMA model (p, d, q).
         seasonal_order (tuple): The seasonal order of the SARIMA model (P, D, Q, m).
+        p (int): The order of the Auto-Regressive (AR) component.
+        d (int): The degree of differencing.
+        q (int): The order of the Moving Average (MA) component.
         P (int): The order of the seasonal Auto-Regressive (SAR) component.
         D (int): The degree of seasonal differencing.
         Q (int): The order of the seasonal Moving Average (SMA) component.
         m (int): The number of time steps in a seasonal period.
     """
 
-    def __init__(self, seasonal_order):
+    def __init__(self, order=(0, 0, 0), seasonal_order=(0, 0, 0, 1)):
         """Initialize the SARIMA model.
 
         Args:
-            seasonal_order (tuple): The seasonal order of the SARIMA model (P, D, Q, m).
+            order (tuple): Non-seasonal ARIMA order (p, d, q).
+            seasonal_order (tuple): Seasonal order (P, D, Q, m).
         """
         # Validate seasonal_order
         if not isinstance(seasonal_order, list | tuple) or len(seasonal_order) != 4:
             raise ValueError(
-                "Seasonal order must be a list or tuple of length 4 (P, D, Q, m)."
-            )
-        if (
-            not all(isinstance(i, int) and i >= 0 for i in seasonal_order[:3])
-            or seasonal_order[3] <= 0
-        ):
-            raise ValueError(
-                "P, D, Q must be non-negative integers, and m must be a positive integer."
+                "Seasonal order must be a tuple/list of length 4: (P, D, Q, m)."
             )
 
-        # Initialize the ARIMA model with the non-seasonal order
-        super().__init__((seasonal_order[0], seasonal_order[1], seasonal_order[2]))
+        P, D, Q, m = seasonal_order
+        if any(x < 0 for x in (P, D, Q)) or m <= 0:
+            raise ValueError("P, D, Q must be ≥0 and m must be a positive integer.")
 
-        self.order = seasonal_order
-        self.P = seasonal_order[0]
-        self.D = seasonal_order[1]
-        self.Q = seasonal_order[2]
-        self.m = seasonal_order[3]
+        super().__init__(order)
+        # Store the seasonal components
+        self.P, self.D, self.Q, self.m = seasonal_order
+        self.original_series = None
 
     def fit(self, time_series):
         """Fit the SARIMA model to the given time series data.
 
+        First fits the ARIMA model on the seasonally-differenced series.
+        Then, forecasts the seasonally-differenced series and inverts the seasonal differencing.
+
         Args:
             time_series (array-like): The time series data to fit the model to.
         """
-        # Step 1: Perform seasonal differencing
-        seasonally_differenced = self._difference_series(time_series, self.D, self.m)
+        # Keep the raw series for inversion later
+        self.original_series = np.asarray(time_series, dtype=float)
 
-        # Step 2: Fit the non-seasonal ARIMA components
-        super().fit(seasonally_differenced)
+        # Apply seasonal differencing if needed
+        if self.D > 0:
+            ts_sd = self._seasonal_difference(self.original_series, self.D, self.m)
+        else:
+            ts_sd = self.original_series.copy()
 
-        # Step 3: Fit the seasonal AR and MA components
-        seasonal_residuals = self._compute_residuals(
-            seasonally_differenced, self.fitted_model["ar_coefficients"]
-        )
-        seasonal_ar_coefficients = self._fit_ar_model(
-            seasonal_residuals, self.P, self.m
-        )
-        seasonal_ma_coefficients = self._fit_ma_model(
-            seasonal_residuals, self.Q, self.m
-        )
-
-        # Combine seasonal components into the fitted model
-        self.fitted_model["seasonal_ar_coefficients"] = seasonal_ar_coefficients
-        self.fitted_model["seasonal_ma_coefficients"] = seasonal_ma_coefficients
-
-        # Store the original time series for inverse differencing
-        self.model = time_series
+        # Fit the ARIMA(p,d,q) on the seasonally-differenced series
+        super().fit(ts_sd)
 
     def forecast(self, steps):
         """Forecast future values using the fitted SARIMA model.
@@ -497,203 +486,346 @@ class SARIMA(ARIMA):
             array-like: The forecasted values.
         """
         if self.fitted_model is None:
-            raise ValueError("The model must be fitted before forecasting.")
+            raise ValueError("Fit the model before forecasting.")
 
-        # Step 1: Forecast using the non-seasonal ARIMA model
-        forecasted_values = super().forecast(steps)
+        # Get forecasts on the seasonally differenced scale
+        fc_sd = super().forecast(steps)
 
-        # Step 2: Add seasonal contributions
-        seasonal_ar = self.fitted_model["seasonal_ar_coefficients"]
-        seasonal_ma = self.fitted_model["seasonal_ma_coefficients"]
-        seasonal_contributions = self._forecast_seasonal(
-            seasonal_ar, seasonal_ma, steps
-        )
+        # Invert seasonal differencing
+        return self._inverse_seasonal_difference(fc_sd)
 
-        # Combine non-seasonal and seasonal forecasts
-        return forecasted_values + seasonal_contributions
-
-    def _difference_series(self, time_series, d, m=1):
-        """Perform seasonal differencing on the time series.
+    def _seasonal_difference(self, series, D, m):
+        """Apply D rounds of lag-m differencing.
 
         Args:
-            time_series (array-like): The original time series data.
-            d (int): The degree of differencing.
+            series (array-like): The time series data.
+            D (int): The degree of seasonal differencing.
             m (int): The seasonal period.
 
         Returns:
             array-like: The seasonally differenced time series.
         """
-        if len(time_series) <= d * m:
-            raise ValueError("Seasonal differencing degree exceeds time series length.")
+        arr = series.copy()
+        # For each degree of differencing, compute the difference
+        # between consecutive observations
+        for _ in range(D):
+            arr = arr[m:] - arr[:-m]
+        return arr
 
-        for _ in range(d):
-            time_series = time_series[m:] - time_series[:-m]
-        return time_series
+    def _inverse_seasonal_difference(self, diff_forecast):
+        """Reconstruct original scale from seasonally differenced forecasts.
 
-    def _fit_ar_model(self, time_series, p, m=1):
-        """Fit the seasonal Auto-Regressive (SAR) component."""
-        if p == 0:
-            return np.array([])
+        Args:
+            diff_forecast (array-like): The seasonally differenced forecasts.
 
-        # Ensure consistent lengths for all slices
-        max_lag = p * m
-        if len(time_series) <= max_lag:
-            raise ValueError(
-                "Time series is too short for the specified AR order and seasonal period."
-            )
-
-        X = np.array(
-            [time_series[max_lag - i * m : len(time_series) - i * m] for i in range(p)]
-        ).T
-        y = time_series[max_lag:]
-        return np.linalg.lstsq(X, y, rcond=None)[0]
-
-    def _fit_ma_model(self, residuals, q, m=1):
-        """Fit the seasonal Moving Average (SMA) component."""
-        if q == 0:
-            return np.array([])
-
-        # Ensure consistent lengths for all slices
-        max_lag = q * m
-        if len(residuals) <= max_lag:
-            raise ValueError(
-                "Residuals are too short for the specified MA order and seasonal period."
-            )
-
-        X = np.array(
-            [residuals[max_lag - i * m : len(residuals) - i * m] for i in range(q)]
-        ).T
-        y = residuals[max_lag:]
-        return np.linalg.lstsq(X, y, rcond=None)[0]
-
-    def _forecast_seasonal(self, seasonal_ar, seasonal_ma, steps):
-        """Forecast seasonal contributions."""
-        seasonal_forecast = np.zeros(steps)
-        for t in range(steps):
-            ar_part = sum(
-                seasonal_ar[i] * seasonal_forecast[t - (i + 1) * self.m]
-                for i in range(len(seasonal_ar))
-                if t - (i + 1) * self.m >= 0
-            )
-            ma_part = sum(
-                seasonal_ma[i] * seasonal_forecast[t - (i + 1) * self.m]
-                for i in range(len(seasonal_ma))
-                if t - (i + 1) * self.m >= 0
-            )
-            seasonal_forecast[t] = ar_part + ma_part
-        return seasonal_forecast
+        Returns:
+            array-like: The original time series.
+        """
+        history = list(self.original_series)
+        result = []
+        # For each degree of differencing, compute the cumulative sum
+        # to reconstruct the original series
+        for f in diff_forecast:
+            # add back the last seasonal value D times
+            val = f
+            for _ in range(self.D):
+                val += history[-self.m]
+            history.append(val)
+            result.append(val)
+        return np.array(result)
 
     @staticmethod
-    def suggest_order(time_series, max_p=5, max_d=2, max_q=5, max_m=12):
-        """Suggest the optimal SARIMA order (P, D, Q, m) for the given time series.
+    def suggest_order(
+        time_series, max_p=3, max_d=2, max_q=3, max_P=2, max_D=1, max_Q=2, max_m=100
+    ):
+        """Suggest the optimal SARIMA order for the given time series.
 
         Args:
             time_series (array-like): The time series data.
-            max_p (int): Maximum order for seasonal AR component.
-            max_d (int): Maximum degree of seasonal differencing.
-            max_q (int): Maximum order for seasonal MA component.
+            max_p (int): Maximum order for AR component.
+            max_d (int): Maximum degree of differencing.
+            max_q (int): Maximum order for MA component.
+            max_P (int): Maximum order for seasonal AR component.
+            max_D (int): Maximum degree of seasonal differencing.
+            max_Q (int): Maximum order for seasonal MA component.
             max_m (int): Maximum seasonal period to consider.
 
         Returns:
-            tuple: The optimal seasonal order (P, D, Q, m).
+            tuple: The optimal orders (p, d, q, P, D, Q, m).
         """
-        # Use ARIMA's suggest_order to determine non-seasonal p, d, q
-        p, d, q = ARIMA.suggest_order(time_series, max_p, max_d, max_q)
-
-        # Determine seasonal differencing (D) using the ADF test
-        D = 0
-        while True:
-            try:
-                from statsmodels.tsa.stattools import adfuller
-
-                adf_test = adfuller(time_series)
-                if adf_test[1] <= 0.05:  # p-value <= 0.05 indicates stationarity
-                    break
-                time_series = np.diff(time_series, prepend=time_series[0])
-                D += 1
-            except Exception as e:
-                raise ValueError(f"Error during ADF test: {e}") from e
-
-        # Determine seasonal period (m) based on autocorrelation peaks
-        m = max_m  # Default to max_m if no clear seasonal period is detected
         try:
-            from statsmodels.tsa.stattools import acf
+            from statsmodels.tsa.stattools import acf, adfuller, pacf
+        except ImportError as e:
+            raise ImportError(
+                "Please install the required dependencies for this function: statsmodels."
+            ) from e
 
-            acf_values = acf(time_series, nlags=max_m)
-            peaks = [i for i, val in enumerate(acf_values) if val > 0.5]
-            if peaks:
-                m = peaks[0]  # Use the first significant peak as the seasonal period
+        # Step 1: Determine seasonal period (m) based on autocorrelation
+        try:
+            acf_values = acf(time_series, nlags=min(len(time_series) // 2, 100))
+            # Find peaks in ACF
+            potential_m = []
+            for i in range(1, len(acf_values) - 1):
+                if (
+                    acf_values[i] > acf_values[i - 1]
+                    and acf_values[i] > acf_values[i + 1]
+                    and acf_values[i] > 0.2
+                ):
+                    potential_m.append(i)
+
+            if potential_m:
+                m = potential_m[0]  # Use the first peak as the seasonal period
+                m = min(m, max_m)  # Limit to max_m
+            else:
+                m = 1  # No clear seasonality detected
         except Exception as e:
             warnings.warn(
-                f"Error determining m using ACF: {e}. Defaulting m to {max_m}.",
+                f"Error determining seasonal period: {e}. Defaulting to m=1.",
                 UserWarning,
                 stacklevel=2,
             )
+            m = 1
 
-        return (p, min(D, max_d), q, m)
+        # Step 2: Apply seasonal differencing if necessary
+        seasonally_differenced = time_series.copy()
+        D = 0
+        if m > 1:
+            # Test for seasonal differencing
+            try:
+                adf_test = adfuller(time_series)
+                if adf_test[1] > 0.05:  # Not stationary
+                    # Apply seasonal differencing
+                    seasonally_differenced = np.array(
+                        [
+                            time_series[i] - time_series[i - m]
+                            for i in range(m, len(time_series))
+                        ]
+                    )
+                    D = 1
+
+                    # Test if more differencing is needed
+                    adf_test = adfuller(seasonally_differenced)
+                    if adf_test[1] > 0.05 and len(seasonally_differenced) > 2 * m:
+                        # Apply one more seasonal differencing
+                        seasonally_differenced = np.array(
+                            [
+                                seasonally_differenced[i]
+                                - seasonally_differenced[i - m]
+                                for i in range(m, len(seasonally_differenced))
+                            ]
+                        )
+                        D = 2
+            except Exception as e:
+                warnings.warn(
+                    f"Error during seasonal differencing test: {e}. No seasonal differencing applied.",
+                    UserWarning,
+                    stacklevel=2,
+                )
+
+        # Step 3: Determine d (regular differencing)
+        d = 0
+        while True:
+            try:
+                adf_test = adfuller(seasonally_differenced)
+                if adf_test[1] <= 0.05 or d >= max_d:  # Stationary or max d reached
+                    break
+                seasonally_differenced = np.diff(seasonally_differenced)
+                d += 1
+            except Exception as e:
+                warnings.warn(
+                    f"Error during ADF test: {e}. No regular differencing applied.",
+                    UserWarning,
+                    stacklevel=2,
+                )
+                break
+
+        # Step 4: Determine p, q, P, Q
+        try:
+            # For non-seasonal components
+            pacf_values = pacf(
+                seasonally_differenced, nlags=min(len(seasonally_differenced) // 2, 20)
+            )
+            p = 0
+            for i in range(1, min(len(pacf_values), max_p + 1)):
+                if abs(pacf_values[i]) > 1.96 / np.sqrt(len(seasonally_differenced)):
+                    p = i
+
+            acf_values = acf(
+                seasonally_differenced, nlags=min(len(seasonally_differenced) // 2, 20)
+            )
+            q = 0
+            for i in range(1, min(len(acf_values), max_q + 1)):
+                if abs(acf_values[i]) > 1.96 / np.sqrt(len(seasonally_differenced)):
+                    q = i
+
+            # For seasonal components
+            P = 0
+            Q = 0
+            if m > 1 and len(seasonally_differenced) > 2 * m:
+                # Look at seasonal lags
+                for i in range(m, min(len(pacf_values), m * (max_P + 1)), m):
+                    if abs(pacf_values[i]) > 1.96 / np.sqrt(
+                        len(seasonally_differenced)
+                    ):
+                        P = i // m
+
+                for i in range(m, min(len(acf_values), m * (max_Q + 1)), m):
+                    if abs(acf_values[i]) > 1.96 / np.sqrt(len(seasonally_differenced)):
+                        Q = i // m
+        except Exception as e:
+            warnings.warn(
+                f"Error determining p, q, P, Q: {e}. Using default values.",
+                UserWarning,
+                stacklevel=2,
+            )
+            p = min(1, max_p)
+            q = min(1, max_q)
+            P = 0
+            Q = 0
+
+        # Ensure P and Q don't exceed their maximums
+        P = min(P, max_P)
+        Q = min(Q, max_Q)
+
+        # # Since this is a SARIMA model, ensure that P, D, Q, m are all greater than 0 ?
+        # P = max(P, 1)
+        # D = max(D, 1)
+        # Q = max(Q, 1)
+        # m = max(m, 1)
+
+        return ((p, d, q), (P, D, Q, m))
 
     @staticmethod
-    def find_best_order(
-        train_series, test_series, max_p=5, max_d=2, max_q=5, max_m=100, subset_size=1.0
+    def find_best_order(  # noqa: D417
+        train_series,
+        test_series,
+        max_p=2,
+        max_d=1,
+        max_q=2,
+        max_P=1,
+        max_D=1,
+        max_Q=1,
+        max_m=12,
     ):
         """Find the best SARIMA order using grid search.
 
         Args:
             train_series (array-like): The training time series data.
             test_series (array-like): The testing time series data.
-            max_p (int): Maximum order for seasonal AR component.
-            max_d (int): Maximum degree of seasonal differencing.
-            max_q (int): Maximum order for seasonal MA component.
-            max_m (int): Maximum seasonal period to consider.
-            subset_size (float): Proportion of the training set to use for fitting.
+            max_p, max_d, max_q: Maximum values for non-seasonal components.
+            max_P, max_D, max_Q, max_m: Maximum values for seasonal components.
 
         Returns:
-            tuple: The best seasonal order (P, D, Q, m).
+            tuple: The best orders as ((p,d,q), (P,D,Q,m)).
         """
-        # Validate input data
-        if not isinstance(train_series, list | np.ndarray) or not isinstance(
-            test_series, list | np.ndarray
-        ):
-            raise ValueError(
-                "train_series and test_series must be list or numpy array."
-            )
-        if len(train_series) < 1 or len(test_series) < 1:
-            raise ValueError("train_series and test_series must not be empty.")
-        if not (0 < subset_size <= 1.0):
-            raise ValueError("subset_size must be between 0 and 1.")
+        # Convert inputs to numpy arrays
+        train_series = np.array(train_series)
+        test_series = np.array(test_series)
 
-        best_order = None
-        best_mse = float("inf")
+        best_aic = float("inf")
+        best_order = ((0, 0, 0), (0, 0, 0, 1))
 
-        if subset_size < 1.0:
-            # Randomly sample a subset of the training series
-            subset_size = int(len(train_series) * subset_size)
-            train_series = np.random.choice(
-                train_series, size=subset_size, replace=False
-            )
+        # First check if there's seasonality
+        potential_m = [1]  # Start with no seasonality
+        if len(train_series) > 20:
+            try:
+                from statsmodels.tsa.stattools import acf
 
-        # Loop through all combinations of (P, D, Q, m) within the specified limits
-        for P in range(max_p + 1):
-            for D in range(1, max_d + 1):
-                for Q in range(1, max_q + 1):
-                    for m in range(1, max_m + 1):
-                        # For each combination, create a SARIMA model and fit it
+                acf_values = acf(train_series, nlags=min(len(train_series) // 2, 50))
+
+                # Find peaks in ACF
+                for i in range(2, min(len(acf_values), max_m + 1)):
+                    if (
+                        acf_values[i] > acf_values[i - 1]
+                        and acf_values[i] > acf_values[i + 1]
+                        and acf_values[i] > 0.2
+                    ):
+                        potential_m.append(i)
+
+                # Only keep up to 3 most likely seasonal periods
+                potential_m = potential_m[:3]
+            except Exception:
+                # If there's an error, just use m=1
+                potential_m = [1]
+
+        # If only testing m=1, use full grid search
+        if len(potential_m) == 1 and potential_m[0] == 1:
+            # Only need to search ARIMA models
+            for p in range(max_p + 1):
+                for d in range(max_d + 1):
+                    for q in range(max_q + 1):
                         try:
-                            sarima_model = SARIMA(seasonal_order=(P, D, Q, m))
-                            sarima_model.fit(train_series)
-                            forecasted_values = sarima_model.forecast(
-                                steps=len(test_series)
-                            )
-                            mse = np.mean((test_series - forecasted_values) ** 2)
+                            model = SARIMA(order=(p, d, q), seasonal_order=(0, 0, 0, 1))
+                            model.fit(train_series)
+                            forecast = model.forecast(len(test_series))
+                            # Calculate error metrics
+                            mse = np.mean((test_series - forecast) ** 2)
+                            aic = mse * len(test_series)  # Simple AIC approximation
 
-                            # If the MSE is lower than the best found so far, update best order
-                            if mse < best_mse:
-                                best_mse = mse
-                                best_order = (P, D, Q, m)
-
-                        # Handle any exceptions that may arise during fitting or forecasting
-                        except Exception as _e:
+                            if aic < best_aic:
+                                best_aic = aic
+                                best_order = ((p, d, q), (0, 0, 0, 1))
+                        except Exception:
                             continue
+        else:
+            # Try different seasonal periods
+            for m in potential_m:
+                if m > 1:
+                    # Try SARIMA models
+                    for p in range(max_p + 1):
+                        for d in range(max_d + 1):
+                            for q in range(max_q + 1):
+                                for P in range(max_P + 1):
+                                    for D in range(max_D + 1):
+                                        for Q in range(max_Q + 1):
+                                            try:
+                                                model = SARIMA(
+                                                    order=(p, d, q),
+                                                    seasonal_order=(P, D, Q, m),
+                                                )
+                                                model.fit(train_series)
+                                                forecast = model.forecast(
+                                                    len(test_series)
+                                                )
+                                                # Calculate error metrics
+                                                mse = np.mean(
+                                                    (test_series - forecast) ** 2
+                                                )
+                                                aic = mse * len(
+                                                    test_series
+                                                )  # Simple AIC approximation
+
+                                                if aic < best_aic:
+                                                    best_aic = aic
+                                                    best_order = (
+                                                        (p, d, q),
+                                                        (P, D, Q, m),
+                                                    )
+                                            except Exception:
+                                                continue
+                else:
+                    # For m=1, just do ARIMA
+                    for p in range(max_p + 1):
+                        for d in range(max_d + 1):
+                            for q in range(max_q + 1):
+                                try:
+                                    model = SARIMA(
+                                        order=(p, d, q), seasonal_order=(0, 0, 0, 1)
+                                    )
+                                    model.fit(train_series)
+                                    forecast = model.forecast(len(test_series))
+                                    # Calculate error metrics
+                                    mse = np.mean((test_series - forecast) ** 2)
+                                    aic = mse * len(
+                                        test_series
+                                    )  # Simple AIC approximation
+
+                                    if aic < best_aic:
+                                        best_aic = aic
+                                        best_order = ((p, d, q), (0, 0, 0, 1))
+                                except Exception:
+                                    continue
+
         return best_order
 
 

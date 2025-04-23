@@ -1,5 +1,6 @@
 import os
 import sys
+import warnings
 
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA as StatsmodelsARIMA
@@ -9,18 +10,19 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 from sega_learn.time_series import SARIMA
 from sega_learn.utils import Metrics, make_time_series
 
+warnings.filterwarnings("ignore", category=UserWarning)
 mean_squared_error = Metrics.mean_squared_error
 
 
 # Generate a synthetic time series
 time_series = make_time_series(
     n_samples=1,
-    n_timestamps=100,
+    n_timestamps=300,
     n_features=1,
     trend="linear",
     seasonality="cosine",
-    seasonality_period=30,
-    noise=0.1,
+    seasonality_period=25,
+    noise=0.2,
     random_state=1,
 )
 
@@ -31,16 +33,12 @@ time_series = time_series.flatten()
 train_size = int(len(time_series) * 0.8)
 train_series, test_series = time_series[:train_size], time_series[train_size:]
 
-# Find the best SARIMA order using the custom SARIMA class
-seasonal_order = SARIMA.suggest_order(train_series)
-print(f"Suggested SARIMA order: {seasonal_order}")
-
-seasonal_order = SARIMA.find_best_order(train_series, test_series)
-print(f"Best SARIMA order: {seasonal_order}")
-
+# Custom order and seasonal_order
+order = (2, 1, 2)
+seasonal_order = (1, 1, 1, 25)
 
 # Initialize and fit the custom SARIMA model
-sarima_model = SARIMA(seasonal_order=seasonal_order)
+sarima_model = SARIMA(order=order, seasonal_order=seasonal_order)
 sarima_model.fit(train_series)
 
 # Forecast future values using the custom SARIMA model
@@ -52,7 +50,9 @@ mse_custom = mean_squared_error(test_series, forecasted_values_custom)
 print(f"Custom SARIMA Mean Squared Error: {mse_custom:.4f}")
 
 # Initialize and fit the Statsmodels SARIMA model
-statsmodels_arima_model = StatsmodelsARIMA(train_series, seasonal_order=seasonal_order)
+statsmodels_arima_model = StatsmodelsARIMA(
+    train_series, order=order, seasonal_order=seasonal_order
+)
 statsmodels_arima_model_fit = statsmodels_arima_model.fit()
 
 # Forecast future values using the Statsmodels SARIMA model
@@ -81,7 +81,7 @@ plt.plot(
 )
 # Add a vertical line to indicate where the forecast starts
 plt.axvline(x=len(train_series), color="black", linestyle="--", label="Forecast Start")
-plt.title("ARIMA Forecast Comparison")
+plt.title("SARIMA Forecast Comparison")
 plt.legend()
 plt.tight_layout()
 # plt.show()

@@ -1,5 +1,6 @@
 import os
 import sys
+import warnings
 
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA as StatsmodelsARIMA
@@ -9,6 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 from sega_learn.time_series import ARIMA
 from sega_learn.utils import Metrics, make_time_series
 
+warnings.filterwarnings("ignore", category=UserWarning)
 mean_squared_error = Metrics.mean_squared_error
 
 
