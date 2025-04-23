@@ -2,17 +2,21 @@ import warnings
 
 import numpy as np
 
+from sega_learn.utils import Metrics
+
+mean_squared_error = Metrics.mean_squared_error
+
 
 class SimpleExponentialSmoothing:
     """Simple Exponential Smoothing (SES) for non-seasonal time series without trend.
 
-    Forecasts are based on a weighted average of past observations, with weights
-    decreasing exponentially over time. Forecast is a flat line.
+    Forecasts are based on a weighted average of past observations, with weights decreasing exponentially over time.
+    Forecast is a flat line, this is because SES does not account for trend or seasonality.
 
     Attributes:
         alpha (float): Smoothing parameter for the level (0 <= alpha <= 1).
         level (float): The final estimated level component after fitting.
-        fitted_values (np.ndarray): The one-step-ahead forecasts made during fitting.
+        fitted_values (np.ndarray): The fitted values (one-step-ahead forecasts).
         model (np.ndarray): The original time series data.
     """
 
@@ -34,6 +38,9 @@ class SimpleExponentialSmoothing:
 
         Args:
             time_series (array-like): The time series data (1-dimensional).
+
+        Returns:
+            np.ndarray: The fitted values (one-step-ahead forecasts).
         """
         self.model = np.asarray(time_series, dtype=float).flatten()
         n = len(self.model)
@@ -65,6 +72,8 @@ class SimpleExponentialSmoothing:
         self.fitted_values = (
             fitted  # fitted[t] is the forecast for model[t] made at t-1
         )
+
+        return self.fitted_values
 
     def forecast(self, steps):
         """Generate forecasts for future steps.
@@ -121,6 +130,9 @@ class DoubleExponentialSmoothing:
 
         Args:
             time_series (array-like): The time series data (1-dimensional). Requires at least 2 points.
+
+        Returns:
+            np.ndarray: The fitted values (one-step-ahead forecasts).
         """
         self.model = np.asarray(time_series, dtype=float).flatten()
         n = len(self.model)
@@ -171,6 +183,8 @@ class DoubleExponentialSmoothing:
         self.trend = current_trend
         self.fitted_values = fitted
 
+        return self.fitted_values
+
     def forecast(self, steps):
         """Generate forecasts for future steps.
 
@@ -188,6 +202,54 @@ class DoubleExponentialSmoothing:
         # Forecast formula: y_{T+h} = l_T + h * b_T
         h_values = np.arange(1, steps + 1)
         return self.level + h_values * self.trend
+
+    def find_best_alpha_beta(
+        self,
+        train_series,
+        test_series,
+        alpha_values=None,
+        beta_values=None,
+        set_best=False,
+    ):
+        """Find the best alpha and beta values for the DES model.
+
+        Args:
+            train_series (array-like): The training time series data (1-dimensional).
+            test_series (array-like): The testing time series data (1-dimensional).
+            alpha_values (list, optional): List of alpha values to evaluate. Defaults to [0.1, 0.2, ..., 0.9].
+            beta_values (list, optional): List of beta values to evaluate. Defaults to [0.1, 0.2, ..., 0.9].
+            set_best (bool, optional): If True, set the best alpha and beta values to the model. Defaults to False.
+
+        Returns:
+            tuple: Best alpha and beta values based on mean squared error.
+        """
+        if alpha_values is None:
+            alpha_values = np.arange(0.1, 1.0, 0.1)
+        if beta_values is None:
+            beta_values = np.arange(0.1, 1.0, 0.1)
+
+        best_alpha = None
+        best_beta = None
+        best_mse = float("inf")
+
+        for alpha in alpha_values:
+            for beta in beta_values:
+                self.alpha = alpha
+                self.beta = beta
+                self.fit(train_series)
+                forecast_steps = len(test_series)
+                forecasted_values = self.forecast(steps=forecast_steps)
+                mse = mean_squared_error(test_series, forecasted_values)
+
+                if mse < best_mse:
+                    best_mse = mse
+                    best_alpha = alpha
+                    best_beta = beta
+
+        if set_best:
+            self.alpha = best_alpha
+            self.beta = best_beta
+        return best_alpha, best_beta
 
 
 class TripleExponentialSmoothing:
@@ -277,6 +339,9 @@ class TripleExponentialSmoothing:
         Args:
             time_series (array-like): The time series data (1-dimensional).
                                       Length should be >= 2 * period.
+
+        Returns:
+            np.ndarray: The fitted values for the time series.
         """
         self.model = np.asarray(time_series, dtype=float).flatten()
         n = len(self.model)
@@ -382,6 +447,8 @@ class TripleExponentialSmoothing:
         self.season = current_seasonals  # The array after the loop finishes
         self.fitted_values = fitted
 
+        return self.fitted_values
+
     def forecast(self, steps):
         """Generate forecasts for future steps (Additive Seasonality).
 
@@ -409,3 +476,61 @@ class TripleExponentialSmoothing:
             forecasts[h - 1] = self.level + h * self.trend + seasonal_component
 
         return forecasts
+
+    def find_best_alpha_beta_gamma(
+        self,
+        train_series,
+        test_series,
+        alpha_values=None,
+        beta_values=None,
+        gamma_values=None,
+        set_best=False,
+    ):
+        """Find the best alpha, beta, and gamma values for the TES model.
+
+        Args:
+            train_series (array-like): The training time series data (1-dimensional).
+            test_series (array-like): The testing time series data (1-dimensional).
+            alpha_values (list, optional): List of alpha values to evaluate. Defaults to [0.1, 0.2, ..., 0.9].
+            beta_values (list, optional): List of beta values to evaluate. Defaults to [0.1, 0.2, ..., 0.9].
+            gamma_values (list, optional): List of gamma values to evaluate. Defaults to [0.1, 0.2, ..., 0.9].
+            set_best (bool, optional): If True, set the best alpha, beta, and gamma values to the model. Defaults to False.
+
+        Returns:
+            tuple: Best alpha, beta, and gamma values based on mean squared error.
+        """
+        if alpha_values is None:
+            alpha_values = np.arange(0.1, 1.0, 0.1)
+        if beta_values is None:
+            beta_values = np.arange(0.1, 1.0, 0.1)
+        if gamma_values is None:
+            gamma_values = np.arange(0.1, 1.0, 0.1)
+
+        best_alpha = None
+        best_beta = None
+        best_gamma = None
+        best_mse = float("inf")
+
+        for alpha in alpha_values:
+            for beta in beta_values:
+                for gamma in gamma_values:
+                    self.alpha = alpha
+                    self.beta = beta
+                    self.gamma = gamma
+                    self.fit(train_series)
+                    forecast_steps = len(test_series)
+                    forecasted_values = self.forecast(steps=forecast_steps)
+                    mse = mean_squared_error(test_series, forecasted_values)
+
+                    if mse < best_mse:
+                        best_mse = mse
+                        best_alpha = alpha
+                        best_beta = beta
+                        best_gamma = gamma
+
+        if set_best:
+            self.alpha = best_alpha
+            self.beta = best_beta
+            self.gamma = best_gamma
+
+        return best_alpha, best_beta, best_gamma
