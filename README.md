@@ -99,8 +99,7 @@ The SEGA_LEARN library includes the following features:
 - **Simple Exponential Smoothing**: Implements simple exponential smoothing for time series forecasting.
 - **Double Exponential Smoothing**: Implements double exponential smoothing for time series forecasting, also known as Holt's linear trend method.
 - **Triple Exponential Smoothing**: Implements triple exponential smoothing for time series forecasting, also known as Holt-Winters seasonal method.
-<!-- - **Prophet**: Implements the Prophet model for time series forecasting, developed by Facebook.
-- **Custom Forecasting Pipeline**: Implements a custom forecasting pipeline that allows users to define their own forecasting models and evaluation metrics. -->
+<!-- - **Custom Forecasting Pipeline**: Implements a custom forecasting pipeline that allows users to define their own forecasting models and evaluation metrics. -->
 - **Simple Moving Average**: Implements the simple moving average for time series forecasting.
 - **Weighted Moving Average**: Implements the weighted moving average for time series forecasting.
 - **Exponential Moving Average**: Implements the exponential moving average for time series forecasting.

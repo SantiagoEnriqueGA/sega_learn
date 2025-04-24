@@ -5,7 +5,7 @@ from .exponential_smoothing import (
     SimpleExponentialSmoothing,
     TripleExponentialSmoothing,
 )
-from .forecasting import CustomForecastingPipeline, ProphetModel
+from .forecasting import CustomForecastingPipeline
 from .moving_average import (
     ExponentialMovingAverage,
     SimpleMovingAverage,
@@ -24,6 +24,5 @@ __all__ = [
     "TripleExponentialSmoothing",
     "AdditiveDecomposition",
     "MultiplicativeDecomposition",
-    "ProphetModel",
     "CustomForecastingPipeline",
 ]
