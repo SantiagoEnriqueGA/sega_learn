@@ -34,6 +34,7 @@ For more detailed information on each module, see the following READMEs:
 - [Nearest Neighbors Module](sega_learn/nearest_neighbors/README.MD)
 - [Neural Networks Module](sega_learn/neural_networks/README.md)
 - [Trees Module](sega_learn/trees/README.md)
+- [Time Series Module](sega_learn/time_series/README.md)
 - [SVM Module](sega_learn/svm/README.md)
 - [Utilities Module](sega_learn/utils/README.md)
 
@@ -89,6 +90,20 @@ The SEGA_LEARN library includes the following features:
 - **AdaBoost Classifier**: Implements an ensemble classifier that combines multiple weak classifiers to create a strong classifier.
 - **AdaBoost Regressor**: Implements an ensemble regressor that combines multiple weak regressors to create a strong regressor.
 
+### Time Series
+- **ARIMA**: Implements the AutoRegressive Integrated Moving Average (ARIMA) model for time series forecasting.
+- **SARIMA**: Implements the Seasonal AutoRegressive Integrated Moving Average (SARIMA) model for time series forecasting with seasonality.
+- **SARIMAX**: Implements the Seasonal AutoRegressive Integrated Moving Average with eXogenous variables (SARIMAX) model for time series forecasting with seasonality and exogenous variables.
+- **Additive Decomposition**: Implements the additive decomposition of time series data into trend, seasonal, and residual components.
+- **Multiplicative Decomposition**: Implements the multiplicative decomposition of time series data into trend, seasonal, and residual components.
+- **Simple Exponential Smoothing**: Implements simple exponential smoothing for time series forecasting.
+- **Double Exponential Smoothing**: Implements double exponential smoothing for time series forecasting, also known as Holt's linear trend method.
+- **Triple Exponential Smoothing**: Implements triple exponential smoothing for time series forecasting, also known as Holt-Winters seasonal method.
+<!-- - **Prophet**: Implements the Prophet model for time series forecasting, developed by Facebook.
+- **Custom Forecasting Pipeline**: Implements a custom forecasting pipeline that allows users to define their own forecasting models and evaluation metrics. -->
+- **Simple Moving Average**: Implements the simple moving average for time series forecasting.
+- **Weighted Moving Average**: Implements the weighted moving average for time series forecasting.
+
 ### Utilities
 - **Data Preparation**: Implements utility functions for data preparation like train-test split, normalization, and standardization.
 - **Voting Regressor**: Implements a voting regressor that combines the predictions of multiple regressors using a weighted average.
@@ -117,6 +132,7 @@ sega_learn/
 │   ├── neural_networks/    # Neural Network components
 │   ├── svm/                # Support Vector Machines
 │   ├── trees/              # Tree-based models
+│   ├── time_series/        # Time series models
 │   └── utils/              # Utility functions (metrics, data prep, etc.)
 |
 ├── examples/           # Usage examples for different modules
@@ -210,6 +226,18 @@ sega_learn/
 - [`isolationForest_reg.py`](examples/utils/isolationForest_reg.py): Demonstrates Isolation Forest for regression tasks.
 - [`randomForestClassifier.py`](examples/trees/randomForestClassifier.py): Demonstrates Random Forest Classifier.
 - [`randomForestRegressor.py`](examples/trees/randomForestRegressor.py): Demonstrates Random Forest Regressor.
+
+### Time Series
+- [`arima_arima.py`](examples/time_series/arima_arima.py): Demonstrates ARIMA model for time series forecasting.
+- [`arima_sarima.py`](examples/time_series/arima_sarima.py): Demonstrates SARIMA model for time series forecasting.
+- [`arima_sarimax.py`](examples/time_series/arima_sarimax.py): Demonstrates SARIMAX model for time series forecasting.
+- [`decom_additiveDecomposition.py`](examples/time_series/decom_additiveDecomposition.py): Demonstrates additive decomposition of time series data.
+- [`decom_multiplicativeDecomposition.py`](examples/time_series/decom_multiplicativeDecomposition.py): Demonstrates multiplicative decomposition of time series data.
+- [`mvg_simpleMovingAverage.py`](examples/time_series/mvg_simpleMovingAverage.py): Demonstrates simple moving average for time series forecasting.
+- [`mvg_weightedMovingAverage.py`](examples/time_series/mvg_weightedMovingAverage.py): Demonstrates weighted moving average for time series forecasting.
+- [`smth_simpleExponentialSmoothing.py`](examples/time_series/smth_simpleExponentialSmoothing.py): Demonstrates simple exponential smoothing for time series forecasting.
+- [`smth_doubleExponentialSmoothing.py`](examples/time_series/smth_doubleExponentialSmoothing.py): Demonstrates double exponential smoothing for time series forecasting.
+- [`smth_tripleExponentialSmoothing.py`](examples/time_series/smth_tripleExponentialSmoothing.py): Demonstrates triple exponential smoothing for time series forecasting.
 
 ### Utils
 - [`dataAugmentation_combined.py`](examples/utils/dataAugmentation_combined.py): Demonstrates a combination of Random Over Sampling and SMOTE for imbalanced classification tasks.
