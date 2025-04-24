@@ -33,6 +33,12 @@ class SimpleExponentialSmoothing:
         self.fitted_values = None
         self.model = None
 
+    def __name__(self):
+        return "Simple Exponential Smoothing (SES)"
+
+    def __str__(self):
+        return f"SimpleExponentialSmoothing(alpha={self.alpha})"
+
     def fit(self, time_series):
         """Fit the SES model to the data.
 
@@ -124,6 +130,12 @@ class DoubleExponentialSmoothing:
         self.trend = None
         self.fitted_values = None
         self.model = None
+
+    def __name__(self):
+        return "Double Exponential Smoothing (DES)"
+
+    def __str__(self):
+        return f"DoubleExponentialSmoothing(alpha={self.alpha}, beta={self.beta})"
 
     def fit(self, time_series):
         """Fit the DES model to the data.
@@ -296,6 +308,12 @@ class TripleExponentialSmoothing:
         self.season = None  # Array of seasonal factors
         self.fitted_values = None
         self.model = None
+
+    def __name__(self):
+        return "Triple Exponential Smoothing (TES)"
+
+    def __str__(self):
+        return f"TripleExponentialSmoothing(alpha={self.alpha}, beta={self.beta}, gamma={self.gamma}, period={self.period})"
 
     def _initial_seasonal_components(self, series, m):
         """Estimate initial seasonal components."""

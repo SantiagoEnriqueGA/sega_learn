@@ -91,6 +91,7 @@ The SEGA_LEARN library includes the following features:
 - **AdaBoost Regressor**: Implements an ensemble regressor that combines multiple weak regressors to create a strong regressor.
 
 ### Time Series
+- **Forecasting Pipeline**: Implements a custom forecasting pipeline that allows users to define their own preprocessing steps, forecasting models, and evaluation metrics.
 - **ARIMA**: Implements the AutoRegressive Integrated Moving Average (ARIMA) model for time series forecasting.
 - **SARIMA**: Implements the Seasonal AutoRegressive Integrated Moving Average (SARIMA) model for time series forecasting with seasonality.
 - **SARIMAX**: Implements the Seasonal AutoRegressive Integrated Moving Average with eXogenous variables (SARIMAX) model for time series forecasting with seasonality and exogenous variables.
@@ -99,7 +100,6 @@ The SEGA_LEARN library includes the following features:
 - **Simple Exponential Smoothing**: Implements simple exponential smoothing for time series forecasting.
 - **Double Exponential Smoothing**: Implements double exponential smoothing for time series forecasting, also known as Holt's linear trend method.
 - **Triple Exponential Smoothing**: Implements triple exponential smoothing for time series forecasting, also known as Holt-Winters seasonal method.
-<!-- - **Custom Forecasting Pipeline**: Implements a custom forecasting pipeline that allows users to define their own forecasting models and evaluation metrics. -->
 - **Simple Moving Average**: Implements the simple moving average for time series forecasting.
 - **Weighted Moving Average**: Implements the weighted moving average for time series forecasting.
 - **Exponential Moving Average**: Implements the exponential moving average for time series forecasting.
@@ -228,6 +228,7 @@ sega_learn/
 - [`randomForestRegressor.py`](examples/trees/randomForestRegressor.py): Demonstrates Random Forest Regressor.
 
 ### Time Series
+- [`forecastingPipeline.py`](examples/time_series/forecast_pipeline.py): Demonstrates a custom forecasting pipeline for time series data.
 - [`arima_arima.py`](examples/time_series/arima_arima.py): Demonstrates ARIMA model for time series forecasting.
 - [`arima_sarima.py`](examples/time_series/arima_sarima.py): Demonstrates SARIMA model for time series forecasting.
 - [`arima_sarimax.py`](examples/time_series/arima_sarimax.py): Demonstrates SARIMAX model for time series forecasting.
@@ -303,6 +304,7 @@ The tests are organized into subdirectories based on the module they test. Each 
 To run the tests, use the following command: `python -m unittest discover -s tests`
 Or run the all tests file: `python run_all_tests.py`
 
+<!-- TODO: Update with test results summary -->
 ### Test Results
 The following are the results of running the tests:
 ```

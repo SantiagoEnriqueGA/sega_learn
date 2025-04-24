@@ -81,6 +81,12 @@ class AdditiveDecomposition:
         self.seasonal = None
         self.residual = None
 
+    def __name__(self):
+        return "AdditiveDecomposition"
+
+    def __str__(self):
+        return f"AdditiveDecomposition(period={self.period})"
+
     def fit(self, time_series):
         """Perform additive decomposition on the time series.
 
@@ -195,6 +201,12 @@ class MultiplicativeDecomposition:
         self.seasonal = None
         self.residual = None
         self._trend_shifted = None  # To help with reconstruction
+
+    def __name__(self):
+        return "MultiplicativeDecomposition"
+
+    def __str__(self):
+        return f"MultiplicativeDecomposition(period={self.period})"
 
     def fit(self, time_series):
         """Perform multiplicative decomposition on the time series.

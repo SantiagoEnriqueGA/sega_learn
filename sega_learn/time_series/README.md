@@ -11,8 +11,51 @@ sega_learn/
    ├─ __init__.py
    ├─ arima.py
    ├─ decomposition.py
+   ├─ forecasting.py
    ├─ exponential_smoothing.py
    └─ moving_average.py
+```
+
+## Forcasting Pipeline
+
+The `ForecastingPipeline` class provides a flexible and modular way to build time series forecasting workflows. It allows users to integrate preprocessing steps, forecasting models, and evaluation metrics into a single pipeline.
+
+### Features
+- **Preprocessors**: Add or remove preprocessing steps to transform the input data.
+- **Model**: Integrate any forecasting model (e.g., ARIMA, SARIMA) that implements `fit` and `predict` methods.
+- **Evaluators**: Add or remove evaluation metrics to assess the model's performance.
+
+### Example Usage
+```python
+from sega_learn.time_series import *
+from sega_learn.utils import make_time_series
+
+# Generate time series
+time_series = make_time_series(n_samples=1, n_timestamps=300, n_features=1)
+
+# Split into training and testing sets
+train_size = int(len(time_series) * 0.8)
+train_series, test_series = time_series[:train_size], time_series[train_size:]
+
+# Initialize the pipeline
+pipeline = ForecastingPipeline(
+    preprocessors=[WeightedMovingAverage()],  # Add preprocessing steps if needed
+    model=ARIMA(order=(1, 1, 1)),             # Replace with your desired model
+    evaluators=[MeanAbsoluteError()]          # Add evaluation metrics if needed
+)
+
+# Fit the pipeline
+pipeline.fit(train_series)
+
+# Forecast future values
+forecast_steps = len(test_series)
+forecasted_values = pipeline.predict(train_series, steps=forecast_steps)
+
+# Evaluate the model (if evaluators are added)
+results = pipeline.evaluate(forecasted_values, test_series)
+
+# Print pipeline summary
+pipeline.summary()
 ```
 
 ## ARIMA Models
@@ -112,9 +155,6 @@ Triple Exponential Smoothing (TES), also known as the Holt-Winters Seasonal Mode
   $s_t = \gamma (y_t - l_t) + (1 - \gamma) s_{t-m}$
   $y_{t+h} = l_t + h b_t + s_{t+h-m}$
   where $l_t$ is the level, $b_t$ is the trend, $s_t$ is the seasonal component, $m$ is the seasonal period, and $h$ is the forecast horizon.
-
-<!-- ## Forecasting Models -->
-<!-- TODO: Add details about forecasting models and their applications once completed-->
 
 ## Moving Average Models
 

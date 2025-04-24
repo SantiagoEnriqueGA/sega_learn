@@ -56,6 +56,12 @@ class ARIMA:
         self._differenced_series = None
         self._residuals = None
 
+    def __name__(self):
+        return "ARIMA"
+
+    def __str__(self):
+        return f"ARIMA(order={self.order})"
+
     def fit(self, time_series):
         """Fit the ARIMA model to the given time series data.
 
@@ -184,16 +190,29 @@ class ARIMA:
 
         # First use OLS to get initial AR coefficients
         # Standard ARIMA often assumes zero mean for differenced series, so no intercept.
-        try:
-            ar_coefficients, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
-        except np.linalg.LinAlgError:
+        # Validate X and y before calling np.linalg.lstsq
+        if (
+            np.any(np.isnan(X))
+            or np.any(np.isnan(y))
+            or np.any(np.isinf(X))
+            or np.any(np.isinf(y))
+        ):
             warnings.warn(
-                "Singular matrix encountered in AR fitting. Coefficients might be unstable.",
+                "Input data contains NaN or Inf values. Returning zero coefficients.",
                 UserWarning,
                 stacklevel=2,
             )
-            # Fallback, return zeros
-            ar_coefficients = np.zeros(p)
+            ar_coefficients = np.zeros(X.shape[1] if X.ndim > 1 else 0)
+        else:
+            try:
+                ar_coefficients, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
+            except np.linalg.LinAlgError:
+                warnings.warn(
+                    "Singular matrix encountered in AR fitting. Coefficients might be unstable.",
+                    UserWarning,
+                    stacklevel=2,
+                )
+                ar_coefficients = np.zeros(X.shape[1] if X.ndim > 1 else 0)
 
         # Use scipy's minimize to optimize the AR coefficients, non-linear optimization
         def objective_function(ar_params):
@@ -237,17 +256,31 @@ class ARIMA:
             X = X[: len(y)]
 
         # First use OLS to get initial MA coefficients
-        try:
-            ma_coefficients, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
-        except np.linalg.LinAlgError:
+        # Validate X and y before calling np.linalg.lstsq
+        if (
+            np.any(np.isnan(X))
+            or np.any(np.isnan(y))
+            or np.any(np.isinf(X))
+            or np.any(np.isinf(y))
+        ):
             warnings.warn(
-                "Singular matrix encountered in MA fitting. Coefficients might be unstable.",
+                "Input data contains NaN or Inf values. Returning zero coefficients.",
                 UserWarning,
                 stacklevel=2,
             )
             ma_coefficients = np.zeros(q)
-        except ValueError as _e:
-            ma_coefficients = np.zeros(q)
+        else:
+            try:
+                ma_coefficients, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
+            except np.linalg.LinAlgError:
+                warnings.warn(
+                    "Singular matrix encountered in MA fitting. Coefficients might be unstable.",
+                    UserWarning,
+                    stacklevel=2,
+                )
+                ma_coefficients = np.zeros(q)
+            except ValueError as _e:
+                ma_coefficients = np.zeros(q)
 
         # Use scipy's minimize to optimize the MA coefficients, non-linear optimization
         def objective_function(ma_params):
@@ -519,6 +552,12 @@ class SARIMA(ARIMA):
         self.seasonal_order = seasonal_order
         self.P, self.D, self.Q, self.m = seasonal_order
         self.original_series = None
+
+    def __name__(self):
+        return "SARIMA"
+
+    def __str__(self):
+        return f"SARIMA(order={self.order}, seasonal_order={self.seasonal_order})"
 
     def fit(self, time_series):
         """Fit the SARIMA model to the given time series data.
@@ -923,6 +962,12 @@ class SARIMAX(SARIMA):
         super().__init__(order=order, seasonal_order=seasonal_order)
         self.beta = None
         self.k_exog = None
+
+    def __name__(self):
+        return "SARIMAX"
+
+    def __str__(self):
+        return f"SARIMAX(order={self.order}, seasonal_order={self.seasonal_order})"
 
     def fit(self, time_series, exog, bound_lower=None, bound_upper=None):
         """Fit the SARIMAX model to the given time series and exogenous regressors.

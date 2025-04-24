@@ -58,6 +58,7 @@ from .time_series import (
     AdditiveDecomposition,
     DoubleExponentialSmoothing,
     ExponentialMovingAverage,
+    ForecastingPipeline,
     MultiplicativeDecomposition,
     SimpleExponentialSmoothing,
     SimpleMovingAverage,
@@ -201,6 +202,7 @@ __all__ = [
     "ExponentialMovingAverage",
     "AdditiveDecomposition",
     "MultiplicativeDecomposition",
+    "ForecastingPipeline",
 ]
 
 try:

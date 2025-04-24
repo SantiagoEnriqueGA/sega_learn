@@ -27,6 +27,12 @@ class SimpleMovingAverage:
         self.model = None
         self._last_ma = None  # Store the last calculated MA value for forecasting
 
+    def __name__(self):
+        return "SimpleMovingAverage"
+
+    def __str__(self):
+        return f"SimpleMovingAverage(window={self.window})"
+
     def fit(self, time_series):
         """Calculate the Simple Moving Average for the series.
 
@@ -155,6 +161,12 @@ class WeightedMovingAverage:
         self.model = None
         self._last_ma = None
 
+    def __name__(self):
+        return "WeightedMovingAverage"
+
+    def __str__(self):
+        return f"WeightedMovingAverage(window={self.window}, weights={self.weights})"
+
     def fit(self, time_series):
         """Calculate the Weighted Moving Average for the series.
 
@@ -242,6 +254,12 @@ class ExponentialMovingAverage:
         self.smoothed_values = None
         self.model = None
         self._last_ema = None  # Store the last calculated EMA value for forecasting
+
+    def __name__(self):
+        return "ExponentialMovingAverage"
+
+    def __str__(self):
+        return f"ExponentialMovingAverage(alpha={self.alpha})"
 
     def fit(self, time_series):
         """Calculate the Exponential Moving Average for the series.
