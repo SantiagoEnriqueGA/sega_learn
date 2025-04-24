@@ -74,4 +74,4 @@ for i, alpha in enumerate(alpha_values, start=1):
 
 plt.tight_layout()
 # plt.show()
-plt.savefig("examples/time_series/plots/ema_forecast_comparison.png", dpi=300)
+plt.savefig("examples/time_series/plots/mvg_ema_forecast_comparison.png", dpi=300)

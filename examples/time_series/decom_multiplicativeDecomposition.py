@@ -74,4 +74,6 @@ axes[3].grid(True)
 fig.suptitle("Multiplicative Decomposition Breakdown", fontsize=14)
 plt.tight_layout()
 # plt.show()
-plt.savefig("examples/time_series/plots/multiplicative_decomposition.png", dpi=300)
+plt.savefig(
+    "examples/time_series/plots/decom_multiplicative_decomposition.png", dpi=300
+)
