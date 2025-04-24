@@ -86,8 +86,8 @@ Exponential Smoothing models are a family of forecasting methods that use weight
 Simple Exponential Smoothing (SES) is used for time series data without a trend or seasonality. It forecasts future values as a weighted average of past observations, with more recent observations receiving higher weights. The model is defined by a single smoothing parameter, **alpha (α)**, which controls the rate of exponential decay.
 
 - **Use Case**: Suitable for stationary time series without trend or seasonality.
-- **Forecast Formula**:  
-  $l_t = \alpha y_t + (1 - \alpha) l_{t-1}$  
+- **Forecast Formula**:
+  $l_t = \alpha y_t + (1 - \alpha) l_{t-1}$
   where $l_t$ is the level at time $t$, and $y_t$ is the observed value.
 
 ### Double Exponential Smoothing (Holt's Linear Trend Model)
@@ -95,10 +95,10 @@ Simple Exponential Smoothing (SES) is used for time series data without a trend 
 Double Exponential Smoothing (DES), also known as Holt's Linear Trend Model, extends SES to handle time series with a linear trend. It introduces a second smoothing parameter, **beta (β)**, to model the trend component.
 
 - **Use Case**: Suitable for time series with a linear trend but no seasonality.
-- **Forecast Formula**:  
-  $l_t = \alpha y_t + (1 - \alpha) (l_{t-1} + b_{t-1})$  
-  $b_t = \beta (l_t - l_{t-1}) + (1 - \beta) b_{t-1}$  
-  $y_{t+h} = l_t + h b_t$  
+- **Forecast Formula**:
+  $l_t = \alpha y_t + (1 - \alpha) (l_{t-1} + b_{t-1})$
+  $b_t = \beta (l_t - l_{t-1}) + (1 - \beta) b_{t-1}$
+  $y_{t+h} = l_t + h b_t$
   where $l_t$ is the level, $b_t$ is the trend, and $h$ is the forecast horizon.
 
 ### Triple Exponential Smoothing (Holt-Winters Seasonal Model)
@@ -106,11 +106,11 @@ Double Exponential Smoothing (DES), also known as Holt's Linear Trend Model, ext
 Triple Exponential Smoothing (TES), also known as the Holt-Winters Seasonal Model, extends DES to handle time series with both trend and seasonality. It introduces a third smoothing parameter, **gamma (γ)**, to model the seasonal component. TES can handle both additive and multiplicative seasonality.
 
 - **Use Case**: Suitable for time series with both trend and seasonality.
-- **Forecast Formula (Additive Seasonality)**:  
-  $l_t = \alpha (y_t - s_{t-m}) + (1 - \alpha) (l_{t-1} + b_{t-1})$  
-  $b_t = \beta (l_t - l_{t-1}) + (1 - \beta) b_{t-1}$  
-  $s_t = \gamma (y_t - l_t) + (1 - \gamma) s_{t-m}$  
-  $y_{t+h} = l_t + h b_t + s_{t+h-m}$  
+- **Forecast Formula (Additive Seasonality)**:
+  $l_t = \alpha (y_t - s_{t-m}) + (1 - \alpha) (l_{t-1} + b_{t-1})$
+  $b_t = \beta (l_t - l_{t-1}) + (1 - \beta) b_{t-1}$
+  $s_t = \gamma (y_t - l_t) + (1 - \gamma) s_{t-m}$
+  $y_{t+h} = l_t + h b_t + s_{t+h-m}$
   where $l_t$ is the level, $b_t$ is the trend, $s_t$ is the seasonal component, $m$ is the seasonal period, and $h$ is the forecast horizon.
 
 <!-- ## Forecasting Models -->
@@ -125,7 +125,7 @@ Moving Average models are used to smooth time series data by averaging observati
 The Simple Moving Average (SMA) calculates the unweighted mean of the last $n$ observations in a time series. It is a straightforward method for smoothing data and is often used as a baseline for comparison with more complex models.
 
 - **Use Case**: Suitable for time series data without significant trends or seasonality.
-- **Formula**:  
+- **Formula**:
   $SMA_t = \frac{1}{n} \sum_{i=0}^{n-1} y_{t-i}$
   where $n$ is the window size, and $y_{t-i}$ are the observations.
 
@@ -134,10 +134,17 @@ The Simple Moving Average (SMA) calculates the unweighted mean of the last $n$ o
 The Weighted Moving Average (WMA) assigns different weights to observations within the window, typically giving more importance to recent observations. This makes WMA more responsive to recent changes in the data compared to SMA.
 
 - **Use Case**: Suitable for time series data where recent observations are more relevant for forecasting.
-- **Formula**:  
+- **Formula**:
   $WMA_t = \frac{\sum_{i=0}^{n-1} w_i y_{t-i}}{\sum_{i=0}^{n-1} w_i}$
   where $w_i$ are the weights, $n$ is the window size, and $y_{t-i}$ are the observations. The weights are typically normalized to sum to 1.
 
+### Exponential Moving Average (EMA)
+
+The Exponential Moving Average (EMA) is a type of weighted moving average that applies exponentially decreasing weights to past observations. It is more responsive to recent changes in the data compared to SMA and WMA.
+- **Use Case**: Suitable for time series data where recent observations are more relevant for forecasting, and it is often used in financial applications.
+- **Formula**:
+  $EMA_t = \alpha y_t + (1 - \alpha) EMA_{t-1}$
+  where $\alpha$ is the smoothing factor (0 < α < 1), and $y_t$ is the observed value. The smoothing factor determines the weight given to the most recent observation compared to the previous EMA.
 
 ## Example Usages
 
@@ -226,7 +233,7 @@ forecasted_values_ses = ses_model.forecast(steps=forecast_steps)
 
 ### Moving Average
 ```python
-from sega_learn.time_series.moving_average import SimpleMovingAverage, WeightedMovingAverage
+from sega_learn.time_series.moving_average import SimpleMovingAverage, WeightedMovingAverage, ExponentialMovingAverage
 from sega_learn.utils import make_time_series
 
 # Generate time series

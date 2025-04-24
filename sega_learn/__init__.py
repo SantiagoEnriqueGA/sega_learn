@@ -57,6 +57,7 @@ from .time_series import (
     SARIMAX,
     AdditiveDecomposition,
     DoubleExponentialSmoothing,
+    ExponentialMovingAverage,
     MultiplicativeDecomposition,
     SimpleExponentialSmoothing,
     SimpleMovingAverage,
@@ -197,6 +198,7 @@ __all__ = [
     "TripleExponentialSmoothing",
     "SimpleMovingAverage",
     "WeightedMovingAverage",
+    "ExponentialMovingAverage",
     "AdditiveDecomposition",
     "MultiplicativeDecomposition",
 ]

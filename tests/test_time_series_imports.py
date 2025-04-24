@@ -28,6 +28,7 @@ class TestImportsTimeSeries(unittest.TestCase):
         from sega_learn.time_series import SARIMAX as sarimax
         from sega_learn.time_series import AdditiveDecomposition as add
         from sega_learn.time_series import DoubleExponentialSmoothing as des
+        from sega_learn.time_series import ExponentialMovingAverage as ema
         from sega_learn.time_series import MultiplicativeDecomposition as mul
         from sega_learn.time_series import SimpleExponentialSmoothing as exps
         from sega_learn.time_series import SimpleMovingAverage as sm
@@ -44,6 +45,7 @@ class TestImportsTimeSeries(unittest.TestCase):
         assert wm is not None
         assert add is not None
         assert mul is not None
+        assert ema is not None
 
     def test_wildcard_import(self):
         """Tests that the segadb package can be imported using a wildcard import."""
@@ -95,6 +97,11 @@ class TestImportsTimeSeries(unittest.TestCase):
         from sega_learn.time_series import WeightedMovingAverage
 
         assert WeightedMovingAverage is not None
+
+    def test_ExponentialMovingAverage(self):  # NOQA D201
+        from sega_learn.time_series import ExponentialMovingAverage
+
+        assert ExponentialMovingAverage is not None
 
     def test_AdditiveDecomposition(self):  # NOQA D201
         from sega_learn.time_series import AdditiveDecomposition

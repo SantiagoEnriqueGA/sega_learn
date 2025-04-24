@@ -217,3 +217,88 @@ class WeightedMovingAverage:
             return np.full(steps, np.nan)
 
         return np.full(steps, self._last_ma)
+
+
+class ExponentialMovingAverage:
+    """Calculates the Exponential Moving Average (EMA) of a time series.
+
+    EMA gives more weight to recent observations, making it more responsive to new information.
+
+    Attributes:
+        alpha (float): The smoothing factor (0 < alpha < 1).
+        smoothed_values (np.ndarray): The calculated EMA values. NaNs prepended.
+        model (np.ndarray): The original time series data.
+    """
+
+    def __init__(self, alpha):
+        """Initialize EMA calculator.
+
+        Args:
+            alpha (float): The smoothing factor (0 < alpha < 1).
+        """
+        if not (0 < alpha < 1):
+            raise ValueError("Alpha must be between 0 and 1 (exclusive).")
+        self.alpha = alpha
+        self.smoothed_values = None
+        self.model = None
+        self._last_ema = None  # Store the last calculated EMA value for forecasting
+
+    def fit(self, time_series):
+        """Calculate the Exponential Moving Average for the series.
+
+        Args:
+            time_series (array-like): The time series data (1-dimensional).
+        """
+        self.model = np.asarray(time_series, dtype=float).flatten()
+        n = len(self.model)
+        if n == 0:
+            self.smoothed_values = np.array([])
+            self._last_ema = np.nan
+            return
+
+        ema_values = np.empty(n)
+        ema_values[:] = np.nan  # Initialize with NaNs
+
+        # First EMA value is the first data point
+        ema_values[0] = self.model[0]
+        for i in range(1, n):
+            ema_values[i] = (
+                self.alpha * self.model[i] + (1 - self.alpha) * ema_values[i - 1]
+            )
+
+        self.smoothed_values = ema_values
+        self._last_ema = ema_values[-1]
+
+        return self.smoothed_values
+
+    def get_smoothed(self):
+        """Return the calculated EMA series."""
+        if self.smoothed_values is None:
+            raise ValueError("Model has not been fitted yet.")
+        return self.smoothed_values
+
+    def forecast(self, steps):
+        """Generate forecasts using the last calculated EMA value.
+
+        Note: This is a naive forecast where the future is predicted to be the
+        last known smoothed value.
+
+        Args:
+            steps (int): The number of steps to forecast ahead.
+
+        Returns:
+            np.ndarray: An array of forecasted values (all the same).
+        """
+        if self.smoothed_values is None:
+            raise ValueError("Model has not been fitted yet.")
+        if steps <= 0:
+            return np.array([])
+        if np.isnan(self._last_ema):
+            warnings.warn(
+                "Last EMA value is NaN, cannot forecast.",
+                UserWarning,
+                stacklevel=2,
+            )
+            return np.full(steps, np.nan)
+
+        return np.full(steps, self._last_ema)

@@ -8,6 +8,7 @@ import numpy as np
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.time_series.moving_average import (
+    ExponentialMovingAverage,
     SimpleMovingAverage,
     WeightedMovingAverage,
 )
@@ -122,6 +123,59 @@ class TestWeightedMovingAverage(unittest.TestCase):
         """Test forecasting with invalid steps."""
         self.wma.fit(self.time_series)
         forecast = self.wma.forecast(0)
+        self.assertEqual(len(forecast), 0)
+
+
+class TestExponentialMovingAverage(unittest.TestCase):
+    """Unit test suite for the ExponentialMovingAverage class."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        print("\nTesting ExponentialMovingAverage", end="", flush=True)
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        warnings.simplefilter("ignore", category=UserWarning)
+
+    def setUp(self):  # NOQA D201
+        self.time_series = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], dtype=float)
+        self.ema = ExponentialMovingAverage(alpha=0.5)
+
+    def test_initialization(self):
+        """Test ExponentialMovingAverage initialization."""
+        self.assertEqual(self.ema.alpha, 0.5)
+        self.assertIsNone(self.ema.smoothed_values)
+        self.assertIsNone(self.ema.model)
+        self.assertIsNone(self.ema._last_ema)
+
+    def test_initialization_invalid_alpha(self):
+        """Test ExponentialMovingAverage initialization with invalid alpha."""
+        with self.assertRaises(ValueError):
+            ExponentialMovingAverage(alpha=1.5)
+
+    def test_fit(self):
+        """Test fitting the model."""
+        smoothed = self.ema.fit(self.time_series)
+        self.assertIsNotNone(smoothed)
+        self.assertEqual(len(smoothed), len(self.time_series))
+
+    def test_fit_empty_series(self):
+        """Test fitting the model with an empty series."""
+        smoothed = self.ema.fit(np.array([]))
+        with self.assertRaises((ValueError, TypeError)):
+            self.assertEqual(len(smoothed), 0)
+
+    def test_forecast(self):
+        """Test forecasting."""
+        self.ema.fit(self.time_series)
+        forecast = self.ema.forecast(5)
+        self.assertEqual(len(forecast), 5)
+        self.assertTrue(
+            np.all(forecast == forecast[0])
+        )  # All values should be the same
+
+    def test_forecast_invalid_steps(self):
+        """Test forecasting with invalid steps."""
+        self.ema.fit(self.time_series)
+        forecast = self.ema.forecast(0)
         self.assertEqual(len(forecast), 0)
 
 

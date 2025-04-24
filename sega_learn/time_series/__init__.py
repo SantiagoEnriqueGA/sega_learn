@@ -6,7 +6,11 @@ from .exponential_smoothing import (
     TripleExponentialSmoothing,
 )
 from .forecasting import CustomForecastingPipeline, ProphetModel
-from .moving_average import SimpleMovingAverage, WeightedMovingAverage
+from .moving_average import (
+    ExponentialMovingAverage,
+    SimpleMovingAverage,
+    WeightedMovingAverage,
+)
 
 __all__ = [
     "ARIMA",
@@ -14,6 +18,7 @@ __all__ = [
     "SARIMAX",
     "SimpleMovingAverage",
     "WeightedMovingAverage",
+    "ExponentialMovingAverage",
     "SimpleExponentialSmoothing",
     "DoubleExponentialSmoothing",
     "TripleExponentialSmoothing",

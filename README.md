@@ -103,6 +103,7 @@ The SEGA_LEARN library includes the following features:
 - **Custom Forecasting Pipeline**: Implements a custom forecasting pipeline that allows users to define their own forecasting models and evaluation metrics. -->
 - **Simple Moving Average**: Implements the simple moving average for time series forecasting.
 - **Weighted Moving Average**: Implements the weighted moving average for time series forecasting.
+- **Exponential Moving Average**: Implements the exponential moving average for time series forecasting.
 
 ### Utilities
 - **Data Preparation**: Implements utility functions for data preparation like train-test split, normalization, and standardization.
@@ -235,6 +236,7 @@ sega_learn/
 - [`decom_multiplicativeDecomposition.py`](examples/time_series/decom_multiplicativeDecomposition.py): Demonstrates multiplicative decomposition of time series data.
 - [`mvg_simpleMovingAverage.py`](examples/time_series/mvg_simpleMovingAverage.py): Demonstrates simple moving average for time series forecasting.
 - [`mvg_weightedMovingAverage.py`](examples/time_series/mvg_weightedMovingAverage.py): Demonstrates weighted moving average for time series forecasting.
+- [`mvg_exponentialMovingAverage.py`](examples/time_series/mvg_exponentialMovingAverage.py): Demonstrates exponential moving average for time series forecasting.
 - [`smth_simpleExponentialSmoothing.py`](examples/time_series/smth_simpleExponentialSmoothing.py): Demonstrates simple exponential smoothing for time series forecasting.
 - [`smth_doubleExponentialSmoothing.py`](examples/time_series/smth_doubleExponentialSmoothing.py): Demonstrates double exponential smoothing for time series forecasting.
 - [`smth_tripleExponentialSmoothing.py`](examples/time_series/smth_tripleExponentialSmoothing.py): Demonstrates triple exponential smoothing for time series forecasting.

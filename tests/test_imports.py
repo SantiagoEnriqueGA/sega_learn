@@ -132,6 +132,7 @@ class TestImports(unittest.TestCase):
         assert TripleExponentialSmoothing is not None
         assert SimpleMovingAverage is not None
         assert WeightedMovingAverage is not None
+        assert ExponentialMovingAverage is not None
         assert AdditiveDecomposition is not None
         assert MultiplicativeDecomposition is not None
 
