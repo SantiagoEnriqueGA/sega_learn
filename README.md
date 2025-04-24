@@ -107,6 +107,8 @@ The SEGA_LEARN library includes the following features:
 ### Utilities
 - **Data Preparation**: Implements utility functions for data preparation like train-test split, normalization, and standardization.
 - **Voting Regressor**: Implements a voting regressor that combines the predictions of multiple regressors using a weighted average.
+- **Voting Classifier**: Implements a voting classifier that combines the predictions of multiple classifiers using a weighted average.
+- **Voting Forcaster**: Implements a voting forecaster that combines the predictions of multiple forecasters using a weighted average.
 - **Polynomial Transformation**: Implements polynomial transformation of features to create higher-order polynomial features.
 - **Evaluation Metrics**: Implements evaluation metrics like mean squared error, mean absolute error, and R-squared.
 - **Model Selection Algorithms**: Implements model selection algorithms like Grid Search Cross Validation and Random Search Cross Validation.
@@ -265,6 +267,7 @@ sega_learn/
 - [`svd_classification.py`](examples/utils/svd_classification.py): Demonstrates SVD for classification tasks.
 - [`svd_regression.py`](examples/utils/svd_regression.py): Demonstrates SVD for regression tasks.
 - [`votingRegressor.py`](examples/utils/votingRegressor.py): Demonstrates Voting Regressor.
+- [`votingClassifier.py`](examples/utils/votingClassifier.py): Demonstrates Voting Classifier.
 
 ## Helper Scripts
 The following PowerShell scripts are included in the `scripts/` folder to help with various tasks:

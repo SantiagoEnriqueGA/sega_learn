@@ -184,3 +184,54 @@ class VotingClassifier:
             # Attempt to get a meaningful name, fallback to class name
             model_name = getattr(model, "__class__", type(model)).__name__
             print(f"  - Model {i + 1}: {model_name}, Weight: {weights[i]:.3f}")
+
+
+class ForecastRegressor:
+    """Implements a forcast voting regressor.
+
+    Takes a list of fitted models and their weights and returns a weighted average of the predictions.
+    """
+
+    def __init__(self, models, model_weights=None):
+        """Initialize the ForecastRegressor object.
+
+        Args:
+            models: list of models to be stacked
+            model_weights: list of weights for each model. Default is None.
+        """
+        self.models = models
+        self.model_weights = model_weights
+
+    def forecast(self, steps):
+        """Forecast the target variable using the fitted models.
+
+        Args:
+            steps: number of steps to forecast
+
+        Returns:
+            y_pred: predicted target variable
+        """
+        y_preds = []
+        for model in self.models:
+            y_pred = model.forecast(steps=steps)
+            y_preds.append(y_pred)
+
+        return np.average(y_preds, axis=0, weights=self.model_weights)
+
+    def get_params(self):
+        """Get the parameters of the ForecastRegressor object.
+
+        Returns:
+            params: dictionary of parameters
+        """
+        return {"models": self.models, "model_weights": self.model_weights}
+
+    def show_models(self, formula=False):
+        """Print the models and their weights."""
+        for model, weight in zip(self.models, self.model_weights, strict=False):
+            if formula:
+                print(
+                    f"Model: {model}, Weight: {weight} \n\tFormula: {model.get_formula()}"
+                )
+            else:
+                print(f"Model: {model}, Weight: {weight}")

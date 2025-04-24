@@ -1,5 +1,7 @@
 import numpy as np
 
+from sega_learn.utils.voting import ForecastRegressor
+
 
 class ForecastingPipeline:
     """A customizable pipeline for time series forecasting.
@@ -29,8 +31,12 @@ class ForecastingPipeline:
             evaluators (list, optional): List of evaluation metrics or functions.
         """
         self.preprocessors = preprocessors or []
-        self.model = model
+        self.models = model or []
         self.evaluators = evaluators or []
+
+        # If self.models is not a list, convert it to a list
+        if not isinstance(self.models, list):
+            self.models = [self.models]
 
     def add_preprocessor(self, preprocessor):
         """Add a preprocessing step to the pipeline.
@@ -70,13 +76,27 @@ class ForecastingPipeline:
         else:
             raise ValueError("Evaluator not found in the pipeline.")
 
-    def replace_model(self, model):
-        """Replace the current model in the pipeline.
+    def add_model(self, model):
+        """Add a forecasting model to the pipeline.
 
         Args:
-            model (object): A new forecasting model (e.g., ARIMA, SARIMA, etc.).
+            model (object): A forecasting model (e.g., ARIMA, SARIMA, etc.).
         """
-        self.model = model
+        if isinstance(model, list):
+            self.models.extend(model)
+        else:
+            self.models.append(model)
+
+    def remove_model(self, model):
+        """Remove a forecasting model from the pipeline.
+
+        Args:
+            model (object): A forecasting model (e.g., ARIMA, SARIMA, etc.) to remove.
+        """
+        if model in self.models:
+            self.models.remove(model)
+        else:
+            raise ValueError("Model not found in the pipeline.")
 
     def fit(self, X, y=None):
         """Fit the model to the data.
@@ -85,7 +105,7 @@ class ForecastingPipeline:
             X (array-like): Input features (e.g., time series data).
             y (array-like): Target values (optional). If not provided, X is used as both features and target.
         """
-        if not self.model:
+        if not self.models:
             raise ValueError("No model has been set in the pipeline.")
 
         for preprocessor in self.preprocessors:
@@ -121,22 +141,29 @@ class ForecastingPipeline:
                 # Handle NaNs in the data, drop nans
                 X = X[~np.isnan(X)]
 
-        if self.model:
+        for model in self.models:
             # Check if model is callable
-            if hasattr(self.model, "fit"):
+            if hasattr(model, "fit"):
                 # Fit the model to the preprocessed data
                 # Fit may take X or X, y depending on the model
                 try:
-                    self.model.fit(X, y)
+                    model.fit(X, y)
                 except TypeError:
                     try:
                         # If it raises TypeError, assume it only takes X
                         # and returns transformed X
-                        self.model.fit(X)
+                        model.fit(X)
                     except Exception as e:
                         raise ValueError(f"Model fit method failed: {e}") from e
             else:
                 raise ValueError("Model must have a fit method.")
+
+        # If self.models is longer than 1, use ForecastRegressor
+        if len(self.models) > 1:
+            self.fit_model = ForecastRegressor(models=self.models)
+            # Fit the ForecastRegressor to the preprocessed data
+        else:
+            self.fit_model = self.models[0]
 
     def predict(self, X, steps=1):
         """Make predictions using the fitted model.
@@ -148,7 +175,7 @@ class ForecastingPipeline:
         Returns:
             array-like: Predicted values.
         """
-        if not self.model:
+        if not self.models:
             raise ValueError("No model has been set in the pipeline.")
 
         for preprocessor in self.preprocessors:
@@ -173,19 +200,19 @@ class ForecastingPipeline:
                             "Preprocessor must be callable or have a transform method."
                         )
 
-        if self.model:
+        if self.fit_model:
             # Check if model is callable
-            if hasattr(self.model, "predict"):
+            if hasattr(self.fit_model, "predict"):
                 # Make predictions using the fitted model
                 try:
-                    return self.model.predict(X, steps)
+                    return self.fit_model.predict(X, steps)
                 except Exception as e:
                     raise ValueError(f"Model predict method failed: {e}") from e
             else:
                 # Check if model is an object with forecast method
-                if hasattr(self.model, "forecast"):
+                if hasattr(self.fit_model, "forecast"):
                     try:
-                        return self.model.forecast(steps)
+                        return self.fit_model.forecast(steps)
                     except Exception as e:
                         raise ValueError(f"Model forecast method failed: {e}") from e
                 else:
@@ -226,9 +253,14 @@ class ForecastingPipeline:
                 print(" " * 16, end="")
                 print(f" {preprocessor.__class__.__name__}")
 
-        print(
-            f"  Model:         {self.model.__class__.__name__ if self.model else 'None'}"
-        )
+        print("  Models:", end="")
+        for i, model in enumerate(self.models):
+            if i == 0:
+                print(" " * 7, end="")
+                print(f" {model.__class__.__name__}")
+            else:
+                print(" " * 16, end="")
+                print(f" {model.__class__.__name__}")
 
         print("  Evaluators:", end="")
         for i, evaluator in enumerate(self.evaluators):

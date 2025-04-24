@@ -1,4 +1,4 @@
-from .voting import VotingRegressor, VotingClassifier
+from .voting import VotingRegressor, VotingClassifier, ForecastRegressor
 from .polynomialTransform import PolynomialTransform
 from .dataPrep import DataPrep
 from .modelSelection import ModelSelectionUtility, GridSearchCV, RandomSearchCV
@@ -23,6 +23,7 @@ __all__ = [
     "DataPrep",
     "VotingRegressor",
     "VotingClassifier",
+    "ForecastRegressor",
     "ModelSelectionUtility",
     "GridSearchCV",
     "RandomSearchCV",

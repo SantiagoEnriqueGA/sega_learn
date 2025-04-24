@@ -40,15 +40,20 @@ seasonal_order = (1, 1, 1, 100)
 pipeline = ForecastingPipeline(
     preprocessors=[
         WeightedMovingAverage(window=5),
-        WeightedMovingAverage(window=5),
         # Add more preprocessors as needed
         # ExponentialMovingAverage(alpha=0.2),
     ],
-    model=SARIMA(order=order, seasonal_order=seasonal_order),
+    model=[
+        SARIMA(order=order, seasonal_order=seasonal_order),
+        # Add more models as needed
+        # SARIMA(order=order, seasonal_order=seasonal_order),
+    ],
     evaluators=[
         Metrics.mean_squared_error,
         Metrics.mean_absolute_error,
         Metrics.mean_absolute_percentage_error,
+        # Add more evaluators as needed
+        # Metrics.mean_squared_log_error,
     ],
 )
 

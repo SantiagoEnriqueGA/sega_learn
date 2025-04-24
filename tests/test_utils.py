@@ -10,10 +10,23 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn.linear_models import *
 from sega_learn.svm import *
+from sega_learn.time_series import *
 from sega_learn.trees import *
 from sega_learn.utils import *
 from sega_learn.utils import make_classification, make_regression, train_test_split
 from tests.utils import suppress_print, synthetic_data_regression
+
+
+# --- Helper function for creating seasonal data ---
+def create_seasonal_data(length=100, period=12, amplitude=10, trend=0.1, noise_std=2):
+    """Creates sample time series data with seasonality, trend, and noise."""
+    time = np.arange(length)
+    seasonal_component = amplitude * np.sin(2 * np.pi * time / period)
+    trend_component = trend * time
+    noise_component = np.random.normal(0, noise_std, length)
+    return (
+        trend_component + seasonal_component + noise_component + 50
+    )  # Add constant offset
 
 
 class TestPolynomialTransform(unittest.TestCase):
@@ -200,6 +213,54 @@ class TestVotingRegressor(unittest.TestCase):
 
     def test_show_models(self):
         """Tests the show_models method of the Voting Regressor class."""
+        with suppress_print():
+            self.voter.show_models()
+
+
+class TestForecastRegressor(unittest.TestCase):
+    """Unit tests for the ForecastRegressor class."""
+
+    @classmethod
+    def setUpClass(cls):  # NOQA D201
+        print("\nTesting Forcast Regressor", end="", flush=True)
+
+    def setUp(self):  # NOQA D201
+        """Set up the ForecastRegressor instance for testing."""
+        self.seasonal_period = 4  # Simple seasonality
+        self.time_series = create_seasonal_data(
+            length=40, period=self.seasonal_period, trend=0.05, noise_std=1
+        )
+        self.time_series = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], dtype=float)
+        self.order = (1, 1, 1)  # Use simpler order for basic tests
+        self.arima = ARIMA(order=self.order)
+        self.arima.fit(self.time_series)
+
+        self.order = (1, 1, 1)
+        self.seasonal_order = (1, 1, 1, self.seasonal_period)  # P, D, Q, m
+        self.sarima = SARIMA(order=self.order, seasonal_order=self.seasonal_order)
+        self.sarima.fit(self.time_series)
+
+        self.voter = ForecastRegressor(
+            models=[self.arima, self.sarima], model_weights=[0.5, 0.5]
+        )
+
+    def test_init(self):
+        """Tests the initialization of the Forcast Regressor class."""
+        self.assertEqual(len(self.voter.models), 2)
+        self.assertEqual(len(self.voter.model_weights), 2)
+
+    def test_forecast(self):
+        """Tests the forecast method of the Forcast Regressor class."""
+        y_pred = self.voter.forecast(steps=2)
+        self.assertEqual(y_pred.shape[0], 2)
+
+    def test_get_params(self):
+        """Tests the get_params method of the Forcast Regressor class."""
+        params = self.voter.get_params()
+        self.assertEqual(len(params), 2)
+
+    def test_show_models(self):
+        """Tests the show_models method of the Forcast Regressor class."""
         with suppress_print():
             self.voter.show_models()
 

@@ -26,12 +26,12 @@ class TestForecastingPipeline(unittest.TestCase):
         self.time_series = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], dtype=float)
         self.train_series = self.time_series[:8]
         self.test_series = self.time_series[8:]
-        self.pipeline = ForecastingPipeline(preprocessors=[], model=None, evaluators=[])
+        self.pipeline = ForecastingPipeline(preprocessors=[], model=[], evaluators=[])
 
     def test_initialization(self):
         """Test ForecastingPipeline initialization."""
         self.assertEqual(len(self.pipeline.preprocessors), 0)
-        self.assertIsNone(self.pipeline.model)
+        self.assertEqual(len(self.pipeline.models), 0)
         self.assertEqual(len(self.pipeline.evaluators), 0)
 
     def test_add_preprocessor(self):
@@ -74,24 +74,32 @@ class TestForecastingPipeline(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.pipeline.remove_evaluator(evaluator)
 
-    def test_replace_model(self):
-        """Test replacing the model in the pipeline."""
+    def test_add_model(self):
+        """Test adding a model to the pipeline."""
         model = SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
-        self.pipeline.replace_model(model)
-        self.assertIs(self.pipeline.model, model)
+        self.pipeline.add_model(model)
+        self.assertEqual(len(self.pipeline.models), 1)
+        self.assertIs(self.pipeline.models[0], model)
+
+    def test_remove_model(self):
+        """Test removing a model from the pipeline."""
+        model = SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+        self.pipeline.add_model(model)
+        self.pipeline.remove_model(model)
+        self.assertEqual(len(self.pipeline.models), 0)
 
     def test_fit(self):
         """Test fitting the pipeline."""
         self.pipeline.preprocessors = [WeightedMovingAverage(window=3)]
-        self.pipeline.model = SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+        self.pipeline.models = [SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_no_preprocessors(self):
         """Test fitting the pipeline with no preprocessors."""
-        self.pipeline.model = SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+        self.pipeline.models = [SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_no_model(self):
         """Test fitting the pipeline with no model."""
@@ -102,98 +110,98 @@ class TestForecastingPipeline(unittest.TestCase):
     def test_fit_arima(self):
         """Test fitting the pipeline with an ARIMA model."""
         self.pipeline.preprocessors = [WeightedMovingAverage(window=3)]
-        self.pipeline.model = ARIMA(order=(1, 1, 1))
+        self.pipeline.models = [ARIMA(order=(1, 1, 1))]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_sarima(self):
         """Test fitting the pipeline with an SARIMA model."""
         self.pipeline.preprocessors = [WeightedMovingAverage(window=3)]
-        self.pipeline.model = SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+        self.pipeline.models = [SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_sarimax(self):
         """Test fitting the pipeline with an SARIMAX model."""
         self.pipeline.preprocessors = [WeightedMovingAverage(window=3)]
-        self.pipeline.model = SARIMAX(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+        self.pipeline.models = [SARIMAX(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))]
         exog = np.random.rand(len(self.train_series), 1)  # Example exogenous variable
         self.pipeline.fit(self.train_series, exog)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_simple_moving_average(self):
         """Test fitting the pipeline with a Simple Moving Average model."""
         self.pipeline.preprocessors = [SimpleMovingAverage(window=3)]
-        self.pipeline.model = ARIMA(order=(1, 1, 1))
+        self.pipeline.models = [ARIMA(order=(1, 1, 1))]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_weighted_moving_average(self):
         """Test fitting the pipeline with a Weighted Moving Average model."""
         self.pipeline.preprocessors = [WeightedMovingAverage(window=3)]
-        self.pipeline.model = ARIMA(order=(1, 1, 1))
+        self.pipeline.models = [ARIMA(order=(1, 1, 1))]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_exponential_moving_average(self):
         """Test fitting the pipeline with an Exponential Moving Average model."""
         self.pipeline.preprocessors = [ExponentialMovingAverage(alpha=0.2)]
-        self.pipeline.model = ARIMA(order=(1, 1, 1))
+        self.pipeline.models = [ARIMA(order=(1, 1, 1))]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_exponential_smoothing(self):
         """Test fitting the pipeline with an Exponential Smoothing model."""
         self.pipeline.preprocessors = [SimpleExponentialSmoothing(alpha=0.2)]
-        self.pipeline.model = ARIMA(order=(1, 1, 1))
+        self.pipeline.models = [ARIMA(order=(1, 1, 1))]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_exponential_smoothing_model(self):
         """Test fitting the pipeline with an Exponential Smoothing model."""
         self.pipeline.preprocessors = [SimpleExponentialSmoothing(alpha=0.2)]
-        self.pipeline.model = SimpleExponentialSmoothing(alpha=0.2)
+        self.pipeline.models = [SimpleExponentialSmoothing(alpha=0.2)]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_double_exponential_smoothing(self):
         """Test fitting the pipeline with a Double Exponential Smoothing model."""
         self.pipeline.preprocessors = [DoubleExponentialSmoothing(alpha=0.2, beta=0.1)]
-        self.pipeline.model = ARIMA(order=(1, 1, 1))
+        self.pipeline.models = [ARIMA(order=(1, 1, 1))]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_double_exponential_smoothing_model(self):
         """Test fitting the pipeline with a Double Exponential Smoothing model."""
         self.pipeline.preprocessors = [DoubleExponentialSmoothing(alpha=0.2, beta=0.1)]
-        self.pipeline.model = DoubleExponentialSmoothing(alpha=0.2, beta=0.1)
+        self.pipeline.models = [DoubleExponentialSmoothing(alpha=0.2, beta=0.1)]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_triple_exponential_smoothing(self):
         """Test fitting the pipeline with a Triple Exponential Smoothing model."""
         self.pipeline.preprocessors = [
             TripleExponentialSmoothing(alpha=0.2, beta=0.1, gamma=0.1, period=2)
         ]
-        self.pipeline.model = ARIMA(order=(1, 1, 1))
+        self.pipeline.models = [ARIMA(order=(1, 1, 1))]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_fit_triple_exponential_smoothing_model(self):
         """Test fitting the pipeline with a Triple Exponential Smoothing model."""
         self.pipeline.preprocessors = [
             TripleExponentialSmoothing(alpha=0.2, beta=0.1, gamma=0.1, period=2)
         ]
-        self.pipeline.model = TripleExponentialSmoothing(
-            alpha=0.2, beta=0.1, gamma=0.1, period=2
-        )
+        self.pipeline.models = [
+            TripleExponentialSmoothing(alpha=0.2, beta=0.1, gamma=0.1, period=2)
+        ]
         self.pipeline.fit(self.train_series)
-        self.assertIsNotNone(self.pipeline.model)
+        self.assertIsNotNone(self.pipeline.models)
 
     def test_predict(self):
         """Test making predictions with the pipeline."""
         self.pipeline.preprocessors = [WeightedMovingAverage(window=3)]
-        self.pipeline.model = SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+        self.pipeline.models = [SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))]
         self.pipeline.fit(self.train_series)
         predictions = self.pipeline.predict(self.test_series, steps=2)
         self.assertEqual(len(predictions), 2)
@@ -206,14 +214,14 @@ class TestForecastingPipeline(unittest.TestCase):
 
     def test_predict_no_preprocessors(self):
         """Test making predictions with no preprocessors in the pipeline."""
-        self.pipeline.model = SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+        self.pipeline.models = [SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))]
         self.pipeline.fit(self.train_series)
         predictions = self.pipeline.predict(self.test_series, steps=2)
         self.assertEqual(len(predictions), 2)
 
     def test_evaluate(self):
         """Test evaluating the pipeline."""
-        self.pipeline.model = SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+        self.pipeline.models = [SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))]
         self.pipeline.evaluators = [Metrics.mean_squared_error]
         self.pipeline.fit(self.train_series)
         predictions = self.pipeline.predict(self.test_series, steps=2)
@@ -222,7 +230,7 @@ class TestForecastingPipeline(unittest.TestCase):
 
     def test_evaluate_no_evaluators(self):
         """Test evaluating the pipeline with no evaluators."""
-        self.pipeline.model = SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+        self.pipeline.models = [SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))]
         self.pipeline.fit(self.train_series)
         predictions = self.pipeline.predict(self.test_series, steps=2)
         with self.assertRaises(ValueError):
@@ -232,7 +240,9 @@ class TestForecastingPipeline(unittest.TestCase):
         """Test the summary method."""
         with suppress_print():
             self.pipeline.preprocessors = [WeightedMovingAverage(window=3)]
-            self.pipeline.model = SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+            self.pipeline.models = [
+                SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+            ]
             self.pipeline.evaluators = [Metrics.mean_squared_error]
             self.pipeline.summary()
 
@@ -246,14 +256,18 @@ class TestForecastingPipeline(unittest.TestCase):
     def test_summary_no_preprocessors(self):
         """Test the summary method with no preprocessors."""
         with suppress_print():
-            self.pipeline.model = SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+            self.pipeline.models = [
+                SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+            ]
             self.pipeline.evaluators = [Metrics.mean_squared_error]
             self.pipeline.summary()
 
     def test_summary_no_evaluators(self):
         """Test the summary method with no evaluators."""
         with suppress_print():
-            self.pipeline.model = SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+            self.pipeline.models = [
+                SARIMA(order=(1, 1, 1), seasonal_order=(1, 1, 1, 1))
+            ]
             self.pipeline.preprocessors = [WeightedMovingAverage(window=3)]
             self.pipeline.summary()
 

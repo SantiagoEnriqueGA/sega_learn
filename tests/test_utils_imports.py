@@ -28,6 +28,7 @@ class TestImportsUtils(unittest.TestCase):
         from sega_learn.utils import SVD as svd
         from sega_learn.utils import Augmenter as augmenter
         from sega_learn.utils import DataPrep as dp
+        from sega_learn.utils import ForecastRegressor as fr
         from sega_learn.utils import GridSearchCV as gscv
         from sega_learn.utils import Metrics as metrics
         from sega_learn.utils import ModelSelectionUtility as msu
@@ -68,6 +69,7 @@ class TestImportsUtils(unittest.TestCase):
         assert ohe is not None
         assert norm is not None
         assert scaler is not None
+        assert fr is not None
 
     def test_wildcard_import(self):
         """Tests that the segadb package can be imported using a wildcard import."""
@@ -162,6 +164,11 @@ class TestImportsUtils(unittest.TestCase):
         from sega_learn.utils import VotingRegressor
 
         assert VotingRegressor is not None
+
+    def test_ForecastRegressor(self):  # NOQA D201
+        from sega_learn.utils import ForecastRegressor
+
+        assert ForecastRegressor is not None
 
     def test_make_blobs(self):  # NOQA D201
         from sega_learn.utils import make_blobs
