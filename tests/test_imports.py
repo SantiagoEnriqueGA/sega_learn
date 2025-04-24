@@ -130,6 +130,10 @@ class TestImports(unittest.TestCase):
         assert DoubleExponentialSmoothing is not None
         assert SimpleExponentialSmoothing is not None
         assert TripleExponentialSmoothing is not None
+        assert SimpleMovingAverage is not None
+        assert WeightedMovingAverage is not None
+        assert AdditiveDecomposition is not None
+        assert MultiplicativeDecomposition is not None
 
     def test_utils_imports(self):  # NOQA D201
         assert PCA is not None
