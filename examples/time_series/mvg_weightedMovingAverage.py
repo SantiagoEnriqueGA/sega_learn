@@ -31,14 +31,14 @@ time_series = time_series.flatten()
 train_size = int(len(time_series) * 0.8)
 train_series, test_series = time_series[:train_size], time_series[train_size:]
 
-des_model = WeightedMovingAverage(window=30)
+wma_model = WeightedMovingAverage(window=30)
 
 # Fit the model with the best alpha, beta, and gamma values
-fitted_values = des_model.fit(train_series)
+fitted_values = wma_model.fit(train_series)
 
 # Forecast future values using the Weighted Moving Average model
 forecast_steps = len(test_series)
-forecasted_values_des = des_model.forecast(steps=forecast_steps)
+forecasted_values_des = wma_model.forecast(steps=forecast_steps)
 
 # Evaluate the Weighted Moving Average model
 mse_des = mean_squared_error(test_series, forecasted_values_des)
@@ -64,4 +64,4 @@ plt.title("Weighted Moving Average Forecast")
 plt.legend()
 plt.tight_layout()
 # plt.show()
-plt.savefig("examples/time_series/plots/mvg_wma_forecast_comparison.png", dpi=300)
+plt.savefig("examples/time_series/plots/mvg_wma_forecast.png", dpi=300)
