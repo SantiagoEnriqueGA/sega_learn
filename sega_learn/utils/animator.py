@@ -3,8 +3,10 @@ from abc import ABC, abstractmethod
 
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
+import numpy as np
 
-from sega_learn.utils import PCA, train_test_split
+from .dataSplitting import train_test_split
+from .decomposition import PCA
 
 # Animation Class
 # The goal is to create a reusable and modular animation class that can handle animations for any model and dataset.
@@ -306,10 +308,10 @@ class ForcastingAnimation(AnimationBase):
                 frame = round(frame, 2)
 
                 self.ax.set_title(
-                    f"Forecast ({self.dynamic_parameter.capitalize()}={frame}) - {self.metric_fn[0].__name__}: {metric_value:.4f}"
+                    f"Forecast ({self.dynamic_parameter}={frame}) - {self.metric_fn[0].__name__.capitalize()}: {metric_value:.4f}"
                 )
                 print(
-                    f"{self.dynamic_parameter.capitalize()}: {frame}, {self.metric_fn[0].__name__}: {metric_value:.4f}",
+                    f"{self.dynamic_parameter}: {frame}, {self.metric_fn[0].__name__.capitalize()}: {metric_value:.4f}",
                     end="\r",
                 )
 
@@ -322,18 +324,16 @@ class ForcastingAnimation(AnimationBase):
                 frame = round(frame, 2)
 
                 self.ax.set_title(
-                    f"Forecast ({self.dynamic_parameter.capitalize()}={frame}) - {', '.join([f'{fn.__name__}: {metric:.4f}' for fn, metric in zip(self.metric_fn, metrics, strict=False)])}"
+                    f"Forecast ({self.dynamic_parameter}={frame}) - {', '.join([f'{fn.__name__.capitalize()}: {metric:.4f}' for fn, metric in zip(self.metric_fn, metrics, strict=False)])}"
                 )
                 print(
-                    f"{self.dynamic_parameter.capitalize()}: {frame}, {', '.join([f'{fn.__name__}: {metric:.4f}' for fn, metric in zip(self.metric_fn, metrics, strict=False)])}",
+                    f"{self.dynamic_parameter}: {frame}, {', '.join([f'{fn.__name__.capitalize()}: {metric:.4f}' for fn, metric in zip(self.metric_fn, metrics, strict=False)])}",
                     end="\r",
                 )
 
         else:
-            self.ax.set_title(
-                f"Forecast ({self.dynamic_parameter.capitalize()}={frame})"
-            )
-            print(f"{self.dynamic_parameter.capitalize()}: {frame}", end="\r")
+            self.ax.set_title(f"Forecast ({self.dynamic_parameter}={frame})")
+            print(f"{self.dynamic_parameter}: {frame}", end="\r")
 
         return [self.fitted_line, self.forecast_line] + self.previous_forecast_lines
 
@@ -465,10 +465,10 @@ class RegressionAnimation(AnimationBase):
                 frame = round(frame, 2)
 
                 self.ax.set_title(
-                    f"Regression ({self.dynamic_parameter.capitalize()}={frame}) - {self.metric_fn[0].__name__}: {metric_value:.4f}"
+                    f"Regression ({self.dynamic_parameter}={frame}) - {self.metric_fn[0].__name__.capitalize()}: {metric_value:.4f}"
                 )
                 print(
-                    f"{self.dynamic_parameter.capitalize()}: {frame}, {self.metric_fn[0].__name__}: {metric_value:.4f}",
+                    f"{self.dynamic_parameter}: {frame}, {self.metric_fn[0].__name__.capitalize()}: {metric_value:.4f}",
                     end="\r",
                 )
             else:
@@ -480,16 +480,203 @@ class RegressionAnimation(AnimationBase):
                 frame = round(frame, 2)
 
                 self.ax.set_title(
-                    f"Regression ({self.dynamic_parameter.capitalize()}={frame}) - {', '.join([f'{fn.__name__}: {metric:.4f}' for fn, metric in zip(self.metric_fn, metrics, strict=False)])}"
+                    f"Regression ({self.dynamic_parameter}={frame}) - {', '.join([f'{fn.__name__.capitalize()}: {metric:.4f}' for fn, metric in zip(self.metric_fn, metrics, strict=False)])}"
                 )
                 print(
-                    f"{self.dynamic_parameter.capitalize()}: {frame}, {', '.join([f'{fn.__name__}: {metric:.4f}' for fn, metric in zip(self.metric_fn, metrics, strict=False)])}",
+                    f"{self.dynamic_parameter}: {frame}, {', '.join([f'{fn.__name__.capitalize()}: {metric:.4f}' for fn, metric in zip(self.metric_fn, metrics, strict=False)])}",
                     end="\r",
                 )
         else:
-            self.ax.set_title(
-                f"Regression ({self.dynamic_parameter.capitalize()}={frame})"
-            )
-            print(f"{self.dynamic_parameter.capitalize()}: {frame}", end="\r")
+            self.ax.set_title(f"Regression ({self.dynamic_parameter}={frame})")
+            print(f"{self.dynamic_parameter}: {frame}", end="\r")
 
         return (self.predicted_line,)
+
+
+class ClassificationAnimation(AnimationBase):
+    """Class for creating animations of classification models."""
+
+    def __init__(
+        self,
+        model,
+        X,
+        y,
+        test_size=0.3,
+        dynamic_parameter=None,
+        static_parameters=None,
+        keep_previous=False,
+        scaler=None,
+        **kwargs,
+    ):
+        """Initialize the classification animation class.
+
+        Args:
+            model: The classification model.
+            X: Feature matrix (input data).
+            y: Target vector (output data).
+            test_size: Proportion of the dataset to include in the test split.
+            dynamic_parameter: The parameter to update dynamically (e.g., 'alpha', 'beta').
+            static_parameters: Additional static parameters for the model.
+                Should be a dictionary with parameter names as keys and their values.
+            keep_previous: Whether to keep all previous lines with reduced opacity.
+            scaler: Optional scaler for preprocessing the data.
+            **kwargs: Additional customization options (e.g., colors, line styles).
+        """
+        if scaler is not None:
+            # Apply the scaler to the data
+            X = scaler.fit_transform(X)
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=test_size, random_state=42
+        )
+        super().__init__(
+            model,
+            (X_train, y_train),
+            (X_test, y_test),
+            dynamic_parameter,
+            static_parameters,
+            keep_previous,
+            **kwargs,
+        )
+
+        self.X_train, self.y_train = X_train, y_train
+        self.X_test, self.y_test = X_test, y_test
+
+        # Create mesh grid for decision boundary
+        self.x_min, self.x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+        self.y_min, self.y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+        self.xx, self.yy = None, None
+
+        if self.keep_previous:
+            self.previous_decision_lines = []  # Store previous decision boundaries
+
+    def setup_plot(
+        self, title, xlabel, ylabel, legend_loc="upper left", grid=True, figsize=(12, 6)
+    ):
+        """Set up the plot for classification animation."""
+        super().setup_plot(title, xlabel, ylabel, legend_loc, grid, figsize)
+
+        # Create mesh grid for decision boundary
+        self.xx, self.yy = np.meshgrid(
+            np.arange(self.x_min, self.x_max, 0.01),
+            np.arange(self.y_min, self.y_max, 0.01),
+        )
+
+        # Plot training data points
+        for class_value in np.unique(self.y_train):
+            self.ax.scatter(
+                self.X_train[self.y_train == class_value, 0],
+                self.X_train[self.y_train == class_value, 1],
+                label=f"Class {class_value}",
+                edgecolors="k",
+            )
+
+        if self.add_legend:
+            self.ax.legend(loc=legend_loc)
+
+    def update_model(self, frame):
+        """Update the classification model for the current frame.
+
+        Args:
+            frame: The current frame (e.g., parameter value).
+        """
+        # Dynamically update the model with the current frame and include static parameters
+        self.model_instance = self.model(
+            **{self.dynamic_parameter: frame}, **self.static_parameters
+        )
+        self.model_instance.fit(self.X_train, self.y_train)
+
+    def update_plot(self, frame):
+        """Update the plot for the current frame.
+
+        Args:
+            frame: The current frame (e.g., parameter value).
+        """
+        # Clear the previous decision boundary if it exists
+        if hasattr(self, "decision_boundary") and self.decision_boundary:
+            for collection in self.decision_boundary.collections:
+                collection.remove()
+
+        # Clear the previous decision boundary lines if they exist
+        if hasattr(self, "decision_boundary_lines") and self.decision_boundary_lines:
+            if self.keep_previous:
+                # For all previous decision boundaries, set alpha from 0.1 to 0.5 based on the number of lines
+                self.previous_decision_lines.append(self.decision_boundary_lines)
+                for i, collection in enumerate(self.previous_decision_lines):
+                    collection.set_alpha(
+                        0.1 + (0.4 / len(self.previous_decision_lines)) * i
+                    )
+                    collection.set_color("black")
+            else:
+                # Remove previous decision boundary lines
+                for collection in self.decision_boundary_lines.collections:
+                    collection.remove()
+
+        # Predict on the mesh grid to create decision boundary
+        Z = self.model_instance.predict(np.c_[self.xx.ravel(), self.yy.ravel()])
+        Z = Z.reshape(self.xx.shape)
+
+        # Plot the current decision boundary contour with filled regions
+        self.decision_boundary = self.ax.contourf(
+            self.xx,
+            self.yy,
+            Z,
+            alpha=0.25,
+            cmap="coolwarm",
+        )
+
+        # If only two classes, plot the decision boundary lines
+        if len(np.unique(self.y_train)) == 2:
+            # Plot decision boundary lines
+            self.decision_boundary_lines = self.ax.contour(
+                self.xx,
+                self.yy,
+                Z,
+                levels=[0.5],
+                linewidths=1,
+                colors="black",
+            )
+
+        # Update the title with the current frame and optional metrics
+        if self.metric_fn:
+            if len(self.metric_fn) == 1:
+                # If only one metric function is provided, use it directly
+                metric_value = self.metric_fn[0](
+                    self.y_test, self.model_instance.predict(self.X_test)
+                )
+                metric_value = round(metric_value, 4)
+                frame = round(frame, 2)
+
+                self.ax.set_title(
+                    f"Classification ({self.dynamic_parameter}={frame}) - {self.metric_fn[0].__name__.capitalize()}: {metric_value:.4f}"
+                )
+                print(
+                    f"{self.dynamic_parameter}: {frame}, {self.metric_fn[0].__name__.capitalize()}: {metric_value:.4f}",
+                    end="\r",
+                )
+            else:
+                # If multiple metric functions are provided, calculate and display each one
+                metrics = [
+                    metric_fn(self.y_test, self.model_instance.predict(self.X_test))
+                    for metric_fn in self.metric_fn
+                ]
+                frame = round(frame, 2)
+
+                self.ax.set_title(
+                    f"Classification ({self.dynamic_parameter}={frame}) - {', '.join([f'{fn.__name__.capitalize()}: {metric:.4f}' for fn, metric in zip(self.metric_fn, metrics, strict=False)])}"
+                )
+                print(
+                    f"{self.dynamic_parameter}: {frame}, {', '.join([f'{fn.__name__.capitalize()}: {metric:.4f}' for fn, metric in zip(self.metric_fn, metrics, strict=False)])}",
+                    end="\r",
+                )
+        else:
+            self.ax.set_title(f"Classification ({self.dynamic_parameter}={frame})")
+            print(f"{self.dynamic_parameter}: {frame}", end="\r")
+
+        if len(np.unique(self.y_train)) == 2:
+            return (
+                self.decision_boundary,
+                self.decision_boundary_lines,
+            )
+        else:
+            return (self.decision_boundary,)
