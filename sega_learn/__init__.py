@@ -51,6 +51,20 @@ from .svm import (
     LinearSVR,
     OneClassSVM,
 )
+from .time_series import (
+    ARIMA,
+    SARIMA,
+    SARIMAX,
+    AdditiveDecomposition,
+    DoubleExponentialSmoothing,
+    ExponentialMovingAverage,
+    ForecastingPipeline,
+    MultiplicativeDecomposition,
+    SimpleExponentialSmoothing,
+    SimpleMovingAverage,
+    TripleExponentialSmoothing,
+    WeightedMovingAverage,
+)
 from .trees import (
     AdaBoostClassifier,
     AdaBoostRegressor,
@@ -72,6 +86,7 @@ from .utils import (
     SVD,
     Augmenter,
     DataPrep,
+    ForecastRegressor,
     GridSearchCV,
     Metrics,
     ModelSelectionUtility,
@@ -85,6 +100,7 @@ from .utils import (
     make_blobs,
     make_classification,
     make_regression,
+    make_time_series,
     normalize,
     one_hot_encode,
     train_test_split,
@@ -96,6 +112,7 @@ __all__ = [
     "DataPrep",
     "VotingRegressor",
     "VotingClassifier",
+    "ForecastRegressor",
     "ModelSelectionUtility",
     "GridSearchCV",
     "RandomSearchCV",
@@ -108,6 +125,7 @@ __all__ = [
     "Augmenter",
     "make_blobs",
     "make_regression",
+    "make_time_series",
     "make_classification",
     "train_test_split",
     "one_hot_encode",
@@ -174,6 +192,19 @@ __all__ = [
     # Auto
     "AutoRegressor",
     "AutoClassifier",
+    # Time Series
+    "ARIMA",
+    "SARIMA",
+    "SARIMAX",
+    "DoubleExponentialSmoothing",
+    "SimpleExponentialSmoothing",
+    "TripleExponentialSmoothing",
+    "SimpleMovingAverage",
+    "WeightedMovingAverage",
+    "ExponentialMovingAverage",
+    "AdditiveDecomposition",
+    "MultiplicativeDecomposition",
+    "ForecastingPipeline",
 ]
 
 try:

@@ -27,6 +27,7 @@ class TestImports(unittest.TestCase):
         assert sega_learn.nearest_neighbors is not None
         assert sega_learn.svm is not None
         assert sega_learn.auto is not None
+        assert sega_learn.time_series is not None
         assert sega_learn.make_sample_data is not None
 
     def test_module_imports(self):  # NOQA D201
@@ -38,6 +39,7 @@ class TestImports(unittest.TestCase):
             nearest_neighbors,
             neural_networks,
             svm,
+            time_series,
             trees,
             utils,
         )
@@ -50,6 +52,7 @@ class TestImports(unittest.TestCase):
         assert trees is not None
         assert nearest_neighbors is not None
         assert auto is not None
+        assert time_series is not None
         assert make_sample_data is not None
 
     def test_auto_imports(self):  # NOQA D201
@@ -120,6 +123,19 @@ class TestImports(unittest.TestCase):
         assert AdaBoostClassifier is not None
         assert AdaBoostRegressor is not None
 
+    def test_time_series_imports(self):  # NOQA D201
+        assert ARIMA is not None
+        assert SARIMA is not None
+        assert SARIMAX is not None
+        assert DoubleExponentialSmoothing is not None
+        assert SimpleExponentialSmoothing is not None
+        assert TripleExponentialSmoothing is not None
+        assert SimpleMovingAverage is not None
+        assert WeightedMovingAverage is not None
+        assert ExponentialMovingAverage is not None
+        assert AdditiveDecomposition is not None
+        assert MultiplicativeDecomposition is not None
+
     def test_utils_imports(self):  # NOQA D201
         assert PCA is not None
         assert SMOTE is not None
@@ -136,9 +152,11 @@ class TestImports(unittest.TestCase):
         assert Scaler is not None
         assert VotingRegressor is not None
         assert VotingClassifier is not None
+        assert ForecastRegressor is not None
         assert make_blobs is not None
         assert make_classification is not None
         assert make_regression is not None
+        assert make_time_series is not None
         assert normalize is not None
         assert one_hot_encode is not None
         assert train_test_split is not None

@@ -19,7 +19,7 @@ class TestImportsUtils(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):  # NOQA D201
-        print("\nTesting Imports - SVM", end="", flush=True)
+        print("\nTesting Imports - Utils", end="", flush=True)
 
     def test_individual_imports(self):
         """Tests that each module in the segadb package can be imported individually."""
@@ -28,6 +28,7 @@ class TestImportsUtils(unittest.TestCase):
         from sega_learn.utils import SVD as svd
         from sega_learn.utils import Augmenter as augmenter
         from sega_learn.utils import DataPrep as dp
+        from sega_learn.utils import ForecastRegressor as fr
         from sega_learn.utils import GridSearchCV as gscv
         from sega_learn.utils import Metrics as metrics
         from sega_learn.utils import ModelSelectionUtility as msu
@@ -41,6 +42,7 @@ class TestImportsUtils(unittest.TestCase):
         from sega_learn.utils import make_blobs as mkblobs
         from sega_learn.utils import make_classification as mkcls
         from sega_learn.utils import make_regression as mkreg
+        from sega_learn.utils import make_time_series as mkts
         from sega_learn.utils import normalize as norm
         from sega_learn.utils import one_hot_encode as ohe
         from sega_learn.utils import train_test_split as tts
@@ -62,10 +64,12 @@ class TestImportsUtils(unittest.TestCase):
         assert mkreg is not None
         assert mkcls is not None
         assert mkblobs is not None
+        assert mkts is not None
         assert tts is not None
         assert ohe is not None
         assert norm is not None
         assert scaler is not None
+        assert fr is not None
 
     def test_wildcard_import(self):
         """Tests that the segadb package can be imported using a wildcard import."""
@@ -85,6 +89,7 @@ class TestImportsUtils(unittest.TestCase):
         assert make_regression is not None
         assert make_classification is not None
         assert make_blobs is not None
+        assert make_time_series is not None
         assert train_test_split is not None
         assert one_hot_encode is not None
         assert normalize is not None
@@ -160,6 +165,11 @@ class TestImportsUtils(unittest.TestCase):
 
         assert VotingRegressor is not None
 
+    def test_ForecastRegressor(self):  # NOQA D201
+        from sega_learn.utils import ForecastRegressor
+
+        assert ForecastRegressor is not None
+
     def test_make_blobs(self):  # NOQA D201
         from sega_learn.utils import make_blobs
 
@@ -174,6 +184,11 @@ class TestImportsUtils(unittest.TestCase):
         from sega_learn.utils import make_regression
 
         assert make_regression is not None
+
+    def test_make_time_series(self):  # NOQA D201
+        from sega_learn.utils import make_time_series
+
+        assert make_time_series is not None
 
     def test_normalize(self):  # NOQA D201
         from sega_learn.utils import normalize

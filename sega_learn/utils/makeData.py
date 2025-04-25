@@ -335,3 +335,83 @@ def make_blobs(
         y = y[indices]
 
     return X, y, centers
+
+
+def make_time_series(
+    n_samples=100,
+    n_timestamps=50,
+    n_features=1,
+    trend="linear",
+    seasonality="sine",
+    seasonality_period=None,
+    noise=0.1,
+    random_state=None,
+):
+    """Generates synthetic time series data.
+
+    Args:
+        n_samples (int, optional): Number of time series samples (default is 100).
+        n_timestamps (int, optional): Number of timestamps per sample (default is 50).
+        n_features (int, optional): Number of features per timestamp (default is 1).
+        trend (str, optional): Type of trend ('linear', 'quadratic', or None) (default is 'linear').
+        seasonality (str, optional): Type of seasonality ('sine', 'cosine', or None) (default is 'sine').
+        seasonality_period (int, optional): Period of the seasonality (default is None, which uses the length of the time series/2).
+        noise (float, optional): Standard deviation of Gaussian noise (default is 0.1).
+        random_state (int or None, optional): Random seed (default is None).
+
+    Returns:
+        X (np.ndarray): Time series data of shape (n_samples, n_timestamps, n_features).
+    """
+    # Verify trend and seasonality
+    if trend not in ["linear", "quadratic", None]:
+        raise ValueError("trend must be 'linear', 'quadratic', or None")
+    if seasonality not in ["sine", "cosine", None]:
+        raise ValueError("seasonality must be 'sine', 'cosine', or None")
+    if seasonality_period is not None and seasonality_period <= 0:
+        raise ValueError("seasonality_period must be a positive integer")
+
+    if seasonality_period is None:
+        seasonality_period = n_timestamps // 2
+
+    rng = np.random.RandomState(random_state)
+
+    # Initialize time series data
+    X = np.zeros((n_samples, n_timestamps, n_features))
+
+    # Generate time points
+    t = np.linspace(0, 1, n_timestamps)
+
+    for i in range(n_samples):
+        for j in range(n_features):
+            # Add trend
+            if trend == "linear":
+                series = t
+            elif trend == "quadratic":
+                series = t**2
+            else:
+                series = np.zeros_like(t)
+
+            # Add seasonality
+            if seasonality == "sine":
+                series += np.sin(
+                    2 * np.pi * np.arange(n_timestamps) / seasonality_period
+                ) / np.max(
+                    np.abs(
+                        np.sin(2 * np.pi * np.arange(n_timestamps) / seasonality_period)
+                    )
+                )
+            elif seasonality == "cosine":
+                series += np.cos(
+                    2 * np.pi * np.arange(n_timestamps) / seasonality_period
+                ) / np.max(
+                    np.abs(
+                        np.cos(2 * np.pi * np.arange(n_timestamps) / seasonality_period)
+                    )
+                )
+
+            # Add noise
+            series += rng.normal(scale=noise, size=t.shape)
+
+            X[i, :, j] = series
+
+    return X

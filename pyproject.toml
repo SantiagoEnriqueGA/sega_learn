@@ -102,11 +102,12 @@ select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "TID", "D"]
 
 
 # Add the specific codes to ignore
-ignore = ["F403", "F405", "E501", "D100", "D104"]
+ignore = ["F403", "F405", "E501", "D100", "D104", "D105"]
 # F403/405 are "import *" statements
 # E501 is line length (ruff format . will still try to wrap lines)
 # D100 is missing docstring in public module
 # D104 is missing docstring in public package
+# D105 is missing docstring in magic method (__name__, __str__, etc.)
 
 # Keep fixable settings
 fixable = ["ALL"]
