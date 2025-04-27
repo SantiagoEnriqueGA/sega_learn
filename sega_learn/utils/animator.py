@@ -75,8 +75,15 @@ class AnimationBase(ABC):
                 "Please install it using 'pip install matplotlib'."
             )
 
+        # Input validation
+        if train_series is None or test_series is None:
+            raise ValueError("train_series and test_series must be provided.")
         if dynamic_parameter is None:
             raise ValueError("dynamic_parameter must be provided.")
+        if not isinstance(static_parameters, dict | None):
+            raise ValueError("static_parameters must be a dictionary or None.")
+        if not isinstance(keep_previous, bool):
+            raise ValueError("keep_previous must be a boolean.")
 
         self.model = model
         self.train_data = train_series
@@ -416,6 +423,22 @@ class RegressionAnimation(AnimationBase):
             pca_components: Number of components to use for PCA.
             **kwargs: Additional customization options (e.g., colors, line styles).
         """
+        # Input validation
+        if X is None or y is None:
+            raise ValueError("X and y must be provided.")
+        if test_size > 1 or test_size < 0:
+            raise ValueError("test_size must be between 0 and 1.")
+        if not isinstance(dynamic_parameter, str):
+            raise ValueError("dynamic_parameter must be a string.")
+        if not isinstance(static_parameters, dict | None):
+            raise ValueError("static_parameters must be a dictionary or None.")
+        if not isinstance(keep_previous, bool):
+            raise ValueError("keep_previous must be a boolean.")
+        if not isinstance(max_previous, int | None):
+            raise ValueError("max_previous must be an integer or None.")
+        if not isinstance(pca_components, int | None) or pca_components < 1:
+            raise ValueError("pca_components must be an integer greater than 0.")
+
         if keep_previous:
             self.max_previous = max_previous
 
@@ -625,6 +648,22 @@ class ClassificationAnimation(AnimationBase):
             plot_step: Resolution of the decision boundary mesh.
             **kwargs: Additional customization options (e.g., colors, line styles).
         """
+        # Input validation
+        if X is None or y is None:
+            raise ValueError("X and y must be provided.")
+        if test_size > 1 or test_size < 0:
+            raise ValueError("test_size must be between 0 and 1.")
+        if not isinstance(dynamic_parameter, str):
+            raise ValueError("dynamic_parameter must be a string.")
+        if not isinstance(static_parameters, dict | None):
+            raise ValueError("static_parameters must be a dictionary or None.")
+        if not isinstance(keep_previous, bool):
+            raise ValueError("keep_previous must be a boolean.")
+        if not isinstance(pca_components, int | None) or pca_components < 1:
+            raise ValueError("pca_components must be an integer greater than 0.")
+        if not isinstance(plot_step, float):
+            raise ValueError("plot_step must be a float.")
+
         self.scaler_instance = scaler
         self.pca_instance = None
         self.needs_pca = False

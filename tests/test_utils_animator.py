@@ -70,6 +70,44 @@ class TestForcastingAnimation(unittest.TestCase):
         self.assertTrue(hasattr(animator, "previous_forecast_lines"))
         self.assertTrue(hasattr(animator, "previous_fitted_lines"))
 
+    def test_init_no_dynamic_parameter(self):
+        """Test initialization with no dynamic parameter."""
+        with self.assertRaises(ValueError):
+            ForcastingAnimation(
+                model=ExponentialMovingAverage,
+                train_series=self.train_series,
+                test_series=self.test_series,
+                forecast_steps=self.forecast_steps,
+                dynamic_parameter=None,
+                keep_previous=True,
+            )
+
+    def test_init_no_static_parameters(self):
+        """Test initialization with no static parameters."""
+        animator = ForcastingAnimation(
+            model=ExponentialMovingAverage,
+            train_series=self.train_series,
+            test_series=self.test_series,
+            forecast_steps=self.forecast_steps,
+            dynamic_parameter="alpha",
+            static_parameters=None,
+            keep_previous=True,
+        )
+        self.assertIsNotNone(animator)
+        self.assertDictEqual(animator.static_parameters, {})
+
+    def test_init_no_train_series(self):
+        """Test initialization with no train series."""
+        with self.assertRaises(ValueError):
+            ForcastingAnimation(
+                model=ExponentialMovingAverage,
+                train_series=None,
+                test_series=self.test_series,
+                forecast_steps=self.forecast_steps,
+                dynamic_parameter="alpha",
+                keep_previous=True,
+            )
+
     def test_setup_plot(self):
         """Test setup_plot with valid parameters."""
         animator = ForcastingAnimation(
@@ -179,6 +217,56 @@ class TestRegressionAnimation(unittest.TestCase):
         self.assertEqual(
             animator.X_train.shape[1], 1
         )  # Should be reduced to 1 component
+
+    def test_init_no_dynamic_parameter(self):
+        """Test initialization with no dynamic parameter."""
+        with self.assertRaises(ValueError):
+            RegressionAnimation(
+                model=Ridge,
+                X=self.X,
+                y=self.y,
+                test_size=0.25,
+                dynamic_parameter=None,
+                keep_previous=True,
+            )
+
+    def test_init_no_static_parameters(self):
+        """Test initialization with no static parameters."""
+        animator = RegressionAnimation(
+            model=Ridge,
+            X=self.X,
+            y=self.y,
+            test_size=0.25,
+            dynamic_parameter="max_iter",
+            static_parameters=None,
+            keep_previous=True,
+        )
+        self.assertIsNotNone(animator)
+        self.assertDictEqual(animator.static_parameters, {})
+
+    def test_init_no_X(self):
+        """Test initialization with no X."""
+        with self.assertRaises(ValueError):
+            RegressionAnimation(
+                model=Ridge,
+                X=None,
+                y=self.y,
+                test_size=0.25,
+                dynamic_parameter="max_iter",
+                keep_previous=True,
+            )
+
+    def test_init_no_y(self):
+        """Test initialization with no y."""
+        with self.assertRaises(ValueError):
+            RegressionAnimation(
+                model=Ridge,
+                X=self.X,
+                y=None,
+                test_size=0.25,
+                dynamic_parameter="max_iter",
+                keep_previous=True,
+            )
 
     def test_setup_plot(self):
         """Test setup_plot with valid parameters."""
@@ -302,6 +390,56 @@ class TestClassificationAnimation(unittest.TestCase):
         self.assertEqual(
             animator.X_train.shape[1], 2
         )  # Should be reduced to 2 components
+
+    def test_init_no_dynamic_parameter(self):
+        """Test initialization with no dynamic parameter."""
+        with self.assertRaises(ValueError):
+            ClassificationAnimation(
+                model=LogisticRegression,
+                X=self.X,
+                y=self.y,
+                test_size=0.25,
+                dynamic_parameter=None,
+                keep_previous=True,
+            )
+
+    def test_init_no_static_parameters(self):
+        """Test initialization with no static parameters."""
+        animator = ClassificationAnimation(
+            model=LogisticRegression,
+            X=self.X,
+            y=self.y,
+            test_size=0.25,
+            dynamic_parameter="max_iter",
+            static_parameters=None,
+            keep_previous=True,
+        )
+        self.assertIsNotNone(animator)
+        self.assertDictEqual(animator.static_parameters, {})
+
+    def test_init_no_X(self):
+        """Test initialization with no X."""
+        with self.assertRaises(ValueError):
+            ClassificationAnimation(
+                model=LogisticRegression,
+                X=None,
+                y=self.y,
+                test_size=0.25,
+                dynamic_parameter="max_iter",
+                keep_previous=True,
+            )
+
+    def test_init_no_y(self):
+        """Test initialization with no y."""
+        with self.assertRaises(ValueError):
+            ClassificationAnimation(
+                model=LogisticRegression,
+                X=self.X,
+                y=None,
+                test_size=0.25,
+                dynamic_parameter="max_iter",
+                keep_previous=True,
+            )
 
     def test_setup_plot(self):
         """Test setup_plot with valid parameters."""
