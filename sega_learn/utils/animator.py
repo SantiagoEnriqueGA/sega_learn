@@ -211,6 +211,7 @@ class ForcastingAnimation(AnimationBase):
         dynamic_parameter=None,
         static_parameters=None,
         keep_previous=False,
+        max_previous=None,
         **kwargs,
     ):
         """Initialize the forecasting animation class.
@@ -224,6 +225,7 @@ class ForcastingAnimation(AnimationBase):
             static_parameters: Static parameters for the model.
                 Should be a dictionary with parameter names as keys and their values.
             keep_previous: Whether to keep all previous lines with reduced opacity.
+            max_previous: Maximum number of previous lines to keep.
             **kwargs: Additional customization options (e.g., colors, line styles).
         """
         super().__init__(
@@ -239,6 +241,7 @@ class ForcastingAnimation(AnimationBase):
         if self.keep_previous:
             self.previous_forecast_lines = []  # List to store previous forecast lines
             self.previous_fitted_lines = []  # List to store previous fitted lines
+            self.max_previous = max_previous
 
         # Initialize plot elements
         self.train_indices = range(len(train_series))
@@ -307,16 +310,13 @@ class ForcastingAnimation(AnimationBase):
         """
         # --- Handle Previous Lines ---
         if self.keep_previous and self.forecast_line and self.fitted_line:
-            # Limit the number of previous lines to avoid clutter (optional)
-            # TODO: Pass this as a parameter
-            MAX_PREVIOUS = None  # Set to None to disable
-            # MAX_PREVIOUS = 10
-            if MAX_PREVIOUS:
-                while len(self.previous_forecast_lines) > MAX_PREVIOUS:
+            # Limit the number of previous lines to avoid clutter
+            if self.max_previous:
+                while len(self.previous_forecast_lines) > self.max_previous:
                     # Remove the oldest line, pop is inplace
                     self.previous_forecast_lines.pop(0)
 
-                while len(self.previous_fitted_lines) > MAX_PREVIOUS:
+                while len(self.previous_fitted_lines) > self.max_previous:
                     self.previous_fitted_lines.pop(0)
 
             # For all previous forecast lines, set alpha from 0.1 to 0.5 based on the number of lines
@@ -378,7 +378,11 @@ class ForcastingAnimation(AnimationBase):
             self.ax.set_title(f"Forecast ({self.dynamic_parameter}={frame})")
             print(f"{self.dynamic_parameter}: {frame}", end="\r")
 
-        return [self.fitted_line, self.forecast_line] + self.previous_forecast_lines
+        # if attribute 'previous_forecast_lines' exists, return it
+        if hasattr(self, "previous_forecast_lines"):
+            return [self.fitted_line, self.forecast_line] + self.previous_forecast_lines
+        else:
+            return [self.fitted_line, self.forecast_line]
 
 
 class RegressionAnimation(AnimationBase):
@@ -393,6 +397,7 @@ class RegressionAnimation(AnimationBase):
         dynamic_parameter=None,
         static_parameters=None,
         keep_previous=False,
+        max_previous=None,
         pca_components=1,
         **kwargs,
     ):
@@ -407,9 +412,13 @@ class RegressionAnimation(AnimationBase):
             static_parameters: Additional static parameters for the model.
                 Should be a dictionary with parameter names as keys and their values.
             keep_previous: Whether to keep all previous lines with reduced opacity.
+            max_previous: Maximum number of previous lines to keep.
             pca_components: Number of components to use for PCA.
             **kwargs: Additional customization options (e.g., colors, line styles).
         """
+        if keep_previous:
+            self.max_previous = max_previous
+
         # Perform PCA if needed before splitting and passing to base
         self.needs_pca = X.shape[1] > 1
         self.pca_instance = None
@@ -523,11 +532,8 @@ class RegressionAnimation(AnimationBase):
         # --- Handle Previous Lines ---
         if self.keep_previous and self.predicted_line:
             # Limit the number of previous lines to avoid clutter (optional)
-            # TODO: Pass this as a parameter
-            MAX_PREVIOUS = None  # Set to None to disable
-            # MAX_PREVIOUS = 10
-            if MAX_PREVIOUS:
-                while len(self.previous_predicted_lines) > MAX_PREVIOUS:
+            if self.max_previous:
+                while len(self.previous_predicted_lines) > self.max_previous:
                     # Remove the oldest line, pop is inplace
                     self.previous_predicted_lines.pop(0)
 

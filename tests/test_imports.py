@@ -140,6 +140,7 @@ class TestImports(unittest.TestCase):
         assert AnimationBase is not None
         assert RegressionAnimation is not None
         assert ForcastingAnimation is not None
+        assert ClassificationAnimation is not None
         assert PCA is not None
         assert SMOTE is not None
         assert SVD is not None
