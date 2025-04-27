@@ -26,8 +26,11 @@ class TestImportsUtils(unittest.TestCase):
         from sega_learn.utils import PCA as pca
         from sega_learn.utils import SMOTE as smote
         from sega_learn.utils import SVD as svd
+        from sega_learn.utils import AnimationBase as anb
         from sega_learn.utils import Augmenter as augmenter
+        from sega_learn.utils import ClassificationAnimation as canb
         from sega_learn.utils import DataPrep as dp
+        from sega_learn.utils import ForcastingAnimation as fanb
         from sega_learn.utils import ForecastRegressor as fr
         from sega_learn.utils import GridSearchCV as gscv
         from sega_learn.utils import Metrics as metrics
@@ -36,6 +39,7 @@ class TestImportsUtils(unittest.TestCase):
         from sega_learn.utils import RandomOverSampler as ros
         from sega_learn.utils import RandomSearchCV as rscv
         from sega_learn.utils import RandomUnderSampler as rus
+        from sega_learn.utils import RegressionAnimation as ranb
         from sega_learn.utils import Scaler as scaler
         from sega_learn.utils import VotingClassifier as vc
         from sega_learn.utils import VotingRegressor as vr
@@ -70,6 +74,10 @@ class TestImportsUtils(unittest.TestCase):
         assert norm is not None
         assert scaler is not None
         assert fr is not None
+        assert anb is not None
+        assert ranb is not None
+        assert fanb is not None
+        assert canb is not None
 
     def test_wildcard_import(self):
         """Tests that the segadb package can be imported using a wildcard import."""
@@ -94,6 +102,30 @@ class TestImportsUtils(unittest.TestCase):
         assert one_hot_encode is not None
         assert normalize is not None
         assert Scaler is not None
+        assert AnimationBase is not None
+        assert RegressionAnimation is not None
+        assert ForcastingAnimation is not None
+        assert ClassificationAnimation is not None
+
+    def test_AnimationBase(self):  # NOQA D201
+        from sega_learn.utils import AnimationBase
+
+        assert AnimationBase is not None
+
+    def test_RegressionAnimation(self):  # NOQA D201
+        from sega_learn.utils import RegressionAnimation
+
+        assert RegressionAnimation is not None
+
+    def test_ForcastingAnimation(self):  # NOQA D201
+        from sega_learn.utils import ForcastingAnimation
+
+        assert ForcastingAnimation is not None
+
+    def test_ClassificationAnimation(self):  # NOQA D201
+        from sega_learn.utils import ClassificationAnimation
+
+        assert ClassificationAnimation is not None
 
     def test_PCA(self):  # NOQA D201
         from sega_learn.utils import PCA

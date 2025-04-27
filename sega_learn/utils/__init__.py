@@ -1,3 +1,9 @@
+from .animator import (
+    AnimationBase,
+    RegressionAnimation,
+    ForcastingAnimation,
+    ClassificationAnimation,
+)
 from .voting import VotingRegressor, VotingClassifier, ForecastRegressor
 from .polynomialTransform import PolynomialTransform
 from .dataPrep import DataPrep
@@ -19,6 +25,10 @@ from .dataPreprocessing import (
 )
 
 __all__ = [
+    "AnimationBase",
+    "RegressionAnimation",
+    "ForcastingAnimation",
+    "ClassificationAnimation",
     "PolynomialTransform",
     "DataPrep",
     "VotingRegressor",

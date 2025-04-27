@@ -84,8 +84,11 @@ from .utils import (
     PCA,
     SMOTE,
     SVD,
+    AnimationBase,
     Augmenter,
+    ClassificationAnimation,
     DataPrep,
+    ForcastingAnimation,
     ForecastRegressor,
     GridSearchCV,
     Metrics,
@@ -94,6 +97,7 @@ from .utils import (
     RandomOverSampler,
     RandomSearchCV,
     RandomUnderSampler,
+    RegressionAnimation,
     Scaler,
     VotingClassifier,
     VotingRegressor,
@@ -108,6 +112,10 @@ from .utils import (
 
 __all__ = [
     # Utils
+    "AnimationBase",
+    "RegressionAnimation",
+    "ForcastingAnimation",
+    "ClassificationAnimation",
     "PolynomialTransform",
     "DataPrep",
     "VotingRegressor",

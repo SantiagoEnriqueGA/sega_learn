@@ -6,10 +6,14 @@ import unittest
 import warnings
 from functools import partialmethod
 
+import matplotlib as mpl
 from tqdm import tqdm
 
 tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 warnings.filterwarnings("ignore")
+
+# Use non-interactive backend for tests
+mpl.use("Agg")
 
 # Change the working directory to the parent directory to allow importing the package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))

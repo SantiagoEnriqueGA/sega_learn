@@ -137,6 +137,10 @@ class TestImports(unittest.TestCase):
         assert MultiplicativeDecomposition is not None
 
     def test_utils_imports(self):  # NOQA D201
+        assert AnimationBase is not None
+        assert RegressionAnimation is not None
+        assert ForcastingAnimation is not None
+        assert ClassificationAnimation is not None
         assert PCA is not None
         assert SMOTE is not None
         assert SVD is not None

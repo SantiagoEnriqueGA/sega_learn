@@ -107,5 +107,19 @@ Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(np.ndarray):&nbsp;Input&nbsp;samples&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_features).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;(np.ndarray):&nbsp;Output&nbsp;values&nbsp;of&nbsp;shape&nbsp;(n_samples,)&nbsp;or&nbsp;(n_samples,&nbsp;n_targets).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;coef&nbsp;(np.ndarray,&nbsp;optional):&nbsp;Coefficients&nbsp;of&nbsp;the&nbsp;underlying&nbsp;linear&nbsp;model&nbsp;of&nbsp;shape&nbsp;(n_features,)&nbsp;or&nbsp;(n_features,&nbsp;n_targets).&nbsp;Only&nbsp;returned&nbsp;if&nbsp;coef=True.</span></dd></dl>
+ <dl><dt><a name="-make_time_series"><strong>make_time_series</strong></a>(n_samples=100, n_timestamps=50, n_features=1, trend='linear', seasonality='sine', seasonality_period=None, noise=0.1, random_state=None)</dt><dd><span class="code">Generates&nbsp;synthetic&nbsp;time&nbsp;series&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_samples&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;time&nbsp;series&nbsp;samples&nbsp;(default&nbsp;is&nbsp;100).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_timestamps&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;timestamps&nbsp;per&nbsp;sample&nbsp;(default&nbsp;is&nbsp;50).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n_features&nbsp;(int,&nbsp;optional):&nbsp;Number&nbsp;of&nbsp;features&nbsp;per&nbsp;timestamp&nbsp;(default&nbsp;is&nbsp;1).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;trend&nbsp;(str,&nbsp;optional):&nbsp;Type&nbsp;of&nbsp;trend&nbsp;('linear',&nbsp;'quadratic',&nbsp;or&nbsp;None)&nbsp;(default&nbsp;is&nbsp;'linear').<br>
+&nbsp;&nbsp;&nbsp;&nbsp;seasonality&nbsp;(str,&nbsp;optional):&nbsp;Type&nbsp;of&nbsp;seasonality&nbsp;('sine',&nbsp;'cosine',&nbsp;or&nbsp;None)&nbsp;(default&nbsp;is&nbsp;'sine').<br>
+&nbsp;&nbsp;&nbsp;&nbsp;seasonality_period&nbsp;(int,&nbsp;optional):&nbsp;Period&nbsp;of&nbsp;the&nbsp;seasonality&nbsp;(default&nbsp;is&nbsp;None,&nbsp;which&nbsp;uses&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;time&nbsp;series/2).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;noise&nbsp;(float,&nbsp;optional):&nbsp;Standard&nbsp;deviation&nbsp;of&nbsp;Gaussian&nbsp;noise&nbsp;(default&nbsp;is&nbsp;0.1).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;random_state&nbsp;(int&nbsp;or&nbsp;None,&nbsp;optional):&nbsp;Random&nbsp;seed&nbsp;(default&nbsp;is&nbsp;None).<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;(np.ndarray):&nbsp;Time&nbsp;series&nbsp;data&nbsp;of&nbsp;shape&nbsp;(n_samples,&nbsp;n_timestamps,&nbsp;n_features).</span></dd></dl>
 </td></tr></table>
 </body></html>
