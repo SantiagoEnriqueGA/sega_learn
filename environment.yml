@@ -127,6 +127,7 @@ dependencies:
   - packaging=24.2
   - pandas=2.2.3
   - parso=0.8.4
+  - patsy=1.0.1
   - pcre2=10.42
   - pickleshare=0.7.5
   - pillow=11.0.0
@@ -161,6 +162,7 @@ dependencies:
   - six=1.16.0
   - sqlite=3.45.3
   - stack_data=0.6.3
+  - statsmodels=0.14.4
   - svt-av1=1.7.0
   - tabulate=0.9.0
   - tbb=2021.8.0

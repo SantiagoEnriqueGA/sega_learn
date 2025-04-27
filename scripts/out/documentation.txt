@@ -6,6 +6,7 @@ wrote sega_learn.linear_models.regressors.html
 wrote sega_learn.linear_models._lasso_jit_utils.html
 wrote sega_learn.linear_models._ridge_jit_utils.html
 wrote sega_learn.linear_models.__init__.html
+wrote sega_learn.utils.animator.html
 wrote sega_learn.utils.dataAugmentation.html
 wrote sega_learn.utils.dataPrep.html
 wrote sega_learn.utils.dataPreprocessing.html
