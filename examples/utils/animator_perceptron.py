@@ -51,7 +51,6 @@ animator.setup_plot(
 
 # Create and save the animation
 max_iter_range = range(1, 2500, 100)
-print(len(max_iter_range))
 animator.animate(frames=max_iter_range, interval=150, blit=True, repeat=False)
 animator.save(
     filename="examples/utils/plots/animator_perceptron.gif",

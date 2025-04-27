@@ -1,8 +1,19 @@
 import sys
 from abc import ABC, abstractmethod
 
-import matplotlib.animation as animation
-import matplotlib.pyplot as plt
+# --- Graceful Matplotlib Import ---
+try:
+    import matplotlib.animation as animation
+    import matplotlib.pyplot as plt
+
+    _MATPLOTLIB_AVAILABLE = True
+except ImportError:
+    _MATPLOTLIB_AVAILABLE = False
+    # Define dummy classes or values for type hinting if needed,
+    # but the check in __init__ will prevent their actual use.
+    plt = None
+    animation = None
+
 import numpy as np
 
 from .dataSplitting import train_test_split
@@ -57,6 +68,13 @@ class AnimationBase(ABC):
             keep_previous: Whether to keep all previous lines with reduced opacity.
             **kwargs: Additional customization options (e.g., colors, line styles).
         """
+        # --- Check for Matplotlib availability ---
+        if not _MATPLOTLIB_AVAILABLE:
+            raise ImportError(
+                "Matplotlib is required for the Animation features but is not installed. "
+                "Please install it using 'pip install matplotlib'."
+            )
+
         if dynamic_parameter is None:
             raise ValueError("dynamic_parameter must be provided.")
 
@@ -153,17 +171,32 @@ class AnimationBase(ABC):
         """
         if not hasattr(self, "ani"):
             raise RuntimeError("Animation has not been created. Call `animate` first.")
-        self.ani.save(filename, writer=writer, fps=fps, dpi=dpi)
+        # print(f"Saving animation to {filename} (this may take a while)...")
+        # progress_callback = lambda i, n: print(f"Saving frame {i+1}/{n}", end='\r')
 
-        sys.stdout.write("\033[K")  # Clear the line
-        print(f"Animation saved successfully to {filename}.")
+        try:
+            self.ani.save(filename, writer=writer, fps=fps, dpi=dpi)
+            sys.stdout.write("\033[K")  # Clear the line
+            print(f"Animation saved successfully to {filename}.")
+        except Exception as e:
+            sys.stdout.write("\033[K")  # Clear the line on error too
+            print(f"\nError saving animation: {e}")
 
     def show(self):
         """Display the animation."""
-        if not hasattr(self, "ani"):
+        if not hasattr(self, "ani") or self.ani is None:
             raise RuntimeError("Animation has not been created. Call `animate` first.")
-        plt.show()
-        print("Animation displayed successfully.")
+        if self.fig is None:
+            raise RuntimeError("Plot has not been set up. Call `setup_plot` first.")
+
+        try:
+            plt.show()
+            print("Animation displayed.")
+        except Exception as e:
+            print(f"Error showing animation: {e}")
+            # Attempt to close the figure if it exists, in case plt.show failed partially
+            if self.fig:
+                plt.close(self.fig)
 
 
 class ForcastingAnimation(AnimationBase):
@@ -232,10 +265,12 @@ class ForcastingAnimation(AnimationBase):
             label="Forecast Start",
         )
 
-        # Create placeholders for dynamic lines
-        (self.fitted_line,) = self.ax.plot([], [], label="Fitted Values", color="green")
+        # Create placeholders for dynamic lines, with higher zorder
+        (self.fitted_line,) = self.ax.plot(
+            [], [], label="Fitted Values", color="green", zorder=3
+        )
         (self.forecast_line,) = self.ax.plot(
-            [], [], label="Forecast", linestyle="--", color="red"
+            [], [], label="Forecast", linestyle="--", color="red", zorder=3
         )
 
         # Auto-adjust y-limits based on the training data range
@@ -270,17 +305,25 @@ class ForcastingAnimation(AnimationBase):
         Args:
             frame: The current frame (e.g., parameter value).
         """
+        # --- Handle Previous Lines ---
         if self.keep_previous and self.forecast_line and self.fitted_line:
+            # Limit the number of previous lines to avoid clutter (optional)
+            # TODO: Pass this as a parameter
+            MAX_PREVIOUS = None  # Set to None to disable
+            # MAX_PREVIOUS = 10
+            if MAX_PREVIOUS:
+                while len(self.previous_forecast_lines) > MAX_PREVIOUS:
+                    # Remove the oldest line, pop is inplace
+                    self.previous_forecast_lines.pop(0)
+
+                while len(self.previous_fitted_lines) > MAX_PREVIOUS:
+                    self.previous_fitted_lines.pop(0)
+
             # For all previous forecast lines, set alpha from 0.1 to 0.5 based on the number of lines
             self.previous_forecast_lines.append(self.forecast_line)
             for i, line in enumerate(self.previous_forecast_lines):
                 line.set_alpha(0.1 + (0.4 / len(self.previous_forecast_lines)) * i)
                 line.set_color("lightcoral")
-
-            # Add a new forecast line
-            (self.forecast_line,) = self.ax.plot(
-                [], [], label="Forecast", linestyle="--", color="red"
-            )
 
             # For all previous fitted lines, set alpha from 0.1 to 0.5 based on the number of lines
             self.previous_fitted_lines.append(self.fitted_line)
@@ -350,6 +393,7 @@ class RegressionAnimation(AnimationBase):
         dynamic_parameter=None,
         static_parameters=None,
         keep_previous=False,
+        pca_components=1,
         **kwargs,
     ):
         """Initialize the regression animation class.
@@ -363,10 +407,32 @@ class RegressionAnimation(AnimationBase):
             static_parameters: Additional static parameters for the model.
                 Should be a dictionary with parameter names as keys and their values.
             keep_previous: Whether to keep all previous lines with reduced opacity.
+            pca_components: Number of components to use for PCA.
             **kwargs: Additional customization options (e.g., colors, line styles).
         """
+        # Perform PCA if needed before splitting and passing to base
+        self.needs_pca = X.shape[1] > 1
+        self.pca_instance = None
+        if self.needs_pca:
+            print(
+                f"Input has {X.shape[1]} features. Applying PCA with n_components={pca_components}."
+            )
+            self.pca_instance = PCA(n_components=pca_components)
+            X_transformed = self.pca_instance.fit_transform(X)
+            if pca_components == 1:
+                X_transformed = X_transformed.reshape(
+                    -1, 1
+                )  # Ensure 2D array even for 1 component
+        else:
+            X_transformed = X  # Use original X if no PCA needed
+
+        # Ensure X is 2D
+        if X_transformed.ndim == 1:
+            X_transformed = X_transformed.reshape(-1, 1)
+
+        # Split into training and testing sets
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=test_size, random_state=42
+            X_transformed, y, test_size=test_size, random_state=42
         )
         super().__init__(
             model,
@@ -384,6 +450,7 @@ class RegressionAnimation(AnimationBase):
 
         # Initialize plot elements
         self.scatter_points = None
+        self.scatter_points_test = None
         self.predicted_line = None
 
         if self.keep_previous:
@@ -393,34 +460,43 @@ class RegressionAnimation(AnimationBase):
         self, title, xlabel, ylabel, legend_loc="upper left", grid=True, figsize=(12, 6)
     ):
         """Set up the plot for regression animation."""
-        super().setup_plot(title, xlabel, ylabel, legend_loc, grid, figsize)
+        # Use generic "Feature" label if PCA was applied
+        if self.needs_pca and self.pca_instance.n_components == 1:
+            effective_xlabel = f"{xlabel} (PCA Component 1)"
+        elif self.X_train.shape[1] == 1:
+            effective_xlabel = xlabel  # Use original if only 1 feature initially
+        else:
+            effective_xlabel = "Feature 1"  # Fallback for unexpected cases
+            print("Warning: Plotting only the first feature for regression line.")
 
-        # Check if X_train has more than one feature
-        if self.X_train.shape[1] > 1:
-            print("Warning: More than one feature detected. Applying PCA.")
-            self.X_train, self.X_test = self._apply_pca(self.X_train, self.X_test)
+        super().setup_plot(title, effective_xlabel, ylabel, legend_loc, grid, figsize)
 
         # Plot static elements (scatter points for training data)
         self.scatter_points = self.ax.scatter(
-            self.X_train[:, 0], self.y_train, label="Training Data", color="blue"
+            self.X_train[:, 0],
+            self.y_train,
+            label="Training Data",
+            color="blue",
+            zorder=3,
+        )
+        # Plot test data points wiht different marker
+        self.scatter_points_test = self.ax.scatter(
+            self.X_test[:, 0],
+            self.y_test,
+            label="Test Data",
+            color="blue",
+            marker="x",
+            zorder=3,
         )
 
         # Create a placeholder for the predicted regression line
         (self.predicted_line,) = self.ax.plot(
-            [], [], label="Regression Line", color="red"
+            [], [], label="Regression Line", color="red", zorder=3
         )
 
         if self.add_legend:
             # Add legend to the plot
             self.ax.legend(loc=legend_loc)
-
-    def _apply_pca(self, X_train, X_test):
-        """Apply PCA to reduce dimensionality if X_train has more than one feature."""
-        pca = PCA(n_components=1)
-        X_train = pca.fit_transform(X_train)
-        X_test = pca.transform(X_test)
-
-        return X_train, X_test
 
     def update_model(self, frame):
         """Update the regression model for the current frame.
@@ -433,7 +509,10 @@ class RegressionAnimation(AnimationBase):
             **{self.dynamic_parameter: frame}, **self.static_parameters
         )
         self.model_instance.fit(self.X_train, self.y_train)
-        self.predicted_values = self.model_instance.predict(self.X_test)
+        # Sort X_test for plotting the line correctly
+        sort_indices = np.argsort(self.X_test[:, 0])
+        self.X_test_sorted = self.X_test[sort_indices]
+        self.predicted_values = self.model_instance.predict(self.X_test_sorted)
 
     def update_plot(self, frame):
         """Update the plot for the current frame.
@@ -441,7 +520,17 @@ class RegressionAnimation(AnimationBase):
         Args:
             frame: The current frame (e.g., parameter value).
         """
+        # --- Handle Previous Lines ---
         if self.keep_previous and self.predicted_line:
+            # Limit the number of previous lines to avoid clutter (optional)
+            # TODO: Pass this as a parameter
+            MAX_PREVIOUS = None  # Set to None to disable
+            # MAX_PREVIOUS = 10
+            if MAX_PREVIOUS:
+                while len(self.previous_predicted_lines) > MAX_PREVIOUS:
+                    # Remove the oldest line, pop is inplace
+                    self.previous_predicted_lines.pop(0)
+
             # For all previous predicted lines, set alpha from 0.1 to 0.5 based on the number of lines
             self.previous_predicted_lines.append(self.predicted_line)
             for i, line in enumerate(self.previous_predicted_lines):
@@ -454,13 +543,17 @@ class RegressionAnimation(AnimationBase):
             )
 
         # Update the regression line with the predicted values
-        self.predicted_line.set_data(self.X_test[:, 0], self.predicted_values)
+        self.predicted_line.set_data(self.X_test_sorted[:, 0], self.predicted_values)
 
         # Update the title with the current frame and optional metrics
         if self.metric_fn:
+            # Calculate metrics using the *original* test set order predictions
+            y_pred_test_original_order = self.model_instance.predict(self.X_test)
             if len(self.metric_fn) == 1:
                 # If only one metric function is provided, use it directly
-                metric_value = self.metric_fn[0](self.y_test, self.predicted_values)
+                metric_value = self.metric_fn[0](
+                    self.y_test, y_pred_test_original_order
+                )
                 metric_value = round(metric_value, 4)
                 frame = round(frame, 2)
 
@@ -474,7 +567,7 @@ class RegressionAnimation(AnimationBase):
             else:
                 # If multiple metric functions are provided, calculate and display each one
                 metrics = [
-                    metric_fn(self.y_test, self.predicted_values)
+                    metric_fn(self.y_test, y_pred_test_original_order)
                     for metric_fn in self.metric_fn
                 ]
                 frame = round(frame, 2)
@@ -506,6 +599,8 @@ class ClassificationAnimation(AnimationBase):
         static_parameters=None,
         keep_previous=False,
         scaler=None,
+        pca_components=2,
+        plot_step=0.02,
         **kwargs,
     ):
         """Initialize the classification animation class.
@@ -520,14 +615,39 @@ class ClassificationAnimation(AnimationBase):
                 Should be a dictionary with parameter names as keys and their values.
             keep_previous: Whether to keep all previous lines with reduced opacity.
             scaler: Optional scaler for preprocessing the data.
+            pca_components: Number of components to use for PCA.
+            plot_step: Resolution of the decision boundary mesh.
             **kwargs: Additional customization options (e.g., colors, line styles).
         """
-        if scaler is not None:
-            # Apply the scaler to the data
-            X = scaler.fit_transform(X)
+        self.scaler_instance = scaler
+        self.pca_instance = None
+        self.needs_pca = False
+
+        if self.scaler_instance is not None:
+            print("Applying scaler...")
+            X = self.scaler_instance.fit_transform(X)
+
+        if X.shape[1] > 2:
+            self.needs_pca = True
+            print(
+                f"Input has {X.shape[1]} features. Applying PCA with n_components={pca_components}."
+            )
+            if pca_components != 2:
+                print(
+                    "Warning: Classification animation requires 2 components for plotting. Forcing pca_components=2."
+                )
+                pca_components = 2
+            self.pca_instance = PCA(n_components=pca_components)
+            X_transformed = self.pca_instance.fit_transform(X)
+        elif X.shape[1] < 2:
+            raise ValueError(
+                "Classification animation requires at least 2 features or PCA to 2 components."
+            )
+        else:
+            X_transformed = X  # Use original X if 2 features
 
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=test_size, random_state=42
+            X_transformed, y, test_size=test_size, random_state=42
         )
         super().__init__(
             model,
@@ -542,10 +662,21 @@ class ClassificationAnimation(AnimationBase):
         self.X_train, self.y_train = X_train, y_train
         self.X_test, self.y_test = X_test, y_test
 
-        # Create mesh grid for decision boundary
-        self.x_min, self.x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-        self.y_min, self.y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-        self.xx, self.yy = None, None
+        # Create mesh grid for decision boundary based on *all* transformed data
+        x_min, x_max = X_transformed[:, 0].min() - 0.5, X_transformed[:, 0].max()
+        y_min, y_max = X_transformed[:, 1].min() - 0.5, X_transformed[:, 1].max()
+        self.xx, self.yy = np.meshgrid(
+            np.arange(x_min, x_max, plot_step),
+            np.arange(y_min, y_max, plot_step),
+        )
+
+        # Store unique classes and assign colors
+        self.unique_classes = np.unique(y)
+        cmap = plt.cm.coolwarm  # Default colormap
+        self.colors = cmap(np.linspace(0, 1, len(self.unique_classes)))
+
+        self.scatter_train_dict = {}
+        self.scatter_test_dict = {}
 
         if self.keep_previous:
             self.previous_decision_lines = []  # Store previous decision boundaries
@@ -554,22 +685,45 @@ class ClassificationAnimation(AnimationBase):
         self, title, xlabel, ylabel, legend_loc="upper left", grid=True, figsize=(12, 6)
     ):
         """Set up the plot for classification animation."""
-        super().setup_plot(title, xlabel, ylabel, legend_loc, grid, figsize)
+        # Adjust labels if PCA was used
+        effective_xlabel = f"{xlabel} (PCA Comp 1)" if self.needs_pca else xlabel
+        effective_ylabel = f"{ylabel} (PCA Comp 2)" if self.needs_pca else ylabel
 
-        # Create mesh grid for decision boundary
-        self.xx, self.yy = np.meshgrid(
-            np.arange(self.x_min, self.x_max, 0.01),
-            np.arange(self.y_min, self.y_max, 0.01),
+        super().setup_plot(
+            title, effective_xlabel, effective_ylabel, legend_loc, grid, figsize
         )
 
-        # Plot training data points
-        for class_value in np.unique(self.y_train):
-            self.ax.scatter(
-                self.X_train[self.y_train == class_value, 0],
-                self.X_train[self.y_train == class_value, 1],
-                label=f"Class {class_value}",
+        # Plot training data points, colored by class
+        for i, class_value in enumerate(self.unique_classes):
+            class_mask = self.y_train == class_value
+            scatter = self.ax.scatter(
+                self.X_train[class_mask, 0],
+                self.X_train[class_mask, 1],
+                color=self.colors[i],
+                label=f"Train Class {class_value}",
                 edgecolors="k",
+                alpha=0.7,
+                zorder=2,
             )
+            self.scatter_train_dict[class_value] = scatter
+
+        # Plot test data points (optional)
+        for i, class_value in enumerate(self.unique_classes):
+            class_mask = self.y_test == class_value
+            scatter = self.ax.scatter(
+                self.X_test[class_mask, 0],
+                self.X_test[class_mask, 1],
+                color=self.colors[i],
+                label=f"Test Class {class_value}",
+                marker="x",  # Different marker for test points
+                alpha=0.7,
+                zorder=2,
+            )
+            self.scatter_test_dict[class_value] = scatter
+
+        # Set plot limits based on meshgrid
+        self.ax.set_xlim(self.xx.min(), self.xx.max())
+        self.ax.set_ylim(self.yy.min(), self.yy.max())
 
         if self.add_legend:
             self.ax.legend(loc=legend_loc)
@@ -612,17 +766,38 @@ class ClassificationAnimation(AnimationBase):
                 for collection in self.decision_boundary_lines.collections:
                     collection.remove()
 
-        # Predict on the mesh grid to create decision boundary
-        Z = self.model_instance.predict(np.c_[self.xx.ravel(), self.yy.ravel()])
+        # Predict on the mesh grid
+        mesh_points = np.c_[self.xx.ravel(), self.yy.ravel()]
+        try:
+            # Some models might output probabilities, some classes. Handle both?
+            # Assuming .predict gives class labels directly here.
+            Z = self.model_instance.predict(mesh_points)
+        except AttributeError:
+            # Handle models with predict_proba if predict isn't available
+            try:
+                Z_proba = self.model_instance.predict_proba(mesh_points)
+                Z = np.argmax(Z_proba, axis=1)  # Get class with highest probability
+                # Need to map back to original class labels if they weren't 0, 1, ...
+                if not np.array_equal(
+                    self.model_instance.classes_, np.arange(len(self.unique_classes))
+                ):
+                    Z = self.model_instance.classes_[Z]
+            except AttributeError:
+                raise AttributeError(
+                    f"{self.model.__name__} needs a 'predict' or 'predict_proba' method returning class labels."
+                ) from None
         Z = Z.reshape(self.xx.shape)
 
-        # Plot the current decision boundary contour with filled regions
+        # Plot the current decision boundary contourf (filled regions)
         self.decision_boundary = self.ax.contourf(
             self.xx,
             self.yy,
             Z,
             alpha=0.25,
-            cmap="coolwarm",
+            cmap=plt.cm.coolwarm,  # Use consistent colormap
+            levels=np.arange(len(self.unique_classes) + 1)
+            - 0.5,  # Center levels between classes
+            zorder=1,  # Behind data points
         )
 
         # If only two classes, plot the decision boundary lines
