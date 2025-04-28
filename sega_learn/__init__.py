@@ -43,7 +43,7 @@ from .neural_networks import (
     lr_scheduler_plateau,
     lr_scheduler_step,
 )
-from .pipelines import ForecastingPipeline
+from .pipelines import ForecastingPipeline, Pipeline
 from .svm import (
     BaseSVM,
     GeneralizedSVC,
@@ -101,6 +101,8 @@ from .utils import (
     Scaler,
     VotingClassifier,
     VotingRegressor,
+    check_is_fitted,
+    check_X_y,
     make_blobs,
     make_classification,
     make_regression,
@@ -139,6 +141,8 @@ __all__ = [
     "one_hot_encode",
     "normalize",
     "Scaler",
+    "check_is_fitted",
+    "check_X_y",
     # Clustering
     "KMeans",
     "DBSCAN",
@@ -212,6 +216,8 @@ __all__ = [
     "ExponentialMovingAverage",
     "AdditiveDecomposition",
     "MultiplicativeDecomposition",
+    # Pipelines
+    "Pipeline",
     "ForecastingPipeline",
 ]
 

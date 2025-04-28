@@ -24,17 +24,25 @@ class TestImportsPipelines(unittest.TestCase):
     def test_individual_imports(self):
         """Tests that each module in the segadb package can be imported individually."""
         from sega_learn.pipelines import ForecastingPipeline as fp
+        from sega_learn.pipelines import Pipeline as p
 
         assert fp is not None
+        assert p is not None
 
     def test_wildcard_import(self):
         """Tests that the segadb package can be imported using a wildcard import."""
         assert ForecastingPipeline is not None
+        assert Pipeline is not None
 
     def test_ForecastingPipeline(self):  # NOQA D201
         from sega_learn.pipelines import ForecastingPipeline
 
         assert ForecastingPipeline is not None
+
+    def test_Pipeline(self):  # NOQA D201
+        from sega_learn.pipelines import Pipeline
+
+        assert Pipeline is not None
 
 
 if __name__ == "__main__":
