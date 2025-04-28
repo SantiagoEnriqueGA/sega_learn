@@ -6,11 +6,8 @@ import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from sega_learn.time_series import (
-    SARIMA,
-    ForecastingPipeline,
-    WeightedMovingAverage,
-)
+from sega_learn.pipelines import ForecastingPipeline
+from sega_learn.time_series import SARIMA, WeightedMovingAverage
 from sega_learn.utils import Metrics, make_time_series
 
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -100,4 +97,4 @@ plt.title("ARIMA Forecast Comparison")
 plt.legend()
 plt.tight_layout()
 # plt.show()
-plt.savefig("examples/time_series/plots/forecastingPipelineine.png")
+plt.savefig("examples/pipelines/plots/forecastingPipelineine.png")

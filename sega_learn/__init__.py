@@ -43,6 +43,7 @@ from .neural_networks import (
     lr_scheduler_plateau,
     lr_scheduler_step,
 )
+from .pipelines import ForecastingPipeline
 from .svm import (
     BaseSVM,
     GeneralizedSVC,
@@ -58,7 +59,6 @@ from .time_series import (
     AdditiveDecomposition,
     DoubleExponentialSmoothing,
     ExponentialMovingAverage,
-    ForecastingPipeline,
     MultiplicativeDecomposition,
     SimpleExponentialSmoothing,
     SimpleMovingAverage,
