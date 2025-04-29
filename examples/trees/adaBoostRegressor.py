@@ -31,7 +31,7 @@ ada_regressor = AdaBoostRegressor(
 from sega_learn.trees import RandomForestRegressor  # noqa: E402, I001
 
 ada_regressor_custom = AdaBoostRegressor(
-    base_estimator=RandomForestRegressor(n_jobs=1, forest_size=5),
+    base_estimator=RandomForestRegressor(n_jobs=1, n_estimators=5),
     n_estimators=10,
     learning_rate=0.1,
     loss="linear",

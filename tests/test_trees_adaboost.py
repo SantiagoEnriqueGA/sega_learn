@@ -189,7 +189,7 @@ class TestAdaBoostClassifier(unittest.TestCase):
     def test_custom_base_estimator_forrest(self):
         """Test using a custom base estimator (forest)."""
         base_est = RandomForestClassifier(
-            forest_size=1, max_depth=1, min_samples_split=1, n_jobs=1
+            n_estimators=1, max_depth=1, min_samples_split=1, n_jobs=1
         )
         # Catch warnings
         with warnings.catch_warnings(record=True) as _w:
@@ -373,7 +373,7 @@ class TestAdaBoostRegressor(unittest.TestCase):
     def test_custom_base_estimator_forrest(self):
         """Test using a custom base estimator (forest)."""
         base_est = RandomForestRegressor(
-            forest_size=1, max_depth=1, min_samples_split=1, n_jobs=1
+            n_estimators=1, max_depth=1, min_samples_split=1, n_jobs=1
         )
         # Catch warnings
         with warnings.catch_warnings(record=True) as _w:

@@ -95,7 +95,7 @@ print(f"Random Forest Results: {rf_results}")
 ├───────────────────┼──────────────────────────┼────────────┼─────────────┼──────────┼────────────┼──────────────┼─────────┼───────────────────────┼────────────────────────────────────────────────────┤
 │ Trees             │ ClassifierTree           │       1    │      1      │   1      │     1      │       0.091  │ True    │ 0.8927                │ {'max_depth': 15}                                  │
 │ SVM               │ OneClassSVM - Linear     │       0.21 │      1      │   1      │     1      │       0.4201 │ True    │ 1.0000                │ {'C': 100, 'tol': 0.001, 'max_iter': 3000, 'lea... │
-│ Trees             │ RandomForestClassifier   │       1    │      1      │   1      │     1      │       1.3242 │ True    │ 0.8934                │ {'forest_size': 50, 'max_depth': 10}               │
+│ Trees             │ RandomForestClassifier   │       1    │      1      │   1      │     1      │       1.3242 │ True    │ 0.8934                │ {'n_estimators': 50, 'max_depth': 10}               │
 │ SVM               │ LinearSVC                │       0.46 │      0.8679 │   1      │     0.9293 │       1.0683 │ True    │ 0.9292                │ {'C': 0.1, 'tol': 0.0001, 'max_iter': 1000, 'le... │
 │ SVM               │ GeneralizedSVC - Linear  │       0.84 │      0.8679 │   0.8364 │     0.8519 │       0.9749 │ True    │ 0.8683                │ {'C': 0.1, 'tol': 0.0001, 'max_iter': 3000, 'le... │
 │ Nearest Neighbors │ KNeighborsClassifier     │       0.81 │      0.8103 │   0.8545 │     0.8319 │       0.005  │ True    │ 0.8766                │ {'n_neighbors': 9, 'distance_metric': 'manhattan'} │

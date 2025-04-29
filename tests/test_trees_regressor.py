@@ -562,7 +562,7 @@ class TestRandomForestRegressor(unittest.TestCase):
     def setUp(self):
         """Sets up the RandomForestRegressor instance for testing."""
         self.rf = RandomForestRegressor(
-            forest_size=5,  # Fewer trees for faster tests
+            n_estimators=5,  # Fewer trees for faster tests
             max_depth=3,
             min_samples_split=MIN_SAMPLES_SPLIT,
             random_seed=RANDOM_STATE,

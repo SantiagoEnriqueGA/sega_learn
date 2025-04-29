@@ -125,7 +125,7 @@ A random forest classifier is an ensemble learning method that constructs multip
 from sega_learn.trees import RandomForestClassifier
 
 # Initialize the RandomForestClassifier object
-rf_classifier = RandomForestClassifier(forest_size=10, max_depth=5)
+rf_classifier = RandomForestClassifier(n_estimators=10, max_depth=5)
 
 # Fit the model
 rf_classifier.fit(X, y)
@@ -148,7 +148,7 @@ A random forest regressor is an ensemble learning method that constructs multipl
 from sega_learn.trees import RandomForestRegressor
 
 # Initialize the RandomForestRegressor object
-rf_regressor = RandomForestRegressor(forest_size=10, max_depth=5)
+rf_regressor = RandomForestRegressor(n_estimators=10, max_depth=5)
 
 # Fit the model
 rf_regressor.fit(X, y)
@@ -313,7 +313,7 @@ X = np.random.rand(100, 2)
 y = np.random.randint(0, 2, size=100)
 
 # Initialize and fit RandomForestClassifier
-rf_classifier = RandomForestClassifier(forest_size=10, max_depth=5)
+rf_classifier = RandomForestClassifier(n_estimators=10, max_depth=5)
 rf_classifier.fit(X, y)
 
 # Predict class labels
@@ -333,7 +333,7 @@ X = np.random.rand(100, 2)
 y = np.random.rand(100)
 
 # Initialize and fit RandomForestRegressor
-rf_regressor = RandomForestRegressor(forest_size=10, max_depth=5)
+rf_regressor = RandomForestRegressor(n_estimators=10, max_depth=5)
 rf_regressor.fit(X, y)
 
 # Predict target values

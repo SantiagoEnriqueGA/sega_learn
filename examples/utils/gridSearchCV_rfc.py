@@ -11,7 +11,7 @@ from sega_learn.utils import make_classification
 
 X, y = make_classification(n_samples=100, n_features=5, n_classes=2, random_state=42)
 
-grid = [{"forest_size": [5, 20]}, {"max_depth": [5, 20]}]
+grid = [{"n_estimators": [5, 20]}, {"max_depth": [5, 20]}]
 # grid_search = ms.GridSearchCV(rfc.RandomForestClassifier, grid, cv=3, metric='precision', direction='maximize')
 # grid_search = ms.GridSearchCV(rfc.RandomForestClassifier, grid, cv=3, metric='recall', direction='maximize')
 grid_search = ms.GridSearchCV(

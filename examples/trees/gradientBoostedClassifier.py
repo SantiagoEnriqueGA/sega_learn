@@ -67,18 +67,18 @@ def grid_search():
     X, y = dp.DataPrep.df_to_ndarray(df, y_col=-1)
 
     # Define the range of forest sizes and maximum depths to test
-    forest_sizes = [10, 20, 100]
+    estimators = [10, 20, 100]
     max_depths = [2, 10, 15]
 
     # Store results
-    results = np.zeros((len(forest_sizes), len(max_depths)))
+    results = np.zeros((len(estimators), len(max_depths)))
 
     # Loop over different forest sizes and maximum depths
-    for i, forest_size in enumerate(forest_sizes):
+    for i, n_estimators in enumerate(estimators):
         for j, max_depth in enumerate(max_depths):
             # Initialize random forest object
             gbObj = gbc.GradientBoostedClassifier(
-                X=X, y=y, max_depth=max_depth, n_estimators=forest_size, random_seed=0
+                X=X, y=y, max_depth=max_depth, n_estimators=n_estimators, random_seed=0
             )
 
             # Train random forest model and get accuracy
@@ -87,13 +87,13 @@ def grid_search():
             results[i, j] = stats["Accuracy"]
 
             print(
-                f"Forest Size: {forest_size}, Max Depth: {max_depth}, Accuracy: {stats['Accuracy']:.4f}\n"
+                f"Forest Size: {n_estimators}, Max Depth: {max_depth}, Accuracy: {stats['Accuracy']:.4f}\n"
             )
 
     # Plot the results
     plt.figure(figsize=(12, 6))
-    for i, forest_size in enumerate(forest_sizes):
-        plt.plot(max_depths, results[i, :], label=f"Forest Size: {forest_size}")
+    for i, n_estimators in enumerate(estimators):
+        plt.plot(max_depths, results[i, :], label=f"Forest Size: {n_estimators}")
 
     plt.xlabel("Max Depth")
     plt.ylabel("Accuracy")

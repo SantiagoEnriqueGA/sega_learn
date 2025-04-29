@@ -72,7 +72,7 @@ class RandomForestRegressor:
 
     def __init__(
         self,
-        forest_size=100,
+        n_estimators=100,
         max_depth=10,
         min_samples_split=2,
         n_jobs=-1,
@@ -81,7 +81,7 @@ class RandomForestRegressor:
         y=None,
     ):
         """Initialize the Random Forest Regressor."""
-        self.n_estimators = forest_size
+        self.n_estimators = n_estimators
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split  # Store this parameter
         self.n_jobs = n_jobs if n_jobs != 0 else max(1, multiprocessing.cpu_count())
@@ -100,7 +100,7 @@ class RandomForestRegressor:
             dict: A dictionary containing the parameters of the model.
         """
         return {
-            "forest_size": self.n_estimators,
+            "n_estimators": self.n_estimators,
             "max_depth": self.max_depth,
             "min_samples_split": self.min_samples_split,
             "n_jobs": self.n_jobs,

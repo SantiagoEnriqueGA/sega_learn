@@ -591,14 +591,14 @@ class TestGridSearchCV(unittest.TestCase):
     def test_randomForestClassifier(self):
         """Tests the GridSearchCV class with the Random Forest Classifier model."""
         decision_tree = RandomForestClassifier
-        param_grid = [{"forest_size": [2, 3], "max_depth": [2], "n_jobs": [1]}]
+        param_grid = [{"n_estimators": [2, 3], "max_depth": [2], "n_jobs": [1]}]
         grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_class, self.y_class)
 
     def test_randomForestRegressor(self):
         """Tests the GridSearchCV class with the Random Forest Regressor model."""
         decision_tree = RandomForestRegressor
-        param_grid = [{"forest_size": [2, 3], "max_depth": [2], "n_jobs": [1]}]
+        param_grid = [{"n_estimators": [2, 3], "max_depth": [2], "n_jobs": [1]}]
         grid_search = GridSearchCV(model=decision_tree, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_reg, self.y_reg)
 
@@ -808,7 +808,7 @@ class TestRandomSearchCV(unittest.TestCase):
     def test_randomForestClassifier(self):
         """Tests the RandomSearchCV class with the Random Forest Classifier model."""
         decision_tree = RandomForestClassifier
-        param_grid = [{"forest_size": [2, 3], "max_depth": [2], "n_jobs": [1]}]
+        param_grid = [{"n_estimators": [2, 3], "max_depth": [2], "n_jobs": [1]}]
         rand_search = RandomSearchCV(
             model=decision_tree, param_grid=param_grid, cv=3, iter=2
         )
@@ -817,7 +817,7 @@ class TestRandomSearchCV(unittest.TestCase):
     def test_randomForestRegressor(self):
         """Tests the RandomSearchCV class with the Random Forest Regressor model."""
         decision_tree = RandomForestRegressor
-        param_grid = [{"forest_size": [2, 3], "max_depth": [2], "n_jobs": [1]}]
+        param_grid = [{"n_estimators": [2, 3], "max_depth": [2], "n_jobs": [1]}]
         rand_search = RandomSearchCV(
             model=decision_tree, param_grid=param_grid, cv=3, iter=2
         )

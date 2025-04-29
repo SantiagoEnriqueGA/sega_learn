@@ -23,7 +23,7 @@ def basic_example(num_trees=10, max_depth=5):
 
     # Initialize random forest object
     rfObj = rfg.RandomForestRegressor(
-        X=X, y=y, max_depth=max_depth, forest_size=num_trees, random_seed=0
+        X=X, y=y, max_depth=max_depth, n_estimators=num_trees, random_seed=0, n_jobs=1
     )
 
     # Train random forest model
@@ -50,7 +50,7 @@ def cars_example(num_trees=50, max_depth=5):
 
     # Initialize random forest object
     rfObj = rfg.RandomForestRegressor(
-        X=X, y=y, max_depth=max_depth, forest_size=num_trees, random_seed=0
+        X=X, y=y, max_depth=max_depth, n_estimators=num_trees, random_seed=0, n_jobs=1
     )
 
     # Train random forest model
@@ -76,21 +76,26 @@ def grid_search():
     X, y = dp.DataPrep.df_to_ndarray(df, y_col=4)
 
     # Define the range of forest sizes and maximum depths to test
-    forest_sizes = [10, 20, 50]
+    estimators = [10, 20, 50]
     max_depths = [5, 10, 20]
 
     # Store results
     results = {
-        metric: np.zeros((len(forest_sizes), len(max_depths)))
+        metric: np.zeros((len(estimators), len(max_depths)))
         for metric in ["MSE", "R^2", "MAPE", "MAE", "RMSE"]
     }
 
     # Loop over different forest sizes and maximum depths
-    for i, forest_size in enumerate(forest_sizes):
+    for i, n_estimators in enumerate(estimators):
         for j, max_depth in enumerate(max_depths):
             # Initialize random forest object
             rfObj = rfg.RandomForestRegressor(
-                X=X, y=y, max_depth=max_depth, forest_size=forest_size, random_seed=0
+                X=X,
+                y=y,
+                max_depth=max_depth,
+                n_estimators=n_estimators,
+                random_seed=0,
+                n_jobs=1,
             )
 
             # Train random forest model and get stats
@@ -101,15 +106,15 @@ def grid_search():
                 results[metric][i, j] = stats[metric]
 
             print(
-                f"Forest Size: {forest_size}, Max Depth: {max_depth}, Stats: {stats}\n"
+                f"Forest Size: {n_estimators}, Max Depth: {max_depth}, Stats: {stats}\n"
             )
 
     # Plot the results for each metric
     for metric in results:
         plt.figure(figsize=(12, 6))
-        for i, forest_size in enumerate(forest_sizes):
+        for i, n_estimators in enumerate(estimators):
             plt.plot(
-                max_depths, results[metric][i, :], label=f"Forest Size: {forest_size}"
+                max_depths, results[metric][i, :], label=f"Forest Size: {n_estimators}"
             )
 
         plt.xlabel("Max Depth")

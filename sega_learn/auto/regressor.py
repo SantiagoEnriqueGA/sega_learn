@@ -210,7 +210,7 @@ class AutoRegressor:
                 {"min_samples_split": [2, 5, 10, 20, 25, 50]},
             ],
             "RandomForestRegressor": [
-                {"forest_size": [50, 100, 200]},
+                {"n_estimators": [50, 100, 200]},
                 {"max_depth": [5, 10, 15]},
                 {"min_samples_split": [2, 5, 10, 20, 25, 50]},
             ],

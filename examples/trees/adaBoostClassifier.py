@@ -43,7 +43,7 @@ ada_classifier_default = AdaBoostClassifier(
 from sega_learn.trees import RandomForestClassifier  # noqa: E402, I001
 
 ada_classifier_custom = AdaBoostClassifier(
-    base_estimator=RandomForestClassifier(n_jobs=1, forest_size=10),
+    base_estimator=RandomForestClassifier(n_jobs=1, n_estimators=10),
     n_estimators=10,
     learning_rate=0.5,
     random_state=42,

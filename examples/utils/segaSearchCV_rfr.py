@@ -11,7 +11,7 @@ from sega_learn.utils import make_regression
 X, y = make_regression(n_samples=100, n_features=3, noise=5, random_state=2)
 
 grid = [
-    {"forest_size": [int, 2, 20]},
+    {"n_estimators": [int, 2, 20]},
     {"max_depth": [int, 2, 20]},
 ]
 # grid_search = ms.segaSearchCV(rfr.RandomForestRegressor, grid, iter=5, cv=3, metric='mse', direction='minimize')

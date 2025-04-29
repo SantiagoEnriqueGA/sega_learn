@@ -549,7 +549,7 @@ class TestRandomForestClassifier(unittest.TestCase):
         """Set up the RandomForestClassifier instance for testing."""
         X, y = make_classification(n_samples=100, n_features=5, n_classes=2)
         self.rf = RandomForestClassifier(
-            X=X, y=y, max_depth=10, forest_size=10, random_seed=0, n_jobs=1
+            X=X, y=y, max_depth=10, n_estimators=10, random_seed=0, n_jobs=1
         )
 
     def test_init(self):
