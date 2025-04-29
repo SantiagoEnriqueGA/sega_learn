@@ -2,6 +2,8 @@ from itertools import product
 
 import numpy as np
 
+from sega_learn.pipelines import Pipeline
+
 from .dataPrep import DataPrep
 from .metrics import Metrics
 
@@ -51,7 +53,11 @@ class ModelSelectionUtility:
         if verbose:
             print(f"Training Model with Params: {params}")
         for i in range(cv):
-            active_model = model(**params)
+            # If model is Pipeline, set params
+            if isinstance(model, Pipeline):
+                active_model = model.set_params(**params)
+            else:
+                active_model = model(**params)
 
             X_folds, y_folds = DataPrep.k_split(X, y, k=cv)
             X_train, y_train = (

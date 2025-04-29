@@ -1,6 +1,7 @@
 import os
 import sys
-import warnings
+
+# import warnings
 
 # Adjust path to import from the root directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
@@ -21,9 +22,9 @@ from sega_learn.utils import (
 from sega_learn.utils.decomposition import PCA
 
 # Suppress warnings for cleaner output during testing/example run
-warnings.filterwarnings("ignore", category=FutureWarning)
-warnings.filterwarnings("ignore", category=UserWarning)
-warnings.filterwarnings("ignore", category=RuntimeWarning)
+# warnings.filterwarnings("ignore", category=FutureWarning)
+# warnings.filterwarnings("ignore", category=UserWarning)
+# warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 
 def run_classification_example():
@@ -77,7 +78,7 @@ def run_regression_example():
     print("\n--- Regression Pipeline Example ---")
 
     # 1. Generate Data
-    X, y = make_regression(n_samples=200, n_features=3, noise=10, random_state=42)
+    X, y = make_regression(n_samples=200, n_features=3, noise=0.5, random_state=42)
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.3, random_state=42
     )
@@ -87,13 +88,13 @@ def run_regression_example():
     reg_steps = [
         ("poly", PolynomialTransform(degree=2)),
         ("scaler", Scaler(method="standard")),
-        ("ridge", Ridge(alpha=1.0, max_iter=500)),  # Use Ridge from sega_learn
+        ("ridge", Ridge(alpha=0.5, max_iter=1000)),  # Use Ridge from sega_learn
     ]
 
     # 3. Create and Fit Pipeline
     reg_pipe = Pipeline(steps=reg_steps)
     print("Fitting regression pipeline...")
-    reg_pipe.fit(X_train, y_train)
+    reg_pipe.fit(X_train, y_train, **{"ridge__numba": True})  # Pass numba=True to Ridge
     print("Fit complete.")
 
     # 4. Predict and Evaluate
@@ -126,18 +127,20 @@ def run_tuning_example():
             ("pca", PCA(n_components=5)),  # n_components will be tuned
             (
                 "rf",
-                RandomForestClassifier(n_estimators=10, random_state=43, n_jobs=1),
-            ),  # n_estimators will be tuned
+                RandomForestClassifier(forest_size=10, random_seed=43, n_jobs=1),
+            ),  # forest_size will be tuned
         ]
     )
 
     # Parameter grid targeting steps in the pipeline
     # Use `step_name__parameter_name` syntax
-    param_grid_cls = {
-        "pca__n_components": [2, 3, 4],  # Tune PCA components
-        "rf__n_estimators": [10, 20],  # Tune RandomForest estimators
-        "rf__max_depth": [3, 5],  # Tune RandomForest max_depth
-    }
+    param_grid_cls = [
+        {
+            "pca__n_components": [2, 3, 4],  # Tune PCA components
+            "rf__forest_size": [10, 20],  # Tune RandomForest estimators
+            "rf__max_depth": [3, 5],  # Tune RandomForest max_depth
+        }
+    ]
 
     # Note: GridSearchCV uses its own internal cross-validation scorer.
     # Ensure your chosen 'metric' in GridSearchCV matches Metrics keys if needed elsewhere,
@@ -207,4 +210,4 @@ def run_tuning_example():
 if __name__ == "__main__":
     run_classification_example()
     run_regression_example()
-    run_tuning_example()
+    # run_tuning_example()

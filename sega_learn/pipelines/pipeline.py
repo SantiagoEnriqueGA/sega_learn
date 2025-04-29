@@ -174,8 +174,7 @@ class Pipeline:
             y (array-like, optional): Training targets. Must fulfill label requirements for
                 all steps of the pipeline.
             **fit_params (dict): Parameters passed to the ``fit`` method of each step,
-                where each parameter name is prefixed such that parameter ``p``
-                for step ``s`` has key ``s__p``.
+                where each parameter name is prefixed such that parameter ``p`` for step ``s`` has key ``s__p``.
 
         Returns:
             self: Pipeline instance.
@@ -193,7 +192,12 @@ class Pipeline:
         Xt = X
         for _, name, transform in self._iter(with_final=False):
             if hasattr(transform, "fit_transform"):
-                Xt = transform.fit_transform(Xt, y, **fit_params_steps[name])
+                # Try fit_transform with y, if TypeError, try without y
+                try:
+                    Xt = transform.fit_transform(Xt, y, **fit_params_steps[name])
+                except TypeError:
+                    Xt = transform.fit_transform(Xt, **fit_params_steps[name])
+
             else:
                 Xt = transform.fit(Xt, y, **fit_params_steps[name]).transform(Xt)
 
