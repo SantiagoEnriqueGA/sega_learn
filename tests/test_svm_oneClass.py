@@ -9,8 +9,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn.svm import OneClassSVM
 
+from utils import BaseTest
 
-class TestOneClassSVM(unittest.TestCase):
+
+class TestOneClassSVM(BaseTest):
     """Unit test suite for the OneClassSVM class."""
 
     @classmethod

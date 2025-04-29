@@ -137,16 +137,20 @@ class Pipeline:
             self._final_estimator = self.steps[-1][1]
 
         # Set parameters for individual steps
+        # For each parameter, check if it belongs to a step and set it accordingly
         step_params = {}
         for key, value in params.items():
             if "__" in key:
                 step_name, param_name = key.split("__", 1)
                 if step_name not in self.named_steps:
                     raise ValueError(f"Invalid parameter {step_name} for pipeline")
+                # Add to dictionary of step-specific parameters
                 if step_name not in step_params:
                     step_params[step_name] = {}
                 step_params[step_name][param_name] = value
 
+        # For each step, set the parameters
+        # If the step has a set_params method, use it; otherwise, set attributes directly
         for name, step_specific_params in step_params.items():
             step = self.named_steps[name]
             if hasattr(step, "set_params"):

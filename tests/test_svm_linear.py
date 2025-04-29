@@ -9,8 +9,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from sega_learn.svm import LinearSVC, LinearSVR
 from sega_learn.utils import make_classification, make_regression
 
+from utils import BaseTest
 
-class TestLinearSVR(unittest.TestCase):
+
+class TestLinearSVR(BaseTest):
     """Unit test suite for the LinearSVR class."""
 
     @classmethod
@@ -113,7 +115,7 @@ class TestLinearSVR(unittest.TestCase):
         )
 
 
-class TestLinearSVC(unittest.TestCase):
+class TestLinearSVC(BaseTest):
     """Unit test suite for the LinearSVC class."""
 
     @classmethod

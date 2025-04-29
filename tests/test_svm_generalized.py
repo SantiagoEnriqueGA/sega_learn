@@ -10,8 +10,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from sega_learn.svm.generalizedSVM import GeneralizedSVC, GeneralizedSVR
 from sega_learn.utils import make_classification, make_regression
 
+from utils import BaseTest
 
-class TestGeneralizedSVR(unittest.TestCase):
+
+class TestGeneralizedSVR(BaseTest):
     """Unit test suite for the GeneralizedSVR class."""
 
     @classmethod
@@ -116,7 +118,7 @@ class TestGeneralizedSVR(unittest.TestCase):
         )
 
 
-class TestGeneralizedSVC(unittest.TestCase):
+class TestGeneralizedSVC(BaseTest):
     """Unit test suite for the GeneralizedSVC class."""
 
     @classmethod

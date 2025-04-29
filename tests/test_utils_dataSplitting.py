@@ -9,8 +9,10 @@ from scipy import sparse
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from sega_learn.utils import train_test_split
 
+from utils import BaseTest
 
-class TestTrainTestSplit(unittest.TestCase):
+
+class TestTrainTestSplit(BaseTest):
     """Unit test for the train_test_split function."""
 
     @classmethod

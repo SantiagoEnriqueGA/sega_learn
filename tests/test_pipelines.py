@@ -33,7 +33,7 @@
 #         return self
 
 
-# class TestPipeline(unittest.TestCase):
+# class TestPipeline(BaseTest):
 #     """Unit tests for the general-purpose Pipeline class."""
 
 #     @classmethod

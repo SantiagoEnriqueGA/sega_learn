@@ -8,6 +8,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn.neural_networks import *
 
+from utils import BaseTest
+
 
 class MockLayer:
     """Mock layer class for testing optimizers."""
@@ -18,7 +20,7 @@ class MockLayer:
         self.biases = np.zeros((1, output_size))
 
 
-class TestAdamOptimizer(unittest.TestCase):
+class TestAdamOptimizer(BaseTest):
     """Unit tests for the AdamOptimizer class."""
 
     @classmethod
@@ -85,7 +87,7 @@ class TestAdamOptimizer(unittest.TestCase):
         self.assertFalse(np.array_equal(layer.biases, initial_biases))
 
 
-class TestSGDOptimizer(unittest.TestCase):
+class TestSGDOptimizer(BaseTest):
     """Unit tests for the SGDOptimizer class."""
 
     @classmethod
@@ -148,7 +150,7 @@ class TestSGDOptimizer(unittest.TestCase):
         self.assertFalse(np.array_equal(layer.biases, initial_biases))
 
 
-class TestAdadeltaOptimizer(unittest.TestCase):
+class TestAdadeltaOptimizer(BaseTest):
     """Unit tests for the AdadeltaOptimizer class."""
 
     @classmethod

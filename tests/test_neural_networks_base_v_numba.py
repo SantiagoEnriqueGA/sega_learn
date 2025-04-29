@@ -42,6 +42,8 @@ from sega_learn.neural_networks.numba_utils import (
     tanh_derivative as tanh_derivative_nb,
 )
 
+from utils import BaseTest
+
 # from tests.utils import suppress_print
 
 os.environ["NUMBA_WARNINGS"] = "0"
@@ -56,7 +58,7 @@ def compare_activation_functions(func1, func2, tolerance, *args):
     return bool(np.allclose(output1, output2, atol=tolerance))
 
 
-class TestNeuralNetworkBaseNumbaTrain(unittest.TestCase):
+class TestNeuralNetworkBaseNumbaTrain(BaseTest):
     """Comprehensive test suite for comparing Numba and non-Numba Train Functions."""
 
     @classmethod
@@ -200,7 +202,7 @@ class TestNeuralNetworkBaseNumbaTrain(unittest.TestCase):
         self.assertTrue(np.array_equal(predictions_numba, predictions_no_numba))
 
 
-class TestNeuralNetworkBaseNumbaActivations(unittest.TestCase):
+class TestNeuralNetworkBaseNumbaActivations(BaseTest):
     """Comprehensive test suite for comparing Numba and non-Numba Activations."""
 
     @classmethod
@@ -298,7 +300,7 @@ class TestNeuralNetworkBaseNumbaActivations(unittest.TestCase):
         )
 
 
-class TestNeuralNetworkBaseNumbaLoss(unittest.TestCase):
+class TestNeuralNetworkBaseNumbaLoss(BaseTest):
     """Comprehensive test suite for comparing Numba and non-Numba Loss Functions."""
 
     @classmethod
@@ -390,7 +392,7 @@ class TestNeuralNetworkBaseNumbaLoss(unittest.TestCase):
         )
 
 
-class TestNeuralNetworkBaseNumbaUtils(unittest.TestCase):
+class TestNeuralNetworkBaseNumbaUtils(BaseTest):
     """Comprehensive test suite for comparing Numba and non-Numba Utilities."""
 
     @classmethod
@@ -466,7 +468,7 @@ class TestNeuralNetworkBaseNumbaUtils(unittest.TestCase):
         self.assertTrue(np.isclose(l2_base, l2_jit, atol=self.tolerance))
 
 
-class TestNeuralNetworkBaseNumbaOptimizers(unittest.TestCase):
+class TestNeuralNetworkBaseNumbaOptimizers(BaseTest):
     """Comprehensive test suite for comparing Numba and non-Numba Optimizers."""
 
     @classmethod

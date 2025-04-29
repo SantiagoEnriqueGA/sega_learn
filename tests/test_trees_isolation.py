@@ -8,8 +8,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn.trees import *
 
+from utils import BaseTest
 
-class TestIsolationUtils(unittest.TestCase):
+
+class TestIsolationUtils(BaseTest):
     """Unit test for the IsolationTreeUtility class."""
 
     @classmethod
@@ -28,7 +30,7 @@ class TestIsolationUtils(unittest.TestCase):
         )
 
 
-class TestIsolationTree(unittest.TestCase):
+class TestIsolationTree(BaseTest):
     """Unit test for the IsolationTree class."""
 
     @classmethod
@@ -66,7 +68,7 @@ class TestIsolationTree(unittest.TestCase):
             self.tree.path_length(sample)
 
 
-class TestIsolationForest(unittest.TestCase):
+class TestIsolationForest(BaseTest):
     """Unit test for the IsolationForest class."""
 
     @classmethod

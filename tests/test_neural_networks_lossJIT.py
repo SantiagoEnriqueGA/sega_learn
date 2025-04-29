@@ -9,8 +9,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn.neural_networks import *
 
+from utils import BaseTest
 
-class TestJITCrossEntropyLoss(unittest.TestCase):
+
+class TestJITCrossEntropyLoss(BaseTest):
     """Unit tests for the JITCrossEntropyLoss class."""
 
     @classmethod
@@ -74,7 +76,7 @@ class TestJITCrossEntropyLoss(unittest.TestCase):
         self.assertTrue(np.isfinite(loss))
 
 
-class TestJITBCEWithLogitsLoss(unittest.TestCase):
+class TestJITBCEWithLogitsLoss(BaseTest):
     """Unit tests for the JITBCEWithLogitsLoss class."""
 
     @classmethod
@@ -117,7 +119,7 @@ class TestJITBCEWithLogitsLoss(unittest.TestCase):
             loss_fn.calculate_loss(logits, targets)
 
 
-class TestMeanSquaredErrorLoss(unittest.TestCase):
+class TestMeanSquaredErrorLoss(BaseTest):
     """Unit tests for the JITMeanSquaredErrorLoss class."""
 
     @classmethod
@@ -150,7 +152,7 @@ class TestMeanSquaredErrorLoss(unittest.TestCase):
             loss_fn.calculate_loss(y_true, y_pred)
 
 
-class TestMeanAbsoluteErrorLoss(unittest.TestCase):
+class TestMeanAbsoluteErrorLoss(BaseTest):
     """Unit tests for the JITMeanAbsoluteErrorLoss class."""
 
     @classmethod
@@ -183,7 +185,7 @@ class TestMeanAbsoluteErrorLoss(unittest.TestCase):
             loss_fn.calculate_loss(y_true, y_pred)
 
 
-class TestHuberLoss(unittest.TestCase):
+class TestHuberLoss(BaseTest):
     """Unit tests for the HuberLoss class."""
 
     @classmethod
@@ -237,7 +239,7 @@ class TestHuberLoss(unittest.TestCase):
         self.assertTrue(np.isfinite(loss))
 
 
-class TestJITvsNonJITLosses(unittest.TestCase):
+class TestJITvsNonJITLosses(BaseTest):
     """Unit tests to compare JIT and non-JIT loss implementations."""
 
     @classmethod

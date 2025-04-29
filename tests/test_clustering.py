@@ -8,8 +8,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn.clustering import *
 
+from utils import BaseTest
 
-class TestKMeans(unittest.TestCase):
+
+class TestKMeans(BaseTest):
     """Unit test for the KMeans clustering class."""
 
     @classmethod
@@ -238,7 +240,7 @@ class TestKMeans(unittest.TestCase):
             os.remove("tests/test_elbow.png")
 
 
-class TestDBSCAN(unittest.TestCase):
+class TestDBSCAN(BaseTest):
     """Unit test for the DBSCAN clustering class."""
 
     @classmethod
@@ -347,7 +349,7 @@ class TestDBSCAN(unittest.TestCase):
         self.assertTrue(all(-1 <= score <= 1 for score in scores_dict.values()))
 
 
-class TestDBSCANNumba(unittest.TestCase):
+class TestDBSCANNumba(BaseTest):
     """Unit test for the DBSCAN clustering class using Numba."""
 
     @classmethod

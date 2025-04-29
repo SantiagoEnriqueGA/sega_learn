@@ -9,6 +9,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn.trees import *
 
+from utils import BaseTest
+
 # Import utility functions if available
 try:
     from tests.utils import suppress_print, synthetic_data_regression
@@ -44,7 +46,7 @@ RANDOM_STATE = 42
 MIN_SAMPLES_SPLIT = 5
 
 
-class TestRegressorTreeUtility(unittest.TestCase):
+class TestRegressorTreeUtility(BaseTest):
     """Tests for the updated RegressorTreeUtility class."""
 
     @classmethod
@@ -407,7 +409,7 @@ class TestRegressorTreeUtility(unittest.TestCase):
         self.assertIsNone(best_split)  # No split should be found
 
 
-class TestRegressorTree(unittest.TestCase):
+class TestRegressorTree(BaseTest):
     """Tests for the updated RegressorTree class."""
 
     @classmethod
@@ -546,7 +548,7 @@ class TestRegressorTree(unittest.TestCase):
         self.assertFalse(np.isnan(predictions).any(), "NaN values found in prediction")
 
 
-class TestRandomForestRegressor(unittest.TestCase):
+class TestRandomForestRegressor(BaseTest):
     """Tests for the updated RandomForestRegressor class."""
 
     @classmethod
@@ -681,7 +683,7 @@ class TestRandomForestRegressor(unittest.TestCase):
         )
 
 
-class TestGradientBoostedRegressor(unittest.TestCase):
+class TestGradientBoostedRegressor(BaseTest):
     """Tests for the updated GradientBoostedRegressor class."""
 
     @classmethod

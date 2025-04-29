@@ -10,10 +10,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from sega_learn.pipelines import ForecastingPipeline
 from sega_learn.time_series import *
 from sega_learn.utils import Metrics
-from tests.utils import suppress_print
+from tests.utils import BaseTest, suppress_print
 
 
-class TestForecastingPipeline(unittest.TestCase):
+class TestForecastingPipeline(BaseTest):
     """Unit test suite for the ForecastingPipeline class."""
 
     @classmethod

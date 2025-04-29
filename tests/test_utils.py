@@ -14,7 +14,7 @@ from sega_learn.time_series import *
 from sega_learn.trees import *
 from sega_learn.utils import *
 from sega_learn.utils import make_classification, make_regression, train_test_split
-from tests.utils import suppress_print, synthetic_data_regression
+from tests.utils import BaseTest, suppress_print, synthetic_data_regression
 
 
 # --- Helper function for creating seasonal data ---
@@ -29,7 +29,7 @@ def create_seasonal_data(length=100, period=12, amplitude=10, trend=0.1, noise_s
     )  # Add constant offset
 
 
-class TestPolynomialTransform(unittest.TestCase):
+class TestPolynomialTransform(BaseTest):
     """Unit tests for the PolynomialTransform class."""
 
     @classmethod
@@ -63,7 +63,7 @@ class TestPolynomialTransform(unittest.TestCase):
             self.transform.transform(None)
 
 
-class TestDataPrep(unittest.TestCase):
+class TestDataPrep(BaseTest):
     """Unit tests for the DataPrep class."""
 
     @classmethod
@@ -174,7 +174,7 @@ class TestDataPrep(unittest.TestCase):
             DataPrep.k_split(None, None, k=5)
 
 
-class TestVotingRegressor(unittest.TestCase):
+class TestVotingRegressor(BaseTest):
     """Unit tests for the VotingRegressor class."""
 
     @classmethod
@@ -217,7 +217,7 @@ class TestVotingRegressor(unittest.TestCase):
             self.voter.show_models()
 
 
-class TestForecastRegressor(unittest.TestCase):
+class TestForecastRegressor(BaseTest):
     """Unit tests for the ForecastRegressor class."""
 
     @classmethod
@@ -265,7 +265,7 @@ class TestForecastRegressor(unittest.TestCase):
             self.voter.show_models()
 
 
-class TestVotingClassifier(unittest.TestCase):
+class TestVotingClassifier(BaseTest):
     """Unit tests for the VotingClassifier class."""
 
     @classmethod
@@ -360,7 +360,7 @@ class TestVotingClassifier(unittest.TestCase):
             self.voter_hard_weighted.show_models()
 
 
-class TestModelSelectionUtils(unittest.TestCase):
+class TestModelSelectionUtils(BaseTest):
     """Unit tests for the Model Selection Utility class."""
 
     @classmethod
@@ -441,7 +441,7 @@ class TestModelSelectionUtils(unittest.TestCase):
             )
 
 
-class TestGridSearchCV(unittest.TestCase):
+class TestGridSearchCV(BaseTest):
     """Unit tests for the GridSearchCV class."""
 
     @classmethod
@@ -630,7 +630,7 @@ class TestGridSearchCV(unittest.TestCase):
             grid_search.fit(self.X_reg, self.y_reg)
 
 
-class TestRandomSearchCV(unittest.TestCase):
+class TestRandomSearchCV(BaseTest):
     """Unit tests for the RandomSearchCV class."""
 
     @classmethod
@@ -864,7 +864,7 @@ class TestRandomSearchCV(unittest.TestCase):
             rand_search.fit(self.X_reg, self.y_reg)
 
 
-class TestMetrics(unittest.TestCase):
+class TestMetrics(BaseTest):
     """Unit tests for the Metrics class."""
 
     @classmethod
@@ -1047,7 +1047,7 @@ class TestMetrics(unittest.TestCase):
                     self.metrics.show_classification_report(y_true, y_pred)
 
 
-class TestDataAugmentation(unittest.TestCase):
+class TestDataAugmentation(BaseTest):
     """Unit tests for the Data Augmentation class."""
 
     @classmethod
@@ -1224,7 +1224,7 @@ class TestDataAugmentation(unittest.TestCase):
             augmenter.augment(self.X, self.y)
 
 
-class TestDataDecomposition(unittest.TestCase):
+class TestDataDecomposition(BaseTest):
     """Unit tests for the Data Decomposition class."""
 
     @classmethod

@@ -11,7 +11,7 @@ from matplotlib.animation import FuncAnimation
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.neural_networks.animation import TrainingAnimator
-from tests.utils import suppress_print
+from tests.utils import BaseTest, suppress_print
 
 
 # Dummy writer to simulate FFMpegWriter / PillowWriter behavior.
@@ -40,7 +40,7 @@ class DummyWriter:
         self.finish_called = True
 
 
-class TestTrainingAnimator(unittest.TestCase):
+class TestTrainingAnimator(BaseTest):
     """Unit tests for the TrainingAnimator class.
 
     Methods:

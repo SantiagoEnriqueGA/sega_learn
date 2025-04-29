@@ -9,7 +9,7 @@ from functools import partialmethod
 
 from tqdm import tqdm
 
-from utils import strip_file_path, suppress_print
+from utils import BaseTest, strip_file_path, suppress_print
 
 tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 
@@ -18,7 +18,7 @@ tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
-class TestExampleExceptions(unittest.TestCase):
+class TestExampleExceptions(BaseTest):
     """Test cases to check for exceptions in example files."""
 
     def test_main(self, example_file):
@@ -55,7 +55,7 @@ class TestExampleExceptions(unittest.TestCase):
             pass
 
 
-class TestExamplesNeuralNetworks(unittest.TestCase):
+class TestExamplesNeuralNetworks(BaseTest):
     """Test cases for the example files.
 
     Holds dynamically generated test cases for each example file.

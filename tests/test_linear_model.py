@@ -7,13 +7,13 @@ import numpy as np
 from sega_learn.linear_models import *
 from sega_learn.linear_models import make_sample_data
 from sega_learn.utils import Metrics, make_classification
-from tests.utils import suppress_print, synthetic_data_regression
+from tests.utils import BaseTest, suppress_print, synthetic_data_regression
 
 r2_score = Metrics.r_squared
 accuracy_score = Metrics.accuracy
 
 
-class TestOrdinaryLeastSquares(unittest.TestCase):
+class TestOrdinaryLeastSquares(BaseTest):
     """Unit test for the Ordinary Least Squares regression class."""
 
     @classmethod
@@ -71,7 +71,7 @@ class TestOrdinaryLeastSquares(unittest.TestCase):
         self.assertEqual(len(self.model.coef_), 5)
 
 
-class TestRidge(unittest.TestCase):
+class TestRidge(BaseTest):
     """Unit test for the Ridge regression class."""
 
     @classmethod
@@ -164,7 +164,7 @@ class TestRidge(unittest.TestCase):
             self.model.fit(None, None, numba=True)
 
 
-class TestLasso(unittest.TestCase):
+class TestLasso(BaseTest):
     """Unit test for the Lasso regression class."""
 
     @classmethod
@@ -257,7 +257,7 @@ class TestLasso(unittest.TestCase):
             self.model.fit(None, None, numba=True)
 
 
-class TestBayesian(unittest.TestCase):
+class TestBayesian(BaseTest):
     """Unit test for the Bayesian regression class."""
 
     @classmethod
@@ -341,7 +341,7 @@ class TestBayesian(unittest.TestCase):
         self.assertEqual(len(self.model.coef_), 5)
 
 
-class TestRANSAC(unittest.TestCase):
+class TestRANSAC(BaseTest):
     """Unit test for the RANSAC regression class."""
 
     @classmethod
@@ -428,7 +428,7 @@ class TestRANSAC(unittest.TestCase):
         self.assertIn("y = ", formula)
 
 
-class TestPassiveAggressiveRegressor(unittest.TestCase):
+class TestPassiveAggressiveRegressor(BaseTest):
     """Unit test for the Passive Aggressive Regressor class."""
 
     @classmethod
@@ -514,7 +514,7 @@ class TestPassiveAggressiveRegressor(unittest.TestCase):
         self.assertEqual(len(self.model.coef_), 5)
 
 
-class TestLinearDiscriminantAnalysis(unittest.TestCase):
+class TestLinearDiscriminantAnalysis(BaseTest):
     """Unit test for the Linear Discriminant Analysis class."""
 
     @classmethod
@@ -591,7 +591,7 @@ class TestLinearDiscriminantAnalysis(unittest.TestCase):
             lda.fit(None, None)
 
 
-class TestQuadraticDiscriminantAnalysis(unittest.TestCase):
+class TestQuadraticDiscriminantAnalysis(BaseTest):
     """Unit test for the Quadratic Discriminant Analysis class."""
 
     @classmethod
@@ -667,7 +667,7 @@ class TestQuadraticDiscriminantAnalysis(unittest.TestCase):
             qda.fit(self.X, self.y)
 
 
-class TestLogisticRegression(unittest.TestCase):
+class TestLogisticRegression(BaseTest):
     """Unit test for the Logistic Regression class."""
 
     @classmethod
@@ -736,7 +736,7 @@ class TestLogisticRegression(unittest.TestCase):
             model.predict(None)
 
 
-class TestPerceptron(unittest.TestCase):
+class TestPerceptron(BaseTest):
     """Unit test for the Perceptron class."""
 
     @classmethod

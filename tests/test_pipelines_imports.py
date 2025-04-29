@@ -7,8 +7,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn.pipelines import *
 
+from utils import BaseTest
 
-class TestImportsPipelines(unittest.TestCase):
+
+class TestImportsPipelines(BaseTest):
     """Tests that the Pipelines subpackage can be imported correctly.
 
     Methods:

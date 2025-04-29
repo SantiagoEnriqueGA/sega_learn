@@ -178,7 +178,11 @@ class GridSearchCV:
                 self.best_params_ = params
                 self.best_model = self.active_model
 
-        return self.best_model
+        # If self.best_model exists, return it
+        if not hasattr(self, "best_model"):
+            return self.best_model
+        else:
+            return None
 
 
 class RandomSearchCV:
@@ -278,7 +282,11 @@ class RandomSearchCV:
                 self.best_params_ = params
                 self.best_model = self.active_model
 
-        return self.best_model
+        # If self.best_model exists, return it
+        if not hasattr(self, "best_model"):
+            return self.best_model
+        else:
+            return None
 
 
 class segaSearchCV:
@@ -465,4 +473,8 @@ class segaSearchCV:
                             p_low[param] - step_size, self.param_lims[param][0]
                         )
 
-        return self.best_model
+        # If self.best_model exists, return it
+        if not hasattr(self, "best_model"):
+            return self.best_model
+        else:
+            return None

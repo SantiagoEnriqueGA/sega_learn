@@ -1,6 +1,10 @@
 import os
+import random
 import sys
+import unittest
 from contextlib import contextmanager
+
+import numpy as np
 
 
 @contextmanager
@@ -50,3 +54,14 @@ def synthetic_data_regression(n_samples=1000, n_features=5, noise=0.1, random_st
 def strip_file_path(file_path):
     """Strips the file path and returns the file name."""
     return os.path.basename(file_path)
+
+
+class BaseTest(unittest.TestCase):
+    """Base class for all test cases."""
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up the class for all test cases."""
+        super().setUpClass()
+        np.random.seed(42)
+        random.seed(42)

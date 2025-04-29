@@ -10,8 +10,10 @@ from sega_learn.trees import *
 from sega_learn.trees.randomForestClassifier import _classify_oob
 from sega_learn.utils import make_classification
 
+from utils import BaseTest
 
-class TestClassifierTreeUtility(unittest.TestCase):
+
+class TestClassifierTreeUtility(BaseTest):
     """Set up the ClassifierTreeUtility instance for testing."""
 
     @classmethod
@@ -404,7 +406,7 @@ class TestClassifierTreeUtility(unittest.TestCase):
         self.assertEqual(best_split["label"], 1)
 
 
-class TestClassifierTree(unittest.TestCase):
+class TestClassifierTree(BaseTest):
     """Set up the ClassifierTree instance for testing."""
 
     @classmethod
@@ -537,7 +539,7 @@ class TestClassifierTree(unittest.TestCase):
         self.assertEqual(result_right, 1)
 
 
-class TestRandomForestClassifier(unittest.TestCase):
+class TestRandomForestClassifier(BaseTest):
     """Set up the RandomForestClassifier instance for testing."""
 
     @classmethod
@@ -686,7 +688,7 @@ class TestRandomForestClassifier(unittest.TestCase):
         self.assertEqual(proba.shape, (10, 2))
 
 
-class TesGradientBoostedClassifier(unittest.TestCase):
+class TesGradientBoostedClassifier(BaseTest):
     """Set up the GradientBoostedClassifier instance for testing."""
 
     @classmethod

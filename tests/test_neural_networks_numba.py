@@ -9,13 +9,13 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 import numpy as np
 from numba.core.errors import NumbaPendingDeprecationWarning
 from sega_learn.neural_networks import *
-from tests.utils import suppress_print
+from tests.utils import BaseTest, suppress_print
 
 os.environ["NUMBA_WARNINGS"] = "0"
 warnings.filterwarnings("ignore", category=NumbaPendingDeprecationWarning)
 
 
-class TestNeuralNetworkNumba(unittest.TestCase):
+class TestNeuralNetworkNumba(BaseTest):
     """Comprehensive test suite for NumbaBackendNeuralNetwork class.
 
     Tests all major functions and edge cases under Numba acceleration.

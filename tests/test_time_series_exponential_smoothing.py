@@ -13,6 +13,8 @@ from sega_learn.time_series.exponential_smoothing import (
     TripleExponentialSmoothing,
 )
 
+from utils import BaseTest
+
 
 # --- Helper function for creating seasonal data ---
 def create_seasonal_data(length=100, period=12, amplitude=10, trend=0.1, noise_std=2):
@@ -26,7 +28,7 @@ def create_seasonal_data(length=100, period=12, amplitude=10, trend=0.1, noise_s
     )  # Add constant offset
 
 
-class TestSimpleExponentialSmoothing(unittest.TestCase):
+class TestSimpleExponentialSmoothing(BaseTest):
     """Unit test suite for the SimpleExponentialSmoothing class."""
 
     @classmethod
@@ -104,7 +106,7 @@ class TestSimpleExponentialSmoothing(unittest.TestCase):
         self.ses.forecast(-5)
 
 
-class TestDoubleExponentialSmoothing(unittest.TestCase):
+class TestDoubleExponentialSmoothing(BaseTest):
     """Unit test suite for the DoubleExponentialSmoothing class."""
 
     @classmethod
@@ -172,7 +174,7 @@ class TestDoubleExponentialSmoothing(unittest.TestCase):
         self.des.forecast(-5)
 
 
-class TestTripleExponentialSmoothing(unittest.TestCase):
+class TestTripleExponentialSmoothing(BaseTest):
     """Unit test suite for the TripleExponentialSmoothing class."""
 
     @classmethod

@@ -7,8 +7,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn import *
 
+from utils import BaseTest
 
-class TestImports(unittest.TestCase):
+
+class TestImports(BaseTest):
     """Tests that the main package can be imported correctly."""
 
     @classmethod

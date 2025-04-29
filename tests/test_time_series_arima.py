@@ -9,6 +9,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn.time_series.arima import ARIMA, SARIMA, SARIMAX
 
+from utils import BaseTest
+
 
 # --- Helper function for creating seasonal data ---
 def create_seasonal_data(length=100, period=12, amplitude=10, trend=0.1, noise_std=2):
@@ -22,7 +24,7 @@ def create_seasonal_data(length=100, period=12, amplitude=10, trend=0.1, noise_s
     )  # Add constant offset
 
 
-class TestARIMA(unittest.TestCase):
+class TestARIMA(BaseTest):
     """Unit test suite for the ARIMA class."""
 
     @classmethod
@@ -234,7 +236,7 @@ class TestARIMA(unittest.TestCase):
             ARIMA.find_best_order(train_series, test_series, subset_size=0)
 
 
-class TestSARIMA(unittest.TestCase):
+class TestSARIMA(BaseTest):
     """Unit test suite for the SARIMA class."""
 
     @classmethod
@@ -441,7 +443,7 @@ class TestSARIMA(unittest.TestCase):
         self.assertTrue(all(isinstance(i, int) for i in best_orders[1]))
 
 
-class TestSARIMAX(unittest.TestCase):
+class TestSARIMAX(BaseTest):
     """Unit test suite for the SARIMAX class."""
 
     @classmethod

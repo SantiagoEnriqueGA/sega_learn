@@ -8,8 +8,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn.neural_networks import *
 
+from utils import BaseTest
 
-class TestDenseLayer(unittest.TestCase):
+
+class TestDenseLayer(BaseTest):
     """Comprehensive test suite for DenseLayer class.
 
     Tests initialization, forward pass, and backward pass functionalities.
@@ -237,7 +239,7 @@ class TestDenseLayer(unittest.TestCase):
             self.layer.activation_derivative(Z)
 
 
-class TestFlattenLayer(unittest.TestCase):
+class TestFlattenLayer(BaseTest):
     """Comprehensive test suite for FlattenLayer class.
 
     Tests forward and backward pass functionalities for flattening multi-dimensional inputs.
@@ -290,7 +292,7 @@ class TestFlattenLayer(unittest.TestCase):
         self.assertEqual(dA_prev.shape, (0, 3, 4, 4))
 
 
-class TestConvLayer(unittest.TestCase):
+class TestConvLayer(BaseTest):
     """Comprehensive test suite for ConvLayer class.
 
     Tests initialization, forward pass, and backward pass with convolution operations.

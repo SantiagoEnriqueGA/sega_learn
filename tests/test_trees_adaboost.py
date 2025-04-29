@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn.trees import *
 from sega_learn.utils import Metrics, make_classification, make_regression
-from tests.utils import suppress_print
+from tests.utils import BaseTest, suppress_print
 
 # Suppress specific warnings if needed
 warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -19,7 +19,7 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 np.random.seed(42)
 
 
-class TestAdaBoostClassifier(unittest.TestCase):
+class TestAdaBoostClassifier(BaseTest):
     """Unit tests for the AdaBoostClassifier class."""
 
     @classmethod
@@ -226,7 +226,7 @@ class TestAdaBoostClassifier(unittest.TestCase):
             AdaBoostClassifier(base_estimator="invalid_estimator")
 
 
-class TestAdaBoostRegressor(unittest.TestCase):
+class TestAdaBoostRegressor(BaseTest):
     """Unit tests for the AdaBoostRegressor class."""
 
     @classmethod
