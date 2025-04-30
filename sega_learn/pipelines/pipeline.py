@@ -208,8 +208,10 @@ class Pipeline:
         # Fit the final estimator
         final_estimator_name, final_estimator = self._final_estimator_step
         if final_estimator is not None:
-            final_estimator.fit(Xt, y, **fit_params_steps[final_estimator_name])
-
+            try:
+                final_estimator.fit(Xt, y, **fit_params_steps[final_estimator_name])
+            except TypeError:
+                final_estimator.fit(Xt, **fit_params_steps[final_estimator_name])
         self._is_fitted = True
         return self
 
@@ -280,7 +282,11 @@ class Pipeline:
         Xt = X
         for _, name, transform in self._iter(with_final=False):
             if hasattr(transform, "fit_transform"):
-                Xt = transform.fit_transform(Xt, y, **fit_params_steps[name])
+                # Try fit_transform with y, if TypeError, try without y
+                try:
+                    Xt = transform.fit_transform(Xt, y, **fit_params_steps[name])
+                except TypeError:
+                    Xt = transform.fit_transform(Xt, **fit_params_steps[name])
             else:
                 Xt = transform.fit(Xt, y, **fit_params_steps[name]).transform(Xt)
 

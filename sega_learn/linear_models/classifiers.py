@@ -474,6 +474,8 @@ class LogisticRegression:
         max_iter: (int) - Maximum number of iterations (default is 1000).
     """
 
+    valid_params = ["learning_rate", "max_iter"]
+
     def __init__(self, learning_rate=0.01, max_iter=1000):
         """Initializes the classifier with specified hyperparameters.
 
@@ -566,3 +568,39 @@ class LogisticRegression:
     def _sigmoid(self, z):
         """Applies the sigmoid function."""
         return 1 / (1 + np.exp(-z))
+
+    # TODO: Add get_params and set_params to all estimators
+    def get_params(self, **params):
+        """Get the parameters of this logistic regression model.
+
+        Args:
+            **params: dict, Parameter names mapped to their values.
+
+        Returns:
+            params: dict, Parameter names mapped to their values.
+        """
+        params = {"learning_rate": self.learning_rate, "max_iter": self.max_iter}
+        return params
+
+    def set_params(self, **params):
+        """Set the parameters of this logistic regression model.
+
+        Args:
+            **params: dict, Parameter names mapped to their values.
+
+        Returns:
+            self: LogisticRegression instance.
+        """
+        if not isinstance(params, dict):
+            raise TypeError("params must be a dict")
+        for key in params:
+            if key not in self.valid_params:
+                raise ValueError(f"Invalid parameter: {key}")
+
+        if "learning_rate" in params:
+            self.learning_rate = params["learning_rate"]
+
+        if "max_iter" in params:
+            self.max_iter = params["max_iter"]
+
+        return self
