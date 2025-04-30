@@ -68,7 +68,7 @@ def train_and_evaluate(optimizer, lr_scheduler, optimizer_name):
         save_animation=True,
         save_path=f"examples/neural_networks/plots/neuralNetwork_classifier_{optimizer_name}.mp4",
         fps=1,
-        dpi=100,
+        dpi=300,
         frame_every=1,
     )
 
@@ -116,7 +116,7 @@ def train_and_evaluate_numba(optimizer, lr_scheduler, optimizer_name):
         save_animation=True,
         save_path=f"examples/neural_networks/plots/neuralNetwork_classifier_{optimizer_name}_numba.mp4",
         fps=1,
-        dpi=100,
+        dpi=300,
         frame_every=1,
     )
 

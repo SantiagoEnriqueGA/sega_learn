@@ -46,5 +46,5 @@ animator.save(
     filename="examples/utils/plots/animator_ridge.gif",
     writer="pillow",
     fps=10,
-    dpi=100,
+    dpi=300,
 )

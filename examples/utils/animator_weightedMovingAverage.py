@@ -61,7 +61,7 @@ animator.save(
     filename="examples/utils/plots/animator_wma_forecast_animation.gif",
     writer="pillow",
     fps=5,
-    dpi=100,
+    dpi=300,
 )
 
 # To show the animation
