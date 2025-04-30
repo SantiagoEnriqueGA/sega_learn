@@ -70,71 +70,70 @@ jobs:
       - name: Run Unit/Functional Tests
         run: uv run python tests/run_quick_tests.py
 
-      # DISABLED: IN DEVELOPMENT!
-      # # Step 4: Run selected examples
-      # - name: Run Examples
-      #   run: |
-      #     # Auto
-      #     uv run python examples/auto/classifier.py
-      #     # Clustering
-      #     uv run python examples/clustering/dbscan.py
-      #     uv run python examples/clustering/dbscan_3d.py
-      #     # Linear Models
-      #     uv run python examples/linear_models/bayes.py
-      #     uv run python examples/linear_models/lasso.py
-      #     uv run python examples/linear_models/lda.py
-      #     uv run python examples/linear_models/logisticRegression.py
-      #     uv run python examples/linear_models/ols.py
-      #     uv run python examples/linear_models/passiveAggressive.py
-      #     uv run python examples/linear_models/qda.py
-      #     uv run python examples/linear_models/ransac.py
-      #     uv run python examples/linear_models/ridge.py
-      #     # Nearest Neighbors
-      #     uv run python examples/nearest_neighbors/nearestNeighborsClassifier.py
-      #     uv run python examples/nearest_neighbors/nearestNeighborsRegressor.py
-      #     # Neural Networks
-      #     uv run python examples/neural_networks/neuralNetwork_classifier.py
-      #     uv run python examples/neural_networks/neuralNetwork_classifier_hyper.py
-      #     uv run python examples/neural_networks/neuralNetwork_iris.py
-      #     uv run python examples/neural_networks/neuralNetwork_layers_conv.py
-      #     uv run python examples/neural_networks/neuralNetwork_metrics_anim.py
-      #     uv run python examples/neural_networks/neuralNetwork_regressor.py
-      #     # SVM
-      #     uv run python examples/svm/generalizedSVC_multi.py
-      #     uv run python examples/svm/linearSVC_binary.py
-      #     uv run python examples/svm/linearSVR.py
-      #     # Trees
-      #     uv run python examples/trees/gradientBoostedRegressor.py
-      #     uv run python examples/trees/isolationForest_reg.py
-      #     uv run python examples/trees/randomForestClassifier.py
-      #     uv run python examples/trees/randomForestRegressor.py
-      #     # Utils
-      #     uv run python examples/utils/dataAugmentation_combined.py
-      #     uv run python examples/utils/dataAugmentation_randOver.py
-      #     uv run python examples/utils/dataAugmentation_randUnder.py
-      #     uv run python examples/utils/dataAugmentation_smote.py
-      #     uv run python examples/utils/dataPreprocessing.py
-      #     uv run python examples/utils/gridSearchCV_gbr.py
-      #     uv run python examples/utils/gridSearchCV_rfc.py
-      #     uv run python examples/utils/gridSearchCV_rfr.py
-      #     uv run python examples/utils/makeData.py
-      #     uv run python examples/utils/pca_classification.py
-      #     uv run python examples/utils/pca_regression.py
-      #     uv run python examples/utils/polynomialTransform.py
-      #     uv run python examples/utils/randomSearchCV_bayes.py
-      #     uv run python examples/utils/randomSearchCV_gbr.py
-      #     uv run python examples/utils/randomSearchCV_rfc.py
-      #     uv run python examples/utils/randomSearchCV_rfr.py
-      #     uv run python examples/utils/segaSearchCV_rfr.py
-      #     uv run python examples/utils/svd_classification.py
-      #     uv run python examples/utils/svd_regression.py
+      # Step 4: Run selected examples
+      - name: Run Examples
+        run: |
+          # Auto
+          uv run python examples/auto/classifier.py
+          # Clustering
+          uv run python examples/clustering/dbscan.py
+          uv run python examples/clustering/dbscan_3d.py
+          # Linear Models
+          uv run python examples/linear_models/bayes.py
+          uv run python examples/linear_models/lasso.py
+          uv run python examples/linear_models/lda.py
+          uv run python examples/linear_models/logisticRegression.py
+          uv run python examples/linear_models/ols.py
+          uv run python examples/linear_models/passiveAggressive.py
+          uv run python examples/linear_models/qda.py
+          uv run python examples/linear_models/ransac.py
+          uv run python examples/linear_models/ridge.py
+          # Nearest Neighbors
+          uv run python examples/nearest_neighbors/nearestNeighborsClassifier.py
+          uv run python examples/nearest_neighbors/nearestNeighborsRegressor.py
+          # Neural Networks
+          uv run python examples/neural_networks/neuralNetwork_classifier.py
+          uv run python examples/neural_networks/neuralNetwork_classifier_hyper.py
+          uv run python examples/neural_networks/neuralNetwork_iris.py
+          uv run python examples/neural_networks/neuralNetwork_layers_conv.py
+          uv run python examples/neural_networks/neuralNetwork_metrics_anim.py
+          uv run python examples/neural_networks/neuralNetwork_regressor.py
+          # SVM
+          uv run python examples/svm/generalizedSVC_multi.py
+          uv run python examples/svm/linearSVC_binary.py
+          uv run python examples/svm/linearSVR.py
+          # Trees
+          uv run python examples/trees/gradientBoostedRegressor.py
+          uv run python examples/trees/isolationForest_reg.py
+          uv run python examples/trees/randomForestClassifier.py
+          uv run python examples/trees/randomForestRegressor.py
+          # Utils
+          uv run python examples/utils/dataAugmentation_combined.py
+          uv run python examples/utils/dataAugmentation_randOver.py
+          uv run python examples/utils/dataAugmentation_randUnder.py
+          uv run python examples/utils/dataAugmentation_smote.py
+          uv run python examples/utils/dataPreprocessing.py
+          uv run python examples/utils/gridSearchCV_gbr.py
+          uv run python examples/utils/gridSearchCV_rfc.py
+          uv run python examples/utils/gridSearchCV_rfr.py
+          uv run python examples/utils/makeData.py
+          uv run python examples/utils/pca_classification.py
+          uv run python examples/utils/pca_regression.py
+          uv run python examples/utils/polynomialTransform.py
+          uv run python examples/utils/randomSearchCV_bayes.py
+          uv run python examples/utils/randomSearchCV_gbr.py
+          uv run python examples/utils/randomSearchCV_rfc.py
+          uv run python examples/utils/randomSearchCV_rfr.py
+          uv run python examples/utils/segaSearchCV_rfr.py
+          uv run python examples/utils/svd_classification.py
+          uv run python examples/utils/svd_regression.py
 
-      # # NOT BEING USED CURRENTLY
-      # # ---------------------------------------
-      # # (Alternative Step: Run ALL examples)
-      # # - name: Run Example Tests
-      # #   run: uv run python tests/run_all_examples.py
+      # NOT BEING USED CURRENTLY
+      # ---------------------------------------
+      # (Alternative Step: Run ALL examples)
+      # - name: Run Example Tests
+      #   run: uv run python tests/run_all_examples.py
 
-      # # (Alternative Step: Run ALL tests)
-      # # - name: Run All Remaining Tests (Alternative)
-      # #   run: uv run python -m unittest discover -s tests -p "test_*.py"
+      # (Alternative Step: Run ALL tests)
+      # - name: Run All Remaining Tests (Alternative)
+      #   run: uv run python -m unittest discover -s tests -p "test_*.py"
