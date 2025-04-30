@@ -10,6 +10,7 @@
 # from sega_learn.pipelines import Pipeline
 # from sega_learn.trees import RandomForestClassifier
 # from sega_learn.utils import Scaler, make_classification, make_regression
+# from tests.utils import BaseTest
 
 
 # class SimpleTransformer:

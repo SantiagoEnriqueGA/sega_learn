@@ -41,8 +41,7 @@ from sega_learn.neural_networks.numba_utils import (
 from sega_learn.neural_networks.numba_utils import (
     tanh_derivative as tanh_derivative_nb,
 )
-
-from utils import BaseTest
+from tests.utils import BaseTest
 
 # from tests.utils import suppress_print
 

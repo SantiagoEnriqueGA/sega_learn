@@ -6,7 +6,7 @@ import os
 import sys
 import unittest
 
-from utils import BaseTest, strip_file_path, suppress_print
+from tests.utils import BaseTest, strip_file_path, suppress_print
 
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))

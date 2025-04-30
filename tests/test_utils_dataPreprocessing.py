@@ -12,8 +12,7 @@ from sega_learn.utils.dataPreprocessing import (
     normalize,
     one_hot_encode,
 )
-
-from utils import BaseTest
+from tests.utils import BaseTest
 
 
 class TestScaler(BaseTest):

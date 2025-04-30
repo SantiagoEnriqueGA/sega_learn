@@ -11,8 +11,7 @@ from sega_learn.utils import (
     make_regression,
     make_time_series,
 )
-
-from utils import BaseTest
+from tests.utils import BaseTest
 
 
 class TestMakeData(BaseTest):

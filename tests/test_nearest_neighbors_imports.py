@@ -6,8 +6,7 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.nearest_neighbors import *
-
-from utils import BaseTest
+from tests.utils import BaseTest
 
 
 class TestImportsNearestNeighbors(BaseTest):

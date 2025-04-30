@@ -7,9 +7,8 @@ import sys
 import unittest
 from functools import partialmethod
 
+from tests.utils import BaseTest, strip_file_path, suppress_print
 from tqdm import tqdm
-
-from utils import BaseTest, strip_file_path, suppress_print
 
 tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 

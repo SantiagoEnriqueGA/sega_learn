@@ -8,8 +8,7 @@ import numpy as np
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.time_series.arima import ARIMA, SARIMA, SARIMAX
-
-from utils import BaseTest
+from tests.utils import BaseTest
 
 
 # --- Helper function for creating seasonal data ---

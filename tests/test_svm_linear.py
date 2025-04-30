@@ -8,8 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from sega_learn.svm import LinearSVC, LinearSVR
 from sega_learn.utils import make_classification, make_regression
-
-from utils import BaseTest
+from tests.utils import BaseTest
 
 
 class TestLinearSVR(BaseTest):

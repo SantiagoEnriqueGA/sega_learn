@@ -13,8 +13,7 @@ from sega_learn.time_series.decomposition import (
     MultiplicativeDecomposition,
     _centered_moving_average,
 )
-
-from utils import BaseTest
+from tests.utils import BaseTest
 
 
 # --- Helper function for creating seasonal data ---

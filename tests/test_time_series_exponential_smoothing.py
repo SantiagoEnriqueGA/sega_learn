@@ -12,8 +12,7 @@ from sega_learn.time_series.exponential_smoothing import (
     SimpleExponentialSmoothing,
     TripleExponentialSmoothing,
 )
-
-from utils import BaseTest
+from tests.utils import BaseTest
 
 
 # --- Helper function for creating seasonal data ---

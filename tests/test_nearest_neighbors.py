@@ -9,8 +9,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from sega_learn.linear_models import *
 from sega_learn.nearest_neighbors.knn_classifier import KNeighborsClassifier
 from sega_learn.nearest_neighbors.knn_regressor import KNeighborsRegressor
-
-from utils import BaseTest
+from tests.utils import BaseTest
 
 
 class TestKNeighborsClassifier(BaseTest):

@@ -9,8 +9,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from sega_learn.trees import *
 from sega_learn.trees.randomForestClassifier import _classify_oob
 from sega_learn.utils import make_classification
-
-from utils import BaseTest
+from tests.utils import BaseTest
 
 
 class TestClassifierTreeUtility(BaseTest):

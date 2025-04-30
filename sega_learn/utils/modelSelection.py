@@ -179,7 +179,7 @@ class GridSearchCV:
                 self.best_model = self.active_model
 
         # If self.best_model exists, return it
-        if not hasattr(self, "best_model"):
+        if hasattr(self, "best_model"):
             return self.best_model
         else:
             return None
@@ -283,7 +283,7 @@ class RandomSearchCV:
                 self.best_model = self.active_model
 
         # If self.best_model exists, return it
-        if not hasattr(self, "best_model"):
+        if hasattr(self, "best_model"):
             return self.best_model
         else:
             return None
@@ -474,7 +474,7 @@ class segaSearchCV:
                         )
 
         # If self.best_model exists, return it
-        if not hasattr(self, "best_model"):
+        if hasattr(self, "best_model"):
             return self.best_model
         else:
             return None

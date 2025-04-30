@@ -12,8 +12,7 @@ from sega_learn.time_series.moving_average import (
     SimpleMovingAverage,
     WeightedMovingAverage,
 )
-
-from utils import BaseTest
+from tests.utils import BaseTest
 
 
 class TestSimpleMovingAverage(BaseTest):

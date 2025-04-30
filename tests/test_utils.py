@@ -619,7 +619,7 @@ class TestGridSearchCV(BaseTest):
     def test_isoForest(self):
         """Tests the GridSearchCV class with the Isolation Forest model."""
         iso_forest = IsolationForest
-        param_grid = [{"n_trees": [10, 20]}]
+        param_grid = [{"n_trees": [10, 20]}, {"n_jobs": [1]}]
         grid_search = GridSearchCV(model=iso_forest, param_grid=param_grid, cv=2)
         grid_search.fit(self.X_class, self.y_class)
 
@@ -835,7 +835,7 @@ class TestRandomSearchCV(BaseTest):
     def test_isoForest(self):
         """Tests the RandomSearchCV class with the Isolation Forest model."""
         iso_forest = IsolationForest
-        param_grid = [{"n_trees": [10, 20]}]
+        param_grid = [{"n_trees": [10, 20]}, {"n_jobs": [1]}]
         rand_search = RandomSearchCV(
             model=iso_forest, param_grid=param_grid, cv=3, iter=2
         )

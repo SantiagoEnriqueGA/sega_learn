@@ -8,8 +8,7 @@ import numpy as np
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.svm import OneClassSVM
-
-from utils import BaseTest
+from tests.utils import BaseTest
 
 
 class TestOneClassSVM(BaseTest):
