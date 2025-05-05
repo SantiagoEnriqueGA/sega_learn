@@ -10,41 +10,29 @@ def train_test_split(
     shuffle=True,
     stratify=None,
 ):
-    """Split arrays or matrices into random train and test subsets.
+    """Splits arrays or matrices into random train and test subsets.
 
-    Parameters
-    ----------
-    *arrays : sequence of arrays
-        Allowed inputs are lists, numpy arrays, scipy-sparse matrices or pandas DataFrames.
-
-    test_size : float or int, default=None
-        If float, should be between 0.0 and 1.0 and represent the proportion
-        of the dataset to include in the test split. If int, represents the
-        absolute number of test samples.
-
-    train_size : float or int, default=None
-        If float, should be between 0.0 and 1.0 and represent the
-        proportion of the dataset to include in the train split. If int,
-        represents the absolute number of train samples. If None, the value is
-        automatically computed as the complement of the test size (unless both
-        are None, in which case test_size defaults to 0.25).
-
-    random_state : int, RandomState instance or None, default=None
-        Controls the shuffling applied to the data before applying the split.
-        Pass an int for reproducible output across multiple function calls.
-
-    shuffle : bool, default=True
-        Whether or not to shuffle the data before splitting. If shuffle=False
-        then stratify must be None.
-
-    stratify : array-like, default=None
-        If not None, data is split in a stratified fashion, using this as
-        the class labels.
+    Args:
+        *arrays: (sequence of arrays) - Allowed inputs are lists, numpy arrays,
+            scipy-sparse matrices, or pandas DataFrames.
+        test_size: (float or int), optional - If float, should be between 0.0 and 1.0
+            and represent the proportion of the dataset to include in the test split.
+            If int, represents the absolute number of test samples (default is None).
+        train_size: (float or int), optional - If float, should be between 0.0 and 1.0
+            and represent the proportion of the dataset to include in the train split.
+            If int, represents the absolute number of train samples. If None, the value
+            is automatically computed as the complement of the test size (default is None).
+        random_state: (int, RandomState instance, or None), optional - Controls the shuffling
+            applied to the data before applying the split. Pass an int for reproducible output
+            across multiple function calls (default is None).
+        shuffle: (bool), optional - Whether or not to shuffle the data before splitting.
+            If shuffle=False, then stratify must be None (default is True).
+        stratify: (array-like), optional - If not None, data is split in a stratified fashion,
+            using this as the class labels (default is None).
 
     Returns:
-    -------
-    splitting : list, length=2 * len(arrays)
-        List containing train-test split of inputs.
+        splitting: (list) - A list containing the train-test split of inputs, with length
+            equal to 2 * len(arrays).
     """
     # Initialize random number generator
     if random_state is not None:
