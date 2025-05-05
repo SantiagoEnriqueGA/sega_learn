@@ -55,5 +55,5 @@ animator.save(
     filename="examples/utils/plots/animator_logistic_regression.gif",
     writer="pillow",
     fps=3,
-    dpi=100,
+    dpi=300,
 )

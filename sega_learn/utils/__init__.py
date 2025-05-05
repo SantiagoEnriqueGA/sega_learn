@@ -23,6 +23,7 @@ from .dataPreprocessing import (
     normalize,
     Scaler,
 )
+from .validation import check_is_fitted, check_X_y
 
 __all__ = [
     "AnimationBase",
@@ -52,4 +53,6 @@ __all__ = [
     "one_hot_encode",
     "normalize",
     "Scaler",
+    "check_is_fitted",
+    "check_X_y",
 ]

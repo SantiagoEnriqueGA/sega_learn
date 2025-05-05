@@ -90,7 +90,7 @@ class RandomForestClassifier:
         log_loss (float or None): The log loss of the model after fitting (only for binary classification).
 
     Methods:
-        __init__(forest_size=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None):
+        __init__(n_estimators=100, max_depth=10, n_jobs=-1, random_seed=None, X=None, y=None):
             Initializes the RandomForestClassifier object with the specified parameters.
         fit(X=None, y=None, verbose=False):
             Fits the random forest model to the provided data using parallel processing.
@@ -104,7 +104,7 @@ class RandomForestClassifier:
 
     def __init__(
         self,
-        forest_size=100,
+        n_estimators=100,
         max_depth=10,
         min_samples_split=2,
         n_jobs=-1,
@@ -113,7 +113,7 @@ class RandomForestClassifier:
         y=None,
     ):
         """Initializes the RandomForest object."""
-        self.n_estimators = forest_size
+        self.n_estimators = n_estimators
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.n_jobs = n_jobs if n_jobs > 0 else max(1, multiprocessing.cpu_count())
@@ -130,7 +130,7 @@ class RandomForestClassifier:
     def get_params(self):
         """Get the parameters of the RandomForestClassifier."""
         return {
-            "forest_size": self.n_estimators,
+            "n_estimators": self.n_estimators,
             "max_depth": self.max_depth,
             "min_samples_split": self.min_samples_split,
             "n_jobs": self.n_jobs,

@@ -1,5 +1,6 @@
 import csv
 import os
+import random
 import sys
 import time
 import unittest
@@ -7,13 +8,16 @@ import warnings
 from functools import partialmethod
 
 import matplotlib as mpl
+import numpy as np
 from tqdm import tqdm
 
 tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 warnings.filterwarnings("ignore")
+mpl.use("Agg")  # Use non-interactive backend for tests
 
-# Use non-interactive backend for tests
-mpl.use("Agg")
+# Set random seeds for reproducibility
+random.seed(42)
+np.random.seed(42)
 
 # Change the working directory to the parent directory to allow importing the package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))

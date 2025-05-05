@@ -6,9 +6,10 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.svm import *
+from tests.utils import BaseTest
 
 
-class TestImportsSVM(unittest.TestCase):
+class TestImportsSVM(BaseTest):
     """Tests that the SVM subpackage can be imported correctly.
 
     Methods:

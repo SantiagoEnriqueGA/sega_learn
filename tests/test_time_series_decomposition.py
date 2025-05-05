@@ -13,6 +13,7 @@ from sega_learn.time_series.decomposition import (
     MultiplicativeDecomposition,
     _centered_moving_average,
 )
+from tests.utils import BaseTest
 
 
 # --- Helper function for creating seasonal data ---
@@ -27,7 +28,7 @@ def create_seasonal_data(
     return trend_component + seasonal_component + noise_component + offset
 
 
-class TestAdditiveDecomposition(unittest.TestCase):
+class TestAdditiveDecomposition(BaseTest):
     """Unit test suite for the AdditiveDecomposition class."""
 
     @classmethod
@@ -146,7 +147,7 @@ class TestAdditiveDecomposition(unittest.TestCase):
         )
 
 
-class TestMultiplicativeDecomposition(unittest.TestCase):
+class TestMultiplicativeDecomposition(BaseTest):
     """Unit test suite for the MultiplicativeDecomposition class."""
 
     @classmethod
@@ -323,7 +324,7 @@ class TestMultiplicativeDecomposition(unittest.TestCase):
         )  # Looser tolerance
 
 
-class TestCenteredMovingAverage(unittest.TestCase):
+class TestCenteredMovingAverage(BaseTest):
     """Unit test suite for the _centered_moving_average helper function."""
 
     @classmethod

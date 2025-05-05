@@ -9,9 +9,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from sega_learn.trees import *
 from sega_learn.trees.randomForestClassifier import _classify_oob
 from sega_learn.utils import make_classification
+from tests.utils import BaseTest
 
 
-class TestClassifierTreeUtility(unittest.TestCase):
+class TestClassifierTreeUtility(BaseTest):
     """Set up the ClassifierTreeUtility instance for testing."""
 
     @classmethod
@@ -404,7 +405,7 @@ class TestClassifierTreeUtility(unittest.TestCase):
         self.assertEqual(best_split["label"], 1)
 
 
-class TestClassifierTree(unittest.TestCase):
+class TestClassifierTree(BaseTest):
     """Set up the ClassifierTree instance for testing."""
 
     @classmethod
@@ -537,7 +538,7 @@ class TestClassifierTree(unittest.TestCase):
         self.assertEqual(result_right, 1)
 
 
-class TestRandomForestClassifier(unittest.TestCase):
+class TestRandomForestClassifier(BaseTest):
     """Set up the RandomForestClassifier instance for testing."""
 
     @classmethod
@@ -549,7 +550,7 @@ class TestRandomForestClassifier(unittest.TestCase):
         """Set up the RandomForestClassifier instance for testing."""
         X, y = make_classification(n_samples=100, n_features=5, n_classes=2)
         self.rf = RandomForestClassifier(
-            X=X, y=y, max_depth=10, forest_size=10, random_seed=0, n_jobs=1
+            X=X, y=y, max_depth=10, n_estimators=10, random_seed=0, n_jobs=1
         )
 
     def test_init(self):
@@ -686,7 +687,7 @@ class TestRandomForestClassifier(unittest.TestCase):
         self.assertEqual(proba.shape, (10, 2))
 
 
-class TesGradientBoostedClassifier(unittest.TestCase):
+class TesGradientBoostedClassifier(BaseTest):
     """Set up the GradientBoostedClassifier instance for testing."""
 
     @classmethod

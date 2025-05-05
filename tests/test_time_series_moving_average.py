@@ -12,9 +12,10 @@ from sega_learn.time_series.moving_average import (
     SimpleMovingAverage,
     WeightedMovingAverage,
 )
+from tests.utils import BaseTest
 
 
-class TestSimpleMovingAverage(unittest.TestCase):
+class TestSimpleMovingAverage(BaseTest):
     """Unit test suite for the SimpleMovingAverage class."""
 
     @classmethod
@@ -67,7 +68,7 @@ class TestSimpleMovingAverage(unittest.TestCase):
         self.assertEqual(len(forecast), 0)
 
 
-class TestWeightedMovingAverage(unittest.TestCase):
+class TestWeightedMovingAverage(BaseTest):
     """Unit test suite for the WeightedMovingAverage class."""
 
     @classmethod
@@ -126,7 +127,7 @@ class TestWeightedMovingAverage(unittest.TestCase):
         self.assertEqual(len(forecast), 0)
 
 
-class TestExponentialMovingAverage(unittest.TestCase):
+class TestExponentialMovingAverage(BaseTest):
     """Unit test suite for the ExponentialMovingAverage class."""
 
     @classmethod

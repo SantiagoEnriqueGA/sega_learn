@@ -56,5 +56,5 @@ animator.save(
     filename="examples/utils/plots/animator_perceptron.gif",
     writer="pillow",
     fps=3,
-    dpi=100,
+    dpi=300,
 )

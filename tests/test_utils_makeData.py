@@ -11,9 +11,10 @@ from sega_learn.utils import (
     make_regression,
     make_time_series,
 )
+from tests.utils import BaseTest
 
 
-class TestMakeData(unittest.TestCase):
+class TestMakeData(BaseTest):
     """Unit test for the data generation utilities make_regression, make_classification, and make_blobs."""
 
     @classmethod

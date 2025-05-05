@@ -10,7 +10,7 @@ from sega_learn.auto import AutoClassifier, AutoRegressor
 from sega_learn.linear_models import LogisticRegression, OrdinaryLeastSquares
 from sega_learn.trees import ClassifierTree, RegressorTree
 from sega_learn.utils import Metrics, make_classification, make_regression
-from tests.utils import suppress_print
+from tests.utils import BaseTest, suppress_print
 
 # Suppress warnings
 warnings.filterwarnings(
@@ -22,7 +22,7 @@ r2_score = Metrics.r_squared
 accuracy_score = Metrics.accuracy
 
 
-class TestAutoRegressor(unittest.TestCase):
+class TestAutoRegressor(BaseTest):
     """Unit test for the AutoRegressor class."""
 
     @classmethod
@@ -254,7 +254,7 @@ class TestAutoRegressor(unittest.TestCase):
         self.assertIsNotNone(self.hp_tuned_model_grid.predictions)
 
 
-class TestAutoClassifier(unittest.TestCase):
+class TestAutoClassifier(BaseTest):
     """Unit test for the AutoClassifier class."""
 
     @classmethod

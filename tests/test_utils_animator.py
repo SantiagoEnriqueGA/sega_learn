@@ -22,10 +22,10 @@ from sega_learn.utils.animator import (
     ForcastingAnimation,
     RegressionAnimation,
 )
-from tests.utils import suppress_print
+from tests.utils import BaseTest, suppress_print
 
 
-class TestForcastingAnimation(unittest.TestCase):
+class TestForcastingAnimation(BaseTest):
     """Unit test for the ForcastingAnimation class."""
 
     @classmethod
@@ -164,7 +164,7 @@ class TestForcastingAnimation(unittest.TestCase):
         plt.close(animator.fig)
 
 
-class TestRegressionAnimation(unittest.TestCase):
+class TestRegressionAnimation(BaseTest):
     """Unit test for the RegressionAnimation class."""
 
     @classmethod
@@ -329,7 +329,7 @@ class TestRegressionAnimation(unittest.TestCase):
         plt.close(animator.fig)
 
 
-class TestClassificationAnimation(unittest.TestCase):
+class TestClassificationAnimation(BaseTest):
     """Unit test for the ClassificationAnimation class."""
 
     @classmethod
@@ -500,7 +500,7 @@ class TestClassificationAnimation(unittest.TestCase):
         plt.close(animator.fig)
 
 
-class TestAnimationIntegration(unittest.TestCase):
+class TestAnimationIntegration(BaseTest):
     """Integration tests for animation classes."""
 
     @classmethod

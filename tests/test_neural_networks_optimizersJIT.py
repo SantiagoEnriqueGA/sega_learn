@@ -9,6 +9,7 @@ from numba.experimental import jitclass
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.neural_networks import *
+from tests.utils import BaseTest
 
 spec = [
     ("weights", float64[:, :]),
@@ -26,7 +27,7 @@ class MockLayer:
         self.biases = np.zeros((1, output_size))
 
 
-class TestJITAdamOptimizer(unittest.TestCase):
+class TestJITAdamOptimizer(BaseTest):
     """Unit tests for the JITAdamOptimizer class."""
 
     @classmethod
@@ -92,7 +93,7 @@ class TestJITAdamOptimizer(unittest.TestCase):
         self.assertFalse(np.array_equal(layer.biases, initial_biases))
 
 
-class TestJITSGDOptimizer(unittest.TestCase):
+class TestJITSGDOptimizer(BaseTest):
     """Unit tests for the JITSGDOptimizer class."""
 
     @classmethod
@@ -159,7 +160,7 @@ class TestJITSGDOptimizer(unittest.TestCase):
         self.assertFalse(np.array_equal(layer.biases, initial_biases))
 
 
-class TestJITAdadeltaOptimizer(unittest.TestCase):
+class TestJITAdadeltaOptimizer(BaseTest):
     """Unit tests for the JITAdadeltaOptimizer class."""
 
     @classmethod

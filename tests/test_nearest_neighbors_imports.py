@@ -6,9 +6,10 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.nearest_neighbors import *
+from tests.utils import BaseTest
 
 
-class TestImportsNearestNeighbors(unittest.TestCase):
+class TestImportsNearestNeighbors(BaseTest):
     """Tests that the clustering subpackage can be imported correctly.
 
     Methods:

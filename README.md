@@ -33,6 +33,7 @@ For more detailed information on each module, see the following READMEs:
 - [Linear Models Module](sega_learn/linear_models/README.md)
 - [Nearest Neighbors Module](sega_learn/nearest_neighbors/README.MD)
 - [Neural Networks Module](sega_learn/neural_networks/README.md)
+- [Pipelines Module](sega_learn/pipelines/README.MD)
 - [Trees Module](sega_learn/trees/README.md)
 - [Time Series Module](sega_learn/time_series/README.md)
 - [SVM Module](sega_learn/svm/README.md)
@@ -91,7 +92,6 @@ The SEGA_LEARN library includes the following features:
 - **AdaBoost Regressor**: Implements an ensemble regressor that combines multiple weak regressors to create a strong regressor.
 
 ### Time Series
-- **Forecasting Pipeline**: Implements a custom forecasting pipeline that allows users to define their own preprocessing steps, forecasting models, and evaluation metrics.
 - **ARIMA**: Implements the AutoRegressive Integrated Moving Average (ARIMA) model for time series forecasting.
 - **SARIMA**: Implements the Seasonal AutoRegressive Integrated Moving Average (SARIMA) model for time series forecasting with seasonality.
 - **SARIMAX**: Implements the Seasonal AutoRegressive Integrated Moving Average with eXogenous variables (SARIMAX) model for time series forecasting with seasonality and exogenous variables.
@@ -103,6 +103,10 @@ The SEGA_LEARN library includes the following features:
 - **Simple Moving Average**: Implements the simple moving average for time series forecasting.
 - **Weighted Moving Average**: Implements the weighted moving average for time series forecasting.
 - **Exponential Moving Average**: Implements the exponential moving average for time series forecasting.
+
+### Pipelines
+- **Generic Pipeline**: Implements a generic pipeline for machine learning tasks: Classification and Regression.
+- **Forecasting Pipeline**: Implements a custom forecasting pipeline for time series forecasting.
 
 ### Utilities
 - **Animator**: Implements a custom animation class for visualizing machine learning models, updating one parameter and observing the changes in the model's performance.
@@ -133,6 +137,7 @@ sega_learn/
 │   ├── linear_models/      # Linear models
 │   ├── nearest_neighbors/  # K-Nearest Neighbors
 │   ├── neural_networks/    # Neural Network components
+│   ├── pipelines/          # Pipelines for machine learning tasks
 │   ├── svm/                # Support Vector Machines
 │   ├── trees/              # Tree-based models
 │   ├── time_series/        # Time series models
@@ -148,9 +153,11 @@ sega_learn/
 |
 ├── scripts/            # Helper scripts (e.g., for building docs, environment setup)
 |
-├── .github/            # GitHub specific files (workflows for CI)
+├── .github/                      # GitHub specific files (workflows for CI)
+│   ├── PULL_REQUEST_TEMPLATE.md  # Pull request template
 │   └── workflows/
-│       └── lint-format.yml # Ruff CI check workflow
+|       ├── lint-format.yml       # Ruff CI check workflow
+│       └── run-tests.yml         # Unit tests CI check workflow
 |
 ├── .gitattributes          # Git attributes for the repository
 ├── .gitignore              # Files/directories ignored by Git
@@ -231,7 +238,6 @@ sega_learn/
 - [`randomForestRegressor.py`](examples/trees/randomForestRegressor.py): Demonstrates Random Forest Regressor.
 
 ### Time Series
-- [`forecastingPipeline.py`](examples/time_series/forecast_pipeline.py): Demonstrates a custom forecasting pipeline for time series data.
 - [`arima_arima.py`](examples/time_series/arima_arima.py): Demonstrates ARIMA model for time series forecasting.
 - [`arima_sarima.py`](examples/time_series/arima_sarima.py): Demonstrates SARIMA model for time series forecasting.
 - [`arima_sarimax.py`](examples/time_series/arima_sarimax.py): Demonstrates SARIMAX model for time series forecasting.
@@ -243,6 +249,13 @@ sega_learn/
 - [`smth_simpleExponentialSmoothing.py`](examples/time_series/smth_simpleExponentialSmoothing.py): Demonstrates simple exponential smoothing for time series forecasting.
 - [`smth_doubleExponentialSmoothing.py`](examples/time_series/smth_doubleExponentialSmoothing.py): Demonstrates double exponential smoothing for time series forecasting.
 - [`smth_tripleExponentialSmoothing.py`](examples/time_series/smth_tripleExponentialSmoothing.py): Demonstrates triple exponential smoothing for time series forecasting.
+
+### Pipelines
+- [`pipeline_classification_tuning.py`](examples/pipelines/pipeline_classification_tuning.py): Demonstrates a custom pipeline for classification with hyperparameter tuning.
+- [`pipeline_classification.py`](examples/pipelines/pipeline_classification.py): Demonstrates a custom pipeline for classification.
+- [`pipeline_regression_tuning.py`](examples/pipelines/pipeline_regression_tuning.py): Demonstrates a custom pipeline for regression with hyperparameter tuning.
+- [`pipeline_regression.py`](examples/pipelines/pipeline_regression.py): Demonstrates a custom pipeline for regression.
+- [`pipeline_forecasting.py`](examples/pipelines/pipeline_forecasting.py): Demonstrates a custom pipeline for time series forecasting.
 
 ### Utils
 - [`animator_exponentialMovingAverage.py`](examples/utils/animator_exponentialMovingAverage.py): Demonstrates the Animator class for visualizing the ExponentialMovingAverage model.
@@ -323,10 +336,11 @@ Testing Imports - Main Package............
 Testing Imports - Linear Models.............
 Testing Imports - Nearest Neighbors....
 Testing Imports - Neural Networks.........................
+Testing Imports - Pipelines....
 Testing Imports - SVM........
 Testing Imports - Time Series.............
 Testing Imports - Trees............
-Testing Imports - Utils............................
+Testing Imports - Utils..............................
 Testing AutoClassifier Model...................
 Testing AutoRegressor Model.......................
 Testing DBSCAN...............
@@ -372,6 +386,8 @@ Testing SGDOptimizer.....
 Testing JITAdadeltaOptimizer.....
 Testing JITAdamOptimizer.....
 Testing JITSGDOptimizer.....
+Testing General Pipeline................
+Testing ForecastingPipeline.................................
 Testing GeneralizedSVC...........
 Testing GeneralizedSVR........
 Testing LinearSVC...........
@@ -386,7 +402,6 @@ Testing MultiplicativeDecomposition.............
 Testing DoubleExponentialSmoothing.........
 Testing SimpleExponentialSmoothing...........
 Testing TripleExponentialSmoothing...........
-Testing ForecastingPipeline.................................
 Testing ExponentialMovingAverage......
 Testing SimpleMovingAverage......
 Testing WeightedMovingAverage.......
@@ -453,6 +468,11 @@ Testing example file: neuralNetwork_iris.py.
 Testing example file: neuralNetwork_layers.py...
 Testing example file: neuralNetwork_layers_numba.py..
 Testing example file: neuralNetwork_regressor.py.
+Testing example file: pipeline_classification.py.
+Testing example file: pipeline_classification_tuning.py.
+Testing example file: pipeline_forecasting.py.
+Testing example file: pipeline_regression.py.
+Testing example file: pipeline_regression_tuning.py.
 Testing example file: generalizedSVC_binary.py.
 Testing example file: generalizedSVC_multi.py.
 Testing example file: generalizedSVR.py.
@@ -465,7 +485,6 @@ Testing example file: arima_sarima.py.
 Testing example file: arima_sarimax.py.
 Testing example file: decom_additiveDecomposition.py.
 Testing example file: decom_multiplicativeDecomposition.py.
-Testing example file: forecastingPipeline.py.
 Testing example file: mvg_exponentialMovingAverage.py.
 Testing example file: mvg_exponentialMovingAverage_anim.py.
 Testing example file: mvg_simpleMovingAverage.py.
@@ -516,7 +535,7 @@ Testing example file: svd_regression.py.
 Testing example file: votingClassifier.py.
 Testing example file: votingRegressor.py.
 ----------------------------------------------------------------------
-Ran 1293 tests in 414.104s
+Ran 1319 tests in 414.621s
 
 OK
 ```

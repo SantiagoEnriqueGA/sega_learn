@@ -12,9 +12,10 @@ from sega_learn.utils.dataPreprocessing import (
     normalize,
     one_hot_encode,
 )
+from tests.utils import BaseTest
 
 
-class TestScaler(unittest.TestCase):
+class TestScaler(BaseTest):
     """Unit test for the Scaler class in the data preprocessing module."""
 
     @classmethod
@@ -94,7 +95,7 @@ class TestScaler(unittest.TestCase):
             scaler.inverse_transform(self.data)
 
 
-class TestCataPreprocessingFuncs(unittest.TestCase):
+class TestCataPreprocessingFuncs(BaseTest):
     """Unit test for categorical preprocessing functions in the data preprocessing module."""
 
     @classmethod

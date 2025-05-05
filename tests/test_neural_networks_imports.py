@@ -6,9 +6,10 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.neural_networks import *
+from tests.utils import BaseTest
 
 
-class TestImportsNeuralNetworks(unittest.TestCase):
+class TestImportsNeuralNetworks(BaseTest):
     """Tests that the neural_networks package can be imported correctly.
 
     Methods:

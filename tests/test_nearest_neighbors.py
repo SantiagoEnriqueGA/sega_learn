@@ -9,9 +9,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from sega_learn.linear_models import *
 from sega_learn.nearest_neighbors.knn_classifier import KNeighborsClassifier
 from sega_learn.nearest_neighbors.knn_regressor import KNeighborsRegressor
+from tests.utils import BaseTest
 
 
-class TestKNeighborsClassifier(unittest.TestCase):
+class TestKNeighborsClassifier(BaseTest):
     """Unit tests for the KNeighborsClassifier class."""
 
     @classmethod
@@ -119,7 +120,7 @@ class TestKNeighborsClassifier(unittest.TestCase):
             _knn = KNeighborsClassifier(n_neighbors=3, one_hot_encode="invalid_value")
 
 
-class TestKNeighborsRegressor(unittest.TestCase):
+class TestKNeighborsRegressor(BaseTest):
     """Unit tests for the KNeighborsRegressor class."""
 
     @classmethod

@@ -9,10 +9,10 @@ import numpy as np
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.neural_networks import *
-from tests.utils import suppress_print
+from tests.utils import BaseTest, suppress_print
 
 
-class TestNeuralNetworkVanilla(unittest.TestCase):
+class TestNeuralNetworkVanilla(BaseTest):
     """Comprehensive test suite for BaseBackendNeuralNetwork class.
 
     Tests all major functions and edge cases.

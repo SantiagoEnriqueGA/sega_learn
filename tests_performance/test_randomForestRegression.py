@@ -20,7 +20,7 @@ sample_sizes = [10**i for i in range(1, num_zeros)]
 
 
 def run_forest(X, y, num_trees):
-    reg = rfr(forest_size=num_trees, max_depth=5, random_seed=0)
+    reg = rfr(n_estimators=num_trees, max_depth=5, random_seed=0)
 
     start_time = time.time()
     reg.fit(X, y)

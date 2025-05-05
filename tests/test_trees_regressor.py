@@ -8,6 +8,7 @@ import numpy as np
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.trees import *
+from tests.utils import BaseTest
 
 # Import utility functions if available
 try:
@@ -44,7 +45,7 @@ RANDOM_STATE = 42
 MIN_SAMPLES_SPLIT = 5
 
 
-class TestRegressorTreeUtility(unittest.TestCase):
+class TestRegressorTreeUtility(BaseTest):
     """Tests for the updated RegressorTreeUtility class."""
 
     @classmethod
@@ -407,7 +408,7 @@ class TestRegressorTreeUtility(unittest.TestCase):
         self.assertIsNone(best_split)  # No split should be found
 
 
-class TestRegressorTree(unittest.TestCase):
+class TestRegressorTree(BaseTest):
     """Tests for the updated RegressorTree class."""
 
     @classmethod
@@ -546,7 +547,7 @@ class TestRegressorTree(unittest.TestCase):
         self.assertFalse(np.isnan(predictions).any(), "NaN values found in prediction")
 
 
-class TestRandomForestRegressor(unittest.TestCase):
+class TestRandomForestRegressor(BaseTest):
     """Tests for the updated RandomForestRegressor class."""
 
     @classmethod
@@ -562,7 +563,7 @@ class TestRandomForestRegressor(unittest.TestCase):
     def setUp(self):
         """Sets up the RandomForestRegressor instance for testing."""
         self.rf = RandomForestRegressor(
-            forest_size=5,  # Fewer trees for faster tests
+            n_estimators=5,  # Fewer trees for faster tests
             max_depth=3,
             min_samples_split=MIN_SAMPLES_SPLIT,
             random_seed=RANDOM_STATE,
@@ -681,7 +682,7 @@ class TestRandomForestRegressor(unittest.TestCase):
         )
 
 
-class TestGradientBoostedRegressor(unittest.TestCase):
+class TestGradientBoostedRegressor(BaseTest):
     """Tests for the updated GradientBoostedRegressor class."""
 
     @classmethod

@@ -14,7 +14,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 from sega_learn.linear_models import *
 from sklearn import linear_model
 
-from utils import synthetic_data_regression
+from tests.utils import synthetic_data_regression
 
 
 class TestTime:

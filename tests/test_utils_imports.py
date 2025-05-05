@@ -6,9 +6,10 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.utils import *
+from tests.utils import BaseTest
 
 
-class TestImportsUtils(unittest.TestCase):
+class TestImportsUtils(BaseTest):
     """Tests that the Utils subpackage can be imported correctly.
 
     Methods:
@@ -43,6 +44,8 @@ class TestImportsUtils(unittest.TestCase):
         from sega_learn.utils import Scaler as scaler
         from sega_learn.utils import VotingClassifier as vc
         from sega_learn.utils import VotingRegressor as vr
+        from sega_learn.utils import check_is_fitted as cif
+        from sega_learn.utils import check_X_y as cxy
         from sega_learn.utils import make_blobs as mkblobs
         from sega_learn.utils import make_classification as mkcls
         from sega_learn.utils import make_regression as mkreg
@@ -78,6 +81,8 @@ class TestImportsUtils(unittest.TestCase):
         assert ranb is not None
         assert fanb is not None
         assert canb is not None
+        assert cif is not None
+        assert cxy is not None
 
     def test_wildcard_import(self):
         """Tests that the segadb package can be imported using a wildcard import."""
@@ -236,6 +241,16 @@ class TestImportsUtils(unittest.TestCase):
         from sega_learn.utils import train_test_split
 
         assert train_test_split is not None
+
+    def test_check_is_fitted(self):  # NOQA D201
+        from sega_learn.utils import check_is_fitted
+
+        assert check_is_fitted is not None
+
+    def test_check_X_y(self):  # NOQA D201
+        from sega_learn.utils import check_X_y
+
+        assert check_X_y is not None
 
 
 if __name__ == "__main__":

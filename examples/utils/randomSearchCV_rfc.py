@@ -12,7 +12,7 @@ from sega_learn.utils import make_classification
 X, y = make_classification(n_samples=100, n_features=5, n_classes=2, random_state=42)
 
 grid = [
-    {"forest_size": [5, 10, 15, 20]},
+    {"n_estimators": [5, 10, 15, 20]},
     {"max_depth": [5, 10, 15, 20]},
 ]
 # grid_search = ms.RandomSearchCV(rfc.RandomForestClassifier, grid, iter=5, cv=3, metric='precision', direction='maximize')

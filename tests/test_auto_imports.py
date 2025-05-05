@@ -6,9 +6,10 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sega_learn.auto import *
+from tests.utils import BaseTest
 
 
-class TestImportsLinear(unittest.TestCase):
+class TestImportsLinear(BaseTest):
     """Tests that the linear_models subpackage can be imported correctly.
 
     Methods:

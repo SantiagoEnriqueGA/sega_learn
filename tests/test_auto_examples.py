@@ -6,13 +6,13 @@ import os
 import sys
 import unittest
 
-from utils import strip_file_path, suppress_print
+from tests.utils import BaseTest, strip_file_path, suppress_print
 
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
-class TestExampleExceptions(unittest.TestCase):
+class TestExampleExceptions(BaseTest):
     """Test cases to check for exceptions in example files."""
 
     def test_main(self, example_file):
@@ -40,7 +40,7 @@ class TestExampleExceptions(unittest.TestCase):
                 run_example(verbose=False, test=True)
 
 
-class TestExamplesAuto(unittest.TestCase):
+class TestExamplesAuto(BaseTest):
     """Test cases for the example files. Holds dynamically generated test cases for each example file."""
 
     pass

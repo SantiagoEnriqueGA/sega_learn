@@ -31,7 +31,7 @@ print(
 )
 
 # Random Forest Classifier
-clf2 = RandomForestClassifier(forest_size=20, max_depth=5, random_seed=42)
+clf2 = RandomForestClassifier(n_estimators=20, max_depth=5, random_seed=42)
 clf2.fit(X_train, y_train)
 print(
     f"  Random Forest fitted. Accuracy: {accuracy_score(y_test, clf2.predict(X_test)):.4f}"
