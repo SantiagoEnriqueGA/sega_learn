@@ -6,13 +6,27 @@ build-backend = "setuptools.build_meta"
 name = "sega_learn"
 version = "0.1.0"
 readme = "README.md"
+description = "Sega Learn is a Python package for machine learning and data science."
+authors = [
+    {name = "Santiago Gonzalez", email = "sega97@gmail.com"},
+]
+license = {file = "LICENSE.txt"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 requires-python = ">=3.12"
 dependencies = [
         "numpy",
         "pandas",
         "scikit-learn",
         "scipy",
-        "statsmodels",
 ]
 
 [project.optional-dependencies]
@@ -30,6 +44,9 @@ accelerators = [
 [tool.setuptools.packages]
 find = { include = ["sega_learn*"] }
 
+[project.urls]
+Homepage = "https://github.com/SantiagoEnriqueGA/sega_learn"
+Repository = "https://github.com/SantiagoEnriqueGA/sega_learn"
 
 [tool.ruff]
 # python 3.12.7
