@@ -211,6 +211,7 @@ class Pipeline:
             try:
                 final_estimator.fit(Xt, y, **fit_params_steps[final_estimator_name])
             except TypeError:
+                # If the final estimator does not accept y, we need to fit without it
                 final_estimator.fit(Xt, **fit_params_steps[final_estimator_name])
         self._is_fitted = True
         return self
