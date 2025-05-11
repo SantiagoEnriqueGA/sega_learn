@@ -1,0 +1,176 @@
+name: Test and Publish Python Package to PyPI
+
+on:
+  workflow_dispatch: # Allows manual triggering from the Actions tab
+    inputs:
+      version:
+        description: 'Package version to publish (e.g., 0.1.1). Must match pyproject.toml.'
+        required: true
+        type: string
+
+jobs:
+  test_package:
+    name: Run Core and Example Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.12'] # Test on these Python versions
+      fail-fast: True # Cancel other Python version tests if one fails
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
+      - name: Install Required System Libraries for Numba/llvmlite
+        run: sudo apt-get update && sudo apt-get install -y libgcc-12-dev
+
+      - name: Install dependencies with uv sync
+        run: uv sync --all-extras # Installs all dependencies including optional ones
+
+      - name: Install project package
+        run: uv run uv pip install --no-deps .
+
+      # --- Core Test Steps (from core-tests.yml) ---
+      - name: Step 1 - Run Main Import Test (test_imports.py)
+        run: uv run python -m unittest tests/test_imports.py
+
+      - name: Step 2 - Run Module Import Tests
+        run: uv run python -m unittest discover -s tests -p "test_*_imports.py"
+
+      - name: Step 3 - Run Unit/Functional Tests (quick tests)
+        run: uv run python tests/run_quick_tests.py
+
+      # --- Example Test Steps (from examples-tests.yml) ---
+      - name: Step 4 - Run selected examples
+        run: |
+          # Pipelines
+          uv run python examples/pipelines/pipeline_classification.py
+          uv run python examples/pipelines/pipeline_regression.py
+          uv run python examples/pipelines/pipeline_forecasting.py
+          # Auto
+          uv run python examples/auto/classifier.py --test
+          # Clustering
+          uv run python examples/clustering/dbscan.py
+          uv run python examples/clustering/dbscan_3d.py
+          # Linear Models
+          uv run python examples/linear_models/bayes.py
+          uv run python examples/linear_models/lasso.py
+          uv run python examples/linear_models/lda.py
+          uv run python examples/linear_models/logisticRegression.py
+          uv run python examples/linear_models/ols.py
+          uv run python examples/linear_models/passiveAggressive.py
+          uv run python examples/linear_models/qda.py
+          uv run python examples/linear_models/ransac.py
+          uv run python examples/linear_models/ridge.py
+          # Nearest Neighbors
+          uv run python examples/nearest_neighbors/nearestNeighborsClassifier.py
+          uv run python examples/nearest_neighbors/nearestNeighborsRegressor.py
+          # Neural Networks
+          uv run python examples/neural_networks/neuralNetwork_classifier.py
+          uv run python examples/neural_networks/neuralNetwork_classifier_hyper.py
+          uv run python examples/neural_networks/neuralNetwork_iris.py
+          uv run python examples/neural_networks/neuralNetwork_layers_conv.py
+          uv run python examples/neural_networks/neuralNetwork_metrics_anim.py
+          uv run python examples/neural_networks/neuralNetwork_regressor.py
+          # SVM
+          uv run python examples/svm/generalizedSVC_multi.py
+          uv run python examples/svm/linearSVC_binary.py
+          uv run python examples/svm/linearSVR.py
+          # Time Series
+          uv run python examples/time_series/arima_arima.py
+          uv run python examples/time_series/decom_additiveDecomposition.py
+          uv run python examples/time_series/mvg_exponentialMovingAverage.py
+          uv run python examples/time_series/smth_simpleExponentialSmoothing.py
+          # Trees
+          uv run python examples/trees/gradientBoostedRegressor.py
+          uv run python examples/trees/isolationForest_reg.py
+          uv run python examples/trees/randomForestClassifier.py
+          uv run python examples/trees/randomForestRegressor.py
+          # Utils
+          uv run python examples/utils/dataAugmentation_combined.py
+          uv run python examples/utils/dataAugmentation_randOver.py
+          uv run python examples/utils/dataAugmentation_randUnder.py
+          uv run python examples/utils/dataAugmentation_smote.py
+          uv run python examples/utils/dataPreprocessing.py
+          uv run python examples/utils/gridSearchCV_gbr.py
+          uv run python examples/utils/gridSearchCV_rfc.py
+          uv run python examples/utils/gridSearchCV_rfr.py
+          uv run python examples/utils/makeData.py
+          uv run python examples/utils/pca_classification.py
+          uv run python examples/utils/pca_regression.py
+          uv run python examples/utils/polynomialTransform.py
+          uv run python examples/utils/randomSearchCV_bayes.py
+          uv run python examples/utils/randomSearchCV_gbr.py
+          uv run python examples/utils/randomSearchCV_rfc.py
+          uv run python examples/utils/randomSearchCV_rfr.py
+          uv run python examples/utils/segaSearchCV_rfr.py
+          uv run python examples/utils/svd_classification.py
+          uv run python examples/utils/svd_regression.py
+
+  publish:
+    name: Build and publish Python distributions to PyPI
+    runs-on: ubuntu-latest
+    needs: test_package # IMPORTANT: This job depends on the 'test_package' job
+    # Prevent publishing from branches other than main, even if manually triggered
+    # Ensure the version in pyproject.toml is updated on main before running.
+    if: github.ref == 'refs/heads/main' && needs.test_package.result == 'success'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for all tags and branches
+
+      - name: Set up Python for publishing
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12' # Use a recent stable version for building/publishing
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+    
+      # Verify pyproject.toml version is the same as the input version
+      - name: Verify pyproject.toml version
+        shell: bash
+        run: |
+          PYPROJECT_VERSION=$(uv run python -c "import tomllib; f = open('pyproject.toml', 'rb'); data = tomllib.load(f); print(data['project']['version'])")
+          INPUT_VERSION="${{ github.event.inputs.version }}"
+          echo "Version from pyproject.toml: $PYPROJECT_VERSION"
+          echo "Version from manual input: $INPUT_VERSION"
+          if [ "$PYPROJECT_VERSION" != "$INPUT_VERSION" ]; then
+            echo "Error: Version in pyproject.toml ($PYPROJECT_VERSION) does not match manually input version ($INPUT_VERSION)."
+            echo "Please update pyproject.toml on the 'main' branch and re-run with the correct version."
+            exit 1
+          fi
+          echo "Versions match. Proceeding with build."
+
+      - name: Build package (sdist and wheel)
+        run: uv build --sdist --wheel -o dist/ .
+
+      - name: Publish package to PyPI
+        run: |
+          uv publish dist/* \
+            --repository-url https://upload.pypi.org/legacy/ \
+            --token ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: success() # Only run if publish was successful
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          name: Release v${{ github.event.inputs.version }}
+          body: |
+            Release of version v${{ github.event.inputs.version }}
+            See [CHANGELOG.md](CHANGELOG.md) for details.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
