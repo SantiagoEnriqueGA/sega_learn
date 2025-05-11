@@ -1,77 +1,50 @@
-name: Run Python Tests
+name: Run Python Examples
 
-# Controls when the workflow will run
 on:
   push:
-    branches: [ main ] # Runs on pushes to the main branch
-    paths:
-      - '**/*.py' # Trigger only when Python files are changed
-  pull_request:
-    branches: [ main ] # Runs on pull requests targeting the main branch
+    branches: [ main ]
     paths:
       - '**/*.py'
+      - 'pyproject.toml'
+      - 'examples/**/*.py'
+      - '.github/workflows/examples-tests.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**/*.py'
+      - 'pyproject.toml'
+      - 'examples/**/*.py'
+      - '.github/workflows/examples-tests.yml'
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  test:
-    # The type of runner that the job will run on
+  run-examples:
     runs-on: ubuntu-latest
     strategy:
-      # Run the job on Python 3.12 only
       matrix:
-        python-version: ['3.12']
-      fail-fast: false # Don't cancel other jobs if one fails
+        python-version: ['3.12'] # Run examples on Python 3.12
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Sets up Python environment
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-      # Install uv (fast Python package installer/resolver)
-      # Uses default version or latest
       - name: Install uv
         uses: astral-sh/setup-uv@v1
 
-      # Install Required Libraries for numba/llvmlite compatibility
-      - name: Install Required Libraries
-        run: sudo apt-get install -y libgcc-12-dev
+      - name: Install Required System Libraries for Numba/llvmlite
+        run: sudo apt-get update && sudo apt-get install -y libgcc-12-dev
 
-      # Install dependencies using uv sync. This creates/uses .venv by default.
-      # This uses the default Python version (3.12) and installs all extras from pyproject.toml.
-      # setup-uv action should automatically handle caching.
       - name: Install dependencies with uv sync
         run: uv sync --all-extras
 
-      # Install the local project package *inside* the uv-managed environment.
-      # `uv run` executes the command within the environment found/created by uv.
-      # --no-deps is good practice here.
-      # This step triggers setup.py build_ext within the correct environment.
       - name: Install project package
         run: uv run uv pip install --no-deps .
 
-      # --- Test Steps ---
-      # Step 1: Run main import tests first
-      - name: Run Main Import Test (test_imports.py)
-        run: uv run python -m unittest tests/test_imports.py
-
-      # Step 2: Run module-specific import tests
-      - name: Run Module Import Tests
-        run: uv run python -m unittest discover -s tests -p "test_*_imports.py"
-
-      # Step 3: Run unit/functional tests
-      # Run quick tests, filters for tests that run under CUTOFF, and not Numba/JIT
-      - name: Run Unit/Functional Tests
-        run: uv run python tests/run_quick_tests.py
-
-      # Step 4: Run selected examples
-      - name: Run Examples
+      - name: Run selected examples
         run: |
           # Auto
           uv run python examples/auto/classifier.py
@@ -136,13 +109,3 @@ jobs:
           uv run python examples/utils/segaSearchCV_rfr.py
           uv run python examples/utils/svd_classification.py
           uv run python examples/utils/svd_regression.py
-
-      # NOT BEING USED CURRENTLY
-      # ---------------------------------------
-      # (Alternative Step: Run ALL examples)
-      # - name: Run Example Tests
-      #   run: uv run python tests/run_all_examples.py
-
-      # (Alternative Step: Run ALL tests)
-      # - name: Run All Remaining Tests (Alternative)
-      #   run: uv run python -m unittest discover -s tests -p "test_*.py"
