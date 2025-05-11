@@ -72,9 +72,9 @@ jobs:
           uv run python examples/neural_networks/neuralNetwork_metrics_anim.py
           uv run python examples/neural_networks/neuralNetwork_regressor.py
           # Pipelines
-          # uv run python examples/pipelines/pipeline_classification.py
-          # uv run python examples/pipelines/pipeline_regression.py
-          # uv run python examples/pipelines/pipeline_forecasting.py
+          uv run python examples/pipelines/pipeline_classification.py
+          uv run python examples/pipelines/pipeline_regression.py
+          uv run python examples/pipelines/pipeline_forecasting.py
           # SVM
           uv run python examples/svm/generalizedSVC_multi.py
           uv run python examples/svm/linearSVC_binary.py
