@@ -136,6 +136,8 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v1
+        with:
+          version: latest # Ensure latest uv is installed
     
       # Verify pyproject.toml version is the same as the input version
       - name: Verify pyproject.toml version
