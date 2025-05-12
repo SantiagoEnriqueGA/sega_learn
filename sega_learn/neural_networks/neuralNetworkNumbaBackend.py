@@ -124,11 +124,13 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         # Check if the provided loss_function is already a JIT version
         is_jit_loss = isinstance(
             self.loss_function,
-            JITMeanSquaredErrorLoss
-            | JITMeanAbsoluteErrorLoss
-            | JITHuberLoss
-            | JITBCEWithLogitsLoss
-            | JITCrossEntropyLoss,
+            (
+                JITMeanSquaredErrorLoss,
+                JITMeanAbsoluteErrorLoss,
+                JITHuberLoss,
+                JITBCEWithLogitsLoss,
+                JITCrossEntropyLoss,
+            ),
         )
 
         if not is_jit_loss:

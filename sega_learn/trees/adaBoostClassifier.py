@@ -337,7 +337,7 @@ class AdaBoostClassifier:
             for metric, value in stats.items():
                 print(
                     f"  {metric}: {value:.4f}"
-                    if isinstance(value, float | int) and np.isfinite(value)
+                    if isinstance(value, (float, int)) and np.isfinite(value)
                     else f"  {metric}: {value}"
                 )
         return stats

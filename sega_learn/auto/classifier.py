@@ -723,7 +723,7 @@ class AutoClassifier:
                 self.results,
                 key=lambda x: (
                     -x.get(primary_metric, float("-inf"))
-                    if isinstance(x.get(primary_metric), int | float)
+                    if isinstance(x.get(primary_metric), (int, float))
                     else float("-inf"),  # Descending sort, handle N/A
                     x.get("Time Taken", float("inf")),  # Ascending Time Taken
                 ),
@@ -762,14 +762,14 @@ class AutoClassifier:
                     # Format metrics, handle N/A or errors gracefully
                     for key in metric_keys:
                         val = result.get(key)
-                        if isinstance(val, int | float):
+                        if isinstance(val, (int, float)):
                             row.append(f"{val:.4f}")
                         else:
                             row.append(str(val))  # Display N/A or error string
 
                     row.append(
                         f"{result.get('Time Taken', 'N/A'):.4f}"
-                        if isinstance(result.get("Time Taken"), int | float)
+                        if isinstance(result.get("Time Taken"), (int, float))
                         else str(result.get("Time Taken", "N/A"))
                     )
                     row.append(result.get("Tuned", False))
@@ -779,7 +779,7 @@ class AutoClassifier:
                         tuning_params = result.get("Best Params (Tuning)")
                         row.append(
                             f"{tuning_score:.4f}"
-                            if isinstance(tuning_score, int | float)
+                            if isinstance(tuning_score, (int, float))
                             else "N/A"
                         )
                         # Limit param display length
@@ -814,7 +814,7 @@ class AutoClassifier:
                     row_parts += [f"{'Error':<15}"] * len(metric_keys)
                     row_parts += [
                         f"{result.get('Time Taken', 'N/A'):<15.4f}"
-                        if isinstance(result.get("Time Taken"), int | float)
+                        if isinstance(result.get("Time Taken"), (int, float))
                         else f"{str(result.get('Time Taken', 'N/A')):<15}",
                         f"{str(result.get('Tuned', False)):<15}",
                     ]
@@ -823,14 +823,14 @@ class AutoClassifier:
                 else:
                     for key in metric_keys:
                         val = result.get(key)
-                        if isinstance(val, int | float):
+                        if isinstance(val, (int, float)):
                             row_parts.append(f"{val:<15.4f}")
                         else:
                             row_parts.append(f"{str(val):<15}")
 
                     row_parts.append(
                         f"{result.get('Time Taken', 'N/A'):<15.4f}"
-                        if isinstance(result.get("Time Taken"), int | float)
+                        if isinstance(result.get("Time Taken"), (int, float))
                         else f"{str(result.get('Time Taken', 'N/A')):<15}"
                     )
                     row_parts.append(f"{str(result.get('Tuned', False)):<15}")
@@ -840,7 +840,7 @@ class AutoClassifier:
                         tuning_params = result.get("Best Params (Tuning)")
                         row_parts.append(
                             f"{tuning_score:<15.4f}"
-                            if isinstance(tuning_score, int | float)
+                            if isinstance(tuning_score, (int, float))
                             else f"{'N/A':<15}"
                         )
                         params_str = str(tuning_params)

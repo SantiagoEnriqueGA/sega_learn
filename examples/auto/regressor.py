@@ -97,7 +97,7 @@ def run_example(verbose=False, test=False):
     for model, result in results.items():
         # Format metrics nicely
         formatted_result = {
-            k: f"{v:.4f}" if isinstance(v, int | float) else v
+            k: f"{v:.4f}" if isinstance(v, (int, float)) else v
             for k, v in result.items()
         }
         print(f"\t{model}: {formatted_result}")

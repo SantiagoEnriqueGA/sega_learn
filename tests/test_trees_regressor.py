@@ -678,7 +678,7 @@ class TestRandomForestRegressor(BaseTest):
         self.assertIn("RMSE", stats)
         self.assertIn("MAPE", stats)
         self.assertTrue(
-            all(np.isfinite(v) for v in stats.values() if isinstance(v, float | int))
+            all(np.isfinite(v) for v in stats.values() if isinstance(v, (float, int)))
         )
 
 
@@ -826,7 +826,7 @@ class TestGradientBoostedRegressor(BaseTest):
         self.assertIn("RMSE", stats)
         self.assertIn("MAPE", stats)
         self.assertTrue(
-            all(np.isfinite(v) for k, v in stats.items() if isinstance(v, float | int))
+            all(np.isfinite(v) for k, v in stats.items() if isinstance(v, (float, int)))
         )
 
 

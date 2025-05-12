@@ -211,7 +211,7 @@ class ClassifierTreeUtility:
                   and the information gain achieved by the split.
         """
         # ----- Input Validation and Setup -----
-        if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
+        if not isinstance(X, (list, np.ndarray)) or not isinstance(y, (list, np.ndarray)):
             raise TypeError("X and y must be lists or NumPy arrays.")
 
         X = np.asarray(X) if not isinstance(X, np.ndarray) else X
@@ -364,7 +364,7 @@ class ClassifierTree:
             dict: The learned decision tree.
         """
         # --- Input Conversion and Validation ---
-        if not isinstance(X, list | np.ndarray) or not isinstance(y, list | np.ndarray):
+        if not isinstance(X, (list, np.ndarray)) or not isinstance(y, (list, np.ndarray)):
             raise TypeError("X and y must be lists or NumPy arrays.")
 
         X = np.asarray(X)

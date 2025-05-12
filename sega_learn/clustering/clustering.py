@@ -49,7 +49,7 @@ class KMeans:
             )
         if not isinstance(max_iter, int) or max_iter < 1:
             raise ValueError("max_iter must be a positive integer.")
-        if not isinstance(tol, int | float) or tol <= 0:
+        if not isinstance(tol, (int, float)) or tol <= 0:
             raise ValueError("tol must be a positive number.")
 
         self.X = self._convert_to_ndarray(X).astype(
@@ -184,7 +184,7 @@ class KMeans:
         """
         # Validate input data
         if not isinstance(
-            new_X, np.ndarray | list | pd.DataFrame
+            new_X, (np.ndarray, list, pd.DataFrame)
         ):  # Check if input is a valid type
             raise ValueError(
                 "Unsupported input type. Input must be a list, NumPy array, or DataFrame."
@@ -547,7 +547,7 @@ class DBSCAN:
             If not compiled, the first call to the numba fitting function will take longer, but subsequent calls will be faster.
         """
         # Validate input parameters
-        if not isinstance(eps, int | float) or eps <= 0:
+        if not isinstance(eps, (int, float)) or eps <= 0:
             raise ValueError("eps must be a positive number.")
         if not isinstance(min_samples, int) or min_samples < 1:
             raise ValueError("min_samples must be a positive integer.")
@@ -729,7 +729,7 @@ class DBSCAN:
         """
         # Validate input parameters
         if not isinstance(
-            new_X, np.ndarray | list | pd.DataFrame
+            new_X, (np.ndarray, list, pd.DataFrame)
         ):  # Check if input is a valid type
             raise ValueError(
                 "Unsupported input type. Input must be a list, NumPy array, or DataFrame."
@@ -840,11 +840,11 @@ class DBSCAN:
             scores_dict (optional): A dictionary of (eps, score) pairs if return_scores is True.
         """
         # Validate input parameters
-        if not isinstance(min, int | float) or min <= 0:
+        if not isinstance(min, (int, float)) or min <= 0:
             raise ValueError("min must be a positive number.")
-        if not isinstance(max, int | float) or max <= 0:
+        if not isinstance(max, (int, float)) or max <= 0:
             raise ValueError("max must be a positive number.")
-        if not isinstance(precision, int | float) or precision <= 0:
+        if not isinstance(precision, (int, float)) or precision <= 0:
             raise ValueError("precision must be a positive number.")
 
         best_eps = 0.1

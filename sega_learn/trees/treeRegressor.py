@@ -255,7 +255,7 @@ class RegressorTree:
         Returns:
             np.ndarray: The predicted target values.
         """
-        if not isinstance(X, (list | np.ndarray)):
+        if not isinstance(X, ((list, np.ndarray))):
             raise TypeError("X must be a list or NumPy array.")
         # If not fitted, raise error (if tree is empty {})
         if self.tree == {}:

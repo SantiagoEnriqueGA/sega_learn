@@ -80,7 +80,7 @@ class AnimationBase(ABC):
             raise ValueError("train_series and test_series must be provided.")
         if dynamic_parameter is None:
             raise ValueError("dynamic_parameter must be provided.")
-        if not isinstance(static_parameters, dict | None):
+        if not isinstance(static_parameters, (dict, type(None))):
             raise ValueError("static_parameters must be a dictionary or None.")
         if not isinstance(keep_previous, bool):
             raise ValueError("keep_previous must be a boolean.")
@@ -430,13 +430,13 @@ class RegressionAnimation(AnimationBase):
             raise ValueError("test_size must be between 0 and 1.")
         if not isinstance(dynamic_parameter, str):
             raise ValueError("dynamic_parameter must be a string.")
-        if not isinstance(static_parameters, dict | None):
+        if not isinstance(static_parameters, (dict, type(None))):
             raise ValueError("static_parameters must be a dictionary or None.")
         if not isinstance(keep_previous, bool):
             raise ValueError("keep_previous must be a boolean.")
-        if not isinstance(max_previous, int | None):
+        if not isinstance(max_previous, (int, type(None))):
             raise ValueError("max_previous must be an integer or None.")
-        if not isinstance(pca_components, int | None) or pca_components < 1:
+        if not isinstance(pca_components, (int, type(None))) or pca_components < 1:
             raise ValueError("pca_components must be an integer greater than 0.")
 
         if keep_previous:
@@ -655,11 +655,11 @@ class ClassificationAnimation(AnimationBase):
             raise ValueError("test_size must be between 0 and 1.")
         if not isinstance(dynamic_parameter, str):
             raise ValueError("dynamic_parameter must be a string.")
-        if not isinstance(static_parameters, dict | None):
+        if not isinstance(static_parameters, (dict, type(None))):
             raise ValueError("static_parameters must be a dictionary or None.")
         if not isinstance(keep_previous, bool):
             raise ValueError("keep_previous must be a boolean.")
-        if not isinstance(pca_components, int | None) or pca_components < 1:
+        if not isinstance(pca_components, (int, type(None))) or pca_components < 1:
             raise ValueError("pca_components must be an integer greater than 0.")
         if not isinstance(plot_step, float):
             raise ValueError("plot_step must be a float.")

@@ -42,7 +42,7 @@ class ARIMA:
             - q: Use the Autocorrelation Function (ACF) plot to determine the lag where the ACF cuts off.
         """
         # Validate input order
-        if not isinstance(order, list | tuple) or len(order) != 3:
+        if not isinstance(order, (list, tuple)) or len(order) != 3:
             raise ValueError("Order must be a list or tuple of length 3 (p, d, q).")
         if not all(isinstance(i, int) and i >= 0 for i in order):
             raise ValueError("p, d, and q must be non-negative integers.")
@@ -470,8 +470,8 @@ class ARIMA:
             tuple: The best order (p, d, q).
         """
         # Validate input data
-        if not isinstance(train_series, list | np.ndarray) or not isinstance(
-            test_series, list | np.ndarray
+        if not isinstance(train_series, (list, np.ndarray)) or not isinstance(
+            test_series, (list, np.ndarray)
         ):
             raise ValueError(
                 "train_series and test_series must be list or numpy array."
@@ -538,7 +538,7 @@ class SARIMA(ARIMA):
             seasonal_order (tuple): Seasonal order (P, D, Q, m).
         """
         # Validate seasonal_order
-        if not isinstance(seasonal_order, list | tuple) or len(seasonal_order) != 4:
+        if not isinstance(seasonal_order, (list, tuple)) or len(seasonal_order) != 4:
             raise ValueError(
                 "Seasonal order must be a tuple/list of length 4: (P, D, Q, m)."
             )

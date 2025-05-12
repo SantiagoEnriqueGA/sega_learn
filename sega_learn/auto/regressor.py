@@ -790,10 +790,10 @@ class AutoRegressor:
                 self.results,
                 key=lambda x: (
                     -x.get(primary_metric, float("-inf"))
-                    if isinstance(x.get(primary_metric), int | float)
+                    if isinstance(x.get(primary_metric), (int, float))
                     else float("-inf"),  # Desc R2
                     x.get(secondary_metric, float("inf"))
-                    if isinstance(x.get(secondary_metric), int | float)
+                    if isinstance(x.get(secondary_metric), (int, float))
                     else float("inf"),  # Asc RMSE
                     x.get("Time Taken", float("inf")),  # Asc Time
                 ),
@@ -830,11 +830,11 @@ class AutoRegressor:
                     for key in metric_keys:
                         val = result.get(key)
                         row.append(
-                            f"{val:.4f}" if isinstance(val, int | float) else str(val)
+                            f"{val:.4f}" if isinstance(val, (int, float)) else str(val)
                         )
                     row.append(
                         f"{result.get('Time Taken', 'N/A'):.4f}"
-                        if isinstance(result.get("Time Taken"), int | float)
+                        if isinstance(result.get("Time Taken"), (int, float))
                         else str(result.get("Time Taken", "N/A"))
                     )
                     row.append(result.get("Tuned", False))
@@ -843,7 +843,7 @@ class AutoRegressor:
                         tuning_params = result.get("Best Params (Tuning)")
                         row.append(
                             f"{tuning_score:.4f}"
-                            if isinstance(tuning_score, int | float)
+                            if isinstance(tuning_score, (int, float))
                             else "N/A"
                         )
                         params_str = str(tuning_params)
@@ -885,12 +885,12 @@ class AutoRegressor:
                         val = result.get(key)
                         row_parts.append(
                             f"{val:<15.4f}"
-                            if isinstance(val, int | float)
+                            if isinstance(val, (int, float))
                             else f"{str(val):<15}"
                         )
                     row_parts.append(
                         f"{result.get('Time Taken', 'N/A'):<15.4f}"
-                        if isinstance(result.get("Time Taken"), int | float)
+                        if isinstance(result.get("Time Taken"), (int, float))
                         else f"{str(result.get('Time Taken', 'N/A')):<15}"
                     )
                     row_parts.append(f"{str(result.get('Tuned', False)):<15}")
@@ -899,7 +899,7 @@ class AutoRegressor:
                         tuning_params = result.get("Best Params (Tuning)")
                         row_parts.append(
                             f"{tuning_score:<15.4f}"
-                            if isinstance(tuning_score, int | float)
+                            if isinstance(tuning_score, (int, float))
                             else f"{'N/A':<15}"
                         )
                         params_str = str(tuning_params)

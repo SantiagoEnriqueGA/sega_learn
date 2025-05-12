@@ -41,7 +41,7 @@ def check_is_fitted(estimator, attributes=None, msg=None):
         )
 
     if attributes is not None:
-        if not isinstance(attributes, list | tuple):
+        if not isinstance(attributes, (list, tuple)):
             attributes = [attributes]
         attrs_present = all(hasattr(estimator, attr) for attr in attributes)
     else:

@@ -275,7 +275,7 @@ def make_blobs(
     rng = np.random.RandomState(random_state)
 
     # Handle n_samples
-    if isinstance(n_samples, list | tuple):
+    if isinstance(n_samples, (list, tuple)):
         n_samples_per_center = n_samples
         n_centers = len(n_samples_per_center)
         n_samples = sum(n_samples_per_center)
