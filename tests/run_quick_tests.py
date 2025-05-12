@@ -6,10 +6,13 @@ from functools import partialmethod
 
 from tqdm import tqdm
 
+from _default_tests import DEFAULT_TESTS
+
 tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 
 # Change the working directory to the parent directory to allow importing the segadb package.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 
 CUTOFF = 1.0  # Elapsed time cutoff in seconds
 TEST_LOG_FILE = "tests/_test_log.csv"
@@ -17,7 +20,7 @@ FILTER_NUMBA = True
 
 
 def get_quick_tests():
-    """Retrieve test names with elapsed time less than the cutoff."""
+    """Retrieve test names with elapsed time less than the cutoff or use DEFAULT_TESTS if no log file exists."""
     quick_tests = set()
     if os.path.exists(TEST_LOG_FILE):
         with open(TEST_LOG_FILE) as file:
@@ -25,6 +28,8 @@ def get_quick_tests():
             for row in reader:
                 if float(row["Elapsed Time (s)"]) < CUTOFF:
                     quick_tests.add(row["Test Name"])
+    else:
+        quick_tests.update(DEFAULT_TESTS)
     return quick_tests
 
 
