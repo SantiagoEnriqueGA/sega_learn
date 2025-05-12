@@ -272,6 +272,37 @@ class LinearDiscriminantAnalysis:
             scores
         ).T  # Return the scores as a numpy array, with each row corresponding to a sample and each column corresponding to a class
 
+    def get_params(self, **params):
+        """Get the parameters of this Linear Discriminant Analysis model.
+
+        Args:
+            **params: dict, Parameter names mapped to their values.
+
+        Returns:
+            params: dict, Parameter names mapped to their values.
+        """
+        return {"solver": self.solver, "priors": self.priors}
+
+    def set_params(self, **params):
+        """Set the parameters of this Linear Discriminant Analysis model.
+
+        Args:
+            **params: dict, Parameter names mapped to their values.
+
+        Returns:
+            self: LinearDiscriminantAnalysis instance.
+        """
+        if not isinstance(params, dict):
+            raise TypeError("params must be a dict")
+        for key, value in params.items():
+            if key == "solver":
+                self.solver = value
+            elif key == "priors":
+                self.priors = value
+            else:
+                raise ValueError(f"Invalid parameter: {key}")
+        return self
+
 
 class QuadraticDiscriminantAnalysis:
     """Implements Quadratic Discriminant Analysis.
@@ -378,6 +409,37 @@ class QuadraticDiscriminantAnalysis:
             scores
         ).T  # Return the scores as a numpy array, with each row corresponding to a sample and each column corresponding to a class
 
+    def get_params(self, **params):
+        """Get the parameters of this Quadratic Discriminant Analysis model.
+
+        Args:
+            **params: dict, Parameter names mapped to their values.
+
+        Returns:
+            params: dict, Parameter names mapped to their values.
+        """
+        return {"priors": self.priors, "reg_param": self.reg_param}
+
+    def set_params(self, **params):
+        """Set the parameters of this Quadratic Discriminant Analysis model.
+
+        Args:
+            **params: dict, Parameter names mapped to their values.
+
+        Returns:
+            self: QuadraticDiscriminantAnalysis instance.
+        """
+        if not isinstance(params, dict):
+            raise TypeError("params must be a dict")
+        for key, value in params.items():
+            if key == "priors":
+                self.priors = value
+            elif key == "reg_param":
+                self.reg_param = value
+            else:
+                raise ValueError(f"Invalid parameter: {key}")
+        return self
+
 
 class Perceptron:
     """Implements the Perceptron algorithm for binary and multiclass classification.
@@ -465,6 +527,37 @@ class Perceptron:
                 scores[:, idx] = np.dot(X, self.weights[cls]) + self.bias[cls]
             return self.classes_[np.argmax(scores, axis=1)]
 
+    def get_params(self, **params):
+        """Get the parameters of this Perceptron model.
+
+        Args:
+            **params: dict, Parameter names mapped to their values.
+
+        Returns:
+            params: dict, Parameter names mapped to their values.
+        """
+        return {"max_iter": self.max_iter, "learning_rate": self.learning_rate}
+
+    def set_params(self, **params):
+        """Set the parameters of this Perceptron model.
+
+        Args:
+            **params: dict, Parameter names mapped to their values.
+
+        Returns:
+            self: Perceptron instance.
+        """
+        if not isinstance(params, dict):
+            raise TypeError("params must be a dict")
+        for key, value in params.items():
+            if key == "max_iter":
+                self.max_iter = value
+            elif key == "learning_rate":
+                self.learning_rate = value
+            else:
+                raise ValueError(f"Invalid parameter: {key}")
+        return self
+
 
 class LogisticRegression:
     """Implements Logistic Regression using gradient descent. Supports binary and multiclass classification.
@@ -497,6 +590,10 @@ class LogisticRegression:
             y: (np.ndarray) - Training target data of shape (n_samples,).
         """
         _validate_data(X, y)
+
+        # Ensure input data is real-valued
+        X = np.real(X)
+        y = np.real(y)
 
         self.classes_ = np.unique(y)
         n_samples, n_features = X.shape
@@ -569,7 +666,6 @@ class LogisticRegression:
         """Applies the sigmoid function."""
         return 1 / (1 + np.exp(-z))
 
-    # TODO: Add get_params and set_params to all estimators
     def get_params(self, **params):
         """Get the parameters of this logistic regression model.
 

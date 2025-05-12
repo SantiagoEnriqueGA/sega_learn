@@ -70,6 +70,21 @@ class TestOrdinaryLeastSquares(BaseTest):
         self.model.fit(X, y)
         self.assertEqual(len(self.model.coef_), 5)
 
+    def test_get_params(self):
+        """Tests the get_params method of the Ordinary Least Squares class."""
+        params = self.model.get_params()
+        self.assertIn("fit_intercept", params)
+
+    def test_set_params(self):
+        """Tests the set_params method of the Ordinary Least Squares class."""
+        self.model.set_params(fit_intercept=False)
+        self.assertFalse(self.model.fit_intercept)
+
+    def test_set_params_invalid(self):
+        """Tests the set_params method with invalid input."""
+        with self.assertRaises(ValueError):
+            self.model.set_params(invalid_param=0.1)
+
 
 class TestRidge(BaseTest):
     """Unit test for the Ridge regression class."""
@@ -162,6 +177,22 @@ class TestRidge(BaseTest):
         self.model = Ridge(alpha=1.0, fit_intercept=True, max_iter=1000, tol=1e-4)
         with self.assertRaises(ValueError):
             self.model.fit(None, None, numba=True)
+
+    def test_get_params(self):
+        """Tests the get_params method of the Ridge class."""
+        params = self.model.get_params()
+        self.assertIn("alpha", params)
+        self.assertIn("fit_intercept", params)
+
+    def test_set_params(self):
+        """Tests the set_params method of the Ridge class."""
+        self.model.set_params(alpha=0.5)
+        self.assertEqual(self.model.alpha, 0.5)
+
+    def test_set_params_invalid(self):
+        """Tests the set_params method with invalid input."""
+        with self.assertRaises(ValueError):
+            self.model.set_params(invalid_param=0.1)
 
 
 class TestLasso(BaseTest):
@@ -256,6 +287,22 @@ class TestLasso(BaseTest):
         with self.assertRaises(ValueError):
             self.model.fit(None, None, numba=True)
 
+    def test_get_params(self):
+        """Tests the get_params method of the Lasso class."""
+        params = self.model.get_params()
+        self.assertIn("alpha", params)
+        self.assertIn("fit_intercept", params)
+
+    def test_set_params(self):
+        """Tests the set_params method of the Lasso class."""
+        self.model.set_params(alpha=0.5)
+        self.assertEqual(self.model.alpha, 0.5)
+
+    def test_set_params_invalid(self):
+        """Tests the set_params method with invalid input."""
+        with self.assertRaises(ValueError):
+            self.model.set_params(invalid_param=0.1)
+
 
 class TestBayesian(BaseTest):
     """Unit test for the Bayesian regression class."""
@@ -339,6 +386,24 @@ class TestBayesian(BaseTest):
         X, y = synthetic_data_regression(n_samples=1000, n_features=5, noise=0.1)
         self.model.fit(X, y)
         self.assertEqual(len(self.model.coef_), 5)
+
+    def test_get_params(self):
+        """Tests the get_params method of the Bayesian class."""
+        params = self.model.get_params()
+        self.assertIn("alpha_1", params)
+        self.assertIn("alpha_2", params)
+        self.assertIn("fit_intercept", params)
+
+    def test_set_params(self):
+        """Tests the set_params method of the Bayesian class."""
+        self.model.set_params(alpha_1=0.5, alpha_2=0.5)
+        self.assertEqual(self.model.alpha_1, 0.5)
+        self.assertEqual(self.model.alpha_2, 0.5)
+
+    def test_set_params_invalid(self):
+        """Tests the set_params method with invalid input."""
+        with self.assertRaises(ValueError):
+            self.model.set_params(invalid_param=0.1)
 
 
 class TestRANSAC(BaseTest):
@@ -427,6 +492,26 @@ class TestRANSAC(BaseTest):
         self.assertIsNotNone(formula)
         self.assertIn("y = ", formula)
 
+    def test_get_params(self):
+        """Tests the get_params method of the RANSAC class."""
+        params = self.model.get_params()
+        self.assertIn("n", params)
+        self.assertIn("k", params)
+        self.assertIn("t", params)
+        self.assertIn("d", params)
+        self.assertIn("auto_scale_t", params)
+        self.assertIn("auto_scale_n", params)
+
+    def test_set_params(self):
+        """Tests the set_params method of the RANSAC class."""
+        self.model.set_params(n=200)
+        self.assertEqual(self.model.n, 200)
+
+    def test_set_params_invalid(self):
+        """Tests the set_params method with invalid input."""
+        with self.assertRaises(ValueError):
+            self.model.set_params(invalid_param=0.1)
+
 
 class TestPassiveAggressiveRegressor(BaseTest):
     """Unit test for the Passive Aggressive Regressor class."""
@@ -513,6 +598,22 @@ class TestPassiveAggressiveRegressor(BaseTest):
             self.model.fit(X, y)
         self.assertEqual(len(self.model.coef_), 5)
 
+    def test_get_params(self):
+        """Tests the get_params method of the Passive Aggressive Regressor class."""
+        params = self.model.get_params()
+        self.assertIn("max_iter", params)
+        self.assertIn("tol", params)
+
+    def test_set_params(self):
+        """Tests the set_params method of the Passive Aggressive Regressor class."""
+        self.model.set_params(max_iter=200)
+        self.assertEqual(self.model.max_iter, 200)
+
+    def test_set_params_invalid(self):
+        """Tests the set_params method with invalid input."""
+        with self.assertRaises(ValueError):
+            self.model.set_params(invalid_param=0.1)
+
 
 class TestLinearDiscriminantAnalysis(BaseTest):
     """Unit test for the Linear Discriminant Analysis class."""
@@ -590,6 +691,25 @@ class TestLinearDiscriminantAnalysis(BaseTest):
         with self.assertRaises(ValueError):
             lda.fit(None, None)
 
+    def test_get_params(self):
+        """Tests the get_params method of the Linear Discriminant Analysis class."""
+        lda = LinearDiscriminantAnalysis()
+        params = lda.get_params()
+        self.assertIn("solver", params)
+        self.assertIn("priors", params)
+
+    def test_set_params(self):
+        """Tests the set_params method of the Linear Discriminant Analysis class."""
+        lda = LinearDiscriminantAnalysis()
+        lda.set_params(solver="svd")
+        self.assertEqual(lda.solver, "svd")
+
+    def test_set_params_invalid(self):
+        """Tests the set_params method with invalid input."""
+        lda = LinearDiscriminantAnalysis()
+        with self.assertRaises(ValueError):
+            lda.set_params(invalid_param=0.1)
+
 
 class TestQuadraticDiscriminantAnalysis(BaseTest):
     """Unit test for the Quadratic Discriminant Analysis class."""
@@ -666,6 +786,25 @@ class TestQuadraticDiscriminantAnalysis(BaseTest):
             qda = QuadraticDiscriminantAnalysis(priors=[0.5, 0.5, 0.5])
             qda.fit(self.X, self.y)
 
+    def test_get_params(self):
+        """Tests the get_params method of the Quadratic Discriminant Analysis class."""
+        qda = QuadraticDiscriminantAnalysis()
+        params = qda.get_params()
+        self.assertIn("priors", params)
+        self.assertIn("reg_param", params)
+
+    def test_set_params(self):
+        """Tests the set_params method of the Quadratic Discriminant Analysis class."""
+        qda = QuadraticDiscriminantAnalysis()
+        qda.set_params(priors=[0.5, 0.5])
+        self.assertEqual(qda.priors, [0.5, 0.5])
+
+    def test_set_params_invalid(self):
+        """Tests the set_params method with invalid input."""
+        qda = QuadraticDiscriminantAnalysis()
+        with self.assertRaises(ValueError):
+            qda.set_params(invalid_param=0.1)
+
 
 class TestLogisticRegression(BaseTest):
     """Unit test for the Logistic Regression class."""
@@ -735,6 +874,25 @@ class TestLogisticRegression(BaseTest):
         with self.assertRaises(TypeError):
             model.predict(None)
 
+    def test_get_params(self):
+        """Tests the get_params method of the Logistic Regression class."""
+        model = LogisticRegression(learning_rate=0.01, max_iter=1000)
+        params = model.get_params()
+        self.assertIn("learning_rate", params)
+        self.assertIn("max_iter", params)
+
+    def test_set_params(self):
+        """Tests the set_params method of the Logistic Regression class."""
+        model = LogisticRegression(learning_rate=0.01, max_iter=1000)
+        model.set_params(learning_rate=0.1)
+        self.assertEqual(model.learning_rate, 0.1)
+
+    def test_set_params_invalid(self):
+        """Tests the set_params method with invalid input."""
+        model = LogisticRegression(learning_rate=0.01, max_iter=1000)
+        with self.assertRaises(ValueError):
+            model.set_params(invalid_param=0.1)
+
 
 class TestPerceptron(BaseTest):
     """Unit test for the Perceptron class."""
@@ -803,6 +961,25 @@ class TestPerceptron(BaseTest):
         model = Perceptron()
         with self.assertRaises(TypeError):
             model.predict(None)
+
+    def test_get_params(self):
+        """Tests the get_params method of the Perceptron class."""
+        model = Perceptron(max_iter=1000, learning_rate=0.01)
+        params = model.get_params()
+        self.assertIn("max_iter", params)
+        self.assertIn("learning_rate", params)
+
+    def test_set_params(self):
+        """Tests the set_params method of the Perceptron class."""
+        model = Perceptron(max_iter=1000, learning_rate=0.01)
+        model.set_params(max_iter=2000)
+        self.assertEqual(model.max_iter, 2000)
+
+    def test_set_params_invalid(self):
+        """Tests the set_params method with invalid input."""
+        model = Perceptron(max_iter=1000, learning_rate=0.01)
+        with self.assertRaises(ValueError):
+            model.set_params(invalid_param=0.1)
 
 
 if __name__ == "__main__":

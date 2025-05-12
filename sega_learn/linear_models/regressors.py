@@ -145,6 +145,33 @@ class OrdinaryLeastSquares:
             )  # Add the intercept to the formula
         return f"y = {formula}"
 
+    def get_params(self):
+        """Returns the parameters of the model.
+
+        Returns:
+            params: (dict) - Dictionary of parameters.
+        """
+        params = {
+            "fit_intercept": self.fit_intercept,
+            "coef_": self.coef_,
+            "intercept_": self.intercept_,
+        }
+        return params
+
+    def set_params(self, **params):
+        """Sets the parameters of the model.
+
+        Args:
+            params: (dict) - Dictionary of parameters to set.
+        """
+        for key, value in params.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+            else:
+                raise ValueError(
+                    f"Invalid parameter {key} for {self.__class__.__name__}"
+                )
+
 
 class Ridge:
     """Fits the Ridge Regression model to the training data.
@@ -378,6 +405,36 @@ class Ridge:
                 f"{self.intercept_:.2f} + " + formula
             )  # Add the intercept to the formula
         return f"y = {formula}"
+
+    def get_params(self):
+        """Returns the parameters of the model.
+
+        Returns:
+            params: (dict) - Dictionary of parameters.
+        """
+        params = {
+            "alpha": self.alpha,
+            "fit_intercept": self.fit_intercept,
+            "max_iter": self.max_iter,
+            "tol": self.tol,
+            "coef_": self.coef_,
+            "intercept_": self.intercept_,
+        }
+        return params
+
+    def set_params(self, **params):
+        """Sets the parameters of the model.
+
+        Args:
+            params: (dict) - Dictionary of parameters to set.
+        """
+        for key, value in params.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+            else:
+                raise ValueError(
+                    f"Invalid parameter {key} for {self.__class__.__name__}"
+                )
 
 
 class Lasso:
@@ -614,6 +671,36 @@ class Lasso:
                 f"{self.intercept_:.2f} + " + formula
             )  # Add the intercept to the formula
         return f"y = {formula}"
+
+    def get_params(self):
+        """Returns the parameters of the model.
+
+        Returns:
+            params: (dict) - Dictionary of parameters.
+        """
+        params = {
+            "alpha": self.alpha,
+            "fit_intercept": self.fit_intercept,
+            "max_iter": self.max_iter,
+            "tol": self.tol,
+            "coef_": self.coef_,
+            "intercept_": self.intercept_,
+        }
+        return params
+
+    def set_params(self, **params):
+        """Sets the parameters of the model.
+
+        Args:
+            params: (dict) - Dictionary of parameters to set.
+        """
+        for key, value in params.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+            else:
+                raise ValueError(
+                    f"Invalid parameter {key} for {self.__class__.__name__}"
+                )
 
 
 class Bayesian:
@@ -924,6 +1011,39 @@ class Bayesian:
             )  # Add the intercept to the formula
         return f"y = {formula}"
 
+    def get_params(self):
+        """Returns the parameters of the model.
+
+        Returns:
+            params: (dict) - Dictionary of parameters.
+        """
+        params = {
+            "alpha_1": self.alpha_1,
+            "alpha_2": self.alpha_2,
+            "lambda_1": self.lambda_1,
+            "lambda_2": self.lambda_2,
+            "fit_intercept": self.fit_intercept,
+            "max_iter": self.max_iter,
+            "tol": self.tol,
+            "coef_": self.coef_,
+            "intercept_": self.intercept_,
+        }
+        return params
+
+    def set_params(self, **params):
+        """Sets the parameters of the model.
+
+        Args:
+            params: (dict) - Dictionary of parameters to set.
+        """
+        for key, value in params.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+            else:
+                raise ValueError(
+                    f"Invalid parameter {key} for {self.__class__.__name__}"
+                )
+
 
 class RANSAC:
     """Fits the RANSAC (RANdom SAmple Consensus) algorithm for robust linear regression.
@@ -1099,6 +1219,39 @@ class RANSAC:
         except Exception as _e:
             return "No model fit available"
 
+    def get_params(self):
+        """Returns the parameters of the model.
+
+        Returns:
+            params: (dict) - Dictionary of parameters.
+        """
+        params = {
+            "n": self.n,
+            "k": self.k,
+            "t": self.t,
+            "d": self.d,
+            "model": self.model,
+            "auto_scale_t": self.scale_threshold,
+            "scale_t_factor": self.scale_t_factor,
+            "auto_scale_n": self.scale_n,
+            "scale_n_factor": self.scale_n_factor,
+        }
+        return params
+
+    def set_params(self, **params):
+        """Sets the parameters of the model.
+
+        Args:
+            params: (dict) - Dictionary of parameters to set.
+        """
+        for key, value in params.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+            else:
+                raise ValueError(
+                    f"Invalid parameter {key} for {self.__class__.__name__}"
+                )
+
 
 class PassiveAggressiveRegressor:
     """Fits the Passive Aggressive Regression model to the training data.
@@ -1223,3 +1376,32 @@ class PassiveAggressiveRegressor:
         ]  # Create the terms of the formula
         formula = " + ".join(terms)  # Join the terms with " + "
         return f"y = {formula} + {self.intercept_:.2f}"
+
+    def get_params(self):
+        """Returns the parameters of the model.
+
+        Returns:
+            params: (dict) - Dictionary of parameters.
+        """
+        params = {
+            "C": self.C,
+            "max_iter": self.max_iter,
+            "tol": self.tol,
+            "coef_": self.coef_,
+            "intercept_": self.intercept_,
+        }
+        return params
+
+    def set_params(self, **params):
+        """Sets the parameters of the model.
+
+        Args:
+            params: (dict) - Dictionary of parameters to set.
+        """
+        for key, value in params.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+            else:
+                raise ValueError(
+                    f"Invalid parameter {key} for {self.__class__.__name__}"
+                )
