@@ -6,55 +6,74 @@ import warnings
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 # Import Pipeline and necessary components
-from sega_learn.linear_models import Ridge
 from sega_learn.pipelines import Pipeline
+from sega_learn.trees import AdaBoostClassifier
 from sega_learn.utils import (
     GridSearchCV,
     Metrics,
-    PolynomialTransform,
     Scaler,
-    make_regression,
+    make_classification,
     train_test_split,
 )
+from sega_learn.utils.decomposition import PCA
 
 # Suppress warnings for cleaner output during testing/example run
 warnings.filterwarnings("ignore", category=UserWarning)
 
 print("\n--- Pipeline with GridSearchCV Example ---")
 
-# --- Regression Tuning ---
-print("\nTuning Regression Pipeline...")
-X_reg, y_reg = make_regression(n_samples=250, n_features=3, noise=0.15, random_state=43)
-X_reg_train, X_reg_test, y_reg_train, y_reg_test = train_test_split(
-    X_reg, y_reg, test_size=0.3, random_state=43
+# --- Classification Tuning ---
+print("\nTuning Classification Pipeline...")
+X_cls, y_cls = make_classification(
+    n_samples=150, n_features=8, n_informative=4, n_classes=2, random_state=43
+)
+X_cls_train, X_cls_test, y_cls_train, y_cls_test = train_test_split(
+    X_cls, y_cls, test_size=0.3, random_state=43
 )
 
-tune_reg_pipe = Pipeline(
+# Pipeline to tune
+tune_cls_pipe = Pipeline(
     [
-        ("poly", PolynomialTransform(degree=2)),  # Degree will be tuned
         ("scaler", Scaler()),
-        ("ridge", Ridge(alpha=1.0)),  # Alpha will be tuned
+        ("pca", PCA(n_components=5)),  # n_components will be tuned
+        (
+            "ada",
+            AdaBoostClassifier(n_estimators=10, random_state=43, learning_rate=0.1),
+        ),
     ]
 )
 
-param_grid_reg = [{"poly__degree": [1, 2], "ridge__alpha": [0.1, 1.0]}]
+# Parameter grid targeting steps in the pipeline
+# Use `step_name__parameter_name` syntax
+param_grid_cls = [
+    {
+        "pca__n_components": [2, 3, 4],  # Tune PCA components
+        "ada__n_estimators": [10, 20],  # Tune AdaBoost estimators
+        "ada__learning_rate": [0.01, 0.1],  # Tune AdaBoost learning rate
+    }
+]
 
-grid_search_reg = GridSearchCV(
-    model=tune_reg_pipe,
-    param_grid=param_grid_reg,
-    cv=2,
-    metric="r2",  # Optimize for R-squared
+# Note: GridSearchCV uses its own internal cross-validation scorer.
+# Ensure your chosen 'metric' in GridSearchCV matches Metrics keys if needed elsewhere,
+# or use standard sklearn scoring strings if using sklearn's GridSearchCV.
+# Using sega_learn's GridSearchCV here.
+grid_search_cls = GridSearchCV(
+    model=tune_cls_pipe,  # Pass the pipeline as the estimator
+    param_grid=param_grid_cls,
+    cv=2,  # Use fewer folds for faster example
+    metric="accuracy",  # Metric to optimize
     direction="maximize",
 )
 
-print("Running GridSearchCV for regression...")
-grid_search_reg.fit(X_reg_train, y_reg_train, verbose=False)
+print("Running GridSearchCV for classification...")
+grid_search_cls.fit(X_cls_train, y_cls_train, verbose=False)  # Fit the search
 print("GridSearchCV fit complete.")
 
-print(f"\nBest Regression Score (R2): {grid_search_reg.best_score_:.4f}")
-print(f"Best Regression Parameters: {grid_search_reg.best_params_}")
+print(f"\nBest Classification Score (Accuracy): {grid_search_cls.best_score_:.4f}")
+print(f"Best Classification Parameters: {grid_search_cls.best_params_}")
 
-best_reg_pipe = grid_search_reg.best_model
-y_reg_pred_best = best_reg_pipe.predict(X_reg_test)
-best_r2 = Metrics.r_squared(y_reg_test, y_reg_pred_best)
-print(f"R-squared of best regression pipeline on test set: {best_r2:.4f}")
+# Evaluate the best model found by GridSearchCV
+best_cls_pipe = grid_search_cls.best_model
+y_cls_pred_best = best_cls_pipe.predict(X_cls_test)
+best_accuracy = Metrics.accuracy(y_cls_test, y_cls_pred_best)
+print(f"Accuracy of best classification pipeline on test set: {best_accuracy:.4f}")
