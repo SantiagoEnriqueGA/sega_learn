@@ -2,8 +2,8 @@
 # --------------------------------------------------------------------------------------------
 # BaseImputer: a base class for common interface and utility functions
 # fit, fit_transform, transform, ...
-# DirectionalImputer: a class for directional imputation (forward, backward)
 # StatisticalImputer: a class for statistical imputation (mean, median, mode)
+# DirectionalImputer: a class for directional imputation (forward, backward)
 # InterpolationImputer: a class for interpolation imputation (linear, polynomial, etc.)
 # KNNImputer: a class for KNN imputation
 # CustomImputer: a class for custom imputation
@@ -117,4 +117,44 @@ class StatisticalImputer(BaseImputer):
         X = np.array(X, copy=True)
         mask = np.isnan(X)
         X[mask] = np.take(self.statistic_, np.where(mask)[1])
+        return X
+
+
+class DirectionalImputer(BaseImputer):
+    """Directional imputer for handling missing values using forward or backward fill."""
+
+    def __init__(self, direction="forward"):
+        """Initialize the DirectionalImputer with a specified direction.
+
+        The direction can be "forward" or "backward".
+
+        Args:
+            direction (str): The imputation direction ("forward" or "backward").
+        """
+        if direction not in ["forward", "backward"]:
+            raise ValueError("Direction must be either 'forward' or 'backward'.")
+        self.direction = direction
+
+    def fit(self, X=None, y=None):
+        """Fit the imputer on the data. No operation needed for directional imputer."""
+        return self
+
+    def transform(self, X):
+        """Impute missing values in X using the specified direction.
+
+        Args:
+            X (array-like): The input data with missing values.
+        """
+        X = np.array(X, copy=True)
+        if self.direction == "forward":
+            for i in range(1, X.shape[0]):
+                # For each row, replace NaN with the previous value
+                # If the previous value is also NaN, it will remain NaN
+                X[i] = np.where(np.isnan(X[i]), X[i - 1], X[i])
+        elif self.direction == "backward":
+            # For backward fill, iterate from the end to the beginning (reverse order)
+            for i in range(X.shape[0] - 2, -1, -1):
+                # For each row, replace NaN with the next value
+                # If the next value is also NaN, it will remain NaN
+                X[i] = np.where(np.isnan(X[i]), X[i + 1], X[i])
         return X
