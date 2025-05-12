@@ -44,7 +44,7 @@ class VotingRegressor:
 
     def show_models(self, formula=False):
         """Print the models and their weights."""
-        for model, weight in zip(self.models, self.model_weights, strict=False):
+        for model, weight in zip(self.models, self.model_weights):
             if formula:
                 print(
                     f"Model: {model}, Weight: {weight} \n\tFormula: {model.get_formula()}"
@@ -228,7 +228,7 @@ class ForecastRegressor:
 
     def show_models(self, formula=False):
         """Print the models and their weights."""
-        for model, weight in zip(self.models, self.model_weights, strict=False):
+        for model, weight in zip(self.models, self.model_weights):
             if formula:
                 print(
                     f"Model: {model}, Weight: {weight} \n\tFormula: {model.get_formula()}"

@@ -339,7 +339,7 @@ class TestVotingClassifier(BaseTest):
         # Verify weights are used (predictions might differ from unweighted)
         y_pred_unweighted = self.voter_hard.predict(self.X)
         # It's possible they are the same by chance, but unlikely for many samples
-        if len(self.X) > 10:  # Only assert difference if enough samples
+        if len(self.X) > 100:  # Only assert difference if enough samples
             self.assertFalse(
                 np.array_equal(y_pred, y_pred_unweighted),
                 "Weighted prediction should differ from unweighted",

@@ -56,7 +56,7 @@ def _classify_oob(X, trees, bootstraps):
 
     for i, record in enumerate(X):
         classifications = []
-        for _j, (tree, bootstrap) in enumerate(zip(trees, bootstraps, strict=False)):
+        for _j, (tree, bootstrap) in enumerate(zip(trees, bootstraps)):
             # Check if record is out-of-bag for this tree
             if i not in bootstrap:
                 classifications.append(ClassifierTree.classify(tree, record))

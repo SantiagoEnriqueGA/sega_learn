@@ -95,7 +95,9 @@ def run_example(verbose=False, test=False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--test", action="store_true", help="Run in test mode with smaller dataset")
+    parser.add_argument(
+        "--test", action="store_true", help="Run in test mode with smaller dataset"
+    )
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()
     run_example(verbose=args.verbose, test=args.test)

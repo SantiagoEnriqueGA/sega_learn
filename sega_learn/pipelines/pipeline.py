@@ -1,4 +1,4 @@
-# sega_learn/pipelines/pipeline.py
+import sys
 
 
 # Helper function to check if an object is a transformer
@@ -51,7 +51,11 @@ class Pipeline:
         if not all(isinstance(step, tuple) and len(step) == 2 for step in steps):
             raise TypeError("Each step must be a tuple (name, transformer/estimator).")
 
-        names, estimators = zip(*steps, strict=False)
+        # Conditional use of strict argument for zip()
+        if sys.version_info >= (3, 10):
+            names, estimators = zip(*steps, strict=False)
+        else:
+            names, estimators = zip(*steps)  # Python < 3.10 doesn't support 'strict'
 
         # Validate names
         if len(set(names)) != len(names):

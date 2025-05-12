@@ -48,7 +48,7 @@ class _Utils:
             dict: (dict) - A dictionary where the keys are unique class labels and the values are their respective counts.
         """
         unique, counts = np.unique(y, return_counts=True)
-        return dict(zip(unique, counts, strict=False))
+        return dict(zip(unique, counts))
 
     @staticmethod
     def get_minority_majority_classes(y):

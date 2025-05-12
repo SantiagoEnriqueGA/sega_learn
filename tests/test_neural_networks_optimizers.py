@@ -37,9 +37,7 @@ class TestAdamOptimizer(BaseTest):
         """Test the initialize method."""
         self.assertEqual(len(self.optimizer.m), len(self.layers))
         self.assertEqual(len(self.optimizer.v), len(self.layers))
-        for m, v, layer in zip(
-            self.optimizer.m, self.optimizer.v, self.layers, strict=False
-        ):
+        for m, v, layer in zip(self.optimizer.m, self.optimizer.v, self.layers):
             np.testing.assert_array_equal(m, np.zeros_like(layer.weights))
             np.testing.assert_array_equal(v, np.zeros_like(layer.weights))
 
@@ -103,7 +101,7 @@ class TestSGDOptimizer(BaseTest):
     def test_initialize(self):
         """Test the initialize method."""
         self.assertEqual(len(self.optimizer.velocity), len(self.layers))
-        for v, layer in zip(self.optimizer.velocity, self.layers, strict=False):
+        for v, layer in zip(self.optimizer.velocity, self.layers):
             np.testing.assert_array_equal(v, np.zeros_like(layer.weights))
 
     def test_update(self):
@@ -168,7 +166,7 @@ class TestAdadeltaOptimizer(BaseTest):
         self.assertEqual(len(self.optimizer.E_g2), len(self.layers))
         self.assertEqual(len(self.optimizer.E_delta_x2), len(self.layers))
         for E_g2, E_delta_x2, layer in zip(
-            self.optimizer.E_g2, self.optimizer.E_delta_x2, self.layers, strict=False
+            self.optimizer.E_g2, self.optimizer.E_delta_x2, self.layers
         ):
             np.testing.assert_array_equal(E_g2, np.zeros_like(layer.weights))
             np.testing.assert_array_equal(E_delta_x2, np.zeros_like(layer.weights))

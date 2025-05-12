@@ -321,7 +321,7 @@ def make_blobs(
 
     # Build data
     start = 0
-    for i, (n, std) in enumerate(zip(n_samples_per_center, cluster_std, strict=False)):
+    for i, (n, std) in enumerate(zip(n_samples_per_center, cluster_std)):
         end = start + n
         X[start:end] = centers[i] + rng.normal(scale=std, size=(n, n_features))
         y[start:end] = i

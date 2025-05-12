@@ -126,19 +126,17 @@ class TestNeuralNetworkBaseNumbaTrain(BaseTest):
     def test_weights_biases_initialization(self):
         """Test that weights and biases are initialized correctly."""
         # Assert equality of weights
-        for w1, w2 in zip(
-            self.nn_numba.weights, self.nn_no_numba.weights, strict=False
-        ):
+        for w1, w2 in zip(self.nn_numba.weights, self.nn_no_numba.weights):
             self.assertTrue(np.array_equal(w1, w2), "Weights are not equal!")
 
         # Assert equality of biases
-        for b1, b2 in zip(self.nn_numba.biases, self.nn_no_numba.biases, strict=False):
+        for b1, b2 in zip(self.nn_numba.biases, self.nn_no_numba.biases):
             self.assertTrue(np.array_equal(b1, b2), "Biases are not equal!")
 
     def test_layer_weights_biases_initialization(self):
         """Test that layer weights and biases are initialized correctly."""
         # Assert equality of layer weights
-        for l1, l2 in zip(self.nn_numba.layers, self.nn_no_numba.layers, strict=False):
+        for l1, l2 in zip(self.nn_numba.layers, self.nn_no_numba.layers):
             self.assertTrue(
                 np.array_equal(l1.weights, l2.weights), "Layer weights are not equal!"
             )

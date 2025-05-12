@@ -22,10 +22,8 @@ class ModelSelectionUtility:
         for grid in param_grid:
             all_params.update(grid)
 
-        keys, values = zip(*all_params.items(), strict=False)
-        param_combinations = [
-            dict(zip(keys, v, strict=False)) for v in product(*values)
-        ]
+        keys, values = zip(*all_params.items())
+        param_combinations = [dict(zip(keys, v)) for v in product(*values)]
         return param_combinations
 
     @staticmethod

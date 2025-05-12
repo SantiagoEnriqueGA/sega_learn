@@ -1,3 +1,4 @@
+import sys
 import warnings
 
 import numpy as np
@@ -620,7 +621,10 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
         lr_options = np.logspace(np.log10(min_lr), np.log10(max_lr), num_steps).tolist()
 
         # Extract parameter combinations
-        keys, values = zip(*param_grid.items(), strict=False)
+        if sys.version_info >= (3, 10):
+            keys, values = zip(*param_grid.items(), strict=False)
+        else:
+            keys, values = zip(*param_grid.items()) # Python < 3.10 doesn't support 'strict'
 
         # Calculate total iterations for progress tracking
         total_iterations = (
@@ -645,7 +649,10 @@ class NumbaBackendNeuralNetwork(NeuralNetworkBase):
                     )
 
                     for combination in product(*values):
-                        params = dict(zip(keys, combination, strict=False))
+                        if sys.version_info >= (3, 10):
+                            params = dict(zip(keys, combination, strict=False))
+                        else:
+                            params = dict(zip(keys, combination)) # Python < 3.10 doesn't support 'strict'
 
                         for lr in lr_options:
                             # Create model with current hyperparameters

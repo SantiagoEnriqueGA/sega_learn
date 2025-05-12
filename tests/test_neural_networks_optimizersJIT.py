@@ -46,7 +46,7 @@ class TestJITAdamOptimizer(BaseTest):
         self.assertEqual(len(self.optimizer.m), len(self.layers))
         self.assertEqual(len(self.optimizer.v), len(self.layers))
         # For JIT classes all layers are the same size
-        for m, v in zip(self.optimizer.m, self.optimizer.v, strict=False):
+        for m, v in zip(self.optimizer.m, self.optimizer.v):
             np.testing.assert_array_equal(m, np.zeros_like(self.layers[0].weights))
             np.testing.assert_array_equal(v, np.zeros_like(self.layers[0].weights))
 
@@ -111,7 +111,7 @@ class TestJITSGDOptimizer(BaseTest):
         """Test the initialize method."""
         self.assertEqual(len(self.optimizer.velocity), len(self.layers))
         # For JIT classes all layers are the same size
-        for v, layer in zip(self.optimizer.velocity, self.layers, strict=False):
+        for v, layer in zip(self.optimizer.velocity, self.layers):
             np.testing.assert_array_equal(
                 v[: layer.weights.shape[0], : layer.weights.shape[1]],
                 np.zeros_like(layer.weights),
@@ -179,9 +179,7 @@ class TestJITAdadeltaOptimizer(BaseTest):
         self.assertEqual(len(self.optimizer.E_g2), len(self.layers))
         self.assertEqual(len(self.optimizer.E_delta_x2), len(self.layers))
         # For JIT classes all layers are the same size
-        for E_g2, E_delta_x2 in zip(
-            self.optimizer.E_g2, self.optimizer.E_delta_x2, strict=False
-        ):
+        for E_g2, E_delta_x2 in zip(self.optimizer.E_g2, self.optimizer.E_delta_x2):
             np.testing.assert_array_equal(E_g2, np.zeros_like(self.layers[0].weights))
             np.testing.assert_array_equal(
                 E_delta_x2, np.zeros_like(self.layers[0].weights)
