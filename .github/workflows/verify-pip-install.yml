@@ -1,0 +1,44 @@
+name: Verify pip Install
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  setup-test-envs:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', "3.11", '3.12'] # Test on these Python versions
+
+    steps:
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Create and activate virtual environment
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+
+    - name: Install required packages
+      run: |
+        source venv/bin/activate
+        pip install numpy pandas scikit-learn scipy statsmodels
+
+    - name: Install sega_learn package from pypi
+      run: |
+        source venv/bin/activate
+        pip install sega_learn
+
+    - name: Verify sega_learn installation
+      run: |
+        source venv/bin/activate
+        python -c "import sega_learn; print('sega_learn installed successfully')"
