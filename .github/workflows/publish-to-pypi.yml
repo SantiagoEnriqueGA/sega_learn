@@ -48,72 +48,72 @@ jobs:
       - name: Step 3 - Run Unit/Functional Tests (quick tests)
         run: uv run python tests/run_quick_tests.py
 
-      # --- Example Test Steps (from examples-tests.yml) ---
-      - name: Step 4 - Run selected examples
-        run: |
-          # Pipelines
-          uv run python examples/pipelines/pipeline_classification.py
-          uv run python examples/pipelines/pipeline_regression.py
-          uv run python examples/pipelines/pipeline_forecasting.py
-          # Auto
-          uv run python examples/auto/classifier.py --test
-          # Clustering
-          uv run python examples/clustering/dbscan.py
-          uv run python examples/clustering/dbscan_3d.py
-          # Linear Models
-          uv run python examples/linear_models/bayes.py
-          uv run python examples/linear_models/lasso.py
-          uv run python examples/linear_models/lda.py
-          uv run python examples/linear_models/logisticRegression.py
-          uv run python examples/linear_models/ols.py
-          uv run python examples/linear_models/passiveAggressive.py
-          uv run python examples/linear_models/qda.py
-          uv run python examples/linear_models/ransac.py
-          uv run python examples/linear_models/ridge.py
-          # Nearest Neighbors
-          uv run python examples/nearest_neighbors/nearestNeighborsClassifier.py
-          uv run python examples/nearest_neighbors/nearestNeighborsRegressor.py
-          # Neural Networks
-          uv run python examples/neural_networks/neuralNetwork_classifier.py
-          uv run python examples/neural_networks/neuralNetwork_classifier_hyper.py
-          uv run python examples/neural_networks/neuralNetwork_iris.py
-          uv run python examples/neural_networks/neuralNetwork_layers_conv.py
-          uv run python examples/neural_networks/neuralNetwork_metrics_anim.py
-          uv run python examples/neural_networks/neuralNetwork_regressor.py
-          # SVM
-          uv run python examples/svm/generalizedSVC_multi.py
-          uv run python examples/svm/linearSVC_binary.py
-          uv run python examples/svm/linearSVR.py
-          # Time Series
-          uv run python examples/time_series/arima_arima.py
-          uv run python examples/time_series/decom_additiveDecomposition.py
-          uv run python examples/time_series/mvg_exponentialMovingAverage.py
-          uv run python examples/time_series/smth_simpleExponentialSmoothing.py
-          # Trees
-          uv run python examples/trees/gradientBoostedRegressor.py
-          uv run python examples/trees/isolationForest_reg.py
-          uv run python examples/trees/randomForestClassifier.py
-          uv run python examples/trees/randomForestRegressor.py
-          # Utils
-          uv run python examples/utils/dataAugmentation_combined.py
-          uv run python examples/utils/dataAugmentation_randOver.py
-          uv run python examples/utils/dataAugmentation_randUnder.py
-          uv run python examples/utils/dataAugmentation_smote.py
-          uv run python examples/utils/dataPreprocessing.py
-          uv run python examples/utils/gridSearchCV_gbr.py
-          uv run python examples/utils/gridSearchCV_rfc.py
-          uv run python examples/utils/gridSearchCV_rfr.py
-          uv run python examples/utils/makeData.py
-          uv run python examples/utils/pca_classification.py
-          uv run python examples/utils/pca_regression.py
-          uv run python examples/utils/polynomialTransform.py
-          uv run python examples/utils/randomSearchCV_bayes.py
-          uv run python examples/utils/randomSearchCV_gbr.py
-          uv run python examples/utils/randomSearchCV_rfc.py
-          uv run python examples/utils/randomSearchCV_rfr.py
-          uv run python examples/utils/segaSearchCV_rfr.py
-          uv run python examples/utils/svd_classification.py
-          uv run python examples/utils/svd_regression.py
+      # # --- Example Test Steps (from examples-tests.yml) ---
+      # - name: Step 4 - Run selected examples
+      #   run: |
+      #     # Pipelines
+      #     uv run python examples/pipelines/pipeline_classification.py
+      #     uv run python examples/pipelines/pipeline_regression.py
+      #     uv run python examples/pipelines/pipeline_forecasting.py
+      #     # Auto
+      #     uv run python examples/auto/classifier.py --test
+      #     # Clustering
+      #     uv run python examples/clustering/dbscan.py
+      #     uv run python examples/clustering/dbscan_3d.py
+      #     # Linear Models
+      #     uv run python examples/linear_models/bayes.py
+      #     uv run python examples/linear_models/lasso.py
+      #     uv run python examples/linear_models/lda.py
+      #     uv run python examples/linear_models/logisticRegression.py
+      #     uv run python examples/linear_models/ols.py
+      #     uv run python examples/linear_models/passiveAggressive.py
+      #     uv run python examples/linear_models/qda.py
+      #     uv run python examples/linear_models/ransac.py
+      #     uv run python examples/linear_models/ridge.py
+      #     # Nearest Neighbors
+      #     uv run python examples/nearest_neighbors/nearestNeighborsClassifier.py
+      #     uv run python examples/nearest_neighbors/nearestNeighborsRegressor.py
+      #     # Neural Networks
+      #     uv run python examples/neural_networks/neuralNetwork_classifier.py
+      #     uv run python examples/neural_networks/neuralNetwork_classifier_hyper.py
+      #     uv run python examples/neural_networks/neuralNetwork_iris.py
+      #     uv run python examples/neural_networks/neuralNetwork_layers_conv.py
+      #     uv run python examples/neural_networks/neuralNetwork_metrics_anim.py
+      #     uv run python examples/neural_networks/neuralNetwork_regressor.py
+      #     # SVM
+      #     uv run python examples/svm/generalizedSVC_multi.py
+      #     uv run python examples/svm/linearSVC_binary.py
+      #     uv run python examples/svm/linearSVR.py
+      #     # Time Series
+      #     uv run python examples/time_series/arima_arima.py
+      #     uv run python examples/time_series/decom_additiveDecomposition.py
+      #     uv run python examples/time_series/mvg_exponentialMovingAverage.py
+      #     uv run python examples/time_series/smth_simpleExponentialSmoothing.py
+      #     # Trees
+      #     uv run python examples/trees/gradientBoostedRegressor.py
+      #     uv run python examples/trees/isolationForest_reg.py
+      #     uv run python examples/trees/randomForestClassifier.py
+      #     uv run python examples/trees/randomForestRegressor.py
+      #     # Utils
+      #     uv run python examples/utils/dataAugmentation_combined.py
+      #     uv run python examples/utils/dataAugmentation_randOver.py
+      #     uv run python examples/utils/dataAugmentation_randUnder.py
+      #     uv run python examples/utils/dataAugmentation_smote.py
+      #     uv run python examples/utils/dataPreprocessing.py
+      #     uv run python examples/utils/gridSearchCV_gbr.py
+      #     uv run python examples/utils/gridSearchCV_rfc.py
+      #     uv run python examples/utils/gridSearchCV_rfr.py
+      #     uv run python examples/utils/makeData.py
+      #     uv run python examples/utils/pca_classification.py
+      #     uv run python examples/utils/pca_regression.py
+      #     uv run python examples/utils/polynomialTransform.py
+      #     uv run python examples/utils/randomSearchCV_bayes.py
+      #     uv run python examples/utils/randomSearchCV_gbr.py
+      #     uv run python examples/utils/randomSearchCV_rfc.py
+      #     uv run python examples/utils/randomSearchCV_rfr.py
+      #     uv run python examples/utils/segaSearchCV_rfr.py
+      #     uv run python examples/utils/svd_classification.py
+      #     uv run python examples/utils/svd_regression.py
 
   publish:
     name: Build and publish Python distributions to PyPI
@@ -140,7 +140,7 @@ jobs:
         uses: astral-sh/setup-uv@v1
         with:
           version: latest # Ensure latest uv is installed
-    
+
       # Verify pyproject.toml version is the same as the input version
       - name: Verify pyproject.toml version
         shell: bash
