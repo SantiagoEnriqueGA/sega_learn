@@ -160,7 +160,7 @@ jobs:
       - name: Publish package to PyPI
         run: |
           uv publish dist/* \
-            --repository-url https://upload.pypi.org/legacy/ \
+            --publish-url https://upload.pypi.org/legacy/ \
             --token ${{ secrets.PYPI_API_TOKEN }}
 
       - name: Create GitHub Release
