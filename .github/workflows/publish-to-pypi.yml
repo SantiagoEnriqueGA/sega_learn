@@ -122,6 +122,8 @@ jobs:
     # Prevent publishing from branches other than main, even if manually triggered
     # Ensure the version in pyproject.toml is updated on main before running.
     if: github.ref == 'refs/heads/main' && needs.test_package.result == 'success'
+    permissions:
+      contents: write  # Allow writing repository contents (needed for creating tags/releases)
 
     steps:
       - name: Checkout repository
