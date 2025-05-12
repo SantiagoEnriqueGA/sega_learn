@@ -11,6 +11,9 @@
 import numpy as np
 from scipy.stats import mode
 
+from sega_learn.nearest_neighbors.knn_classifier import KNeighborsClassifier
+from sega_learn.nearest_neighbors.knn_regressor import KNeighborsRegressor
+
 
 class BaseImputer:
     """Base class for imputers providing a common interface."""
@@ -206,4 +209,67 @@ class InterpolationImputer(BaseImputer):
                     ),
                     np.arange(X.shape[0]),
                 )
+        return X
+
+
+class KNNImputer(BaseImputer):
+    """K-Nearest Neighbors imputer for handling missing values using KNN."""
+
+    def __init__(self, n_neighbors=5, distance_metric="euclidean"):
+        """Initialize the KNNImputer with a specified number of neighbors.
+
+        Args:
+            n_neighbors (int): The number of neighbors to use for imputation.
+            distance_metric (str): Distance metric for calculating distances ('euclidean', 'manhattan', 'minkowski').
+        """
+        self.n_neighbors = n_neighbors
+        self.distance_metric = distance_metric
+        if distance_metric not in ["euclidean", "manhattan", "minkowski"]:
+            raise ValueError(
+                "distance_metric must be one of 'euclidean', 'manhattan', or 'minkowski'."
+            )
+
+    def fit(self, X=None, y=None):
+        """Fit the imputer on the data. No operation needed for KNN imputer."""
+        return self
+
+    def transform(self, X):
+        """Impute missing values in X using KNN.
+
+        Args:
+            X (array-like): The input data with missing values.
+        """
+        # TODO: Update to correctly handle categorical features
+        X = np.array(X, copy=True)
+
+        # Identify numerical features
+        num_features = np.array(
+            [np.issubdtype(X[:, i].dtype, np.number) for i in range(X.shape[1])]
+        )
+
+        # Iterate over each feature
+        for i in range(X.shape[1]):
+            missing_mask = np.isnan(X[:, i])
+
+            if not np.any(missing_mask):
+                # Skip if no missing values in the feature
+                continue
+
+            if num_features[i]:
+                # Use KNeighborsRegressor for numerical features
+                knn = KNeighborsRegressor(
+                    n_neighbors=self.n_neighbors, distance_metric=self.distance_metric
+                )
+            else:
+                # Use KNeighborsClassifier for categorical features
+                knn = KNeighborsClassifier(
+                    n_neighbors=self.n_neighbors, distance_metric=self.distance_metric
+                )
+
+            # Fit the KNN model on non-missing data
+            knn.fit(X[~missing_mask, :], X[~missing_mask, i])
+
+            # Predict missing values
+            X[missing_mask, i] = knn.predict(X[missing_mask, :])
+
         return X
