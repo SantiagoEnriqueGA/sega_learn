@@ -6,8 +6,7 @@
 # DirectionalImputer: a class for directional imputation (forward, backward)
 # InterpolationImputer: a class for interpolation imputation (linear, polynomial, etc.)
 # KNNImputer: a class for KNN imputation
-# CustomImputer: a class for custom imputation
-# Can take estimator as input and use it for imputation
+# CustomImputer: a class for custom imputation, take estimator as input and use it for imputation
 
 import numpy as np
 from scipy.stats import mode
@@ -157,4 +156,54 @@ class DirectionalImputer(BaseImputer):
                 # For each row, replace NaN with the next value
                 # If the next value is also NaN, it will remain NaN
                 X[i] = np.where(np.isnan(X[i]), X[i + 1], X[i])
+        return X
+
+
+class InterpolationImputer(BaseImputer):
+    """Interpolation imputer for handling missing values using linear interpolation."""
+
+    def __init__(self, method="linear", degree=1):
+        """Initialize the InterpolationImputer with a specified method.
+
+        The method can be "linear" or "polynomial"
+
+        Args:
+            method (str): The interpolation method ("linear", "polynomial").
+            degree (int): The degree of the polynomial for polynomial interpolation.
+        """
+        self.method = method
+        self.degree = degree
+
+    def fit(self, X=None, y=None):
+        """Fit the imputer on the data. No operation needed for interpolation imputer."""
+        return self
+
+    def transform(self, X):
+        """Impute missing values in X using interpolation.
+
+        Args:
+            X (array-like): The input data with missing values.
+        """
+        X = np.array(X, copy=True)
+
+        # Linear Interpolation
+        if self.method == "linear":
+            for i in range(X.shape[1]):
+                X[:, i] = np.interp(
+                    np.arange(X.shape[0]),
+                    np.flatnonzero(~np.isnan(X[:, i])),
+                    X[~np.isnan(X[:, i]), i],
+                )
+
+        # Polynomial Interpolation
+        elif self.method == "polynomial":
+            for i in range(X.shape[1]):
+                X[:, i] = np.polyval(
+                    np.polyfit(
+                        np.flatnonzero(~np.isnan(X[:, i])),
+                        X[~np.isnan(X[:, i]), i],
+                        self.degree,
+                    ),
+                    np.arange(X.shape[0]),
+                )
         return X
