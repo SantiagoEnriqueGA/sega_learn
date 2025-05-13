@@ -60,12 +60,13 @@ class OrdinaryLeastSquares:
         """Returns the string representation of the model."""
         return "Ordinary Least Squares"
 
-    def fit(self, X, y):
+    def fit(self, X, y, warn=False):
         """Fits the linear regression model to the training data.
 
         Args:
             X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
             y: (np.ndarray) - Training target data of shape (n_samples,).
+            warn: (bool), optional - Whether to print detailed warnings (default is False).
 
         Returns:
             self: (OrdinaryLeastSquares) - The fitted linear regression model.
@@ -84,10 +85,11 @@ class OrdinaryLeastSquares:
             else:
                 self.intercept_ = 0.0  # No intercept
         except Exception as _e:
-            warnings.warn(
-                "Tried to use C compiled code, but failed. Using Python code instead.",
-                stacklevel=2,
-            )
+            if warn:
+                warnings.warn(
+                    "Tried to use C compiled code, but failed. Using Python code instead.",
+                    stacklevel=2,
+                )
 
             if self.fit_intercept:  # If fit_intercept is True
                 X = np.hstack(
@@ -253,13 +255,14 @@ class Ridge:
         """Returns the string representation of the model."""
         return "Ridge Regression"
 
-    def fit(self, X, y, numba=False):
+    def fit(self, X, y, numba=False, warn=False):
         """Fits the Ridge Regression model to the training data.
 
         Args:
             X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
             y: (np.ndarray) - Training target data of shape (n_samples,).
             numba: (bool), optional - Whether to use numba for faster computation (default is False).
+            warn: (bool), optional - Whether to print detailed warnings (default is False).
 
         Returns:
             self: (Ridge) - The fitted Ridge Regression model.
@@ -285,10 +288,11 @@ class Ridge:
 
                 return
             except Exception as _e:
-                warnings.warn(
-                    "Tried to use C compiled code, but failed. Using Python code instead.",
-                    stacklevel=2,
-                )
+                if warn:
+                    warnings.warn(
+                        "Tried to use C compiled code, but failed. Using Python code instead.",
+                        stacklevel=2,
+                    )
 
         if numba:
             # Try to use numba for faster computation
@@ -518,13 +522,14 @@ class Lasso:
         """Returns the string representation of the model."""
         return "Lasso Regression"
 
-    def fit(self, X, y, numba=False):
+    def fit(self, X, y, numba=False, warn=False):
         """Fits the Lasso Regression model to the training data using coordinate descent.
 
         Args:
             X: (np.ndarray) - Training feature data of shape (n_samples, n_features).
             y: (np.ndarray) - Training target data of shape (n_samples,).
             numba: (bool), optional - Whether to use numba for faster computation (default is False).
+            warn: (bool), optional - Whether to print detailed warnings (default is False).
 
         Returns:
             self: (Lasso) - The fitted Lasso Regression model.
@@ -550,10 +555,11 @@ class Lasso:
 
                 return
             except Exception as _e:
-                warnings.warn(
-                    "Tried to use C compiled code, but failed. Using Python code instead.",
-                    stacklevel=2,
-                )
+                if warn:
+                    warnings.warn(
+                        "Tried to use C compiled code, but failed. Using Python code instead.",
+                        stacklevel=2,
+                    )
 
         if numba:
             # Try to use numba for faster computation

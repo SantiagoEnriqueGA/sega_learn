@@ -1,3 +1,5 @@
+# TODO: Add tests for all these imputers
+
 # HIGH LEVEL STRUCTURE OF IMPUTATION CLASSES
 # --------------------------------------------------------------------------------------------
 # BaseImputer: a base class for common interface and utility functions
@@ -8,14 +10,15 @@
 # KNNImputer: a class for KNN imputation
 # CustomImputer: a class for custom imputation, take estimator as input and use it for imputation
 
+import contextlib
 from collections import Counter
 
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import OneHotEncoder
 
 from sega_learn.nearest_neighbors.knn_classifier import KNeighborsClassifier
 from sega_learn.nearest_neighbors.knn_regressor import KNeighborsRegressor
+from sega_learn.utils.dataPreprocessing import Encoder, one_hot_encode
 
 
 class BaseImputer:
@@ -634,9 +637,10 @@ class KNNImputer(BaseImputer):
         self._initial_imputer_cat = StatisticalImputer(
             strategy="mode", missing_values=self.missing_values
         )
-        self._encoder = OneHotEncoder(
-            handle_unknown="ignore", sparse_output=False
-        )  # Keep sparse=False for simplicity with numpy hstack
+        # self._encoder = OneHotEncoder(
+        #     handle_unknown="ignore", sparse_output=False
+        # )  # Keep sparse=False for simplicity with numpy hstack
+        self._encoder = one_hot_encode
 
         self.is_fitted_ = True
         return self
@@ -715,7 +719,9 @@ class KNNImputer(BaseImputer):
                 X_cat_encoded = self._encoder.transform(X_cat_part)
                 X_knn_features = np.hstack((X_numeric_part, X_cat_encoded))
             except Exception as e:
-                raise RuntimeError(f"Categorical feature encoding failed: {e}") from None
+                raise RuntimeError(
+                    f"Categorical feature encoding failed: {e}"
+                ) from None
         elif X_numeric_part.size > 0:
             X_knn_features = X_numeric_part
         else:
@@ -724,7 +730,9 @@ class KNNImputer(BaseImputer):
         try:
             X_knn_features = X_knn_features.astype(float)
         except ValueError as e:
-            raise TypeError(f"Could not convert final features to numeric: {e}") from None
+            raise TypeError(
+                f"Could not convert final features to numeric: {e}"
+            ) from None
 
         # 4. Iterate through columns and impute using KNN
         output_X = X_imputed.copy()
@@ -810,4 +818,362 @@ class KNNImputer(BaseImputer):
         try:
             return pd.DataFrame(output_X).infer_objects().to_numpy()
         except Exception:  # Fallback to object if inference fails
+            return output_X
+
+
+class CustomImputer(BaseImputer):
+    """Imputes missing values using a user-provided estimator(s).
+
+    Each feature with missing values is treated as a target. Features for the
+    estimators are created from other columns after an initial simple imputation
+    (mean/mode) and one-hot encoding of categorical features among them.
+    """
+
+    def __init__(
+        self,
+        regressor=None,
+        classifier=None,
+        missing_values=np.nan,
+        one_hot_encode_features=True,
+    ):  # New parameter
+        """Initialize the CustomImputer.
+
+        Args:
+            regressor (estimator object, optional): Estimator for numeric targets.
+            classifier (estimator object, optional): Estimator for categorical targets.
+            missing_values (scalar, str, None, default=np.nan): Placeholder for missing values.
+            one_hot_encode_features (bool, default=True): Whether to one-hot encode
+                categorical features in the matrix X used by the custom estimators.
+                If False, custom estimators must handle mixed-type features.
+        """
+        # Call BaseImputer's __init__
+        self.missing_values = missing_values
+
+        if regressor is None and classifier is None:
+            raise ValueError(
+                "At least one estimator (regressor or classifier) must be provided."
+            )
+
+        if regressor is not None and not (
+            hasattr(regressor, "fit") and hasattr(regressor, "predict")
+        ):
+            raise TypeError("Regressor must have fit and predict methods.")
+        if classifier is not None and not (
+            hasattr(classifier, "fit") and hasattr(classifier, "predict")
+        ):
+            raise TypeError("Classifier must have fit and predict methods.")
+
+        self.regressor = regressor
+        self.classifier = classifier
+        self.one_hot_encode_features = one_hot_encode_features
+        self.is_fitted_ = False
+        self._initial_imputer_num = None
+        self._initial_imputer_cat = None
+        self._column_types = None  # Overall column types (numeric/categorical)
+        # For features fed to custom estimators:
+        self._feature_cat_indices_for_ohe = (
+            None  # Indices of categorical cols *within the feature set* for OHE
+        )
+        self._feature_num_indices_for_ohe = (
+            None  # Indices of numeric cols *within the feature set* for OHE
+        )
+        self._ohe_feature_encoder = None  # OneHotEncoder for the feature matrix X
+
+    def fit(self, X, y=None):
+        """Fit the imputer: validate input, determine overall column types, and prepare for one-hot encoding of features if enabled."""
+        self._check_input(X)
+        try:
+            X_df = pd.DataFrame(X).copy()
+        except Exception as e:
+            raise ValueError(
+                f"Could not convert input X to DataFrame. Error: {e}"
+            ) from None
+
+        for col in X_df.columns:
+            with contextlib.suppress(TypeError):
+                X_df[col] = X_df[col].replace(
+                    ["nan", "NaN", "None", "null", "", "NA", "<NA>"], np.nan
+                )
+
+        if X_df.ndim != 2:
+            raise ValueError("CustomImputer expects 2D input.")
+
+        # Determine overall column types (numeric/categorical)
+        self._column_types = []
+        self._num_feature_indices = []  # Indices of numeric columns in the original X
+        self._cat_feature_indices = []  # Indices of categorical columns in the original X
+        for i, col_name in enumerate(X_df.columns):
+            col = X_df[col_name]
+            try:
+                inferred_col = pd.to_numeric(col, errors="raise")
+                if not inferred_col.isnull().all():
+                    self._column_types.append("numeric")
+                    self._num_feature_indices.append(i)
+                else:
+                    self._column_types.append("categorical")
+                    self._cat_feature_indices.append(i)
+            except (ValueError, TypeError):
+                self._column_types.append("categorical")
+                self._cat_feature_indices.append(i)
+
+        if self._num_feature_indices and self.regressor is None:
+            print(
+                "Warning: Numeric columns found, no regressor. Numeric imputation skipped."
+            )
+        if self._cat_feature_indices and self.classifier is None:
+            print(
+                "Warning: Categorical columns found, no classifier. Categorical imputation skipped."
+            )
+
+        self._initial_imputer_num = StatisticalImputer(
+            strategy="mean", missing_values=self.missing_values
+        )
+        self._initial_imputer_cat = StatisticalImputer(
+            strategy="mode", missing_values=self.missing_values
+        )
+
+        if self.one_hot_encode_features:
+            # self._ohe_feature_encoder = OneHotEncoder(
+            #     handle_unknown="ignore", sparse_output=False
+            # )
+            self._ohe_feature_encoder = one_hot_encode
+            # Note: The actual fitting of this OHE will happen dynamically within transform
+            # for each set of features used by the custom estimators, as the feature set changes.
+            # However, we determine general categorical/numerical features of the *input X* here.
+
+        self.is_fitted_ = True
+        return self
+
+    def _prepare_features_for_estimator(self, X_data_filled, current_target_col_idx):
+        """Prepares the feature matrix X for the custom estimator. Handles selection of other columns and optional one-hot encoding."""
+        # Select all *other* columns to be features
+        feature_indices_orig = [
+            idx
+            for idx in range(X_data_filled.shape[1])
+            if idx != current_target_col_idx
+        ]
+
+        if not feature_indices_orig:
+            return None  # No features available (e.g., if X has only 1 column)
+
+        X_features_raw = X_data_filled[:, feature_indices_orig]
+
+        if not self.one_hot_encode_features:
+            # Estimator must handle mixed types if OHE is off
+            return X_features_raw.astype(object)  # Ensure object type for mixed
+
+        # --- One-Hot Encode features if enabled ---
+        # Determine numeric and categorical columns *within this X_features_raw set*
+        num_cols_in_features = []
+        cat_cols_in_features = []
+
+        for local_idx, orig_idx in enumerate(feature_indices_orig):
+            if self._column_types[orig_idx] == "numeric":
+                num_cols_in_features.append(local_idx)
+            else:
+                cat_cols_in_features.append(local_idx)
+
+        X_features_numeric_part = X_features_raw[:, num_cols_in_features].astype(float)
+
+        if cat_cols_in_features:
+            X_features_cat_part = X_features_raw[:, cat_cols_in_features]
+            # Fit OHE specifically on these categorical feature columns
+            current_ohe = self._ohe_feature_encoder
+            current_ohe(X_features_cat_part)
+            X_features_cat_encoded = current_ohe(X_features_cat_part)
+
+            if X_features_numeric_part.size > 0:
+                X_features_processed = np.hstack(
+                    (X_features_numeric_part, X_features_cat_encoded)
+                )
+            else:
+                X_features_processed = X_features_cat_encoded
+        elif X_features_numeric_part.size > 0:  # Only numeric features
+            X_features_processed = X_features_numeric_part
+        else:  # No features (should be caught by empty feature_indices_orig)
+            return None
+
+        return X_features_processed.astype(float)
+
+    def transform(self, X):
+        """Impute missing values in X using the provided custom estimator(s)."""
+        if not self.is_fitted_:
+            raise RuntimeError("Call fit() before transform().")
+        self._check_input(X)
+
+        if isinstance(X, pd.DataFrame):
+            X_imputed = X.to_numpy(copy=True, dtype=object)
+        else:
+            X_imputed = np.array(X, copy=True, dtype=object)
+
+        if X_imputed.ndim != 2:
+            raise ValueError("CustomImputer expects 2D input.")
+        if X_imputed.shape[1] != len(self._column_types):
+            raise ValueError(
+                f"Input features ({X_imputed.shape[1]}) != fitted features ({len(self._column_types)})."
+            )
+
+        original_mask = self._get_mask(X_imputed)
+        if not np.any(original_mask):
+            try:
+                return pd.DataFrame(X_imputed).infer_objects().to_numpy()
+            except Exception:
+                return X_imputed
+
+        # 1. Initial Imputation (Mean/Mode)
+        X_filled_initial = X_imputed.copy()
+        if self._num_feature_indices:  # Use original indices of num/cat columns
+            num_cols_idx_orig = self._num_feature_indices
+            if num_cols_idx_orig:  # Check if list is not empty
+                num_data = X_filled_initial[:, num_cols_idx_orig]
+                if self._get_mask(num_data).any():
+                    try:
+                        self._initial_imputer_num.fit(num_data)
+                        imputed_num = self._initial_imputer_num.transform(num_data)
+                        X_filled_initial[:, num_cols_idx_orig] = (
+                            imputed_num  # Maintain type from imputer
+                        )
+                    except Exception as e:
+                        print(f"Warning: Initial numeric fill failed: {e}")
+        if self._cat_feature_indices:
+            cat_cols_idx_orig = self._cat_feature_indices
+            if cat_cols_idx_orig:  # Check if list is not empty
+                cat_data = X_filled_initial[:, cat_cols_idx_orig]
+                if self._get_mask(cat_data).any():
+                    try:
+                        self._initial_imputer_cat.fit(cat_data)
+                        X_filled_initial[:, cat_cols_idx_orig] = (
+                            self._initial_imputer_cat.transform(cat_data)
+                        )
+                    except Exception as e:
+                        print(f"Warning: Initial categorical fill failed: {e}")
+
+        # 2. Secondary Fill
+        final_check_mask = self._get_mask(X_filled_initial)
+        if np.any(final_check_mask):
+            print(
+                "Warning: NaNs after initial fill. Applying secondary fill (0/missing)."
+            )
+            for j_orig in range(X_filled_initial.shape[1]):
+                if np.any(final_check_mask[:, j_orig]):
+                    fill_val = (
+                        0 if self._column_types[j_orig] == "numeric" else "missing"
+                    )
+                    X_filled_initial[final_check_mask[:, j_orig], j_orig] = fill_val
+
+        # 3. Iterate through columns and impute
+        output_X = X_imputed.copy()
+
+        for j_target_orig_idx in range(
+            output_X.shape[1]
+        ):  # j_target_orig_idx is the index in original X
+            col_mask_orig = original_mask[:, j_target_orig_idx]
+            if not np.any(col_mask_orig):
+                continue
+
+            is_numeric_target = self._column_types[j_target_orig_idx] == "numeric"
+            estimator_to_use = None
+            if is_numeric_target and self.regressor:
+                estimator_to_use = self.regressor
+            elif not is_numeric_target and self.classifier:
+                estimator_to_use = self.classifier
+            else:
+                print(
+                    f"Warning: No suitable estimator for col {j_target_orig_idx} (type: {self._column_types[j_target_orig_idx]}). Using initial fill."
+                )
+                output_X[col_mask_orig, j_target_orig_idx] = X_filled_initial[
+                    col_mask_orig, j_target_orig_idx
+                ]
+                continue
+
+            rows_to_impute_idx = np.where(col_mask_orig)[0]
+            rows_for_training_idx = np.where(~col_mask_orig)[0]
+
+            min_samples_required = 2
+            if len(rows_for_training_idx) < min_samples_required:
+                print(
+                    f"Warning: Insufficient samples ({len(rows_for_training_idx)}) for col {j_target_orig_idx}. Using initial fill."
+                )
+                output_X[rows_to_impute_idx, j_target_orig_idx] = X_filled_initial[
+                    rows_to_impute_idx, j_target_orig_idx
+                ]
+                continue
+
+            # --- Prepare features for THIS estimator ---
+            # X_filled_initial is the fully imputed dataset (mean/mode/secondary)
+            X_features_processed = self._prepare_features_for_estimator(
+                X_filled_initial, j_target_orig_idx
+            )
+
+            if X_features_processed is None or X_features_processed.shape[1] == 0:
+                print(
+                    f"Warning: No features available for imputing column {j_target_orig_idx}. Using initial fill."
+                )
+                output_X[rows_to_impute_idx, j_target_orig_idx] = X_filled_initial[
+                    rows_to_impute_idx, j_target_orig_idx
+                ]
+                continue
+
+            X_train_est = X_features_processed[rows_for_training_idx, :]
+            X_predict_est = X_features_processed[rows_to_impute_idx, :]
+            y_train_original = output_X[rows_for_training_idx, j_target_orig_idx]
+
+            try:
+                y_train_processed = y_train_original
+                label_encoder = None
+                if is_numeric_target:
+                    y_train_processed = y_train_original.astype(float)
+                else:  # Categorical target
+                    label_encoder = Encoder()
+                    y_train_processed = label_encoder.fit_transform(y_train_original)
+
+                estimator_to_use.fit(X_train_est, y_train_processed)
+                predicted_values = estimator_to_use.predict(X_predict_est)
+
+                # Ensure predicted_values are np.ndarray
+                if not isinstance(predicted_values, np.ndarray):
+                    predicted_values = np.array(predicted_values)
+
+                if label_encoder:
+                    predicted_values = predicted_values.astype(
+                        int
+                    )  # Ensure int for inverse_transform
+                    # Handle cases where prediction might be outside of fitted classes
+                    # by transforming back only known predicted labels
+                    known_preds_mask = np.isin(
+                        predicted_values,
+                        label_encoder.transform(label_encoder.classes_),
+                    )
+                    decoded_values = np.full_like(
+                        predicted_values,
+                        fill_value=label_encoder.classes_[0],
+                        dtype=object,
+                    )  # Fallback to first class
+                    if np.any(
+                        known_preds_mask
+                    ):  # Check if there are any known predictions
+                        decoded_values[known_preds_mask] = (
+                            label_encoder.inverse_transform(
+                                predicted_values[known_preds_mask]
+                            )
+                        )
+                    if not np.all(known_preds_mask):
+                        print(
+                            f"Warning: Classifier predicted unknown labels for col {j_target_orig_idx}. Used fallback."
+                        )
+                    predicted_values = decoded_values
+
+                output_X[rows_to_impute_idx, j_target_orig_idx] = predicted_values
+            except Exception as e:
+                print(
+                    f"Error during custom imputation for col {j_target_orig_idx} with {type(estimator_to_use).__name__}: {e}. Using initial fill."
+                )
+                output_X[rows_to_impute_idx, j_target_orig_idx] = X_filled_initial[
+                    rows_to_impute_idx, j_target_orig_idx
+                ]
+
+        # 4. Return
+        try:
+            return pd.DataFrame(output_X).infer_objects().to_numpy()
+        except Exception:
             return output_X
