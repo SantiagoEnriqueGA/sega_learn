@@ -195,4 +195,276 @@ class Scaler:
             return X * (self.norm[:, np.newaxis] + 1e-8)
 
 
-# TODO: Add data imputation methods/functions
+# TODO: Add tests for encoder
+class Encoder:
+    """Custom encoder for transforming categorical labels into numerical representations.
+
+    Supports Label Encoding and can be extended for Label Binarization.
+    """
+
+    def __init__(
+        self, strategy="label_encode", handle_unknown="error", unknown_value=-1
+    ):
+        """Initialize the Encoder.
+
+        Args:
+            strategy (str, default="label_encode"): The encoding strategy.
+                Currently supports:
+                - "label_encode": Encode target labels with value between 0 and n_classes-1.
+                Future options could include "label_binarize".
+            handle_unknown (str, default='error'): How to handle unknown categories
+                during transform (i.e., categories not seen during fit).
+                - 'error': Raise a ValueError.
+                - 'use_unknown_value': Encode them as `unknown_value`.
+            unknown_value (int, default=-1): Value to use for unknown categories
+                when `handle_unknown='use_unknown_value'`. Ignored if `handle_unknown='error'`.
+        """
+        if strategy not in ["label_encode"]:  # Add "label_binarize" when implemented
+            raise ValueError(
+                f"Strategy '{strategy}' is not supported. "
+                "Currently supported: 'label_encode'."
+            )
+        if handle_unknown not in ["error", "use_unknown_value"]:
+            raise ValueError("handle_unknown must be 'error' or 'use_unknown_value'.")
+
+        self.strategy = strategy
+        self.handle_unknown = handle_unknown
+        self.unknown_value = int(unknown_value)  # Ensure it's an integer
+
+        self.classes_ = None
+        self._mapping = None  # For label_encode: maps category to int
+        self._inverse_mapping = None  # For label_encode: maps int to category
+        self.is_fitted_ = False
+
+    def fit(self, y):
+        """Fit the encoder to determine the mapping from categories to numbers.
+
+        Args:
+            y (array-like): The input array of labels to be encoded.
+                Can be a list, NumPy array, or pandas Series.
+        """
+        if not isinstance(y, (list, np.ndarray, pd.Series)):
+            raise TypeError(
+                "Input y must be array-like (list, NumPy array, or pandas Series)."
+            )
+
+        y_arr = np.asarray(y)
+        if y_arr.ndim != 1:
+            raise ValueError("Input y must be a 1-dimensional array.")
+
+        # Find unique classes, handling NaNs consistently
+        # Using pandas for robust unique with NaN handling
+        unique_classes_pd = pd.unique(y_arr)
+        # Filter out NaNs from classes_ if present (LabelEncoder typically doesn't map NaNs)
+        self.classes_ = np.array([cls for cls in unique_classes_pd if not pd.isna(cls)])
+        self.classes_.sort()  # Ensure consistent mapping order
+
+        if self.strategy == "label_encode":
+            self._mapping = {cls: i for i, cls in enumerate(self.classes_)}
+            self._inverse_mapping = {i: cls for cls, i in self._mapping.items()}
+        # Add logic for "label_binarize" here in the future
+        # For binarizer, self.classes_ would define the columns
+
+        self.is_fitted_ = True
+        return self
+
+    def transform(self, y):
+        """Transform labels to their numerical representation.
+
+        Args:
+            y (array-like): The input array of labels to be transformed.
+
+        Returns:
+            np.ndarray: The transformed numerical labels. For "label_encode",
+                        this is a 1D array of integers.
+        """
+        if not self.is_fitted_:
+            raise RuntimeError(
+                "Encoder has not been fitted. Call fit() before transform()."
+            )
+        if not isinstance(y, (list, np.ndarray, pd.Series)):
+            raise TypeError(
+                "Input y must be array-like (list, NumPy array, or pandas Series)."
+            )
+
+        y_arr = np.asarray(y)
+        if y_arr.ndim != 1:
+            raise ValueError("Input y must be a 1-dimensional array.")
+
+        if self.strategy == "label_encode":
+            transformed_y = np.full(y_arr.shape, self.unknown_value, dtype=int)
+            for i, item in enumerate(y_arr):
+                if pd.isna(item):  # How to handle NaNs in transform?
+                    # Option 1: Treat as unknown
+                    if self.handle_unknown == "error":
+                        # Or decide to map NaNs consistently if they were in fit classes_
+                        # For now, if NaN wasn't in self.classes_ (it's filtered), treat as unknown
+                        raise ValueError(
+                            "Encountered NaN during transform and NaNs were not explicitly handled as a class during fit."
+                        )
+                    transformed_y[i] = self.unknown_value
+                    continue
+
+                encoded_value = self._mapping.get(item)
+                if encoded_value is not None:
+                    transformed_y[i] = encoded_value
+                else:  # Unknown category
+                    if self.handle_unknown == "error":
+                        raise ValueError(
+                            f"Unknown category '{item}' encountered during transform."
+                        )
+                    # Already pre-filled with self.unknown_value, so no explicit assignment needed here
+                    # but good to be aware.
+            return transformed_y
+
+        # Add logic for "label_binarize" transform here
+        # elif self.strategy == "label_binarize":
+        #     if len(self.classes_) == 2: # Special case for binary: output 1D array (0 or 1)
+        #         # Positive class is typically self.classes_[1] after sorting
+        #         positive_class = self.classes_[1]
+        #         transformed_y = np.zeros(len(y_arr), dtype=int)
+        #         for i, item in enumerate(y_arr):
+        #             if pd.isna(item):
+        #                 if self.handle_unknown == 'error': raise ValueError("NaN in input y for binarize")
+        #                 # How to binarize NaN? Perhaps all zeros. Or error.
+        #                 continue # Skips, effectively leaving it 0
+        #             if item == positive_class:
+        #                 transformed_y[i] = 1
+        #             elif item not in self.classes_: # Unknown class
+        #                 if self.handle_unknown == 'error': raise ValueError(f"Unknown category '{item}'")
+        #                 # For binarizer, unknown usually means all zeros.
+        #         return transformed_y
+        #     else: # Multi-class binarization (One-Hot Encoding like)
+        #         transformed_y = np.zeros((len(y_arr), len(self.classes_)), dtype=int)
+        #         for i, item in enumerate(y_arr):
+        #             if pd.isna(item):
+        #                 if self.handle_unknown == 'error': raise ValueError("NaN in input y for binarize")
+        #                 continue # Row of zeros for NaN
+        #             try:
+        #                 # Find index of the item in self.classes_
+        #                 class_idx = np.where(self.classes_ == item)[0][0]
+        #                 transformed_y[i, class_idx] = 1
+        #             except IndexError: # Item not in self.classes_ (unknown)
+        #                 if self.handle_unknown == 'error':
+        #                     raise ValueError(f"Unknown category '{item}' encountered during transform.")
+        #                 # For binarizer, unknown means a row of zeros, which is default.
+        #         return transformed_y
+
+        else:
+            raise NotImplementedError(
+                f"Transform for strategy '{self.strategy}' not implemented."
+            )
+
+    def fit_transform(self, y):
+        """Fit the encoder and then transform the labels.
+
+        Args:
+            y (array-like): The input array of labels.
+
+        Returns:
+            np.ndarray: The transformed numerical labels.
+        """
+        self.fit(y)
+        return self.transform(y)
+
+    def inverse_transform(self, y_transformed):
+        """Transform numerical labels back to their original categories.
+
+        Args:
+            y_transformed (array-like): The numerical labels to be transformed back.
+                                       Should be a 1D array of integers for "label_encode".
+
+        Returns:
+            np.ndarray: The original categorical labels.
+        """
+        if not self.is_fitted_:
+            raise RuntimeError(
+                "Encoder has not been fitted. Call fit() before inverse_transform()."
+            )
+        if not isinstance(y_transformed, (list, np.ndarray, pd.Series)):
+            raise TypeError("Input y_transformed must be array-like.")
+
+        y_transformed_arr = np.asarray(y_transformed)
+        if y_transformed_arr.ndim != 1:
+            raise ValueError(
+                "Input y_transformed must be a 1-dimensional array for label_encode inverse."
+            )
+
+        if self.strategy == "label_encode":
+            original_labels = np.full(
+                y_transformed_arr.shape, fill_value=None, dtype=object
+            )  # Use object for mixed types
+            for i, item_code in enumerate(y_transformed_arr):
+                if (
+                    item_code == self.unknown_value
+                    and self.handle_unknown == "use_unknown_value"
+                ):
+                    # What to inverse_transform unknown_value to? Could be None, or a specific placeholder.
+                    # Let's use None, or raise error if not 'use_unknown_value'
+                    original_labels[i] = (
+                        None  # Or a specific placeholder like "unknown_category"
+                    )
+                else:
+                    original_category = self._inverse_mapping.get(item_code)
+                    if original_category is not None:
+                        original_labels[i] = original_category
+                    else:
+                        # This case implies an integer was passed that doesn't correspond to a known class
+                        # or the unknown_value if handle_unknown was 'error'
+                        raise ValueError(
+                            f"Value '{item_code}' not found in inverse mapping. "
+                            "It might be an unknown value not handled by 'use_unknown_value' "
+                            "or an invalid code."
+                        )
+            return original_labels
+
+        # Add logic for "label_binarize" inverse_transform here
+        # elif self.strategy == "label_binarize":
+        #     if y_transformed_arr.ndim == 1 and len(self.classes_) == 2: # Binary case
+        #         # Assuming 0 maps to self.classes_[0] and 1 to self.classes_[1]
+        #         original_labels = np.full(len(y_transformed_arr), fill_value=None, dtype=object)
+        #         for i, val in enumerate(y_transformed_arr):
+        #             if val == 0: original_labels[i] = self.classes_[0]
+        #             elif val == 1: original_labels[i] = self.classes_[1]
+        #             else: raise ValueError(f"Invalid value {val} in binary transformed data.")
+        #         return original_labels
+        #     elif y_transformed_arr.ndim == 2 and y_transformed_arr.shape[1] == len(self.classes_): # Multi-class
+        #         original_labels = np.full(y_transformed_arr.shape[0], fill_value=None, dtype=object)
+        #         for i in range(y_transformed_arr.shape[0]):
+        #             hot_indices = np.where(y_transformed_arr[i, :] == 1)[0]
+        #             if len(hot_indices) == 1:
+        #                 original_labels[i] = self.classes_[hot_indices[0]]
+        #             elif len(hot_indices) == 0: # All zeros, could be unknown or NaN original
+        #                 # This depends on how transform handled unknowns/NaNs.
+        #                 # For now, let's assume it was an unknown if handle_unknown='use_unknown_value'
+        #                 # or if transform created all zeros for NaNs.
+        #                 original_labels[i] = None # Or "unknown_category_from_binarized"
+        #             else: # Multiple 1s - invalid binarized format
+        #                 raise ValueError(f"Invalid binarized row at index {i}: more than one 'hot' value.")
+        #         return original_labels
+        #     else:
+        #         raise ValueError("Shape of y_transformed is incompatible with fitted classes for binarizer.")
+        else:
+            raise NotImplementedError(
+                f"Inverse transform for strategy '{self.strategy}' not implemented."
+            )
+
+
+# --- Placeholder for Label Binarizer Tests (when implemented) ---
+# print("\n--- Label Binarizer Tests (Placeholder) ---")
+# encoder_bin = Encoder(strategy="label_binarize")
+# # Test binary case
+# labels_bin1 = ['yes', 'no', 'yes', 'yes', 'no']
+# encoder_bin.fit(labels_bin1)
+# print("Fitted classes_ (bin1):", encoder_bin.classes_)
+# transformed_bin1 = encoder_bin.transform(labels_bin1)
+# print("Transformed (bin1):", transformed_bin1)
+# print("Inverse transformed (bin1):", encoder_bin.inverse_transform(transformed_bin1))
+
+# # Test multi-class case
+# labels_bin2 = ['A', 'B', 'C', 'A', 'B']
+# encoder_bin.fit(labels_bin2)
+# print("\nFitted classes_ (bin2):", encoder_bin.classes_)
+# transformed_bin2 = encoder_bin.transform(labels_bin2)
+# print("Transformed (bin2):\n", transformed_bin2)
+# print("Inverse transformed (bin2):", encoder_bin.inverse_transform(transformed_bin2))
