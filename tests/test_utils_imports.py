@@ -30,10 +30,15 @@ class TestImportsUtils(BaseTest):
         from sega_learn.utils import AnimationBase as anb
         from sega_learn.utils import Augmenter as augmenter
         from sega_learn.utils import ClassificationAnimation as canb
+        from sega_learn.utils import CustomImputer as cimp
         from sega_learn.utils import DataPrep as dp
+        from sega_learn.utils import DirectionalImputer as dimp
+        from sega_learn.utils import Encoder as enc
         from sega_learn.utils import ForcastingAnimation as fanb
         from sega_learn.utils import ForecastRegressor as fr
         from sega_learn.utils import GridSearchCV as gscv
+        from sega_learn.utils import InterpolationImputer as impp
+        from sega_learn.utils import KNNImputer as knnimp
         from sega_learn.utils import Metrics as metrics
         from sega_learn.utils import ModelSelectionUtility as msu
         from sega_learn.utils import PolynomialTransform as plt
@@ -42,6 +47,7 @@ class TestImportsUtils(BaseTest):
         from sega_learn.utils import RandomUnderSampler as rus
         from sega_learn.utils import RegressionAnimation as ranb
         from sega_learn.utils import Scaler as scaler
+        from sega_learn.utils import StatisticalImputer as simp
         from sega_learn.utils import VotingClassifier as vc
         from sega_learn.utils import VotingRegressor as vr
         from sega_learn.utils import check_is_fitted as cif
@@ -76,6 +82,7 @@ class TestImportsUtils(BaseTest):
         assert ohe is not None
         assert norm is not None
         assert scaler is not None
+        assert enc is not None
         assert fr is not None
         assert anb is not None
         assert ranb is not None
@@ -83,6 +90,11 @@ class TestImportsUtils(BaseTest):
         assert canb is not None
         assert cif is not None
         assert cxy is not None
+        assert simp is not None
+        assert dimp is not None
+        assert impp is not None
+        assert knnimp is not None
+        assert cimp is not None
 
     def test_wildcard_import(self):
         """Tests that the segadb package can be imported using a wildcard import."""
@@ -107,6 +119,7 @@ class TestImportsUtils(BaseTest):
         assert one_hot_encode is not None
         assert normalize is not None
         assert Scaler is not None
+        assert Encoder is not None
         assert AnimationBase is not None
         assert RegressionAnimation is not None
         assert ForcastingAnimation is not None
@@ -197,6 +210,11 @@ class TestImportsUtils(BaseTest):
 
         assert Scaler is not None
 
+    def test_Encoder(self):  # NOQA D201
+        from sega_learn.utils import Encoder
+
+        assert Encoder is not None
+
     def test_VotingRegressor(self):  # NOQA D201
         from sega_learn.utils import VotingRegressor
 
@@ -251,6 +269,31 @@ class TestImportsUtils(BaseTest):
         from sega_learn.utils import check_X_y
 
         assert check_X_y is not None
+
+    def test_StatisticalImputer(self):  # NOQA D201
+        from sega_learn.utils import StatisticalImputer
+
+        assert StatisticalImputer is not None
+
+    def test_DirectionalImputer(self):  # NOQA D201
+        from sega_learn.utils import DirectionalImputer
+
+        assert DirectionalImputer is not None
+
+    def test_InterpolationImputer(self):  # NOQA D201
+        from sega_learn.utils import InterpolationImputer
+
+        assert InterpolationImputer is not None
+
+    def test_KNNImputer(self):  # NOQA D201
+        from sega_learn.utils import KNNImputer
+
+        assert KNNImputer is not None
+
+    def test_CustomImputer(self):  # NOQA D201
+        from sega_learn.utils import CustomImputer
+
+        assert CustomImputer is not None
 
 
 if __name__ == "__main__":

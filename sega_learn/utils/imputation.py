@@ -715,8 +715,8 @@ class KNNImputer(BaseImputer):
         if self._cat_feature_indices:
             X_cat_part = X_filled_initial[:, self._cat_feature_indices]
             try:
-                self._encoder.fit(X_cat_part)
-                X_cat_encoded = self._encoder.transform(X_cat_part)
+                self._encoder(X_cat_part)
+                X_cat_encoded = self._encoder(X_cat_part)
                 X_knn_features = np.hstack((X_numeric_part, X_cat_encoded))
             except Exception as e:
                 raise RuntimeError(

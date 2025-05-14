@@ -22,8 +22,16 @@ from .dataPreprocessing import (
     one_hot_encode,
     normalize,
     Scaler,
+    Encoder,
 )
 from .validation import check_is_fitted, check_X_y
+from .imputation import (
+    StatisticalImputer,
+    DirectionalImputer,
+    InterpolationImputer,
+    KNNImputer,
+    CustomImputer,
+)
 
 __all__ = [
     "AnimationBase",
@@ -53,6 +61,12 @@ __all__ = [
     "one_hot_encode",
     "normalize",
     "Scaler",
+    "Encoder",
     "check_is_fitted",
     "check_X_y",
+    "StatisticalImputer",
+    "DirectionalImputer",
+    "InterpolationImputer",
+    "KNNImputer",
+    "CustomImputer",
 ]

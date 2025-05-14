@@ -195,7 +195,6 @@ class Scaler:
             return X * (self.norm[:, np.newaxis] + 1e-8)
 
 
-# TODO: Add tests for encoder
 class Encoder:
     """Custom encoder for transforming categorical labels into numerical representations.
 
