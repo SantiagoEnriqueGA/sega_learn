@@ -20,6 +20,9 @@ from sega_learn.nearest_neighbors.knn_classifier import KNeighborsClassifier
 from sega_learn.nearest_neighbors.knn_regressor import KNeighborsRegressor
 from sega_learn.utils.dataPreprocessing import Encoder, one_hot_encode
 
+# Suppress FutureWarning about downcasting in .replace()
+pd.set_option("future.no_silent_downcasting", True)
+
 
 class BaseImputer:
     """Base class for imputers providing a common interface."""
@@ -114,7 +117,9 @@ class BaseImputer:
 class StatisticalImputer(BaseImputer):
     """Statistical imputer for handling missing values using mean, median, or mode."""
 
-    def __init__(self, strategy="mean", nan_policy="omit", missing_values=np.nan):
+    def __init__(
+        self, strategy="mean", nan_policy="omit", missing_values=np.nan, warn=True
+    ):
         """Initialize the StatisticalImputer with a specified strategy.
 
         The strategy can be "mean", "median", or "mode".
@@ -128,6 +133,7 @@ class StatisticalImputer(BaseImputer):
             strategy (str): The imputation strategy ("mean", "median", or "mode").
             nan_policy (str): Policy for handling NaN values ("omit", "propagate", or "raise").
             missing_values (float): The value to replace missing values with.
+            warn (bool, default=True): Whether to print warnings.
         """
         if strategy not in ["mean", "median", "mode"]:
             raise ValueError("Strategy must be one of 'mean', 'median', or 'mode'.")
@@ -142,6 +148,7 @@ class StatisticalImputer(BaseImputer):
         self.missing_values = missing_values
         self.statistic_ = None
         self.is_fitted_ = False
+        self.warn = warn
 
     def _calculate_mode(self, a):
         """Calculate the mode of a 1D array. Handles mixed types.
@@ -181,7 +188,8 @@ class StatisticalImputer(BaseImputer):
 
         except Exception as e:
             # Catch potential errors during counting or sorting
-            print(f"Warning: Error calculating mode: {e}. Returning NaN.")
+            if self.warn:
+                print(f"Warning: Error calculating mode: {e}. Returning NaN.")
             return np.nan
 
     def fit(self, X, y=None):
@@ -253,9 +261,10 @@ class StatisticalImputer(BaseImputer):
                     self.statistic_[i] = mode_value
             except Exception as e:
                 # Error during calculation (e.g., mean/median on incompatible type not caught by coerce)
-                print(
-                    f"Warning: Could not apply strategy '{self.strategy}' to feature {i}. Error: {e}. Setting statistic to NaN."
-                )
+                if self.warn:
+                    print(
+                        f"Warning: Could not apply strategy '{self.strategy}' to feature {i}. Error: {e}. Setting statistic to NaN."
+                    )
                 self.statistic_[i] = np.nan  # Fallback statistic
 
         # Handle cases where statistic could not be computed (remained NaN)
@@ -265,9 +274,10 @@ class StatisticalImputer(BaseImputer):
         nan_stats_indices = np.where(np.isnan(stat_array_float))[0]
 
         if len(nan_stats_indices) > 0 and self.strategy != "mode":
-            print(
-                f"Warning: Could not compute statistic for features {nan_stats_indices} (all values missing or type error?). Filling with defaults."
-            )
+            if self.warn:
+                print(
+                    f"Warning: Could not compute statistic for features {nan_stats_indices} (all values missing or type error?). Filling with defaults."
+                )
             for idx in nan_stats_indices:
                 # Check original column type again for better default
                 original_col_valid = X_arr[:, idx][~mask[:, idx]]
@@ -328,9 +338,10 @@ class StatisticalImputer(BaseImputer):
                     fill_value = 0
                 except (ValueError, TypeError):
                     fill_value = "missing"
-                print(
-                    f"Warning: Statistic for column {i} was NaN, filling with default '{fill_value}' during transform."
-                )
+                if self.warn:
+                    print(
+                        f"Warning: Statistic for column {i} was NaN, filling with default '{fill_value}' during transform."
+                    )
 
             X_copy[feature_mask, i] = fill_value
 
@@ -346,7 +357,7 @@ class StatisticalImputer(BaseImputer):
 class DirectionalImputer(BaseImputer):
     """Directional imputer for handling missing values using forward or backward fill."""
 
-    def __init__(self, direction="forward", missing_values=np.nan):
+    def __init__(self, direction="forward", missing_values=np.nan, warn=True):
         """Initialize the DirectionalImputer with a specified direction.
 
         The direction can be "forward" or "backward".
@@ -354,12 +365,14 @@ class DirectionalImputer(BaseImputer):
         Args:
             direction (str): The imputation direction ("forward" or "backward").
             missing_values (float): The value to replace missing values with.
+            warn (bool, default=True): Whether to print warnings.
         """
         if direction not in ["forward", "backward"]:
             raise ValueError("Direction must be either 'forward' or 'backward'.")
         self.direction = direction
         self.missing_values = missing_values
         self.is_fitted_ = False  # Fit does nothing, but good practice
+        self.warn = warn
 
     def fit(self, X=None, y=None):
         """Fit the imputer. No operation needed for directional imputer."""
@@ -379,6 +392,10 @@ class DirectionalImputer(BaseImputer):
                 "The imputer has not been fitted yet. Call fit() before transform()."
             )
         self._check_input(X)
+
+        original_input_is_numpy = isinstance(X, np.ndarray)
+        original_input_dtype = X.dtype if original_input_is_numpy else None
+
         X_copy = np.array(
             X, copy=True, dtype=object
         )  # Use object dtype for mixed stats
@@ -414,22 +431,44 @@ class DirectionalImputer(BaseImputer):
         if X.ndim == 1:
             X_copy = X_copy.flatten()
 
-        # Attempt to convert back to a more specific dtype if possible
+        # Attempt to convert to a more specific dtype using NumPy's inference.
         try:
-            # Find a common type, prioritize original if possible
-            common_dtype = np.find_common_type(
-                [X.dtype if hasattr(X, "dtype") else type(X[0])],
-                [type(v) for v in X_copy.ravel() if v is not None],
-            )
-            return X_copy.astype(common_dtype)
+            # Convert the object array (X_copy) to a list of Python objects.
+            # Then, np.array() will infer the tightest possible dtype.
+            # E.g., if X_copy contains [1, 2.0, 3] (as Python objects),
+            # np.array([1, 2.0, 3]) results in a float64 array.
+            # If X_copy contains [1, 'hello', 3.0], it results in an object array.
+            list_representation = X_copy.tolist()
+            inferred_array = np.array(list_representation)
+
+            # If the original input X was a NumPy array with a numeric dtype,
+            # and the newly inferred_array is also numeric,
+            # promote their types to ensure the output can accommodate both.
+            if (
+                original_input_is_numpy
+                and np.issubdtype(original_input_dtype, np.number)
+                and np.issubdtype(inferred_array.dtype, np.number)
+            ):
+                final_dtype = np.promote_types(
+                    original_input_dtype, inferred_array.dtype
+                )
+
+                # Cast to the promoted type if it's different from the inferred type.
+                if final_dtype != inferred_array.dtype:
+                    return inferred_array.astype(final_dtype)
+
+            return inferred_array
         except (TypeError, ValueError):
-            return X_copy  # Keep object dtype if conversion fails
+            # Fallback if conversion via tolist() and np.array() fails for any reason
+            # (e.g., complex nested objects not intended for simple array conversion,
+            # or issues during astype if the promotion logic had a subtle flaw for an edge case).
+            return X_copy
 
 
 class InterpolationImputer(BaseImputer):
     """Interpolation imputer for handling missing values using linear or polynomial interpolation."""
 
-    def __init__(self, method="linear", degree=1, missing_values=np.nan):
+    def __init__(self, method="linear", degree=1, missing_values=np.nan, warn=True):
         """Initialize the InterpolationImputer with a specified method.
 
         The method can be "linear" or "polynomial"
@@ -438,6 +477,7 @@ class InterpolationImputer(BaseImputer):
             method (str): The interpolation method ("linear", "polynomial").
             degree (int): The degree of the polynomial for polynomial interpolation.
             missing_values (float): The value to replace missing values with.
+            warn (bool, default=True): Whether to print warnings.
         """
         if method not in ["linear", "polynomial"]:
             raise ValueError("Method must be either 'linear' or 'polynomial'.")
@@ -445,8 +485,8 @@ class InterpolationImputer(BaseImputer):
             raise ValueError(
                 "Degree must be a non-negative integer for polynomial interpolation."
             )
-        if missing_values is not np.nan:
-            # While possible to replace other values, standard interpolation libraries expect NaN
+        # While possible to replace other values, standard interpolation libraries expect NaN
+        if missing_values is not np.nan and self.warn:
             print(
                 "Warning: Interpolation usually works best with np.nan as missing_values."
             )
@@ -455,6 +495,7 @@ class InterpolationImputer(BaseImputer):
         self.degree = degree
         self.missing_values = missing_values
         self.is_fitted_ = False  # Fit does nothing here
+        self.warn = warn
 
     def fit(self, X=None, y=None):
         """Fit the imputer on the data. No operation needed for interpolation imputer."""
@@ -501,9 +542,10 @@ class InterpolationImputer(BaseImputer):
             valid_mask = ~col_mask
 
             if not np.any(valid_mask):  # Skip column if all values are missing
-                print(
-                    f"Warning: Column {j} has no valid values for interpolation. Skipping."
-                )
+                if self.warn:
+                    print(
+                        f"Warning: Column {j} has no valid values for interpolation. Skipping."
+                    )
                 continue
             if not np.any(col_mask):  # Skip column if no values are missing
                 continue
@@ -512,14 +554,16 @@ class InterpolationImputer(BaseImputer):
             valid_values = col_data[valid_mask]
 
             if len(valid_indices) < 2 and self.method == "linear":
-                print(
-                    f"Warning: Column {j} has fewer than 2 valid values. Cannot perform linear interpolation. Skipping."
-                )
+                if self.warn:
+                    print(
+                        f"Warning: Column {j} has fewer than 2 valid values. Cannot perform linear interpolation. Skipping."
+                    )
                 continue
             if len(valid_indices) <= self.degree and self.method == "polynomial":
-                print(
-                    f"Warning: Column {j} has {len(valid_indices)} valid values, insufficient for polynomial interpolation of degree {self.degree}. Skipping."
-                )
+                if self.warn:
+                    print(
+                        f"Warning: Column {j} has {len(valid_indices)} valid values, insufficient for polynomial interpolation of degree {self.degree}. Skipping."
+                    )
                 continue
 
             if self.method == "linear":
@@ -559,7 +603,11 @@ class KNNImputer(BaseImputer):
     """
 
     def __init__(
-        self, n_neighbors=5, distance_metric="euclidean", missing_values=np.nan
+        self,
+        n_neighbors=5,
+        distance_metric="euclidean",
+        missing_values=np.nan,
+        warn=True,
     ):
         """Initialize the KNNImputer.
 
@@ -567,6 +615,7 @@ class KNNImputer(BaseImputer):
             n_neighbors (int): Number of neighbors to use for imputation.
             distance_metric (str): Distance metric for KNN ('euclidean', 'manhattan', 'minkowski').
             missing_values (scalar, str, None, default=np.nan): Placeholder for missing values.
+            warn (bool, default=True): Whether to print warnings.
         """
         if n_neighbors <= 0:
             raise ValueError("n_neighbors must be a positive integer.")
@@ -587,6 +636,7 @@ class KNNImputer(BaseImputer):
         self._cat_feature_indices = None
         self._num_feature_indices = None
         self._encoder = None
+        self.warn = warn
 
     def fit(self, X, y=None):
         """Fit the imputer on the data.
@@ -632,10 +682,10 @@ class KNNImputer(BaseImputer):
 
         # Setup initial imputers (fitted during transform)
         self._initial_imputer_num = StatisticalImputer(
-            strategy="mean", missing_values=self.missing_values
+            strategy="mean", missing_values=self.missing_values, warn=self.warn
         )
         self._initial_imputer_cat = StatisticalImputer(
-            strategy="mode", missing_values=self.missing_values
+            strategy="mode", missing_values=self.missing_values, warn=self.warn
         )
         # self._encoder = OneHotEncoder(
         #     handle_unknown="ignore", sparse_output=False
@@ -746,9 +796,10 @@ class KNNImputer(BaseImputer):
             rows_for_training_idx = np.where(~col_mask)[0]
 
             if len(rows_for_training_idx) < self.n_neighbors:
-                print(
-                    f"Warning: Not enough samples ({len(rows_for_training_idx)}) for col {j} KNN. Using initial fill."
-                )
+                if self.warn:
+                    print(
+                        f"Warning: Not enough samples ({len(rows_for_training_idx)}) for col {j} KNN. Using initial fill."
+                    )
                 output_X[rows_to_impute_idx, j] = X_filled_initial[
                     rows_to_impute_idx, j
                 ]
@@ -797,7 +848,7 @@ class KNNImputer(BaseImputer):
                         [int_to_cat.get(i, "unknown_pred") for i in predicted_ints]
                     )
                     # Handle potential unknown predictions if necessary (though KNN usually predicts existing labels)
-                    if "unknown_pred" in imputed_values:
+                    if "unknown_pred" in imputed_values and self.warn:
                         print(
                             f"Warning: KNNClassifier predicted an unknown integer label for column {j}."
                         )
@@ -807,9 +858,10 @@ class KNNImputer(BaseImputer):
                 output_X[rows_to_impute_idx, j] = imputed_values  # Fill imputed values
 
             except Exception as e:
-                print(
-                    f"Error during KNN imputation for col {j}: {e}. Using initial fill."
-                )
+                if self.warn:
+                    print(
+                        f"Error during KNN imputation for col {j}: {e}. Using initial fill."
+                    )
                 output_X[rows_to_impute_idx, j] = X_filled_initial[
                     rows_to_impute_idx, j
                 ]  # Fallback
@@ -835,7 +887,8 @@ class CustomImputer(BaseImputer):
         classifier=None,
         missing_values=np.nan,
         one_hot_encode_features=True,
-    ):  # New parameter
+        warn=True,
+    ):
         """Initialize the CustomImputer.
 
         Args:
@@ -845,9 +898,10 @@ class CustomImputer(BaseImputer):
             one_hot_encode_features (bool, default=True): Whether to one-hot encode
                 categorical features in the matrix X used by the custom estimators.
                 If False, custom estimators must handle mixed-type features.
+            warn (bool, default=True): Whether to print warnings.
         """
-        # Call BaseImputer's __init__
         self.missing_values = missing_values
+        self.warn = warn
 
         if regressor is None and classifier is None:
             raise ValueError(
@@ -891,9 +945,14 @@ class CustomImputer(BaseImputer):
 
         for col in X_df.columns:
             with contextlib.suppress(TypeError):
-                X_df[col] = X_df[col].replace(
+                current_col_series = X_df[col]
+                replaced_series = current_col_series.replace(
                     ["nan", "NaN", "None", "null", "", "NA", "<NA>"], np.nan
                 )
+                # Address the FutureWarning by explicitly calling infer_objects.
+                # This ensures that types are inferred after replacement,
+                # e.g., an object column with "1", "2", "nan" might become numeric.
+                X_df[col] = replaced_series.infer_objects(copy=False)
 
         if X_df.ndim != 2:
             raise ValueError("CustomImputer expects 2D input.")
@@ -916,20 +975,20 @@ class CustomImputer(BaseImputer):
                 self._column_types.append("categorical")
                 self._cat_feature_indices.append(i)
 
-        if self._num_feature_indices and self.regressor is None:
+        if self._num_feature_indices and self.regressor is None and self.warn:
             print(
                 "Warning: Numeric columns found, no regressor. Numeric imputation skipped."
             )
-        if self._cat_feature_indices and self.classifier is None:
+        if self._cat_feature_indices and self.classifier is None and self.warn:
             print(
                 "Warning: Categorical columns found, no classifier. Categorical imputation skipped."
             )
 
         self._initial_imputer_num = StatisticalImputer(
-            strategy="mean", missing_values=self.missing_values
+            strategy="mean", missing_values=self.missing_values, warn=self.warn
         )
         self._initial_imputer_cat = StatisticalImputer(
-            strategy="mode", missing_values=self.missing_values
+            strategy="mode", missing_values=self.missing_values, warn=self.warn
         )
 
         if self.one_hot_encode_features:
@@ -1034,7 +1093,8 @@ class CustomImputer(BaseImputer):
                             imputed_num  # Maintain type from imputer
                         )
                     except Exception as e:
-                        print(f"Warning: Initial numeric fill failed: {e}")
+                        if self.warn:
+                            print(f"Warning: Initial numeric fill failed: {e}")
         if self._cat_feature_indices:
             cat_cols_idx_orig = self._cat_feature_indices
             if cat_cols_idx_orig:  # Check if list is not empty
@@ -1046,14 +1106,16 @@ class CustomImputer(BaseImputer):
                             self._initial_imputer_cat.transform(cat_data)
                         )
                     except Exception as e:
-                        print(f"Warning: Initial categorical fill failed: {e}")
+                        if self.warn:
+                            print(f"Warning: Initial categorical fill failed: {e}")
 
         # 2. Secondary Fill
         final_check_mask = self._get_mask(X_filled_initial)
         if np.any(final_check_mask):
-            print(
-                "Warning: NaNs after initial fill. Applying secondary fill (0/missing)."
-            )
+            if self.warn:
+                print(
+                    "Warning: NaNs after initial fill. Applying secondary fill (0/missing)."
+                )
             for j_orig in range(X_filled_initial.shape[1]):
                 if np.any(final_check_mask[:, j_orig]):
                     fill_val = (
@@ -1078,9 +1140,10 @@ class CustomImputer(BaseImputer):
             elif not is_numeric_target and self.classifier:
                 estimator_to_use = self.classifier
             else:
-                print(
-                    f"Warning: No suitable estimator for col {j_target_orig_idx} (type: {self._column_types[j_target_orig_idx]}). Using initial fill."
-                )
+                if self.warn:
+                    print(
+                        f"Warning: No suitable estimator for col {j_target_orig_idx} (type: {self._column_types[j_target_orig_idx]}). Using initial fill."
+                    )
                 output_X[col_mask_orig, j_target_orig_idx] = X_filled_initial[
                     col_mask_orig, j_target_orig_idx
                 ]
@@ -1091,9 +1154,10 @@ class CustomImputer(BaseImputer):
 
             min_samples_required = 2
             if len(rows_for_training_idx) < min_samples_required:
-                print(
-                    f"Warning: Insufficient samples ({len(rows_for_training_idx)}) for col {j_target_orig_idx}. Using initial fill."
-                )
+                if self.warn:
+                    print(
+                        f"Warning: Insufficient samples ({len(rows_for_training_idx)}) for col {j_target_orig_idx}. Using initial fill."
+                    )
                 output_X[rows_to_impute_idx, j_target_orig_idx] = X_filled_initial[
                     rows_to_impute_idx, j_target_orig_idx
                 ]
@@ -1106,9 +1170,10 @@ class CustomImputer(BaseImputer):
             )
 
             if X_features_processed is None or X_features_processed.shape[1] == 0:
-                print(
-                    f"Warning: No features available for imputing column {j_target_orig_idx}. Using initial fill."
-                )
+                if self.warn:
+                    print(
+                        f"Warning: No features available for imputing column {j_target_orig_idx}. Using initial fill."
+                    )
                 output_X[rows_to_impute_idx, j_target_orig_idx] = X_filled_initial[
                     rows_to_impute_idx, j_target_orig_idx
                 ]
@@ -1157,7 +1222,7 @@ class CustomImputer(BaseImputer):
                                 predicted_values[known_preds_mask]
                             )
                         )
-                    if not np.all(known_preds_mask):
+                    if not np.all(known_preds_mask) and self.warn:
                         print(
                             f"Warning: Classifier predicted unknown labels for col {j_target_orig_idx}. Used fallback."
                         )
@@ -1165,9 +1230,10 @@ class CustomImputer(BaseImputer):
 
                 output_X[rows_to_impute_idx, j_target_orig_idx] = predicted_values
             except Exception as e:
-                print(
-                    f"Error during custom imputation for col {j_target_orig_idx} with {type(estimator_to_use).__name__}: {e}. Using initial fill."
-                )
+                if self.warn:
+                    print(
+                        f"Error during custom imputation for col {j_target_orig_idx} with {type(estimator_to_use).__name__}: {e}. Using initial fill."
+                    )
                 output_X[rows_to_impute_idx, j_target_orig_idx] = X_filled_initial[
                     rows_to_impute_idx, j_target_orig_idx
                 ]
