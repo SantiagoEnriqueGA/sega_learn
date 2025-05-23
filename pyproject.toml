@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "sega_learn"
 version = "0.1.12"
-readme = "README.md"
+readme = "README_PyPI.md"
 description = "Sega Learn is a Python package for machine learning and data science."
 authors = [
     {name = "Santiago Gonzalez", email = "sega97@gmail.com"},

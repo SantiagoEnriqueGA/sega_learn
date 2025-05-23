@@ -1,5 +1,11 @@
 # SEGA_LEARN
 
+[![PyPI version](https://badge.fury.io/py/sega_learn.svg)](https://badge.fury.io/py/sega_learn)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/SantiagoEnriqueGA/sega_learn/.github/workflows/core-tests.yml?branch=main)](https://github.com/SantiagoEnriqueGA/sega_learn/actions/workflows/core-tests.yml)
+[![Python Versions](https://img.shields.io/pypi/pyversions/sega_learn.svg)](https://pypi.org/project/sega_learn/)
+[![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-blue.svg)](https://github.com/charliermarsh/ruff)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 SEGA_LEARN is a custom package implementating machine learning algorithms built from the Python standard library as well as NumPy and SciPy.
 It includes scratch implementations of various machine learning algorithms, including clustering, linear models, neural networks, and trees.
 The project also includes scripts for testing, documentation generation, and other tasks.
