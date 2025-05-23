@@ -155,9 +155,15 @@ class TestImports(BaseTest):
         assert RandomSearchCV is not None
         assert RandomUnderSampler is not None
         assert Scaler is not None
+        assert Encoder is not None
         assert VotingRegressor is not None
         assert VotingClassifier is not None
         assert ForecastRegressor is not None
+        assert StatisticalImputer is not None
+        assert DirectionalImputer is not None
+        assert InterpolationImputer is not None
+        assert KNNImputer is not None
+        assert CustomImputer is not None
         assert make_blobs is not None
         assert make_classification is not None
         assert make_regression is not None
