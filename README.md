@@ -123,7 +123,6 @@ The SEGA_LEARN library includes the following features:
 
 ### Planned Features - Future Work
 - Implement OPTICS clustering algorithm
-- Implement new model selection algorithms like Bayesian Optimization, Bayesian Model Averaging, and Bayesian Model Selection.
 
 
 ## Project Structure
